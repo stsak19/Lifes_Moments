@@ -841,28 +841,30 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rooms { padding-bottom: calc(64px + var(--sheet-r)); }
 }
 
-/* reviews: a deck of cards. The front card flies off to the left, the next one comes forward. */
-.rev-car { position: relative; padding: 0 40px 34px 0; }
-.rev-track { display: grid; }
+/* reviews: a stack you can drag. Pull the front card away and the next one rises from behind. */
+.reviews { overflow-x: clip; }
+.rev-car { position: relative; padding-bottom: 26px; }
+.rev-track { display: grid; touch-action: pan-y; }
 .rev-track .rev { grid-area: 1 / 1; min-height: 230px; display: flex; flex-direction: column; justify-content: center;
-  transform-origin: 30% 100%; box-shadow: 0 24px 50px -30px var(--shadow);
-  transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .9s ease, filter .9s ease; }
+  box-shadow: 0 26px 50px -30px var(--shadow); user-select: none; -webkit-user-select: none;
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1), opacity .55s ease, filter .55s ease; will-change: transform; }
 .rev-track .rev blockquote { font-size: clamp(22px, 2.3vw, 30px); }
-.rev-track .rev[data-pos="0"] { z-index: 3; transform: none; opacity: 1; }
-.rev-track .rev[data-pos="1"] { z-index: 2; transform: translate(20px, 16px) scale(.96); opacity: .75; filter: saturate(.6); }
-.rev-track .rev[data-pos="2"] { z-index: 1; transform: translate(40px, 32px) scale(.92); opacity: .45; filter: saturate(.4); }
-.rev-track .rev[data-pos="out"] { z-index: 4; transform: translate(-70%, -14px) rotate(-7deg); opacity: 0; }
+.rev-track .rev[data-pos="0"] { z-index: 3; cursor: grab; }
+.rev-track .rev[data-pos="1"] { z-index: 2; transform: translateY(14px) scale(.94); opacity: .55; filter: saturate(.5); }
+.rev-track .rev[data-pos="2"] { z-index: 1; transform: translateY(28px) scale(.88); opacity: 0; }
+.rev-track.dragging .rev { transition: none; }
+.rev-track.dragging .rev[data-pos="0"] { cursor: grabbing; }
 .rev-track .rev.no-anim { transition: none; }
-.rev-track .rev:not([data-pos="0"]) { pointer-events: none; }
-.rev-track .rev[data-pos="0"] blockquote, .rev-track .rev[data-pos="0"] figcaption { animation: qin .9s .3s cubic-bezier(.2, .8, .2, 1) both; }
-.rev-track .rev[data-pos="0"] figcaption { animation-delay: .5s; }
-@keyframes qin { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
-.rev-dots { display: flex; gap: 8px; margin-top: 4px; }
+.rev-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px; }
+.rev-hint { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); letter-spacing: .03em; }
+.rev-hint svg { animation: nudge 2.4s ease-in-out infinite; }
+@keyframes nudge { 0%, 60%, 100% { transform: none; } 30% { transform: translateX(-6px); } }
+.rev-dots { display: flex; gap: 8px; }
 .rev-dots button { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; }
 .rev-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: width .3s, background-color .3s; }
 .rev-dots button[aria-current="true"]::before { width: 24px; border-radius: 4px; background: var(--accent); }
-@media (max-width: 760px) { .rev-car { padding: 0 24px 24px 0; } .rev-track .rev { min-height: 210px; } .rev-track .rev[data-pos="1"] { transform: translate(12px, 12px) scale(.96); } .rev-track .rev[data-pos="2"] { transform: translate(24px, 24px) scale(.92); } }
-@media (prefers-reduced-motion: reduce) { .rev-track .rev, .rev-track .rev blockquote, .rev-track .rev figcaption { transition: none; animation: none; } }
+@media (max-width: 760px) { .rev-track .rev { min-height: 210px; } }
+@media (prefers-reduced-motion: reduce) { .rev-track .rev { transition: none; } .rev-hint svg { animation: none; } }
 
 /* ---------- reveal on scroll ---------- */
 .js-reveal [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
@@ -1199,7 +1201,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
             <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
           </div>
-          <div class="rev-dots" id="revDots"></div>
+          <div class="rev-foot"><div class="rev-dots" id="revDots"></div><span class="rev-hint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg><span data-i18n="rev.drag">Drag for the next one</span></span></div>
         </div>
       </div>
     </div>
@@ -1352,7 +1354,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
       'nav.guide': 'Guide', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
       'g.all': 'All', 'g.beach': 'Beaches', 'g.village': 'Villages', 'g.sight': 'Sights', 'g.taste': 'Taste',
-      'rev.eyebrow': 'Reviews', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
+      'rev.eyebrow': 'Reviews', 'rev.drag': 'Drag for the next one', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
       'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
     },
     el: {
@@ -1409,7 +1411,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
       'nav.guide': 'Οδηγός', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
       'g.all': 'Όλα', 'g.beach': 'Παραλίες', 'g.village': 'Χωριά', 'g.sight': 'Αξιοθέατα', 'g.taste': 'Γεύσεις',
-      'rev.eyebrow': 'Κριτικές', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
+      'rev.eyebrow': 'Κριτικές', 'rev.drag': 'Σύρετε για το επόμενο', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
       'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Προς το παρόν δοκιμαστικό σπίτι · εδώ μπαίνουν οι φωτογραφίες 360°'
     }
   };
@@ -2192,36 +2194,71 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     langHooks.push(() => { render(); setPlaying(playing); });
   })();
 
-  /* ================= reviews: card deck ================= */
+  /* ================= reviews: drag the front card away ================= */
   (function reviews() {
     const car = $('#revCar'); if (!car) return;
-    const cards = Array.from($('#revTrack').children), dots = $('#revDots'), n = cards.length;
-    let i = 0, timer = null, hover = false, onScreen = false, first = true;
+    const track = $('#revTrack'), cards = Array.from(track.children), dots = $('#revDots'), n = cards.length;
+    let i = 0, timer = null, hover = false, onScreen = false, busy = false;
     dots.innerHTML = cards.map((_, k) => '<button type="button" aria-label="' + (k + 1) + ' / ' + n + '"></button>').join('');
-    function go(k) {
-      const prev = i;
-      i = ((k % n) + n) % n;
-      cards.forEach((c, j) => {
-        const pos = (j - i + n) % n;
-        if (!first && j === prev && j !== i) {
-          c.dataset.pos = 'out'; // fly off, then slip quietly to the back of the deck
-          setTimeout(() => { if (c.dataset.pos !== 'out') return; c.classList.add('no-anim'); c.dataset.pos = String((j - i + n) % n); void c.offsetWidth; c.classList.remove('no-anim'); }, reduce ? 0 : 900);
-        } else c.dataset.pos = pos < 3 ? String(pos) : '2';
-        c.setAttribute('aria-hidden', String(j !== i));
-      });
-      first = false;
+    const front = () => cards[i], next = () => cards[(i + 1) % n];
+    function place() {
+      cards.forEach((c, j) => { const p = (j - i + n) % n; c.dataset.pos = String(Math.min(p, 2)); c.style.transform = ''; c.style.opacity = ''; c.style.filter = ''; c.setAttribute('aria-hidden', String(p !== 0)); });
       $$('button', dots).forEach((d, j) => d.setAttribute('aria-current', String(j === i)));
-      schedule();
     }
-    function schedule() { clearTimeout(timer); if (!reduce && onScreen && !hover) timer = setTimeout(() => go(i + 1), 5500); }
-    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { const k = $$('button', dots).indexOf(b); if (k !== i) go(k); } });
-    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; schedule(); } });
+    // how far the front card is pulled (dx in px) and what the card behind looks like
+    function pull(dx) {
+      const w = car.clientWidth, p = Math.min(1, Math.abs(dx) / (w * 0.5));
+      front().style.transform = 'translateX(' + dx + 'px) rotate(' + (dx / w * 10) + 'deg)';
+      front().style.opacity = String(1 - p * 0.1); // stays solid so nothing shows through it
+      const b = next();
+      b.style.transform = 'translateY(' + (14 - 14 * p) + 'px) scale(' + (0.94 + 0.06 * p) + ')';
+      b.style.opacity = String(0.55 + 0.45 * p); b.style.filter = 'saturate(' + (0.5 + 0.5 * p) + ')';
+    }
+    // throw the front card off in a direction (-1 left, 1 right) and bring the next one up
+    function fling(dir) {
+      if (busy) return; busy = true;
+      const c = front(), w = car.clientWidth;
+      track.classList.remove('dragging');
+      c.style.transform = 'translateX(' + (dir * w * 1.15) + 'px) rotate(' + (dir * 14) + 'deg)'; c.style.opacity = '0';
+      const b = next(); b.style.transform = 'none'; b.style.opacity = '1'; b.style.filter = 'none';
+      setTimeout(() => {
+        c.classList.add('no-anim'); i = (i + 1) % n; place(); void c.offsetWidth; c.classList.remove('no-anim');
+        busy = false; schedule();
+      }, reduce ? 0 : 520);
+    }
+    function jump(k) { if (k === i || busy) return; i = k; place(); schedule(); }
+    function schedule() { clearTimeout(timer); if (!reduce && onScreen && !hover && !drag) timer = setTimeout(() => fling(-1), 5500); }
+    // drag
+    let drag = null;
+    track.addEventListener('pointerdown', (e) => {
+      if (busy || !e.target.closest('.rev[data-pos="0"]')) return;
+      drag = { x: e.clientX, y: e.clientY, dx: 0, id: e.pointerId, on: false };
+      clearTimeout(timer);
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.on) {
+        if (Math.abs(dx) < 6) return;
+        if (Math.abs(dy) > Math.abs(dx)) { drag = null; return; } // vertical: let the page scroll
+        drag.on = true; track.classList.add('dragging'); track.setPointerCapture(e.pointerId);
+      }
+      drag.dx = dx; pull(dx);
+    });
+    function release() {
+      if (!drag) return;
+      const d = drag; drag = null;
+      if (!d.on) { schedule(); return; }
+      if (Math.abs(d.dx) > car.clientWidth * 0.22) fling(d.dx < 0 ? -1 : 1);
+      else { track.classList.remove('dragging'); place(); schedule(); }
+    }
+    track.addEventListener('pointerup', release);
+    track.addEventListener('pointercancel', release);
+    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) jump($$('button', dots).indexOf(b)); });
+    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; clearTimeout(timer); } });
     car.addEventListener('pointerleave', () => { hover = false; schedule(); });
-    let sx = null;
-    car.addEventListener('pointerdown', (e) => { sx = e.clientX; });
-    car.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(i + (e.clientX < sx ? 1 : -1)); sx = null; });
     new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; schedule(); }, { threshold: 0.3 }).observe(car);
-    go(0);
+    place(); schedule();
   })();
 
   window.addEventListener('load', () => { if (hasGsap) ScrollTrigger.refresh(); });
