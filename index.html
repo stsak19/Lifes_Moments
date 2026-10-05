@@ -56,31 +56,104 @@ h1, h2, h3 { text-wrap: balance; }
 .icon-btn:disabled { opacity: .35; }
 
 /* ---------- header ---------- */
+/* Over the hero the bar is see-through with light text; once you scroll it turns into frosted glass in the mood colors. */
 .top {
   position: fixed; inset: 0 0 auto 0; z-index: 40;
   padding-top: env(safe-area-inset-top, 0px);
-  background: var(--nav); border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  transition: background-color .9s, border-color .9s;
+  --top-ink: var(--cap-ink);
+  color: var(--top-ink);
+  background: transparent; border-bottom: 1px solid transparent;
+  transition: background-color .5s ease, border-color .5s ease, color .5s ease, box-shadow .5s ease;
 }
-.top-in { max-width: 1280px; margin: 0 auto; padding: 8px 24px; min-height: var(--header-h); display: flex; align-items: center; gap: 22px; }
-.brand { font: 400 25px/1 var(--font-display); color: var(--ink); text-decoration: none; white-space: nowrap; }
-.nav { display: flex; gap: 22px; flex: 1; font-size: 14px; }
-.nav a { color: var(--ink); text-decoration: none; opacity: .82; }
+.top::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(5, 9, 16, .55), transparent);
+  transition: opacity .5s ease;
+}
+.top.solid {
+  --top-ink: var(--ink);
+  background: var(--nav); border-bottom-color: var(--line);
+  backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: 0 10px 30px -18px var(--shadow);
+}
+.top.solid::before { opacity: 0; }
+.top-in {
+  max-width: 1180px; margin: 0 auto; padding: 14px 24px; min-height: var(--header-h);
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px;
+  transition: padding .5s ease;
+}
+.top.solid .top-in { padding-block: 8px; }
+.brand { display: inline-flex; flex-direction: column; gap: 5px; justify-self: start; color: var(--top-ink, var(--ink)); text-decoration: none; white-space: nowrap; }
+.brand-name { font: 400 26px/1 var(--font-display); letter-spacing: .01em; }
+.brand-sub { font: 500 10px/1 var(--font-body); letter-spacing: .32em; text-transform: uppercase; opacity: .7; }
+.nav { display: flex; gap: 6px; padding: 4px; border-radius: 999px; }
+.nav a {
+  position: relative; padding: 9px 16px; border-radius: 999px;
+  font: 500 12.5px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--top-ink); text-decoration: none; opacity: .78; transition: opacity .25s, background-color .25s;
+}
+.nav a::after {
+  content: ""; position: absolute; left: 16px; right: 16px; bottom: 4px; height: 1px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+}
 .nav a:hover { opacity: 1; }
-.moods { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 999px; }
-.moods button { border: 0; background: transparent; min-height: 36px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
-.moods button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.clock { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.mood-chip { display: none; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; font-size: 12px; font-weight: 500; white-space: nowrap; }
-.menu-btn { display: none; border: 0; }
-.spacer { flex: 1; }
-@media (max-width: 1100px) { .nav, .clock { display: none; } .menu-btn { display: inline-flex; } }
+.nav a:hover::after { transform: scaleX(1); }
+.top-actions { display: flex; align-items: center; gap: 8px; justify-self: end; }
+.book-btn { min-height: 42px; padding: 0 22px; font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; }
+.top:not(.solid) .book-btn { background: rgba(248, 244, 236, .14); color: var(--cap-ink); border-color: rgba(248, 244, 236, .5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.top:not(.solid) .book-btn:hover { background: var(--cap-ink); color: #0A1220; }
+.menu-btn { display: none; border: 0; color: var(--top-ink); }
+@media (max-width: 1100px) {
+  .top-in { grid-template-columns: 1fr auto; }
+  .nav { display: none; }
+  .menu-btn { display: inline-flex; }
+}
 @media (max-width: 760px) {
-  .top-in { padding: 6px 8px 6px 16px; gap: 6px; }
-  .brand { font-size: 21px; }
-  .top .moods, .top .btn { display: none; }
-  .mood-chip { display: inline-flex; align-items: center; }
+  .top-in, .top.solid .top-in { padding: 8px 8px 8px 18px; gap: 6px; }
+  .brand-name { font-size: 22px; }
+  .brand-sub { font-size: 9px; }
+  .book-btn { display: none; }
+}
+
+/* ---------- preview tools (not on the live site) ----------
+   Deliberately looks like a dev tool, not like the site: neutral grey, monospace, dashed amber edge. */
+.devpanel {
+  position: fixed; right: 0; top: 50%; z-index: 45; transform: translateY(-50%);
+  display: flex; align-items: center;
+  font: 500 12px/1.3 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #EDEDED;
+}
+.dev-tab {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px 9px; border: 1px dashed #F5B83D; border-right: 0; border-radius: 0 10px 10px 0;
+  background: #1C1C1E; color: #EDEDED; font: inherit; letter-spacing: .06em;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+.dev-tab-dot { width: 7px; height: 7px; border-radius: 50%; background: #F5B83D; }
+.devpanel.open .dev-tab { display: none; }
+.dev-body {
+  width: 220px; margin-right: 12px; padding: 14px;
+  background: #1C1C1E; border: 1px dashed #F5B83D; border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+}
+.dev-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.dev-badge { padding: 4px 8px; border-radius: 6px; background: #F5B83D; color: #1C1C1E; font-weight: 700; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; }
+.dev-x { width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #A1A1A6; }
+.dev-x:hover { background: #2C2C2E; color: #EDEDED; }
+.dev-note { margin: 0 0 12px; color: #A1A1A6; font-size: 11px; line-height: 1.45; }
+.dev-clock { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 10px; margin-bottom: 10px; border-radius: 8px; background: #2C2C2E; color: #A1A1A6; }
+.dev-clock b { color: #EDEDED; font-size: 15px; font-variant-numeric: tabular-nums; }
+.dev-moods { display: flex; flex-direction: column; gap: 4px; }
+.dev-moods button {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 36px; padding: 0 10px; border: 1px solid #3A3A3C; border-radius: 8px;
+  background: transparent; color: #D1D1D6; font: inherit; text-align: left;
+}
+.dev-moods button:hover { border-color: #636366; }
+.dev-moods button[aria-pressed="true"] { background: #F5B83D; border-color: #F5B83D; color: #1C1C1E; font-weight: 700; }
+.dev-moods button[aria-pressed="true"]::after { content: "●"; font-size: 9px; }
+@media (max-width: 760px) {
+  .dev-tab { padding: 12px 7px; }
 }
 
 /* ---------- menu sheet ---------- */
@@ -93,8 +166,6 @@ h1, h2, h3 { text-wrap: balance; }
 .sheet-head { display: flex; justify-content: space-between; align-items: center; }
 .sheet nav { display: flex; flex-direction: column; }
 .sheet nav a { font: 400 32px/1.2 var(--font-display); color: var(--ink); text-decoration: none; padding: 8px 0; border-bottom: 1px solid var(--line); }
-.sheet .moods { flex-wrap: wrap; border-radius: 16px; }
-.sheet .moods button { min-height: 44px; flex: 1 1 40%; }
 
 /* ---------- intro ---------- */
 .intro { position: relative; height: 86vh; height: 86svh; min-height: 540px; max-height: 940px; overflow: hidden; background: #0A1220; }
@@ -283,36 +354,56 @@ footer { border-top: 1px solid var(--line); }
 }
 </style>
 
-<header class="top">
+<header class="top" id="top">
   <div class="top-in">
-    <a class="brand" href="#intro">Life's Moments</a>
+    <a class="brand" href="#intro">
+      <span class="brand-name">Life's Moments</span>
+      <span class="brand-sub">Thasos</span>
+    </a>
     <nav class="nav" aria-label="Main">
       <a href="#stay">Stay</a>
       <a href="#rooms">Rooms</a>
       <a href="#tour">3D tour</a>
       <a href="#guide">Thasos guide</a>
     </nav>
-    <span class="spacer"></span>
-    <span class="clock" id="clock">Thasos --:--</span>
-    <div class="moods" role="group" aria-label="Lighting">
+    <div class="top-actions">
+      <a class="btn book-btn" href="#stay">Book now</a>
+      <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
+    </button>
+    </div>
+  </div>
+</header>
+
+<!-- Preview tools: only for showing the design. Remove this block (and .devpanel CSS) for the live site. -->
+<aside class="devpanel" id="devpanel" aria-label="Preview tools">
+  <button type="button" class="dev-tab" id="devTab" aria-expanded="false" aria-controls="devBody">
+    <span class="dev-tab-dot" aria-hidden="true"></span>
+    <span class="dev-tab-text">Preview · <span id="devTabMood">Night</span></span>
+  </button>
+  <div class="dev-body" id="devBody" hidden>
+    <div class="dev-head">
+      <span class="dev-badge">Preview only</span>
+      <button type="button" class="dev-x" id="devClose" aria-label="Hide preview tools">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <p class="dev-note">Not part of the real site. Lets you check how each time of day looks.</p>
+    <div class="dev-clock"><span>Thasos</span><b id="clock">--:--</b></div>
+    <div class="dev-moods" role="group" aria-label="Lighting">
       <button type="button" data-mode="auto">Auto</button>
       <button type="button" data-mode="morning">Morning</button>
       <button type="button" data-mode="noon">Midday</button>
       <button type="button" data-mode="golden">Golden hour</button>
       <button type="button" data-mode="night">Night</button>
     </div>
-    <a class="btn" href="#stay">Book</a>
-    <button type="button" class="mood-chip" id="moodChip" aria-label="Change lighting">Night</button>
-    <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
-    </button>
   </div>
-</header>
+</aside>
 
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="sheet-head">
-      <span class="brand">Life's Moments</span>
+      <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub">Thasos</span></span>
       <button type="button" class="icon-btn" id="sheetClose" aria-label="Close menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
       </button>
@@ -323,16 +414,6 @@ footer { border-top: 1px solid var(--line); }
       <a href="#tour">3D tour</a>
       <a href="#guide">Thasos guide</a>
     </nav>
-    <div>
-      <p class="eyebrow" style="margin-bottom: 10px">Lighting · <span class="clock-inline">--:--</span> on Thasos</p>
-      <div class="moods" role="group" aria-label="Lighting">
-        <button type="button" data-mode="auto">Auto</button>
-        <button type="button" data-mode="morning">Morning</button>
-        <button type="button" data-mode="noon">Midday</button>
-        <button type="button" data-mode="golden">Golden hour</button>
-        <button type="button" data-mode="night">Night</button>
-      </div>
-    </div>
     <a class="btn wide" href="#stay">Check availability</a>
   </div>
 </div>
@@ -493,7 +574,7 @@ footer { border-top: 1px solid var(--line); }
 
 <footer>
   <div class="wrap foot">
-    <span class="brand">Life's Moments</span>
+    <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub">Thasos</span></span>
     <span>[Phone] · [Email] · Thasos, Greece</span>
     <span>Also on Booking.com</span>
   </div>
@@ -622,11 +703,9 @@ footer { border-top: 1px solid var(--line); }
   function refreshMood(instant) {
     const now = athensNow();
     const next = moodMode === 'auto' ? phaseFor(now.h) : moodMode;
-    $('#clock').textContent = 'Thasos ' + now.clock;
-    $$('.clock-inline').forEach((el) => { el.textContent = now.clock; });
+    $('#clock').textContent = now.clock;
     $$('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === moodMode)));
-    $('#moodChip').textContent = moodMode === 'auto' ? MOOD_NAME[next] + ' · ' + now.clock : MOOD_NAME[next];
-    $('#moodChip').setAttribute('aria-label', 'Lighting: ' + MOOD_NAME[next] + '. Tap to change.');
+    $('#devTabMood').textContent = moodMode === 'auto' ? 'Auto' : MOOD_NAME[next];
     if (next !== mood || instant) {
       mood = next;
       document.documentElement.dataset.mood = mood;
@@ -634,11 +713,31 @@ footer { border-top: 1px solid var(--line); }
     }
   }
   $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { moodMode = b.dataset.mode; refreshMood(); }));
-  const CYCLE = ['auto', 'morning', 'noon', 'golden', 'night'];
-  $('#moodChip').addEventListener('click', () => { moodMode = CYCLE[(CYCLE.indexOf(moodMode) + 1) % CYCLE.length]; refreshMood(); });
   document.documentElement.dataset.mood = mood;
   refreshMood(true);
   setInterval(refreshMood, 30000);
+
+  /* ================= preview tools panel (not on the live site) ================= */
+  const devpanel = $('#devpanel'), devTab = $('#devTab'), devBody = $('#devBody');
+  function setDev(open) {
+    devpanel.classList.toggle('open', open);
+    devBody.hidden = !open;
+    devTab.setAttribute('aria-expanded', String(open));
+  }
+  devTab.addEventListener('click', () => { setDev(true); $('#devClose').focus(); });
+  $('#devClose').addEventListener('click', () => { setDev(false); devTab.focus(); });
+  setDev(window.innerWidth >= 1680); // open by default only when it fits beside the content
+
+  /* ================= header: clear over the hero, glass after ================= */
+  const topBar = $('#top');
+  function updateTop() {
+    const hero = $('#intro');
+    const limit = hero ? hero.offsetHeight - topBar.offsetHeight - 40 : 80;
+    topBar.classList.toggle('solid', window.scrollY > Math.max(60, limit));
+  }
+  window.addEventListener('scroll', updateTop, { passive: true });
+  window.addEventListener('resize', updateTop);
+  updateTop();
 
   /* ================= the rooms and the apartment ================= */
   // Two choices for the guest: a room in the main house (the host picks which one) or the apartment next door.
