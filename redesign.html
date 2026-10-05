@@ -883,6 +883,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   box-shadow: 0 26px 50px -30px var(--shadow); user-select: none; -webkit-user-select: none;
   transition: transform .55s cubic-bezier(.2, .8, .2, 1), opacity .55s ease, filter .55s ease; will-change: transform; }
 .rev-track .rev blockquote { font-size: clamp(22px, 2.3vw, 30px); }
+.rev-track .rev.long blockquote { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.45; }
+.rev-stars { color: #E7A93B; letter-spacing: 2px; margin-right: 4px; }
+@media (max-width: 760px) { .rev-track .rev.long blockquote { font-size: 16px; line-height: 1.5; } }
 .rev-track .rev[data-pos="0"] { z-index: 3; cursor: grab; }
 .rev-track .rev[data-pos="1"] { z-index: 2; transform: translateY(14px) scale(.94); opacity: .55; filter: saturate(.5); }
 .rev-track .rev[data-pos="2"] { z-index: 1; transform: translateY(28px) scale(.88); opacity: 0; }
@@ -1219,12 +1222,12 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <p class="rate-t" data-i18n="score.t">Rated 5 stars on Google</p>
           <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span data-i18n="score.read">Read them</span> ↗</a>
         </div>
-        <!-- Three real reviews from Google go here, once the owner picks them. -->
+        <!-- Real Google reviews. Texts live in the dictionary as rev.1 / rev.2 / rev.3 (EN original, EL translation). -->
         <div class="rev-car" id="revCar" data-reveal aria-roledescription="carousel" aria-label="Guest reviews">
           <div class="rev-track" id="revTrack">
-            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
-            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
-            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.1"></blockquote><figcaption><span class="rev-stars" aria-hidden="true">★★★★★</span> <span data-i18n="rev.src">Guest review on Google</span></figcaption></figure>
+            <figure class="rev long" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.2"></blockquote><figcaption><span class="rev-stars" aria-hidden="true">★★★★★</span> <span data-i18n="rev.src">Guest review on Google</span></figcaption></figure>
+            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.3"></blockquote><figcaption><span class="rev-stars" aria-hidden="true">★★★★★</span> <span data-i18n="rev.src">Guest review on Google</span></figcaption></figure>
           </div>
           <div class="rev-foot"><div class="rev-dots" id="revDots"></div><span class="rev-hint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg><span data-i18n="rev.drag">Drag for the next one</span></span></div>
         </div>
@@ -1379,7 +1382,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
       'nav.guide': 'Guide', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
       'g.all': 'All', 'g.beach': 'Beaches', 'g.village': 'Villages', 'g.sight': 'Sights', 'g.taste': 'Taste',
-      'rev.eyebrow': 'Reviews', 'rev.drag': 'Drag for the next one', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
+      'rev.1': "The place was wonderful, the location magical and the rooms spotlessly clean! Thank you very much to Sasha for her kindness and smile!", 'rev.2': "An ideal choice for anyone looking for relaxation and tranquility on their vacation. The hotel is located in an area that provides easy access to many nearby beaches. Rooms with sea view and spotlessly clean. The hostess, Ms. Sasha, is very helpful, cheerful and always willing to make your stay as pleasant as possible. The breakfast is fresh and delicious. I think we made the best choice, we will definitely choose you again in the future!", 'rev.3': "Awesome view! Hot water and fast internet, very clean and Nasia very helpful!! I highly recommend it!", 'rev.src': "Guest review on Google", 'rev.eyebrow': 'Reviews', 'rev.drag': 'Drag for the next one', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
       'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
     },
     el: {
@@ -1436,7 +1439,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
       'nav.guide': 'Οδηγός', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
       'g.all': 'Όλα', 'g.beach': 'Παραλίες', 'g.village': 'Χωριά', 'g.sight': 'Αξιοθέατα', 'g.taste': 'Γεύσεις',
-      'rev.eyebrow': 'Κριτικές', 'rev.drag': 'Σύρετε για το επόμενο', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
+      'rev.1': "Ο χώρος ήταν υπέροχος, η τοποθεσία μαγική και τα δωμάτια πεντακάθαρα! Ευχαριστούμε πολύ τη Σάσα για την ευγένεια και το χαμόγελό της!", 'rev.2': "Ιδανική επιλογή για όποιον ψάχνει χαλάρωση και ηρεμία στις διακοπές του. Το κατάλυμα βρίσκεται σε σημείο με εύκολη πρόσβαση σε πολλές κοντινές παραλίες. Δωμάτια με θέα στη θάλασσα και πεντακάθαρα. Η οικοδέσποινα, η κ. Σάσα, είναι πολύ εξυπηρετική, χαμογελαστή και πάντα πρόθυμη να κάνει τη διαμονή σας όσο πιο ευχάριστη γίνεται. Το πρωινό είναι φρέσκο και νόστιμο. Νομίζω πως κάναμε την καλύτερη επιλογή, σίγουρα θα σας ξαναδιαλέξουμε στο μέλλον!", 'rev.3': "Φοβερή θέα! Ζεστό νερό και γρήγορο ίντερνετ, πολύ καθαρό και η Νάσια πολύ εξυπηρετική!! Το συστήνω ανεπιφύλακτα!", 'rev.src': "Κριτική επισκέπτη στο Google", 'rev.eyebrow': 'Κριτικές', 'rev.drag': 'Σύρετε για το επόμενο', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
       'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Προς το παρόν δοκιμαστικό σπίτι · εδώ μπαίνουν οι φωτογραφίες 360°'
     }
   };
