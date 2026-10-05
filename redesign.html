@@ -997,10 +997,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           </div>
           <button type="button" class="btn sb-go" id="reqBtn">Check dates</button>
         </form>
-        <p class="sb-status" aria-live="polite">
-          <span id="uOut" class="sr-only">A room</span>
-          <span id="nOut"></span>
-        </p>
 
         <div class="cal-pop" id="calPop" role="dialog" aria-label="Choose your dates" hidden>
           <div class="cal-top">
@@ -1681,7 +1677,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         : '<span class="ok">' + t('st.free') + '</span>';
       h = plural(n, 'night', 'nights') + ' · ' + st + ' · ' + t('st.price');
     } else h = many ? t('st.rooms', { n: u.subs.length, g: u.guests }) : t('st.apt', { g: u.guests });
-    $('#nOut').innerHTML = h;
+    const nOut = $('#nOut'); if (nOut) nOut.innerHTML = h; // the line under the bar was removed
   }
   function selectUnit(i) {
     cal.unit = i;
@@ -1724,7 +1720,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   function renderSum() {
     const u = UNITS[cal.unit];
-    $('#uOut').textContent = u.name;
+    const uOut = $('#uOut'); if (uOut) uOut.textContent = u.name;
     $('#ciOut').textContent = cal.ci ? fmtShort.format(kDate(cal.ci)) : t('bar.add');
     $('#coOut').textContent = cal.co ? fmtShort.format(kDate(cal.co)) : t('bar.add');
     $('#ciBtn').classList.toggle('empty', !cal.ci);
