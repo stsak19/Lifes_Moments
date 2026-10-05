@@ -3,8 +3,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Commissioner:wght@300;400;500;600&family=Noto+Serif+Display:ital,wght@1,300;1,400&display=swap">
-<!-- Greek font trial (preview only): once one is chosen, keep just that family here. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300;0,400;0,500&family=Literata:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Piazzolla:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Bona+Nova:ital,wght@0,400;0,700;1,400&family=Ysabeau+Infant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap">
 <style>
 /* Layout: fixed glass header; hero video; booking bar with the Google rating; a day at the house; rooms (switch + every unit sliding); the place; Thasos guide; reviews; footer.
    The palette follows the time on Thasos (data-mood on <html>), not the OS theme. */
@@ -854,18 +852,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 @media (max-width: 760px) { .stay-rate { font-size: 13px; gap: 8px; } }
 
 
-/* ---------- Greek font: picked in the preview panel (JS sets --el-display / --el-body) ---------- */
-html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif); --font-body: var(--el-body, "Commissioner", system-ui, sans-serif); --font-italic: var(--el-display, "Noto Serif Display", Georgia, serif); }
-.dev-h { margin: 16px 0 4px; font-size: 11px; font-weight: 600; letter-spacing: .08em; color: #EDEDED; }
-.font-list { display: flex; flex-direction: column; gap: 6px; }
-.font-list button { display: flex; flex-direction: column; gap: 4px; padding: 9px 10px; border: 1px solid #3A3A3C; border-radius: 8px; background: transparent; color: #D1D1D6; text-align: left; }
-.font-list button:hover { border-color: #636366; }
-.font-list button[aria-pressed="true"] { border-color: #F5B83D; background: #2C2C2E; }
-.font-list .f-top { display: flex; justify-content: space-between; gap: 8px; font: 600 12px/1.2 system-ui, sans-serif; color: #EDEDED; }
-.font-list .f-top i { font-style: normal; font-weight: 400; color: #A1A1A6; }
-.font-list .f-sample { font-size: 22px; line-height: 1.15; color: #F5F5F7; }
-.font-list .f-body { font-size: 12.5px; color: #A1A1A6; }
-
 /* ---------- booking bar: bigger ---------- */
 .stay { margin-top: -64px; }
 .sbar { padding: 10px; border-radius: 26px; }
@@ -877,9 +863,9 @@ html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif)
 .mini { width: 36px; height: 36px; }
 .sb-guests output { font-size: 20px; min-width: 18px; }
 .sb-guests .step { gap: 12px; }
-.sb-go { margin-left: 10px; padding: 0 40px; border-radius: 18px; font-size: 16.5px; }
+.sb-go { align-self: center; height: 52px; min-height: 0; margin-left: 10px; margin-right: 6px; padding: 0 34px; border-radius: 14px; font-size: 16px; }
 @media (max-width: 980px) {
-  .sb-go { min-height: 58px; margin: 6px 0 0; }
+  .sb-go { align-self: stretch; height: 48px; margin: 6px 0 0; }
 }
 @media (max-width: 760px) {
   .stay { margin-top: -32px; }
@@ -962,7 +948,7 @@ html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif)
 <aside class="devpanel" id="devpanel" aria-label="Preview tools">
   <button type="button" class="dev-tab" id="devTab" aria-expanded="false" aria-controls="devBody">
     <span class="dev-tab-dot" aria-hidden="true"></span>
-    <span class="dev-tab-text">Χρώματα · <span id="devTabPal">1</span> · <span id="devTabFont">Aa</span></span>
+    <span class="dev-tab-text">Χρώματα · <span id="devTabPal">1</span></span>
   </button>
   <div class="dev-body" id="devBody" hidden>
     <div class="dev-head">
@@ -973,9 +959,6 @@ html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif)
     </div>
     <p class="dev-note">Δεν φαίνεται στο κανονικό site. Πατήστε ένα συνδυασμό για να τον δείτε σε όλη τη σελίδα.</p>
     <div class="pal-list" id="palList" role="group" aria-label="Colour options"></div>
-    <p class="dev-h">Γραμματοσειρά · ελληνικά</p>
-    <p class="dev-note">Αλλάζει μόνο τα ελληνικά. Πατώντας μία, το site γυρνάει στα ελληνικά.</p>
-    <div class="font-list" id="fontList" role="group" aria-label="Greek font options"></div>
   </div>
 </aside>
 
@@ -1486,7 +1469,6 @@ html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif)
     applyLang();
   }
   window.__applyLang = applyLang;
-  window.__setLang = setLang;
   // language menu
   const langBtn = $('#langBtn'), langMenu = $('#langMenu');
   function langOpen(open) { langMenu.hidden = !open; langBtn.setAttribute('aria-expanded', String(open)); }
@@ -1614,33 +1596,6 @@ html[lang="el"] { --font-display: var(--el-display, "GFS Didot", Georgia, serif)
   let savedPal = 0;
   try { savedPal = +(localStorage.getItem('lm-pal') || 0) || 0; } catch (e) { savedPal = 0; }
   applyPalette(PALETTES[savedPal] ? savedPal : 0);
-
-  /* ================= Greek font trial (preview only) ================= */
-  const EL_FONTS = [
-    { n: 'GFS Didot', note: 'τωρινή', d: '"GFS Didot", Georgia, serif', b: '"Commissioner", system-ui, sans-serif' },
-    { n: 'Noto Serif Display', note: 'λεπτή, κομψή', d: '"Noto Serif Display", Georgia, serif', b: '"Commissioner", system-ui, sans-serif' },
-    { n: 'Literata', note: 'ζεστή, σαν βιβλίο', d: '"Literata", Georgia, serif', b: '"Commissioner", system-ui, sans-serif' },
-    { n: 'Piazzolla', note: 'πρόταση · σύγχρονη, ζεστή', d: '"Piazzolla", Georgia, serif', b: '"Commissioner", system-ui, sans-serif' },
-    { n: 'Bona Nova', note: 'κλασική, πολυτελής', d: '"Bona Nova", Georgia, serif', b: '"Commissioner", system-ui, sans-serif' },
-    { n: 'Ysabeau Infant', note: 'μαλακή, φιλική', d: '"Ysabeau Infant", system-ui, sans-serif', b: '"Ysabeau Infant", system-ui, sans-serif' },
-    { n: 'Manrope', note: 'μοντέρνα, χωρίς πατούρες', d: '"Manrope", system-ui, sans-serif', b: '"Manrope", system-ui, sans-serif' }
-  ];
-  function applyElFont(i, switchLang) {
-    const f = EL_FONTS[i], st = document.documentElement.style;
-    st.setProperty('--el-display', f.d); st.setProperty('--el-body', f.b);
-    try { localStorage.setItem('lm-elfont', String(i)); } catch (e) { /* fine */ }
-    $$('#fontList button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
-    $('#devTabFont').textContent = f.n;
-    if (switchLang && lang !== 'el' && window.__setLang) window.__setLang('el');
-  }
-  $('#fontList').innerHTML = EL_FONTS.map((f, i) =>
-    '<button type="button" data-f="' + i + '" aria-pressed="false"><span class="f-top">' + (i + 1) + '. ' + f.n + '<i>' + f.note + '</i></span>' +
-    '<span class="f-sample" style="font-family:' + f.d.replace(/"/g, '&quot;') + '">Πού θα μείνετε</span>' +
-    '<span class="f-body" style="font-family:' + f.b.replace(/"/g, '&quot;') + '">Άφιξη · Αναχώρηση · Δείτε ημερομηνίες</span></button>').join('');
-  $('#fontList').addEventListener('click', (e) => { const b = e.target.closest('button[data-f]'); if (b) applyElFont(+b.dataset.f, true); });
-  let savedFont = 3; // default: Piazzolla
-  try { const v = localStorage.getItem('lm-elfont'); if (v !== null) savedFont = +v; } catch (e) { /* keep the default */ }
-  applyElFont(EL_FONTS[savedFont] ? savedFont : 0, false);
 
   const devpanel = $('#devpanel'), devTab = $('#devTab'), devBody = $('#devBody');
   function setDev(open) {
