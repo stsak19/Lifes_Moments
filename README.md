@@ -3,7 +3,8 @@
 Website prototype for the Life's Moments holiday rental on Thasos.
 
 - `index.html` — the whole site (hero with drone video / 3D house, date booking, gallery, Thasos guide stub)
-- `redesign.html` — a new look to compare with `index.html`: Thasos palette (marble, pine, Aegean blue, terracotta for booking), editorial titles, a "day at the house" scene that goes from morning to night as you scroll, a 360° tour section (demo house until the real 360° photos arrive), a Thasos guide, and Google reviews at the bottom. Booking, languages and time-of-day colours work the same as in `index.html`.
+- `redesign.html` — the new version: real photos of the property, editorial titles, a "day at the house" scene that goes from morning to night as you scroll, an auto-sliding strip with photos of each of the 11 rooms and the apartment, a Thasos guide, and Google reviews at the bottom. One fixed colour style; the preview panel on the right lists 14 colour options with their hex codes. Photos per room go in `UNIT_PHOTOS` in the script.
+- `photos/` — photos of the property, resized for the web
 - `hero-1600.mp4`, `hero-960.mp4` — hero video for desktop and mobile
 - `hero-poster.jpg` — still frame shown while the video loads
 

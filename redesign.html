@@ -743,6 +743,53 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 @media (prefers-reduced-motion: reduce) { .hero-photo { animation: none; } }
 @media (max-width: 760px) { .hero-photo { object-position: 42% 60%; } }
 
+/* ---------- every unit: auto-sliding photos (light background) ---------- */
+.units { padding-block: 120px 100px; overflow: hidden; }
+.units-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 36px; }
+.units-lead { margin: 0; max-width: 34ch; color: var(--muted); font-size: 17px; }
+.ucar { overflow: hidden; touch-action: pan-y; }
+.utrack { --side: max(24px, calc((100vw - 1180px) / 2 + 24px)); display: flex; column-gap: 20px; padding-inline: var(--side); transition: transform .9s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
+.uslide { flex: 0 0 calc((min(100vw, 1180px) - 48px - 40px) / 3); display: flex; flex-direction: column; gap: 14px; padding: 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.uslide.is-empty { cursor: default; }
+.uimg { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: var(--r-img); overflow: hidden; background: var(--deep); }
+.uimg img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.uslide:hover .uimg img { transform: scale(1.04); }
+.usoon { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px dashed var(--line); border-radius: var(--r-img); color: var(--muted); }
+.usoon b { font: 400 64px/1 var(--font-display); color: var(--accent-2); opacity: .55; }
+.usoon span { font-size: 13px; letter-spacing: .06em; }
+.umeta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.umeta b { font: 400 24px/1.1 var(--font-display); }
+.umeta span { font-size: 13px; color: var(--muted); }
+.uslide.is-apt .umeta b::after { content: "★"; margin-left: 8px; font-size: 14px; color: var(--accent); vertical-align: 3px; }
+.uctl { display: flex; align-items: center; gap: 18px; margin-top: 28px; }
+.ucount { font: 400 18px/1 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: .04em; min-width: 72px; }
+.ubar { position: relative; flex: 1; height: 1px; background: var(--line); overflow: hidden; }
+.ubar i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; }
+.ubtns { display: flex; gap: 6px; }
+#uPlay .i-play { display: none; }
+#uPlay[data-state="paused"] .i-play { display: block; }
+#uPlay[data-state="paused"] .i-pause { display: none; }
+@media (max-width: 980px) { .uslide { flex-basis: calc((100vw - 48px - 20px) / 2); } }
+@media (max-width: 760px) {
+  .units { padding-block: 72px 64px; }
+  .utrack { --side: 16px; column-gap: 12px; }
+  .uslide { flex-basis: calc(100vw - 32px - 48px); }
+  .umeta b { font-size: 21px; }
+}
+
+/* ---------- colour picker in the preview panel ---------- */
+.dev-body { width: 300px; max-height: 84vh; overflow: auto; }
+.pal-list { display: flex; flex-direction: column; gap: 6px; }
+.pal-list button { display: flex; flex-direction: column; gap: 6px; padding: 9px 10px; border: 1px solid #3A3A3C; border-radius: 8px; background: transparent; color: #D1D1D6; font: inherit; text-align: left; }
+.pal-list button:hover { border-color: #636366; }
+.pal-list button[aria-pressed="true"] { border-color: #F5B83D; background: #2C2C2E; }
+.pal-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pal-top b { font-weight: 600; font-size: 12px; color: #EDEDED; }
+.pal-sw { display: flex; flex: none; }
+.pal-sw i { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .25); margin-left: -4px; }
+.pal-codes { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; font-size: 10.5px; color: #A1A1A6; }
+.dev-tab-text { max-width: 60vh; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* ---------- reviews (bottom of the page) ---------- */
 .reviews { padding-block: 120px 130px; }
 .rev-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.6fr); gap: 56px; margin-top: 40px; align-items: start; }
@@ -785,7 +832,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#tour" data-i18n="nav.tour">360° tour</a>
+      <a href="#photos" data-i18n="nav.photos">Photos</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
     </nav>
     <div class="top-actions">
@@ -812,7 +859,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 <aside class="devpanel" id="devpanel" aria-label="Preview tools">
   <button type="button" class="dev-tab" id="devTab" aria-expanded="false" aria-controls="devBody">
     <span class="dev-tab-dot" aria-hidden="true"></span>
-    <span class="dev-tab-text">Preview · <span id="devTabMood">Night</span></span>
+    <span class="dev-tab-text">Χρώματα · <span id="devTabPal">1</span></span>
   </button>
   <div class="dev-body" id="devBody" hidden>
     <div class="dev-head">
@@ -821,15 +868,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
       </button>
     </div>
-    <p class="dev-note">Not part of the real site. Lets you check how each time of day looks.</p>
-    <div class="dev-clock"><span>Thasos</span><b id="clock">--:--</b></div>
-    <div class="dev-moods" role="group" aria-label="Lighting">
-      <button type="button" data-mode="auto">Auto</button>
-      <button type="button" data-mode="morning">Morning</button>
-      <button type="button" data-mode="noon">Midday</button>
-      <button type="button" data-mode="golden">Golden hour</button>
-      <button type="button" data-mode="night">Night</button>
-    </div>
+    <p class="dev-note">Δεν φαίνεται στο κανονικό site. Πατήστε ένα συνδυασμό για να τον δείτε σε όλη τη σελίδα.</p>
+    <div class="pal-list" id="palList" role="group" aria-label="Colour options"></div>
   </div>
 </aside>
 
@@ -845,7 +885,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#tour" data-i18n="nav.tour">360° tour</a>
+      <a href="#photos" data-i18n="nav.photos">Photos</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
     </nav>
     <a class="btn wide" href="#stay" data-i18n="sheet.cta">Check availability</a>
@@ -854,7 +894,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 <main>
   <section class="intro" id="intro" aria-label="Life's Moments">
-    <div class="stage" id="introStage"></div>
     <img class="hero-photo" id="heroPhoto" src="photos/terrace-dusk.jpg" srcset="photos/terrace-dusk-960.jpg 960w, photos/terrace-dusk.jpg 1920w" sizes="100vw" alt="The terrace at dusk, with pine trees and the sea below" fetchpriority="high">
     <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" poster="hero-poster.jpg" aria-label="Drone video flying over the house"></video>
     <div class="grade"></div>
@@ -864,7 +903,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <div class="hero-switch" role="group" aria-label="Hero version">
         <button type="button" data-heromode="photo" data-i18n="hero.photo">Photo</button>
         <button type="button" data-heromode="video" data-i18n="hero.drone">Drone video</button>
-        <button type="button" data-heromode="3d" data-i18n="hero.3d">3D house</button>
       </div>
       <button type="button" class="play-btn" id="playBtn" aria-label="Pause video" data-state="playing">
         <svg class="i-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
@@ -872,18 +910,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <span class="scroll-cue" aria-hidden="true"></span>
-    <ol class="rail" id="rail" aria-label="Video chapters">
-      <li><button type="button" data-ch="0"><span data-i18n="ch.around">Around</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="1"><span data-i18n="ch.entrance">Entrance</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="2"><span data-i18n="ch.living">Living room</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="3"><span data-i18n="ch.bedroom">Bedroom</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="4"><span data-i18n="ch.sea">Sea view</span><span class="bar"><i></i></span></button></li>
-    </ol>
 
     <div class="cap hero">
       <p class="eyebrow" data-i18n="hero.eyebrow">Life's Moments · Thasos</p>
       <h1 data-i18n-html="hero.title">Moments by the <em>Aegean</em></h1>
-      <p data-i18n="hero.sub">Guest rooms and a private apartment on the island.</p>
+      <p data-i18n="hero.sub">Eleven rooms and a separate apartment on the island.</p>
     </div>
   </section>
 
@@ -1072,28 +1103,28 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
   </section>
 
-  <section class="tour" id="tour" aria-labelledby="tourTitle">
+  <!-- Photos of every unit, sliding on their own. Photos per unit live in UNIT_PHOTOS in the script. -->
+  <section class="units" id="photos" aria-labelledby="unitsTitle">
     <div class="wrap">
-      <div class="tour-head" data-reveal>
+      <div class="units-head" data-reveal>
         <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.tour">3D tour</span></p>
-          <h2 class="sec-title" id="tourTitle" data-i18n-html="tour.title">Walk through the <em>house</em></h2>
+          <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.photos">Photos</span></p>
+          <h2 class="sec-title" id="unitsTitle" data-i18n-html="units.title">Every room, <em>one by one</em></h2>
         </div>
-        <button type="button" class="btn ghost" id="fsBtn" data-i18n="tour.fs">Full screen</button>
+        <p class="units-lead" data-i18n="units.lead">Eleven rooms and a separate apartment. Tap one to see all its photos.</p>
       </div>
-      <div class="tour-frame" id="tourFrame">
-        <div class="stage" id="tourStage"></div>
-        <div class="tour-hint" id="tourHint" data-i18n="tour.hint">Drag to look around · pick a spot below</div>
-        <div class="tour-cover" id="tourCover">
-          <img src="photos/exterior-dusk.jpg" alt="" loading="lazy">
-          <button type="button" class="btn tour-enter" id="tourEnter">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>
-            <span data-i18n="tour.enter">Step inside</span>
-          </button>
-          <p id="tourCoverNote" data-i18n="tour.coverNote">Demo house for now · the real 360° photos go here</p>
-        </div>
+    </div>
+    <div class="ucar" id="ucar" aria-roledescription="carousel" aria-labelledby="unitsTitle">
+      <div class="utrack" id="utrack"></div>
+    </div>
+    <div class="wrap uctl">
+      <span class="ucount" id="ucount" aria-live="polite">01 / 12</span>
+      <span class="ubar" aria-hidden="true"><i id="ubar"></i></span>
+      <div class="ubtns">
+        <button type="button" class="icon-btn" id="uPrev" data-i18n-aria="u.prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg></button>
+        <button type="button" class="icon-btn" id="uPlay" data-i18n-aria="u.pause" aria-label="Pause" data-state="playing"><svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg></button>
+        <button type="button" class="icon-btn" id="uNext" data-i18n-aria="u.next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg></button>
       </div>
-      <div class="spots" id="spots" role="group" aria-label="Move to"></div>
     </div>
   </section>
 
@@ -1218,7 +1249,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function () {
   'use strict';
@@ -1235,15 +1265,15 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const I18N = {
     en: {
       'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
-      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
-      'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Guest rooms and a private apartment on the island.',
+      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.photos': 'Photos', 'units.title': 'Every room, <em>one by one</em>', 'units.lead': 'Eleven rooms and a separate apartment. Tap one to see all its photos.', 'unit.n': 'Room {n}', 'unit.apt': 'The Apartment', 'unit.photos': '{n} photos', 'unit.photo1': '1 photo', 'unit.soon': 'Photos coming soon', 'u.prev': 'Previous', 'u.next': 'Next', 'u.pause': 'Pause slideshow', 'u.play': 'Play slideshow', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
+      'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Eleven rooms and a separate apartment on the island.',
       'hero.photo': 'Photo', 'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
       'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
       'bar.stayin': 'Stay in', 'bar.ci': 'Check-in', 'bar.co': 'Check-out', 'bar.guests': 'Guests', 'bar.add': 'Add date',
       'bar.go': 'Check dates', 'bar.request': 'Request booking',
       'bar.fine': 'Card held, not charged · the host replies within 24 hours · synced with Booking.com',
       'u.room': 'A room', 'u.apt': 'Apartment',
-      'st.rooms': '{n} rooms in the main house · up to {g} guests each', 'st.apt': 'Private apartment next door · up to {g} guests',
+      'st.rooms': '{n} rooms · up to {g} guests each', 'st.apt': 'Private apartment next door · up to {g} guests',
       'st.sleeps': '{name} sleeps up to {g}', 'night': 'night', 'nights': 'nights',
       'st.booked': 'Booked on your dates', 'st.last': 'Last room free', 'st.some': '{f} of {t} rooms free', 'st.free': 'Free on your dates', 'st.price': 'from [price] / night',
       'note.guests': '{name} sleeps up to {g}. Guests set to {g}.', 'note.noroom': 'No room is free on those dates. Pick new dates.', 'note.aptbooked': 'The apartment is booked on those dates. Pick new dates.',
@@ -1254,9 +1284,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'rooms.title': "Where you'll <em>stay</em>", 'rooms.renders': 'Renders of the demo house. Real photos replace them.',
       'tab.room': 'Rooms', 'tab.apt': 'The Apartment', 'name.room': 'A room', 'name.apt': 'The Apartment',
       'book.room': 'Book a room', 'book.apt': 'Book the apartment',
-      'line.room': 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
+      'line.room': 'One of our eleven rooms. You pick the dates, the host gives you a free one.',
       'line.apt': 'A separate apartment right next to the main house, with its own kitchen and living room.',
-      'facts.room': ['4 rooms in the main house', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
+      'facts.room': ['11 rooms', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
       'facts.apt': ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
       'ph.label': '{name}, photo {i} of 3', 'ph.open': 'Open {x}', 'ph.wait': 'Rendering…', 'ph.n': 'Photo {i}',
       'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
@@ -1268,7 +1298,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
       'tour.title': 'Walk through the <em>house</em>', 'tour.fs': 'Full screen', 'tour.hint': 'Drag to look around · pick a spot below', 'tour.fail': 'The 3D view could not load. Refresh the page.',
       'spot.Garden': 'Garden', 'spot.Entrance': 'Entrance', 'spot.Living room': 'Living room', 'spot.Kitchen': 'Kitchen', 'spot.Bedroom': 'Bedroom', 'spot.Pool': 'Pool',
-      'foot.about': 'Guest rooms and a private apartment on the island of Thasos.', 'foot.contact': 'Contact', 'foot.reg': 'Registry', 'foot.place': 'Thasos · Greece',
+      'foot.about': 'Eleven rooms and a separate apartment on the island of Thasos.', 'foot.contact': 'Contact', 'foot.reg': 'Registry', 'foot.place': 'Thasos · Greece',
       'foot.contactP': '<span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Limenaria, Thasos',
       'foot.stayP': 'Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece',
@@ -1292,29 +1322,29 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     },
     el: {
       'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
-      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
-      'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί.',
+      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.photos': 'Φωτογραφίες', 'units.title': 'Κάθε διαμέρισμα, <em>ένα ένα</em>', 'units.lead': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ. Πατήστε ένα για να δείτε όλες τις φωτογραφίες του.', 'unit.n': 'Διαμέρισμα {n}', 'unit.apt': 'Απαρτμέντ', 'unit.photos': '{n} φωτογραφίες', 'unit.photo1': '1 φωτογραφία', 'unit.soon': 'Φωτογραφίες σύντομα', 'u.prev': 'Προηγούμενο', 'u.next': 'Επόμενο', 'u.pause': 'Παύση', 'u.play': 'Αναπαραγωγή', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
+      'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ στο νησί.',
       'hero.photo': 'Φωτογραφία', 'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
       'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
       'bar.stayin': 'Διαμονή σε', 'bar.ci': 'Άφιξη', 'bar.co': 'Αναχώρηση', 'bar.guests': 'Άτομα', 'bar.add': 'Επιλογή',
       'bar.go': 'Δείτε ημερομηνίες', 'bar.request': 'Αίτημα κράτησης',
       'bar.fine': 'Η κάρτα δεσμεύεται, δεν χρεώνεται · απάντηση από τον οικοδεσπότη μέσα σε 24 ώρες · συγχρονισμός με το Booking.com',
-      'u.room': 'Δωμάτιο', 'u.apt': 'Διαμέρισμα',
-      'st.rooms': '{n} δωμάτια στο κεντρικό σπίτι · έως {g} άτομα το καθένα', 'st.apt': 'Ιδιωτικό διαμέρισμα ακριβώς δίπλα · έως {g} άτομα',
+      'u.room': 'Διαμέρισμα', 'u.apt': 'Απαρτμέντ',
+      'st.rooms': '{n} διαμερίσματα · έως {g} άτομα το καθένα', 'st.apt': 'Ξεχωριστό απαρτμέντ ακριβώς δίπλα · έως {g} άτομα',
       'st.sleeps': '{name}: έως {g} άτομα', 'night': 'νύχτα', 'nights': 'νύχτες',
-      'st.booked': 'Δεν είναι διαθέσιμο αυτές τις μέρες', 'st.last': 'Ένα δωμάτιο ελεύθερο', 'st.some': '{f} από {t} δωμάτια ελεύθερα', 'st.free': 'Διαθέσιμο αυτές τις μέρες', 'st.price': 'από [τιμή] / βράδυ',
-      'note.guests': '{name}: έως {g} άτομα. Τα άτομα ορίστηκαν σε {g}.', 'note.noroom': 'Δεν υπάρχει ελεύθερο δωμάτιο αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.', 'note.aptbooked': 'Το διαμέρισμα είναι κλεισμένο αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.',
-      'note.gaproom': 'Κανένα δωμάτιο δεν είναι ελεύθερο για όλες αυτές τις νύχτες. Διαλέξτε λιγότερες νύχτες ή άλλες ημερομηνίες.', 'note.gapapt': 'Το διαμέρισμα είναι κλεισμένο ενδιάμεσα. Διαλέξτε άλλες ημερομηνίες.',
+      'st.booked': 'Δεν είναι διαθέσιμο αυτές τις μέρες', 'st.last': 'Ένα διαμέρισμα ελεύθερο', 'st.some': '{f} από {t} διαμερίσματα ελεύθερα', 'st.free': 'Διαθέσιμο αυτές τις μέρες', 'st.price': 'από [τιμή] / βράδυ',
+      'note.guests': '{name}: έως {g} άτομα. Τα άτομα ορίστηκαν σε {g}.', 'note.noroom': 'Δεν υπάρχει ελεύθερο διαμέρισμα αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.', 'note.aptbooked': 'Το απαρτμέντ είναι κλεισμένο αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.',
+      'note.gaproom': 'Κανένα διαμέρισμα δεν είναι ελεύθερο για όλες αυτές τις νύχτες. Διαλέξτε λιγότερες νύχτες ή άλλες ημερομηνίες.', 'note.gapapt': 'Το απαρτμέντ είναι κλεισμένο ενδιάμεσα. Διαλέξτε άλλες ημερομηνίες.',
       'hint.1': 'Πατήστε την ημέρα άφιξης και μετά την ημέρα αναχώρησης.', 'hint.2': 'Τώρα πατήστε την ημέρα αναχώρησης.', 'hint.3': 'Τέλεια. Πατήστε άλλη ημέρα για να ξεκινήσετε από την αρχή.',
       'cal.yours': 'Η διαμονή σας', 'cal.booked': 'Κλεισμένο', 'cal.done': 'Τέλος', 'cal.isbooked': ', κλεισμένο', 'cal.past': ', έχει περάσει',
       'cal.dow': ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
       'rooms.title': 'Πού θα <em>μείνετε</em>', 'rooms.renders': 'Απεικονίσεις του δοκιμαστικού σπιτιού. Θα μπουν πραγματικές φωτογραφίες.',
-      'tab.room': 'Δωμάτια', 'tab.apt': 'Το διαμέρισμα', 'name.room': 'Δωμάτιο', 'name.apt': 'Το διαμέρισμα',
-      'book.room': 'Κράτηση δωματίου', 'book.apt': 'Κράτηση διαμερίσματος',
-      'line.room': 'Ένα από τα δωμάτια του κεντρικού σπιτιού. Εσείς διαλέγετε ημερομηνίες και ο οικοδεσπότης σάς δίνει ένα ελεύθερο δωμάτιο.',
-      'line.apt': 'Ανεξάρτητο διαμέρισμα ακριβώς δίπλα στο κεντρικό σπίτι, με δική του κουζίνα και σαλόνι.',
-      'facts.room': ['4 δωμάτια στο κεντρικό σπίτι', 'Έως 3 άτομα', '[κρεβάτια]', 'Το δωμάτιο το ορίζει ο οικοδεσπότης'],
-      'facts.apt': ['Ολόκληρο το διαμέρισμα', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Δικό του σαλόνι'],
+      'tab.room': 'Διαμερίσματα', 'tab.apt': 'Το απαρτμέντ', 'name.room': 'Διαμέρισμα', 'name.apt': 'Το απαρτμέντ',
+      'book.room': 'Κράτηση διαμερίσματος', 'book.apt': 'Κράτηση απαρτμέντ',
+      'line.room': 'Ένα από τα 11 διαμερίσματα. Εσείς διαλέγετε ημερομηνίες και ο οικοδεσπότης σάς δίνει ένα ελεύθερο.',
+      'line.apt': 'Ξεχωριστό απαρτμέντ ακριβώς δίπλα, με δική του κουζίνα και σαλόνι.',
+      'facts.room': ['11 διαμερίσματα', 'Έως 3 άτομα', '[κρεβάτια]', 'Το διαμέρισμα το ορίζει ο οικοδεσπότης'],
+      'facts.apt': ['Ολόκληρο το απαρτμέντ', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Δικό του σαλόνι'],
       'ph.label': '{name}, φωτογραφία {i} από 3', 'ph.open': 'Άνοιγμα: {x}', 'ph.wait': 'Φόρτωση…', 'ph.n': 'Φωτογραφία {i}',
       'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
@@ -1325,7 +1355,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
       'tour.title': 'Περιηγηθείτε στο <em>σπίτι</em>', 'tour.fs': 'Πλήρης οθόνη', 'tour.hint': 'Σύρετε για να δείτε γύρω · ή διαλέξτε σημείο από κάτω', 'tour.fail': 'Η 3D προβολή δεν φόρτωσε. Ανανεώστε τη σελίδα.',
       'spot.Garden': 'Κήπος', 'spot.Entrance': 'Είσοδος', 'spot.Living room': 'Σαλόνι', 'spot.Kitchen': 'Κουζίνα', 'spot.Bedroom': 'Υπνοδωμάτιο', 'spot.Pool': 'Πισίνα',
-      'foot.about': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί της Θάσου.', 'foot.contact': 'Επικοινωνία', 'foot.reg': 'Μητρώο', 'foot.place': 'Θάσος · Ελλάδα',
+      'foot.about': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ στο νησί της Θάσου.', 'foot.contact': 'Επικοινωνία', 'foot.reg': 'Μητρώο', 'foot.place': 'Θάσος · Ελλάδα',
       'foot.contactP': '<span class="todo">[τηλέφωνο]</span><br><span class="todo">[email]</span><br><span class="todo">[διεύθυνση]</span>, Λιμενάρια, Θάσος',
       'foot.stayP': 'Άφιξη <span class="todo">[ώρα]</span><br>Αναχώρηση <span class="todo">[ώρα]</span><br>Και στο Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[αριθμός]</span><br>Μητρώο Ακινήτων Βραχυχρόνιας Διαμονής',
@@ -1444,27 +1474,64 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
 
   /* ================= mood (lighting) ================= */
-  let moodMode = 'auto';
-  let mood = phaseFor(athensNow().h);
-  let onSceneMood = null;
-  function refreshMood(instant) {
-    const now = athensNow();
-    const next = moodMode === 'auto' ? phaseFor(now.h) : moodMode;
-    $('#clock').textContent = now.clock;
-    $$('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === moodMode)));
-    $('#devTabMood').textContent = moodMode === 'auto' ? 'Auto' : MOOD_NAME[next];
-    if (next !== mood || instant) {
-      mood = next;
-      document.documentElement.dataset.mood = mood;
-      if (onSceneMood) onSceneMood(mood, instant);
-    }
-  }
-  $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { moodMode = b.dataset.mode; refreshMood(); }));
+  // One fixed look. Colours come from the palette picked in the preview panel (see PALETTES).
+  const mood = 'noon';
   document.documentElement.dataset.mood = mood;
-  refreshMood(true);
-  setInterval(refreshMood, 30000);
 
-  /* ================= preview tools panel (not on the live site) ================= */
+  /* ================= colour options (preview panel, not on the live site) =================
+     Each option: background, text, buttons, and a second tone for italics and icons.
+     The other shades (cards, lines, grey text) are worked out from these four. */
+  const PALETTES = [
+    { n: 'Μάρμαρο & Αιγαίο', bg: '#F7F4ED', ink: '#13263A', accent: '#A44A26', accent2: '#1D5378' },
+    { n: 'Πεύκο & τερακότα', bg: '#F3F0E8', ink: '#1C2B27', accent: '#A9512B', accent2: '#2E5E51' },
+    { n: 'Κυκλαδίτικο λευκό & μπλε', bg: '#FFFFFF', ink: '#0B2545', accent: '#0D5EAF', accent2: '#0D5EAF' },
+    { n: 'Λευκό & ναυτικό μπλε', bg: '#FAFAF7', ink: '#0F2440', accent: '#0F2A4A', accent2: '#8C6A30' },
+    { n: 'Άμμος & ελιά', bg: '#F2EDE3', ink: '#2E2A22', accent: '#5E6B2E', accent2: '#7A5C2E' },
+    { n: 'Ηλιοβασίλεμα', bg: '#FBF4EC', ink: '#2B1E19', accent: '#B54A22', accent2: '#9A5A2A' },
+    { n: 'Ανοιχτό γαλάζιο', bg: '#EEF4F6', ink: '#10303D', accent: '#0E6577', accent2: '#1F6F80' },
+    { n: 'Μέλι & πέτρα', bg: '#F5F0E6', ink: '#2A2620', accent: '#8A5A10', accent2: '#6E5A3E' },
+    { n: 'Μοντέρνο γκρι', bg: '#F4F4F2', ink: '#1F2326', accent: '#2F3B45', accent2: '#4F6A7A' },
+    { n: 'Κοράλλι & μπλε', bg: '#FFF8F3', ink: '#1A2A44', accent: '#B83E32', accent2: '#1E4E8C' },
+    { n: 'Ροδακινί & δαμάσκηνο', bg: '#FAF1EE', ink: '#2D1F24', accent: '#8E3550', accent2: '#6B4C8A' },
+    { n: 'Πράσινο θάλασσας', bg: '#F1F5F2', ink: '#14302A', accent: '#1F6B5C', accent2: '#9A5A22' },
+    { n: 'Αιγαίο νύχτα (σκούρο)', bg: '#0B1424', ink: '#ECE6DA', accent: '#DDAE74', accent2: '#93B6CC' },
+    { n: 'Ανθρακί & χρυσό (σκούρο)', bg: '#151515', ink: '#F1ECE2', accent: '#C9A35E', accent2: '#D8C3A0' }
+  ];
+  const hx = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const toHex = (r) => '#' + r.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('').toUpperCase();
+  const mixH = (a, b, k) => { const A = hx(a), B = hx(b); return toHex(A.map((v, i) => v + (B[i] - v) * k)); };
+  const lumH = (h) => { const c = hx(h).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+  const contrastH = (a, b) => { const x = lumH(a), y = lumH(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const rgba = (h, a) => 'rgba(' + hx(h).join(', ') + ', ' + a + ')';
+  let palIdx = 0;
+  function applyPalette(i) {
+    const p = PALETTES[i]; if (!p) return;
+    palIdx = i;
+    const dark = lumH(p.bg) < 0.2, st = document.documentElement.style;
+    const v = dark ? {
+      '--bg': p.bg, '--surface': mixH(p.bg, p.ink, .07), '--deep': mixH(p.bg, '#000000', .3), '--ink': p.ink, '--muted': mixH(p.ink, p.bg, .35),
+      '--line': mixH(p.bg, p.ink, .16), '--range': mixH(p.bg, p.accent2, .2), '--nav': rgba(p.bg, .9), '--shadow': 'rgba(0, 0, 0, .5)'
+    } : {
+      '--bg': p.bg, '--surface': mixH(p.bg, '#FFFFFF', .65), '--deep': mixH(p.bg, p.ink, .06), '--ink': p.ink, '--muted': mixH(p.ink, p.bg, .32),
+      '--line': mixH(p.bg, p.ink, .14), '--range': mixH(p.bg, p.accent2, .13), '--nav': rgba(p.bg, .92), '--shadow': rgba(p.ink, .13)
+    };
+    v['--accent'] = p.accent; v['--accent-2'] = p.accent2;
+    v['--accent-ink'] = contrastH('#FFFFFF', p.accent) >= 4.5 ? '#FFFFFF' : (dark ? p.bg : '#111111');
+    Object.keys(v).forEach((k) => st.setProperty(k, v[k]));
+    st.setProperty('color-scheme', dark ? 'dark' : 'light');
+    try { localStorage.setItem('lm-pal', String(i)); } catch (e) { /* fine */ }
+    $$('#palList button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    $('#devTabPal').textContent = (i + 1) + '. ' + p.n;
+  }
+  $('#palList').innerHTML = PALETTES.map((p, i) =>
+    '<button type="button" data-p="' + i + '" aria-pressed="false"><span class="pal-top"><b>' + (i + 1) + '. ' + p.n + '</b>' +
+    '<span class="pal-sw">' + [p.bg, p.ink, p.accent, p.accent2].map((c) => '<i style="background:' + c + '"></i>').join('') + '</span></span>' +
+    '<span class="pal-codes"><span>Φόντο ' + p.bg + '</span><span>Κείμενο ' + p.ink + '</span><span>Κουμπιά ' + p.accent + '</span><span>Τόνος ' + p.accent2 + '</span></span></button>').join('');
+  $('#palList').addEventListener('click', (e) => { const b = e.target.closest('button[data-p]'); if (b) applyPalette(+b.dataset.p); });
+  let savedPal = 0;
+  try { savedPal = +(localStorage.getItem('lm-pal') || 0) || 0; } catch (e) { savedPal = 0; }
+  applyPalette(PALETTES[savedPal] ? savedPal : 0);
+
   const devpanel = $('#devpanel'), devTab = $('#devTab'), devBody = $('#devBody');
   function setDev(open) {
     devpanel.classList.toggle('open', open);
@@ -1473,7 +1540,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   devTab.addEventListener('click', () => { setDev(true); $('#devClose').focus(); });
   $('#devClose').addEventListener('click', () => { setDev(false); devTab.focus(); });
-  setDev(window.innerWidth >= 1680); // open by default only when it fits beside the content
+  setDev(window.innerWidth >= 1500);
 
   /* ================= header: clear over the hero, glass after ================= */
   const topBar = $('#top');
@@ -1491,11 +1558,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   // Two choices for the guest: a room in the main house (the host picks which one) or the apartment next door.
   // Room count, sizes and beds are placeholders until the owner sends the real details.
   const UNITS = [
-    { id: 'room', kind: 'Main house', name: 'A room', tab: 'Rooms', book: 'Book a room', subs: [0, 1, 2, 3], guests: 3, beds: '[beds]',
+    { id: 'room', kind: 'Main house', name: 'A room', tab: 'Rooms', book: 'Book a room', subs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], guests: 3, beds: '[beds]',
       facts: ['4 rooms in the main house', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
       line: 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
       shots: [[[1.6, 1.6, -6.8], [-3.7, 0.6, -8.1]], [[-2.1, 1.2, -6.5], [-4.5, 0.8, -6.75]], [[-1.2, 1.6, -6.6], [2, 1.5, -9.8]]] },
-    { id: 'apt', kind: 'Next door', name: 'The Apartment', tab: 'The Apartment', book: 'Book the apartment', subs: [4], guests: 5, beds: 'own kitchen',
+    { id: 'apt', kind: 'Next door', name: 'The Apartment', tab: 'The Apartment', book: 'Book the apartment', subs: [11], guests: 5, beds: 'own kitchen',
       facts: ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
       line: 'A separate apartment right next to the main house, with its own kitchen and living room.',
       shots: [[[2.6, 1.65, -0.8], [-3, 0.9, -4.4]], [[0.9, 1.7, -0.9], [3.0, 0.8, -2.6]], [[-1.4, 1.35, -2.0], [-2.6, 0.6, -5.6]]] }
@@ -1535,10 +1602,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const bookedCache = {};
   // Demo bookings, one calendar per physical room (4 rooms + the apartment). Later each reads its own Booking.com calendar.
   function bookedSet(y, m, sub) {
-    const id = (y * 12 + m) * 8 + sub;
+    const id = (y * 12 + m) * 16 + sub;
     if (bookedCache[id]) return bookedCache[id];
     const r = rng(id * 7919 + 13), n = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(), s = new Set();
-    const runs = (m === 6 || m === 7 ? 4 : m >= 4 && m <= 8 ? 3 : 1) + (sub === 4 ? 1 : 0);
+    const runs = (m === 6 || m === 7 ? 4 : m >= 4 && m <= 8 ? 3 : 1) + (sub === 11 ? 1 : 0);
     for (let i = 0; i < runs; i++) {
       const st = 1 + Math.floor(r() * (n - 4)), len = 2 + Math.floor(r() * 5);
       for (let d = st; d < Math.min(n + 1, st + len); d++) s.add(key(y, m, d));
@@ -1788,16 +1855,20 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
   /* ================= lightbox ================= */
   const lb = $('#lb');
-  let lbI = 0, lbX = null;
+  let lbI = 0, lbX = null, lbList = null, lbName = '';
+  const lbShots = () => lbList || currentShots() || [];
   function showLb() {
-    const s = currentShots(); if (!s) return;
+    const s = lbShots(); if (!s.length) return;
+    const name = lbList ? lbName : ROOMS[roomIdx].name;
     $('#lbImg').src = s[lbI];
-    $('#lbImg').alt = t('ph.label', { name: ROOMS[roomIdx].name, i: lbI + 1 });
-    $('#lbCap').textContent = ROOMS[roomIdx].name + ' · ' + (lbI + 1) + ' / 3';
+    $('#lbImg').alt = name + ', ' + (lbI + 1) + ' / ' + s.length;
+    $('#lbCap').textContent = name + ' · ' + (lbI + 1) + ' / ' + s.length;
+    $('#lbPrev').hidden = $('#lbNext').hidden = s.length < 2;
   }
-  function openLb(i) { lastFocus = document.activeElement; lbI = i; showLb(); lb.hidden = false; lenis && lenis.stop(); $('#lbClose').focus(); }
+  function openLb(i, list, name) { lastFocus = document.activeElement; lbList = list || null; lbName = name || ''; lbI = i; showLb(); lb.hidden = false; lenis && lenis.stop(); $('#lbClose').focus(); }
+  window.__openLb = openLb;
   function closeLb() { lb.hidden = true; lenis && lenis.start(); lastFocus && lastFocus.focus && lastFocus.focus(); }
-  const stepLb = (d) => { lbI = (lbI + d + 3) % 3; showLb(); };
+  const stepLb = (d) => { const n = lbShots().length || 1; lbI = (lbI + d + n) % n; showLb(); };
   $('#lbPrev').addEventListener('click', () => stepLb(-1));
   $('#lbNext').addEventListener('click', () => stepLb(1));
   $('#lbClose').addEventListener('click', closeLb);
@@ -1814,7 +1885,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const hv = $('#heroVideo'), playBtn = $('#playBtn'), introEl = $('#intro');
   hv.muted = true;
   const loadVideo = () => { if (!hv.getAttribute('src')) hv.src = mqMobile.matches ? 'hero-960.mp4' : 'hero-1600.mp4'; }; // only fetched if someone picks the video
-  let heroMode = location.hash === '#hero-3d' ? '3d' : location.hash === '#hero-video' ? 'video' : 'photo';
+  let heroMode = location.hash === '#hero-video' ? 'video' : 'photo';
   let wantPlay = !reduce, introOnScreen = true;
   const hero3d = { playing: false, onMode: null }; // filled in by the 3D part
   const isPlaying = () => (heroMode === 'video' ? !hv.paused : hero3d.playing);
@@ -2008,615 +2079,90 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     langHooks.push(render);
   })();
 
-  /* ================= tour cover ================= */
-  (function tourCover() {
-    const cover = $('#tourCover'); if (!cover) return;
-    $('#tourEnter').addEventListener('click', () => {
-      if (!window.THREE) {
-        // 3D didn't load: say so on the cover instead of revealing an empty frame
-        const note = $('#tourCoverNote'); note.dataset.i18n = 'tour.fail'; note.textContent = t('tour.fail');
-        return;
-      }
-      cover.classList.add('gone');
-      const hint = $('#tourHint'); if (hint) hint.style.opacity = '1';
+
+  /* ================= every unit, sliding on its own =================
+     One list of photos per unit. Rooms 1–11, then the apartment. Leave a list empty until its photos arrive. */
+  (function unitSlider() {
+    const UNIT_PHOTOS = [
+      ['photos/room-blue.jpg', 'photos/bathroom.jpg'],
+      ['photos/room-grey.jpg', 'photos/balcony-sea.jpg'],
+      [], [], [], [], [], [], [], [], []
+    ];
+    const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg'];
+    const units = UNIT_PHOTOS.map((ph, i) => ({ ph: ph, name: () => t('unit.n', { n: i + 1 }) })).concat([{ ph: APT_PHOTOS, apt: true, name: () => t('unit.apt') }]);
+    const car = $('#ucar'), track = $('#utrack');
+    const pad2 = (n) => String(n).padStart(2, '0');
+    function render() {
+      track.innerHTML = units.map((u, i) => {
+        const has = u.ph.length > 0, count = u.ph.length === 1 ? t('unit.photo1') : t('unit.photos', { n: u.ph.length });
+        const inner = '<span class="uimg">' + (has ? '<img src="' + u.ph[0] + '" alt="" loading="lazy">' : '<span class="usoon"><b>' + (u.apt ? 'A' : pad2(i + 1)) + '</b><span>' + t('unit.soon') + '</span></span>') + '</span>' +
+          '<span class="umeta"><b>' + u.name() + '</b><span>' + (has ? count : '') + '</span></span>';
+        return has ? '<button type="button" class="uslide' + (u.apt ? ' is-apt' : '') + '" data-u="' + i + '" role="group" aria-roledescription="slide" aria-label="' + u.name() + '">' + inner + '</button>'
+                   : '<div class="uslide is-empty" role="group" aria-roledescription="slide" aria-label="' + u.name() + '">' + inner + '</div>';
+      }).join('');
+      layout();
+    }
+    let idx = 0, step = 0, maxIdx = 0, playing = !reduce, hover = false, onScreen = false, timer = null, t0 = 0;
+    const DELAY = 3800;
+    function layout() {
+      const first = track.firstElementChild; if (!first) return;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      step = first.getBoundingClientRect().width + gap;
+      const perView = Math.max(1, Math.floor((car.clientWidth - parseFloat(getComputedStyle(track).paddingLeft) + gap + 2) / step));
+      maxIdx = Math.max(0, units.length - perView);
+      go(Math.min(idx, maxIdx), true);
+    }
+    function go(i, instant) {
+      idx = i < 0 ? maxIdx : i > maxIdx ? 0 : i;
+      track.style.transition = instant ? 'none' : '';
+      track.style.transform = 'translateX(' + (-idx * step) + 'px)';
+      $('#ucount').textContent = pad2(idx + 1) + ' / ' + pad2(units.length);
+      restart();
+    }
+    const bar = $('#ubar');
+    function restart() {
+      clearTimeout(timer);
+      bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)';
+      if (!(playing && onScreen && !hover)) return;
+      void bar.offsetWidth;
+      bar.style.transition = 'transform ' + DELAY + 'ms linear'; bar.style.transform = 'scaleX(1)';
+      timer = setTimeout(() => go(idx + 1), DELAY);
+    }
+    function setPlaying(p) {
+      playing = p;
+      const b = $('#uPlay'); b.dataset.state = p ? 'playing' : 'paused';
+      b.setAttribute('aria-label', t(p ? 'u.pause' : 'u.play')); b.dataset.i18nAria = p ? 'u.pause' : 'u.play';
+      restart();
+    }
+    $('#uPrev').addEventListener('click', () => go(idx - 1));
+    $('#uNext').addEventListener('click', () => go(idx + 1));
+    $('#uPlay').addEventListener('click', () => setPlaying(!playing));
+    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; restart(); } });
+    car.addEventListener('pointerleave', () => { hover = false; restart(); });
+    car.addEventListener('focusin', () => { hover = true; restart(); });
+    car.addEventListener('focusout', () => { hover = false; restart(); });
+    // swipe
+    let sx = null, sy = null, moved = false;
+    car.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; moved = false; });
+    car.addEventListener('pointerup', (e) => {
+      if (sx === null) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { moved = true; go(idx + (dx < 0 ? 1 : -1)); }
+      sx = null;
     });
+    track.addEventListener('click', (e) => {
+      if (moved) { moved = false; return; }
+      const b = e.target.closest('.uslide[data-u]'); if (!b) return;
+      const u = units[+b.dataset.u]; if (window.__openLb) window.__openLb(0, u.ph, u.name());
+    });
+    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; restart(); }, { threshold: 0.3 }).observe(car);
+    document.addEventListener('visibilitychange', () => { onScreen = !document.hidden && onScreen; restart(); });
+    window.addEventListener('resize', layout);
+    render();
+    if (reduce) setPlaying(false);
+    langHooks.push(() => { render(); setPlaying(playing); });
   })();
 
-  /* ================= 3D (hero, tour, room renders) ================= */
-  if (!window.THREE) {
-    $('#tourHint').dataset.i18n = 'tour.fail';
-    $('#tourHint').textContent = t('tour.fail');
-    return;
-  }
-  const THREE = window.THREE;
-  const tourStage = $('#tourStage'), introStage = $('#introStage');
-  const small = Math.min(window.innerWidth, window.innerHeight) < 600;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.6 : 2));
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  const canvas = renderer.domElement;
-  canvas.setAttribute('aria-label', 'Three-dimensional view of the demo house');
-  tourStage.appendChild(canvas);
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xa8695f, 45, 190);
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.05, 900);
-
-  // ---------- procedural textures ----------
-  const rnd = (a, b) => a + Math.random() * (b - a);
-  function canvasTex(w, h, draw, repeat) {
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    draw(c.getContext('2d'), w, h);
-    const t = new THREE.CanvasTexture(c);
-    t.encoding = THREE.sRGBEncoding;
-    t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    if (repeat) t.repeat.set(repeat[0], repeat[1]);
-    return t;
-  }
-  function noise(g, w, h, n, alpha) {
-    for (let i = 0; i < n; i++) {
-      const v = Math.random() > .5 ? 255 : 0;
-      g.fillStyle = 'rgba(' + v + ',' + v + ',' + v + ',' + (Math.random() * alpha) + ')';
-      g.fillRect(Math.random() * w, Math.random() * h, rnd(1, 3), rnd(1, 3));
-    }
-  }
-  const stoneTex = canvasTex(512, 512, (g, w, h) => {
-    g.fillStyle = '#5e564c'; g.fillRect(0, 0, w, h);
-    let y = 0;
-    while (y < h) {
-      const rh = rnd(26, 46); let x = -rnd(0, 40);
-      while (x < w) {
-        const rw = rnd(38, 92);
-        g.fillStyle = 'hsl(' + rnd(26, 40) + ',' + rnd(8, 20) + '%,' + rnd(52, 72) + '%)';
-        g.beginPath();
-        const r = rnd(6, 12), px = x + 3, py = y + 3, pw = rw - 6, ph = rh - 6;
-        g.moveTo(px + r, py); g.arcTo(px + pw, py, px + pw, py + ph, r); g.arcTo(px + pw, py + ph, px, py + ph, r);
-        g.arcTo(px, py + ph, px, py, r); g.arcTo(px, py, px + pw, py, r); g.fill();
-        g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(px + 2, py + ph - 5, pw - 4, 4);
-        x += rw;
-      }
-      y += rh;
-    }
-    noise(g, w, h, 9000, .12);
-  });
-  const plasterTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = '#ece5d8'; g.fillRect(0, 0, w, h); noise(g, w, h, 5000, .05); });
-  const woodTex = canvasTex(512, 512, (g, w, h) => {
-    const n = 8, pw = w / n;
-    for (let i = 0; i < n; i++) {
-      g.fillStyle = 'hsl(' + rnd(24, 32) + ',' + rnd(35, 45) + '%,' + rnd(30, 40) + '%)';
-      g.fillRect(i * pw, 0, pw, h);
-      g.strokeStyle = 'rgba(0,0,0,.18)';
-      for (let k = 0; k < 14; k++) { const xx = i * pw + rnd(3, pw - 3); g.beginPath(); g.moveTo(xx, 0); g.bezierCurveTo(xx + rnd(-6, 6), h * .3, xx + rnd(-6, 6), h * .7, xx, h); g.stroke(); }
-      g.fillStyle = 'rgba(0,0,0,.45)'; g.fillRect(i * pw, 0, 2, h);
-      g.fillRect(i * pw, rnd(0, h), pw, 2);
-    }
-  });
-  const doorTex = canvasTex(256, 512, (g, w, h) => {
-    g.fillStyle = '#1f4f7a'; g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 5; i++) { g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(i * w / 5, 0, 3, h); }
-    g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(0, h * .2, w, 10); g.fillRect(0, h * .78, w, 10);
-    noise(g, w, h, 4000, .1);
-  });
-  const rugTex = canvasTex(256, 256, (g, w, h) => {
-    g.fillStyle = '#8e4b3a'; g.fillRect(0, 0, w, h);
-    const cols = ['#d9c7a5', '#2f3e52', '#b5703f', '#e9dcc2'];
-    for (let y = 12; y < h - 12; y += 16) { g.fillStyle = cols[(y / 16 | 0) % 4]; g.fillRect(12, y, w - 24, 6); }
-    g.strokeStyle = '#e9dcc2'; g.lineWidth = 4; g.strokeRect(8, 8, w - 16, h - 16);
-    noise(g, w, h, 3000, .12);
-  });
-  const groundTex = canvasTex(512, 512, (g, w, h) => {
-    g.fillStyle = '#3a3a26'; g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 1800; i++) { g.fillStyle = 'hsla(' + rnd(50, 80) + ',' + rnd(18, 32) + '%,' + rnd(18, 34) + '%,.6)'; g.fillRect(rnd(0, w), rnd(0, h), rnd(2, 8), rnd(2, 8)); }
-  }, [40, 40]);
-
-  // ---------- materials ----------
-  const std = (o) => new THREE.MeshStandardMaterial(Object.assign({ roughness: .85, metalness: 0 }, o));
-  const MAT = {
-    stone: std({ map: stoneTex, roughness: .95 }), plaster: std({ map: plasterTex, roughness: .95 }),
-    edge: std({ color: 0xd9cfbf, roughness: .95 }), floor: std({ map: woodTex, roughness: .7 }),
-    beam: std({ color: 0x4a3222, roughness: .8 }), wood: std({ color: 0x6b4a32, roughness: .7 }),
-    darkWood: std({ color: 0x3d2a1d, roughness: .7 }), door: std({ map: doorTex, roughness: .6 }),
-    shutter: std({ color: 0x1f4f7a, roughness: .6 }), roof: std({ color: 0x9a4e33, roughness: .9, flatShading: true }),
-    linen: std({ color: 0xe8e0d2, roughness: 1 }), sofa: std({ color: 0xcdbfa6, roughness: 1 }),
-    blanket: std({ color: 0x3b5d73, roughness: 1 }), rug: std({ map: rugTex, roughness: 1 }),
-    leaf: std({ color: 0x66704f, roughness: .9, flatShading: true }), vine: std({ color: 0x4f6a35, roughness: .9, flatShading: true }),
-    cypress: std({ color: 0x223522, roughness: .9, flatShading: true }), bloom: std({ color: 0xc23a7a, roughness: .8, flatShading: true }),
-    trunk: std({ color: 0x5a4a3c, roughness: 1, flatShading: true }), pot: std({ color: 0xb06a45, roughness: .9 }),
-    pathStone: std({ color: 0xa79d8c, roughness: 1, flatShading: true }), black: std({ color: 0x120d0a, roughness: 1 }),
-    metal: std({ color: 0x2b2b2b, roughness: .5, metalness: .6 }),
-    glowWarm: new THREE.MeshBasicMaterial({ color: 0xffcf8a }),
-    flame: new THREE.MeshBasicMaterial({ color: 0xff9a3c, transparent: true, opacity: .9 }),
-    flame2: new THREE.MeshBasicMaterial({ color: 0xffd36b, transparent: true, opacity: .9 })
-  };
-
-  // ---------- helpers ----------
-  function box(w, h, d, mat, x, y, z, parent) {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    m.position.set(x, y + h / 2, z);
-    m.castShadow = true; m.receiveShadow = true;
-    (parent || scene).add(m);
-    return m;
-  }
-  function planarUV(geo, ox, oy, S) {
-    const pos = geo.attributes.position, uv = geo.attributes.uv;
-    for (let i = 0; i < pos.count; i++) {
-      const f = Math.floor(i / 4), x = pos.getX(i) + ox, y = pos.getY(i) + oy, z = pos.getZ(i);
-      if (f < 2) uv.setXY(i, z / S, y / S); else if (f < 4) uv.setXY(i, x / S, z / S); else uv.setXY(i, x / S, y / S);
-    }
-    uv.needsUpdate = true;
-  }
-  function wall(o) {
-    const g = new THREE.Group();
-    const mats = [MAT.edge, MAT.edge, MAT.edge, MAT.edge, o.outMat, o.inMat];
-    const piece = (x0, x1, y0, y1) => {
-      if (x1 - x0 < 0.01 || y1 - y0 < 0.01) return;
-      const w = x1 - x0, h = y1 - y0, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-      const geo = new THREE.BoxGeometry(w, h, o.T);
-      planarUV(geo, cx, cy, 2.2);
-      const m = new THREE.Mesh(geo, mats);
-      m.position.set(cx, cy, 0); m.castShadow = m.receiveShadow = true; g.add(m);
-    };
-    const ops = o.openings.slice().sort((a, b) => a.c - b.c);
-    let cur = -o.len / 2;
-    ops.forEach((op) => { const a = op.c - op.w / 2, b = op.c + op.w / 2; piece(cur, a, 0, o.H); piece(a, b, 0, op.y0); piece(a, b, op.y1, o.H); cur = b; });
-    piece(cur, o.len / 2, 0, o.H);
-    g.position.set(o.x || 0, 0, o.z || 0); g.rotation.y = o.rot || 0;
-    scene.add(g);
-    return g;
-  }
-  function windowFrame(parent, c, w, y0, y1, T, shutters) {
-    const fz = T / 2 + 0.02, t = 0.07;
-    box(w + .14, t, .1, MAT.darkWood, c, y0 - t, fz, parent);
-    box(w + .14, t, .1, MAT.darkWood, c, y1, fz, parent);
-    box(t, y1 - y0, .1, MAT.darkWood, c - w / 2 - t / 2, y0, fz, parent);
-    box(t, y1 - y0, .1, MAT.darkWood, c + w / 2 + t / 2, y0, fz, parent);
-    box(w + .4, .08, .3, MAT.edge, c, y0 - .16, fz + .1, parent);
-    if (shutters) [-1, 1].forEach((s) => { const sw = w / 2; const sh = box(sw, y1 - y0, .05, MAT.shutter, 0, y0, 0, parent); sh.position.x = c + s * (w / 2 + sw / 2 + .08); sh.position.z = fz + .04; });
-  }
-  const lamps = [];
-  function lamp(color, base, dist, x, y, z) { const l = new THREE.PointLight(color, base, dist, 2); l.position.set(x, y, z); scene.add(l); lamps.push({ l: l, base: base }); return l; }
-
-  // ---------- sky, stars, sea, ground ----------
-  const U = {
-    top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, horizon: { value: new THREE.Color() }, low: { value: new THREE.Color() },
-    sun: { value: new THREE.Vector3(0, 1, 0) }, glowCol: { value: new THREE.Color() }, glow: { value: 1 }
-  };
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 48, 24), new THREE.ShaderMaterial({
-    side: THREE.BackSide, depthWrite: false, fog: false, uniforms: U,
-    vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: 'uniform vec3 top, mid, horizon, low, sun, glowCol; uniform float glow; varying vec3 vDir;\n' +
-      'void main(){ float h = vDir.y; vec3 c = mix(horizon, mid, smoothstep(0.0, 0.22, h)); c = mix(c, top, smoothstep(0.18, 0.75, h)); c = mix(low, c, smoothstep(-0.08, 0.0, h));\n' +
-      'float d = max(dot(normalize(vDir), normalize(sun)), 0.0); c += glowCol * (pow(d, 18.0) * 0.5 + pow(d, 900.0) * 2.2) * glow; gl_FragColor = vec4(c, 1.0); }'
-  }));
-  scene.add(sky);
-  const starGeo = new THREE.BufferGeometry(), starPos = [];
-  for (let i = 0; i < 700; i++) {
-    const th = Math.random() * Math.PI * 2, ph = Math.acos(Math.random() * 0.95);
-    starPos.push(440 * Math.sin(ph) * Math.cos(th), 440 * Math.cos(ph) + 10, 440 * Math.sin(ph) * Math.sin(th));
-  }
-  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
-  const starMat = new THREE.PointsMaterial({ color: 0xdfe8ff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false });
-  scene.add(new THREE.Points(starGeo, starMat));
-
-  const seaMat = std({ color: 0x17304d, roughness: .22, metalness: .55 });
-  const sea = new THREE.Mesh(new THREE.PlaneGeometry(1400, 900), seaMat);
-  sea.rotation.x = -Math.PI / 2; sea.position.set(0, -7, -460); scene.add(sea);
-  const glitterTex = canvasTex(64, 512, (g, w, h) => {
-    const grd = g.createLinearGradient(0, 0, 0, h);
-    grd.addColorStop(0, 'rgba(255,190,120,0)'); grd.addColorStop(.25, 'rgba(255,190,120,.85)'); grd.addColorStop(1, 'rgba(255,210,150,.25)');
-    g.fillStyle = grd; g.fillRect(0, 0, w, h);
-    g.globalCompositeOperation = 'destination-in';
-    for (let i = 0; i < 900; i++) { g.fillStyle = 'rgba(0,0,0,' + rnd(.2, 1) + ')'; g.fillRect(rnd(0, w), rnd(0, h), rnd(4, 26), rnd(1, 3)); }
-  });
-  const glitterMat = new THREE.MeshBasicMaterial({ map: glitterTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, fog: false });
-  const glitter = new THREE.Mesh(new THREE.PlaneGeometry(18, 400), glitterMat);
-  glitter.rotation.x = -Math.PI / 2; glitter.position.set(0, -6.95, -215);
-  const glitterG = new THREE.Group(); glitterG.position.set(2, 0, -9); glitterG.add(glitter); scene.add(glitterG);
-
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(220, 200), std({ map: groundTex, roughness: 1 }));
-  ground.rotation.x = -Math.PI / 2; ground.position.set(0, 0, 86); ground.receiveShadow = true; scene.add(ground);
-  box(220, 7.2, 6, std({ color: 0x4a4436, roughness: 1 }), 0, -7.1, -17);
-  for (let i = -8; i <= 8; i++) box(1.3, .7 + Math.random() * .2, .5, MAT.stone, i * 1.3, 0, -13.2);
-
-  // ---------- house ----------
-  const H = 3.2, T = 0.35, half = 5 + T / 2;
-  const front = wall({ len: half * 2, H: H, T: T, z: 0, rot: 0, outMat: MAT.stone, inMat: MAT.plaster,
-    openings: [{ c: 0, w: 1.3, y0: 0, y1: 2.3 }, { c: -3, w: 1.1, y0: .9, y1: 2.2 }, { c: 3, w: 1.1, y0: .9, y1: 2.2 }] });
-  windowFrame(front, -3, 1.1, .9, 2.2, T, true); windowFrame(front, 3, 1.1, .9, 2.2, T, true);
-  box(1.6, .12, .14, MAT.darkWood, 0, 2.3, T / 2 + .02, front);
-  box(1.5, .12, .6, MAT.pathStone, 0, -.05, .5, front);
-  const back = wall({ len: half * 2, H: H, T: T, z: -10, rot: Math.PI, outMat: MAT.stone, inMat: MAT.plaster,
-    openings: [{ c: -2, w: 2.4, y0: .5, y1: 2.5 }, { c: 3, w: 1.2, y0: .9, y1: 2.2 }] });
-  windowFrame(back, -2, 2.4, .5, 2.5, T, false); windowFrame(back, 3, 1.2, .9, 2.2, T, true);
-  const left = wall({ len: 10, H: H, T: T, x: -5, z: 0, rot: -Math.PI / 2, outMat: MAT.stone, inMat: MAT.plaster, openings: [{ c: 2, w: 1.0, y0: 1.0, y1: 2.1 }] });
-  left.children.forEach((m) => { m.position.x -= 5; });
-  windowFrame(left, -3, 1.0, 1.0, 2.1, T, true);
-  const right = wall({ len: 10, H: H, T: T, x: 5, z: 0, rot: Math.PI / 2, outMat: MAT.stone, inMat: MAT.plaster,
-    openings: [{ c: -2, w: 1.0, y0: 1.0, y1: 2.1 }, { c: 3, w: 1.0, y0: 1.0, y1: 2.1 }] });
-  right.children.forEach((m) => { m.position.x += 5; });
-  windowFrame(right, 8, 1.0, 1.0, 2.1, T, true); windowFrame(right, 3, 1.0, 1.0, 2.1, T, true);
-  wall({ len: 10, H: H, T: .22, z: -6, rot: 0, outMat: MAT.plaster, inMat: MAT.plaster, openings: [{ c: 2, w: 1.7, y0: 0, y1: 2.4 }] });
-
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), MAT.floor);
-  floor.rotation.x = -Math.PI / 2; floor.position.set(0, .012, -5); floor.receiveShadow = true;
-  woodTex.repeat.set(2.5, 2.5); scene.add(floor);
-  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), MAT.plaster);
-  ceil.rotation.x = Math.PI / 2; ceil.position.set(0, H - .01, -5); scene.add(ceil);
-  for (let z = -.8; z > -10; z -= 1.3) box(10, .2, .18, MAT.beam, 0, H - .21, z);
-  const roof = new THREE.Mesh(new THREE.ConeGeometry((half + .45) * Math.SQRT2, 2.3, 4), MAT.roof);
-  roof.rotation.y = Math.PI / 4; roof.position.set(0, H + 1.15, -5); roof.castShadow = true; scene.add(roof);
-  box(half * 2 + .3, .18, half * 2 + .3, MAT.edge, 0, H, -5);
-
-  const hinge = new THREE.Group(); hinge.position.set(-0.64, 0, -0.02); scene.add(hinge);
-  box(1.28, 2.28, .08, MAT.door, .64, 0, 0, hinge);
-  const knob = new THREE.Mesh(new THREE.SphereGeometry(.05, 12, 10), MAT.metal); knob.position.set(1.12, 1.05, .07); hinge.add(knob);
-
-  [-2.4, 2.4].forEach((x) => { box(.16, 2.8, .16, MAT.wood, x, 0, 3.6); box(.14, .14, 3.9, MAT.wood, x, 2.8, 1.75); });
-  for (let z = .4; z <= 3.6; z += .45) box(5.2, .08, .1, MAT.wood, 0, 2.94, z);
-  for (let i = 0; i < 26; i++) {
-    const v = new THREE.Mesh(new THREE.IcosahedronGeometry(rnd(.25, .5), 0), MAT.vine);
-    v.position.set(rnd(-2.6, 2.6), rnd(2.95, 3.2), rnd(.3, 3.7)); v.scale.y = .45; v.rotation.set(rnd(0, 3), rnd(0, 3), 0); v.castShadow = true; scene.add(v);
-  }
-  for (let i = 0; i < 22; i++) {
-    const b = new THREE.Mesh(new THREE.IcosahedronGeometry(rnd(.12, .26), 0), i % 3 ? MAT.bloom : MAT.vine);
-    b.position.set(rnd(-1.6, -.9), rnd(.4, 2.9), rnd(.25, .5)); scene.add(b);
-  }
-  function pot(x, z, s) {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(.28 * s, .2 * s, .5 * s, 16), MAT.pot);
-    m.position.set(x, .25 * s, z); m.castShadow = true; scene.add(m);
-    for (let i = 0; i < 6; i++) { const l = new THREE.Mesh(new THREE.IcosahedronGeometry(.22 * s, 0), MAT.vine); l.position.set(x + rnd(-.2, .2) * s, (.6 + rnd(0, .5)) * s, z + rnd(-.2, .2) * s); scene.add(l); }
-  }
-  pot(1.1, .7, 1.1); pot(-4.3, -.7, 1.2); pot(4.3, -9.2, 1);
-
-  // ---------- garden ----------
-  for (let z = 1.2; z < 24; z += rnd(.75, .95)) {
-    const s = new THREE.Mesh(new THREE.CylinderGeometry(rnd(.35, .5), rnd(.4, .55), .08, 7), MAT.pathStone);
-    s.position.set(rnd(-.35, .35), .04, z); s.rotation.y = rnd(0, 3); s.scale.x = rnd(1, 1.6); s.receiveShadow = true; scene.add(s);
-  }
-  function olive(x, z, s) {
-    const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); g.rotation.y = rnd(0, 6);
-    const tr = new THREE.Mesh(new THREE.CylinderGeometry(.14, .3, 2.2, 7), MAT.trunk);
-    tr.position.y = 1.1; tr.rotation.z = rnd(-.2, .2); tr.castShadow = true; g.add(tr);
-    for (let i = 0; i < 9; i++) { const c = new THREE.Mesh(new THREE.IcosahedronGeometry(rnd(.7, 1.1), 0), MAT.leaf); c.position.set(rnd(-1.2, 1.2), rnd(2.2, 3.2), rnd(-1.2, 1.2)); c.scale.y = .7; c.castShadow = true; g.add(c); }
-    scene.add(g);
-  }
-  function cypress(x, z, s) { const m = new THREE.Mesh(new THREE.ConeGeometry(.8 * s, 7 * s, 9), MAT.cypress); m.position.set(x, 3.5 * s, z); m.castShadow = true; scene.add(m); }
-  olive(-7.5, 7, 1.15); olive(7.8, 9.5, 1); olive(-10, 15, 1.3); olive(9.5, 2.5, .9); olive(-8.8, -7, 1); olive(12, 16, 1.2);
-  cypress(-6.4, -1, 1); cypress(6.2, 1.8, 1.15); cypress(-13, 4, 1.2);
-  [[-1.3, 7], [1.3, 13]].forEach((p) => { box(.08, 1, .08, MAT.metal, p[0], 0, p[1]); const lm = box(.22, .26, .22, MAT.glowWarm, p[0], 1, p[1]); lm.castShadow = false; lamp(0xffb468, 1.4, 7, p[0], 1.2, p[1]); });
-  lamp(0xffc47a, 1.6, 6, 0, 2.55, .9);
-  box(.18, .22, .18, MAT.glowWarm, 0, 2.5, .3);
-
-  // ---------- living room ----------
-  box(.95, .42, 2.5, MAT.sofa, -4.25, 0, -3.1); box(.25, .55, 2.5, MAT.sofa, -4.6, .42, -3.1);
-  [-1.95, -4.25].forEach((z) => box(.95, .25, .22, MAT.sofa, -4.25, .42, z));
-  box(.4, .32, .35, MAT.blanket, -4.4, .42, -2.4).rotation.y = .3;
-  const rug = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 3), MAT.rug);
-  rug.rotation.x = -Math.PI / 2; rug.position.set(-2.9, .02, -3.1); rug.receiveShadow = true; scene.add(rug);
-  box(.75, .06, 1.25, MAT.darkWood, -2.85, .38, -3.1);
-  [[-.3, -.55], [.3, -.55], [-.3, .55], [.3, .55]].forEach((p) => box(.06, .38, .06, MAT.darkWood, -2.85 + p[0], 0, -3.1 + p[1]));
-  box(.18, .12, .18, MAT.pot, -2.75, .44, -3.3);
-  // sideboard with a plant and a picture above it (no fireplace: this is a summer house)
-  box(1.7, .72, .45, MAT.wood, -2.6, 0, -5.62); box(.22, .26, .22, MAT.pot, -2.05, .72, -5.6); box(.3, .06, .2, MAT.darkWood, -3.0, .72, -5.6);
-  box(1.1, .75, .04, MAT.darkWood, -2.6, 1.35, -5.86);
-  const flames = [];
-  const fire = { intensity: 0 };
-  box(.95, .06, 1.8, MAT.wood, 3.0, .74, -2.6);
-  [[-.4, -.8], [.4, -.8], [-.4, .8], [.4, .8]].forEach((p) => box(.07, .74, .07, MAT.wood, 3.0 + p[0], 0, -2.6 + p[1]));
-  [[2.25, -2.1], [2.25, -3.1], [3.75, -2.1], [3.75, -3.1]].forEach((p) => {
-    const x = p[0], z = p[1];
-    box(.45, .05, .45, MAT.darkWood, x, .45, z); box(.05, .45, .45, MAT.darkWood, x + (x < 3 ? -.2 : .2), .5, z);
-    [[-.18, -.18], [.18, -.18], [-.18, .18], [.18, .18]].forEach((q) => box(.04, .45, .04, MAT.darkWood, x + q[0], 0, z + q[1]));
-  });
-  box(.015, .6, .015, MAT.metal, 3.0, H - .6, -2.6);
-  const shadeM = new THREE.Mesh(new THREE.SphereGeometry(.26, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), MAT.glowWarm);
-  shadeM.position.set(3.0, H - .62, -2.6); shadeM.rotation.x = Math.PI; scene.add(shadeM);
-  lamp(0xffc27a, 1.9, 8, 3.0, H - .9, -2.6);
-  box(.65, .9, 2.2, MAT.plaster, 4.48, 0, -4.6); box(.7, .05, 2.25, MAT.darkWood, 4.48, .9, -4.6); box(.3, .05, 1.6, MAT.darkWood, 4.65, 1.75, -4.6);
-  [-5.1, -4.8, -4.4, -4.1].forEach((z, i) => box(.16, .2 + i % 2 * .1, .14, i % 2 ? MAT.pot : MAT.linen, 4.65, 1.8, z));
-  lamp(0xffd2a0, .7, 9, 0, 2.6, -1.5);
-
-  // ---------- bedroom ----------
-  box(2.2, .35, 1.8, MAT.wood, -3.75, 0, -8.1); box(2.05, .26, 1.7, MAT.linen, -3.72, .35, -8.1); box(1.0, .1, 1.74, MAT.blanket, -3.15, .58, -8.1);
-  [-8.5, -7.7].forEach((z) => box(.45, .16, .7, MAT.linen, -4.45, .61, z));
-  box(.12, 1.2, 1.95, MAT.darkWood, -4.82, 0, -8.1);
-  [-6.75, -9.45].forEach((z) => { box(.5, .5, .45, MAT.darkWood, -4.5, 0, z); box(.08, .3, .08, MAT.metal, -4.5, .5, z); box(.26, .2, .26, MAT.glowWarm, -4.5, .8, z); });
-  lamp(0xffc27a, 1.3, 6, -4.2, 1.1, -6.9);
-  const rug2 = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 2.6), MAT.rug); rug2.rotation.x = -Math.PI / 2; rug2.position.set(-2.2, .02, -8.1); scene.add(rug2);
-  const curtains = [];
-  [.55, 3.45].forEach((x) => {
-    const g = new THREE.Group(); g.position.set(x, 2.75, -9.7); scene.add(g);
-    const c = new THREE.Mesh(new THREE.BoxGeometry(.5, 2.6, .04), std({ color: 0xf2ece2, roughness: 1, transparent: true, opacity: .92 }));
-    c.position.y = -1.3; g.add(c); curtains.push(g);
-  });
-  box(3.4, .04, .04, MAT.metal, 2, 2.76, -9.7);
-  lamp(0xffd2a0, .6, 7, 1, 2.5, -7.5);
-
-  // ---------- pool ----------
-  const deckMat = std({ color: 0xcfc3ad, roughness: .9 });
-  const PX = 10, PZ = -5.5, PW = 3.2, PL = 7;
-  box(PW + 1.4, .14, .7, deckMat, PX, 0, PZ + PL / 2 + .35); box(PW + 1.4, .14, .7, deckMat, PX, 0, PZ - PL / 2 - .35);
-  box(.7, .14, PL, deckMat, PX - PW / 2 - .35, 0, PZ); box(.7, .14, PL, deckMat, PX + PW / 2 + .35, 0, PZ);
-  box(2.6, .1, PL + 1.4, deckMat, PX - PW / 2 - 2.0, 0, PZ);
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(PW, PL), std({ color: 0x2f9fb0, roughness: .08, metalness: .25, emissive: 0x0b5a66, emissiveIntensity: .55 }));
-  water.rotation.x = -Math.PI / 2; water.position.set(PX, .09, PZ); water.receiveShadow = true; scene.add(water);
-  lamp(0x5fd3e0, 1.2, 7, PX, .5, PZ);
-  [-1.2, .2].forEach((dz) => {
-    const g = new THREE.Group(); g.position.set(PX - PW / 2 - 2.0, .1, PZ + dz * 1.6); scene.add(g);
-    box(1.9, .25, .7, MAT.linen, 0, .05, 0, g); const bk = box(.75, .08, .7, MAT.linen, -.75, .45, 0, g); bk.rotation.z = -.7; box(1.9, .05, .72, MAT.wood, 0, 0, 0, g);
-  });
-  const umb = new THREE.Group(); umb.position.set(PX - PW / 2 - 2.0, .1, PZ - 2.2); scene.add(umb);
-  box(.05, 2.3, .05, MAT.wood, 0, 0, 0, umb);
-  const canopy = new THREE.Mesh(new THREE.ConeGeometry(1.3, .45, 10), MAT.linen); canopy.position.y = 2.35; canopy.castShadow = true; umb.add(canopy);
-
-  // ---------- light that follows the time of day ----------
-  const hemi = new THREE.HemisphereLight(0xf2b68a, 0x2a2a3a, .55); scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xffb070, 1.5);
-  sun.target.position.set(0, 0, -2); scene.add(sun, sun.target);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
-  Object.assign(sun.shadow.camera, { left: -24, right: 24, top: 18, bottom: -18, near: 1, far: 90 });
-  sun.shadow.bias = -0.0006;
-  const frontFill = new THREE.DirectionalLight(0x8fa3d6, .35); frontFill.position.set(6, 10, 20); scene.add(frontFill);
-
-  const SCENE = {
-    morning: { top: 0x6fa6d6, mid: 0xa9cde4, horizon: 0xf1dfc0, low: 0x4d6577, sun: [0.75, 0.3, -0.6], sunCol: 0xfff0d8, sunInt: 1.7, glowCol: 0xfff2d6, glow: .45, hemiSky: 0xdbe8f2, hemiGround: 0x4c4a3a, hemiInt: .75, fog: 0xc9d9df, exp: 1.0, lamps: .35, glitter: .2, stars: 0, sea: 0x356a8c },
-    noon: { top: 0x2c78c0, mid: 0x62a8db, horizon: 0xcfe5ef, low: 0x3f5f78, sun: [0.25, 0.95, -0.35], sunCol: 0xffffff, sunInt: 2.1, glowCol: 0xffffff, glow: .3, hemiSky: 0xd2e6f6, hemiGround: 0x5a5440, hemiInt: .85, fog: 0xb7d3e4, exp: .95, lamps: .2, glitter: 0, stars: 0, sea: 0x1f5f8f },
-    golden: { top: 0x24305e, mid: 0x9a5a6a, horizon: 0xf3a35e, low: 0x2a2a3a, sun: [-0.42, 0.075, -1], sunCol: 0xffb070, sunInt: 1.55, glowCol: 0xff9a4d, glow: 1, hemiSky: 0xf2b68a, hemiGround: 0x2a2a3a, hemiInt: .55, fog: 0xa8695f, exp: 1.15, lamps: .9, glitter: 1, stars: 0, sea: 0x17304d },
-    night: { top: 0x02050c, mid: 0x081530, horizon: 0x1a2a48, low: 0x03060d, sun: [0.35, 0.42, -1], sunCol: 0x9fb4e0, sunInt: .32, glowCol: 0xcfdcff, glow: .55, hemiSky: 0x2a3a5c, hemiGround: 0x07080e, hemiInt: .28, fog: 0x0b1628, exp: 1.25, lamps: 1.4, glitter: .3, stars: 1, sea: 0x081426 }
-  };
-  const KC = ['top', 'mid', 'horizon', 'low', 'sunCol', 'glowCol', 'hemiSky', 'hemiGround', 'fog', 'sea'];
-  const KN = ['sunInt', 'glow', 'hemiInt', 'exp', 'lamps', 'glitter', 'stars'];
-  function toState(p) { const s = {}; KC.forEach((k) => { s[k] = new THREE.Color(p[k]); }); KN.forEach((k) => { s[k] = p[k]; }); s.sun = new THREE.Vector3(p.sun[0], p.sun[1], p.sun[2]).normalize(); return s; }
-  function blend(a, b, k) { const o = {}; KC.forEach((c) => { o[c] = a[c].clone().lerp(b[c], k); }); KN.forEach((n) => { o[n] = a[n] + (b[n] - a[n]) * k; }); o.sun = a.sun.clone().lerp(b.sun, k).normalize(); return o; }
-  const sunOff = new THREE.Vector3(-6, 4, 0);
-  let lampMul = 1;
-  function applyScene(s) {
-    U.top.value.copy(s.top); U.mid.value.copy(s.mid); U.horizon.value.copy(s.horizon); U.low.value.copy(s.low);
-    U.sun.value.copy(s.sun); U.glowCol.value.copy(s.glowCol); U.glow.value = s.glow;
-    sun.color.copy(s.sunCol); sun.intensity = s.sunInt; sun.position.copy(s.sun).multiplyScalar(40).add(sunOff);
-    hemi.color.copy(s.hemiSky); hemi.groundColor.copy(s.hemiGround); hemi.intensity = s.hemiInt;
-    scene.fog.color.copy(s.fog); renderer.toneMappingExposure = s.exp;
-    lampMul = s.lamps; lamps.forEach((o) => { o.l.intensity = o.base * s.lamps; });
-    glitterMat.opacity = s.glitter; glitterG.rotation.y = Math.atan2(-s.sun.x, -s.sun.z);
-    starMat.opacity = s.stars; seaMat.color.copy(s.sea);
-  }
-  let cur = toState(SCENE[mood]);
-  applyScene(cur);
-  let moodTween = null;
-  onSceneMood = function (name, instant) {
-    const from = cur, to = toState(SCENE[name]);
-    if (moodTween) moodTween.kill();
-    if (instant || reduce || !window.gsap) { cur = to; applyScene(cur); queueAll(); return; }
-    const tw = { k: 0 };
-    moodTween = gsap.to(tw, { k: 1, duration: 1.4, ease: 'power2.inOut',
-      onUpdate: () => { cur = blend(from, to, tw.k); applyScene(cur); },
-      onComplete: () => { cur = to; queueAll(); } });
-  };
-
-  const clamp01 = (t) => Math.max(0, Math.min(1, t));
-  const ease = (t) => t * t * (3 - 2 * t);
-
-  // ---------- 3D hero: camera path that plays by itself ----------
-  const V = (x, y, z) => new THREE.Vector3(x, y, z);
-  const posPath = new THREE.CatmullRomCurve3([V(0, 5, 14), V(0, 2.4, 8.5), V(0, 1.65, 3.4), V(0.1, 1.6, -1.1), V(1.6, 1.6, -4.3), V(2.0, 1.6, -7.1), V(2.0, 1.7, -8.85)], false, 'centripetal');
-  const lookPath = new THREE.CatmullRomCurve3([V(0, 1.5, -5), V(0, 1.6, 0), V(0, 1.45, -3), V(-2.8, 1.0, -4.2), V(2.0, 1.3, -8.5), V(-2.5, .8, -8.3), V(1.6, .9, -40)], false, 'centripetal');
-  const ORBIT_END = 0.36, ORBIT_R = 19, ORBIT_C = V(0, 1.5, -5);
-  const CH = [
-    { a: 0, b: ORBIT_END, dur: 16 }, { a: ORBIT_END, b: 0.62, dur: 8 }, { a: 0.62, b: 0.79, dur: 7 },
-    { a: 0.79, b: 0.93, dur: 6 }, { a: 0.93, b: 1, dur: 5 }
-  ];
-  let acc = 0;
-  CH.forEach((c) => { c.t0 = acc; acc += c.dur; });
-  const TOTAL = acc, HOLD = 3, FADE = 1;
-  let playT = 0, looped = false, snap = true, introProg = 0;
-  const chAt = (t) => { for (let i = 0; i < CH.length; i++) if (t < CH[i].t0 + CH[i].dur) return i; return CH.length - 1; };
-  function progAt(t) {
-    if (t >= TOTAL) return 1;
-    const c = CH[chAt(t)], l = (t - c.t0) / c.dur;
-    return c.a + (c.b - c.a) * (0.5 - 0.5 * Math.cos(Math.PI * l));
-  }
-  const fadeEl = $('#fade');
-  const railBtns = $$('#rail button');
-  railBtns.forEach((b) => b.addEventListener('click', () => {
-    playT = CH[+b.dataset.ch].t0 + 0.01;
-    looped = false; fadeEl.style.opacity = '0';
-  }));
-  let lastCh = -1;
-  function updateRail() {
-    const i = chAt(Math.min(playT, TOTAL - 0.001)), c = CH[i];
-    if (i !== lastCh) { railBtns.forEach((b, j) => b.setAttribute('aria-current', String(j === i))); lastCh = i; }
-    const fill = playT >= TOTAL ? 1 : clamp01((playT - c.t0) / c.dur);
-    railBtns[i].querySelector('i').style.transform = 'scaleX(' + fill.toFixed(3) + ')';
-  }
-  let desktop = !mqMobile.matches;
-
-  // ---------- one canvas: in the hero (3D version) or in the tour frame ----------
-  let mode = 'tour', introVisible = true, tourVisible = false;
-  function size() {
-    const host = canvas.parentElement || tourStage, w = host.clientWidth || 1, h = host.clientHeight || 1;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.fov = mode === 'tour' ? (w / h < 1 ? 70 : 60) : (w / h < 0.8 ? 66 : w / h < 1.2 ? 58 : 50);
-    camera.updateProjectionMatrix();
-  }
-  function placeCanvas() {
-    const want = tourVisible || heroMode !== '3d' ? 'tour' : 'intro';
-    const host = want === 'tour' ? tourStage : introStage;
-    mode = want;
-    if (canvas.parentElement !== host) host.appendChild(canvas);
-    if (want === 'intro') fadeEl.style.opacity = '0';
-    size();
-  }
-  hero3d.onMode = () => { snap = true; placeCanvas(); };
-  const canvasIO = new IntersectionObserver((entries) => {
-    entries.forEach((en) => {
-      if (en.target.id === 'intro') introVisible = en.isIntersecting;
-      if (en.target.id === 'tourFrame') tourVisible = en.isIntersecting;
-    });
-    placeCanvas();
-  }, { threshold: 0.05 });
-  canvasIO.observe(introEl);
-  canvasIO.observe($('#tourFrame'));
-  window.addEventListener('resize', size);
-  mqMobile.addEventListener('change', () => { desktop = !mqMobile.matches; renderCal(); size(); });
-  document.addEventListener('fullscreenchange', () => setTimeout(size, 60));
-  placeCanvas();
-
-  // ---------- 3D tour ----------
-  const SPOTS = [
-    { name: 'Garden', pos: [0, 1.7, 11], look: [0, 1.6, 0] },
-    { name: 'Entrance', pos: [0, 1.65, 2.2], look: [0, 1.5, -3] },
-    { name: 'Living room', pos: [1.2, 1.6, -1.2], look: [-2.8, 0.9, -4.4] },
-    { name: 'Kitchen', pos: [1.0, 1.6, -2.3], look: [4.5, 1.2, -4.6] },
-    { name: 'Bedroom', pos: [1.4, 1.6, -7.2], look: [-3.7, 0.6, -8.2] },
-    { name: 'Pool', pos: [5.8, 1.8, -0.8], look: [10, 0.1, -6] }
-  ];
-  const tour = { x: 0, y: 1.7, z: 11, yaw: 0, pitch: 0 };
-  let tourTween = null;
-  function aim(p, l) {
-    const dx = l[0] - p[0], dy = l[1] - p[1], dz = l[2] - p[2];
-    return { yaw: Math.atan2(dx, -dz), pitch: Math.asin(dy / Math.hypot(dx, dy, dz)) };
-  }
-  function goSpot(i, instant) {
-    $$('.spot').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
-    const s = SPOTS[i], a = aim(s.pos, s.look);
-    let yaw = a.yaw;
-    while (yaw - tour.yaw > Math.PI) yaw -= Math.PI * 2;
-    while (yaw - tour.yaw < -Math.PI) yaw += Math.PI * 2;
-    const to = { x: s.pos[0], y: s.pos[1], z: s.pos[2], yaw: yaw, pitch: a.pitch };
-    if (tourTween) tourTween.kill();
-    if (instant || reduce || !window.gsap) Object.assign(tour, to);
-    else tourTween = gsap.to(tour, Object.assign({ duration: 1.8, ease: 'power2.inOut' }, to));
-  }
-  $('#spots').innerHTML = SPOTS.map((s, i) => '<button type="button" class="spot" aria-pressed="' + (i === 0) + '" data-i18n="spot.' + s.name + '">' + t('spot.' + s.name) + '</button>').join('');
-  $$('.spot').forEach((b, i) => b.addEventListener('click', () => goSpot(i)));
-  goSpot(0, true);
-  let drag = null;
-  canvas.addEventListener('pointerdown', (e) => { if (mode !== 'tour') return; drag = { x: e.clientX, y: e.clientY }; if (tourTween) tourTween.kill(); $('#tourHint').style.opacity = '0'; });
-  window.addEventListener('pointermove', (e) => {
-    if (!drag || mode !== 'tour') return;
-    tour.yaw -= (e.clientX - drag.x) * 0.005;
-    if (e.pointerType === 'mouse') tour.pitch = Math.max(-0.7, Math.min(0.6, tour.pitch + (e.clientY - drag.y) * 0.004));
-    drag.x = e.clientX; drag.y = e.clientY;
-  });
-  window.addEventListener('pointerup', () => { drag = null; });
-  window.addEventListener('pointercancel', () => { drag = null; });
-  $('#fsBtn').addEventListener('click', () => {
-    const f = $('#tourFrame');
-    try {
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (f.requestFullscreen) { const p = f.requestFullscreen(); if (p && p.catch) p.catch(() => {}); }
-    } catch (e) {}
-  });
-
-  // ---------- room renders (stand-ins for real photos) ----------
-  const jobs = [];
-  function queueRoom(i) {
-    if (window.__realPhotos) return; // real photos are in, no need to render the demo rooms
-    const r = ROOMS[i];
-    if (shotCache[mood] && shotCache[mood][r.id]) return;
-    if (!jobs.some((j) => j.mood === mood && j.i === i)) jobs.unshift({ mood: mood, i: i });
-  }
-  function queueAll() { for (let i = ROOMS.length - 1; i >= 0; i--) if (i !== roomIdx) queueRoom(i); queueRoom(roomIdx); }
-  window.__queueRoom = queueRoom;
-  const tmpLook = new THREE.Vector3();
-  function runJob() {
-    const j = jobs.shift();
-    if (!j || j.mood !== mood) return;
-    const r = ROOMS[j.i], out = [];
-    const w = small ? 720 : 960, h = Math.round(w * 2 / 3);
-    const pr = renderer.getPixelRatio(), doorWas = hinge.rotation.y;
-    renderer.setPixelRatio(1);
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.fov = 58; camera.updateProjectionMatrix();
-    hinge.rotation.y = 1.75;
-    r.shots.forEach((s) => {
-      camera.position.set(s[0][0], s[0][1], s[0][2]);
-      tmpLook.set(s[1][0], s[1][1], s[1][2]);
-      camera.lookAt(tmpLook);
-      renderer.render(scene, camera);
-      out.push(canvas.toDataURL('image/jpeg', 0.82));
-    });
-    hinge.rotation.y = doorWas;
-    renderer.setPixelRatio(pr);
-    size();
-    (shotCache[j.mood] = shotCache[j.mood] || {})[r.id] = out;
-    renderUnits();
-    if (j.i === roomIdx) { renderGallery(); if (!lb.hidden) showLb(); }
-  }
-
-  const look = { x: 0, y: 0, tx: 0, ty: 0 };
-  window.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
-    look.tx = (e.clientX / window.innerWidth - .5) * 2;
-    look.ty = (e.clientY / window.innerHeight - .5) * 2;
-  });
-
-  // ---------- loop ----------
-  const tmp = new THREE.Vector3();
-  let last = performance.now(), firstFrame = true;
-  function frame(now) {
-    requestAnimationFrame(frame);
-    const dt = Math.min((now - last) / 1000, .05); last = now;
-    const t = now / 1000;
-    if (jobs.length) runJob();
-    const active = (mode === 'intro' && introVisible) || (mode === 'tour' && tourVisible);
-    if (!active && !firstFrame) return;
-
-    if (mode === 'tour') {
-      camera.position.set(tour.x, tour.y, tour.z);
-      tmp.set(tour.x + Math.sin(tour.yaw) * Math.cos(tour.pitch), tour.y + Math.sin(tour.pitch), tour.z - Math.cos(tour.yaw) * Math.cos(tour.pitch));
-      camera.lookAt(tmp);
-      hinge.rotation.y = 1.75;
-    } else if (desktop) {
-      if (hero3d.playing) playT += dt;
-      if (playT >= TOTAL + HOLD + FADE) { playT = 0; looped = true; snap = true; }
-      let fo = 0;
-      if (playT > TOTAL + HOLD) fo = (playT - TOTAL - HOLD) / FADE;
-      else if (looped && playT < FADE) fo = 1 - playT / FADE;
-      fadeEl.style.opacity = clamp01(fo).toFixed(3);
-      const target = progAt(Math.min(playT, TOTAL));
-      if (snap || reduce) { introProg = target; snap = false; }
-      else introProg += (target - introProg) * (1 - Math.exp(-dt * 5));
-      updateRail();
-      const p = introProg;
-      if (p < ORBIT_END) {
-        const u = p / ORBIT_END, th = Math.PI * 2 * u;
-        camera.position.set(ORBIT_C.x + ORBIT_R * Math.sin(th), 5 + 2.2 * Math.sin(Math.PI * u), ORBIT_C.z + ORBIT_R * Math.cos(th));
-        tmp.copy(ORBIT_C);
-      } else {
-        const q = (p - ORBIT_END) / (1 - ORBIT_END);
-        posPath.getPoint(q, camera.position); lookPath.getPoint(q, tmp);
-      }
-      look.x += (look.tx - look.x) * (1 - Math.exp(-dt * 3));
-      look.y += (look.ty - look.y) * (1 - Math.exp(-dt * 3));
-      if (!reduce) { tmp.x += look.x * .6; tmp.y -= look.y * .35; camera.position.y += Math.sin(t * .8) * .02; }
-      camera.lookAt(tmp);
-      hinge.rotation.y = 1.75 * ease(clamp01(((p - ORBIT_END) / (1 - ORBIT_END) - 0.15) / 0.17));
-    } else {
-      // phone: a slow drift in front of the house
-      const moving = hero3d.playing && !reduce;
-      const th = moving ? 0.35 + Math.sin(t * 0.09) * 0.45 : 0.35;
-      camera.position.set(ORBIT_C.x + 17 * Math.sin(th), 4.2 + (moving ? Math.sin(t * .2) * .3 : 0), ORBIT_C.z + 17 * Math.cos(th));
-      camera.lookAt(ORBIT_C.x, 1.4, ORBIT_C.z + 2);
-      hinge.rotation.y = 0;
-      fadeEl.style.opacity = '0';
-    }
-
-    const fl = reduce ? 1 : 1 + Math.sin(t * 11) * .12 + Math.sin(t * 23.7) * .08 + Math.sin(t * 5.3) * .1;
-    fire.intensity = 2.2 * fl * Math.max(lampMul, .7);
-    flames.forEach((f, i) => { f.scale.y = reduce ? 1 : .8 + Math.abs(Math.sin(t * (6 + i * 1.7) + i)) * .45; });
-    curtains.forEach((c, i) => { c.rotation.x = reduce ? 0 : Math.sin(t * .9 + i * 1.3) * .045 + .02; });
-
-    renderer.render(scene, camera);
-    if (firstFrame) { firstFrame = false; queueAll(); }
-  }
-  requestAnimationFrame(frame);
   window.addEventListener('load', () => { if (hasGsap) ScrollTrigger.refresh(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (hasGsap) ScrollTrigger.refresh(); });
 })();
