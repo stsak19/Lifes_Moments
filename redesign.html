@@ -917,6 +917,25 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .scroll-cue::after { animation: none; }
   .mom { transition: none; }
 }
+
+/* ---------- buttons: a soft colour change on hover ---------- */
+.btn, .icon-btn, .mini, .tab, .seg button, .gtabs button, .lang-btn, .play-btn, .lang-menu button, .gdir {
+  transition: background-color .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease, opacity .35s ease;
+}
+.btn:not(:disabled):hover { filter: none; }
+@media (hover: hover) {
+  /* filled buttons lean toward the text colour: darker on light palettes, lighter on dark ones */
+  .btn:not(:disabled):not(.ghost):not(.light):hover { background: color-mix(in srgb, var(--accent) 84%, var(--ink)); box-shadow: 0 8px 22px -12px var(--shadow); }
+  .btn.ghost:hover { background: var(--ink); color: var(--bg); }
+  .btn.light:hover { background: rgba(6, 10, 18, .58); border-color: rgba(248, 244, 236, .85); }
+  .icon-btn:not(:disabled):hover, .mini:not(:disabled):hover { background: var(--range); border-color: color-mix(in srgb, var(--ink) 35%, var(--line)); }
+  .tab:not([aria-selected="true"]):hover, .gtabs button:not([aria-pressed="true"]):hover { background: var(--range); color: var(--ink); }
+  .seg button:not([aria-pressed="true"]):hover { background: color-mix(in srgb, var(--surface) 70%, transparent); color: var(--ink); }
+  .play-btn:hover { background: rgba(6, 10, 18, .62); border-color: rgba(248, 244, 236, .6); }
+  .gdir:hover { color: var(--accent); }
+  .rev-dots button:hover::before { background: var(--muted); }
+  .rev-dots button[aria-current="true"]:hover::before { background: var(--accent); }
+}
 </style>
 
 <header class="top" id="top">
