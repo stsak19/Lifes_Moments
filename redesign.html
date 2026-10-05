@@ -841,6 +841,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rooms { padding-bottom: calc(64px + var(--sheet-r)); }
 }
 
+/* reviews: one card at a time, sliding on its own */
+.rev-car { overflow: hidden; }
+.rev-track { display: flex; transition: transform .9s cubic-bezier(.65, 0, .25, 1); }
+.rev-track .rev { flex: 0 0 100%; min-height: 220px; display: flex; flex-direction: column; justify-content: center; }
+.rev-track .rev blockquote { font-size: clamp(22px, 2.3vw, 30px); }
+.rev-dots { display: flex; gap: 8px; margin-top: 18px; }
+.rev-dots button { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; }
+.rev-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: width .3s, background-color .3s; }
+.rev-dots button[aria-current="true"]::before { width: 24px; border-radius: 4px; background: var(--accent); }
+@media (max-width: 760px) { .rev-track .rev { min-height: 200px; } }
+
 /* ---------- reveal on scroll ---------- */
 .js-reveal [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
 .js-reveal [data-reveal].in { opacity: 1; transform: none; }
@@ -977,7 +988,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <p class="sb-status" aria-live="polite">
           <span id="uOut" class="sr-only">A room</span>
           <span id="nOut"></span>
-          <span class="sb-fine" data-i18n="bar.fine">Card held, not charged · the host replies within 24 hours · synced with Booking.com</span>
         </p>
 
         <div class="cal-pop" id="calPop" role="dialog" aria-label="Choose your dates" hidden>
@@ -1015,16 +1025,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <div class="tabs" role="tablist" aria-label="Rooms" id="roomTabs"></div>
       </div>
       <div class="gallery" id="gallery" role="tabpanel" aria-labelledby="roomsTitle"></div>
-      <div class="room-meta" data-reveal>
-        <div class="room-text">
-          <h3 id="roomName">A room</h3>
-          <p id="roomLine"></p>
-          <ul class="facts" id="roomFacts"></ul>
-        </div>
-        <div class="room-cta">
-          <button type="button" class="btn" id="bookThis">Book a room</button>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1185,10 +1185,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span data-i18n="score.read">Read them</span> ↗</a>
         </div>
         <!-- Three real reviews from Google go here, once the owner picks them. -->
-        <div class="rev-list">
-          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
-          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
-          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+        <div class="rev-car" id="revCar" data-reveal aria-roledescription="carousel" aria-label="Guest reviews">
+          <div class="rev-track" id="revTrack">
+            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+            <figure class="rev" role="group" aria-roledescription="slide"><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+          </div>
+          <div class="rev-dots" id="revDots"></div>
         </div>
       </div>
     </div>
@@ -1203,8 +1206,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   <div class="wrap foot">
     <div class="foot-brand">
       <span class="brand"><svg class="mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg><span class="brand-txt"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span></span>
-      <p data-i18n="foot.about">Guest rooms and a private apartment on the island of Thasos.</p>
-      <a class="btn" href="#stay" data-i18n="bar.go">Check dates</a>
     </div>
     <div class="foot-col">
       <h4 data-i18n="foot.contact">Contact</h4>
@@ -1820,12 +1821,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   tabsEl.innerHTML = ROOMS.map((r, i) => '<button type="button" class="tab" role="tab" id="tab-' + r.id + '" aria-selected="' + (i === 0) + '" tabindex="' + (i === 0 ? 0 : -1) + '">' + r.tab + '</button>').join('');
   const tabs = $$('.tab', tabsEl);
   function roomText(i) { return ROOMS[i].line; }
-  function roomInfo(i) {
-    $('#roomName').textContent = ROOMS[i].name;
-    $('#roomLine').textContent = roomText(i);
-    $('#roomFacts').innerHTML = ROOMS[i].facts.map((f) => '<li>' + f + '</li>').join('');
-    $('#bookThis').textContent = ROOMS[i].book;
-  }
+  function roomInfo(i) { /* the text block under the gallery was removed; nothing to fill */ }
   function selectRoom(i, focus) {
     roomIdx = i;
     tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === i)); t.tabIndex = j === i ? 0 : -1; });
@@ -1845,10 +1841,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         selectRoom((i + (e.key === 'ArrowRight' ? 1 : ROOMS.length - 1)) % ROOMS.length, true);
       }
     });
-  });
-  $('#bookThis').addEventListener('click', () => {
-    selectUnit(roomIdx); goTo('#stay');
-    if (!(cal.ci && cal.co)) setTimeout(() => openCal($('#ciBtn')), reduce ? 50 : 1100);
   });
   // Real photos of the property. The first one is the big image.
   const PHOTOS = {
@@ -2190,6 +2182,29 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     render();
     if (reduce) setPlaying(false);
     langHooks.push(() => { render(); setPlaying(playing); });
+  })();
+
+  /* ================= reviews slider ================= */
+  (function reviews() {
+    const car = $('#revCar'); if (!car) return;
+    const track = $('#revTrack'), dots = $('#revDots'), n = track.children.length;
+    let i = 0, timer = null, hover = false, onScreen = false;
+    dots.innerHTML = Array.from({ length: n }, (_, k) => '<button type="button" aria-label="' + (k + 1) + ' / ' + n + '"></button>').join('');
+    function go(k) {
+      i = (k + n) % n;
+      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      $$('button', dots).forEach((d, j) => d.setAttribute('aria-current', String(j === i)));
+      clearTimeout(timer);
+      if (!reduce && onScreen && !hover) timer = setTimeout(() => go(i + 1), 5500);
+    }
+    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go($$('button', dots).indexOf(b)); });
+    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; go(i); } });
+    car.addEventListener('pointerleave', () => { hover = false; go(i); });
+    let sx = null;
+    car.addEventListener('pointerdown', (e) => { sx = e.clientX; });
+    car.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(i + (e.clientX < sx ? 1 : -1)); sx = null; });
+    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; go(i); }, { threshold: 0.3 }).observe(car);
+    go(0);
   })();
 
   window.addEventListener('load', () => { if (hasGsap) ScrollTrigger.refresh(); });
