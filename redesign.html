@@ -749,6 +749,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .utrack { --side: max(24px, calc((100vw - 1180px) / 2 + 24px)); display: flex; column-gap: 20px; padding-inline: var(--side); transition: transform .9s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
 .uslide { flex: 0 0 calc((min(100vw, 1180px) - 48px - 40px) / 3); display: flex; flex-direction: column; gap: 14px; padding: 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
 .uslide.is-empty { cursor: default; }
+.ucar { cursor: grab; user-select: none; -webkit-user-select: none; }
+.ucar.dragging { cursor: grabbing; }
+.ucar.dragging .uslide { pointer-events: none; }
+.uimg img { -webkit-user-drag: none; }
+.ubar i { transform-origin: left; }
 .uimg { position: relative; display: block; aspect-ratio: 4 / 3; border-radius: var(--r-img); overflow: hidden; background: var(--deep); }
 .uimg img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
 .uslide:hover .uimg img { transform: scale(1.04); }
@@ -2134,8 +2139,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   })();
 
 
-  /* ================= every unit, sliding on its own =================
-     One list of photos per unit. Rooms 1–11, then the apartment. Leave a list empty until its photos arrive. */
+  /* ================= every unit, gliding by without stopping =================
+     One list of photos per unit. Rooms 1–11, then the apartment. Leave a list empty until its photos arrive.
+     The strip moves at a steady speed and loops forever (the set is drawn three times so the seam never shows).
+     It slows to a stop on hover, can be dragged, and the arrows step one unit at a time. */
   (function unitSlider() {
     const UNIT_PHOTOS = [
       ['photos/room-blue.jpg', 'photos/bathroom.jpg'],
@@ -2144,79 +2151,128 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     ];
     const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg'];
     const units = UNIT_PHOTOS.map((ph, i) => ({ ph: ph, name: () => t('unit.n', { n: i + 1 }) })).concat([{ ph: APT_PHOTOS, apt: true, name: () => t('unit.apt') }]);
-    const car = $('#ucar'), track = $('#utrack');
+    const N = units.length, COPIES = 3;
+    const car = $('#ucar'), track = $('#utrack'), bar = $('#ubar');
     const pad2 = (n) => String(n).padStart(2, '0');
-    function render() {
-      track.innerHTML = units.map((u, i) => {
-        const has = u.ph.length > 0, count = u.ph.length === 1 ? t('unit.photo1') : t('unit.photos', { n: u.ph.length });
-        const inner = '<span class="uimg">' + (has ? '<img src="' + u.ph[0] + '" alt="" loading="lazy">' : '<span class="usoon"><b>' + (u.apt ? 'A' : pad2(i + 1)) + '</b><span>' + t('unit.soon') + '</span></span>') + '</span>' +
-          '<span class="umeta"><b>' + u.name() + '</b><span>' + (has ? count : '') + '</span></span>';
-        return has ? '<button type="button" class="uslide' + (u.apt ? ' is-apt' : '') + '" data-u="' + i + '" role="group" aria-roledescription="slide" aria-label="' + u.name() + '">' + inner + '</button>'
-                   : '<div class="uslide is-empty" role="group" aria-roledescription="slide" aria-label="' + u.name() + '">' + inner + '</div>';
-      }).join('');
-      layout();
+    track.style.transition = 'none';
+
+    function slideHtml(u, i, clone) {
+      const has = u.ph.length > 0, count = u.ph.length === 1 ? t('unit.photo1') : t('unit.photos', { n: u.ph.length });
+      const inner = '<span class="uimg">' + (has ? '<img src="' + u.ph[0] + '" alt="" loading="lazy" draggable="false">' : '<span class="usoon"><b>' + (u.apt ? 'A' : pad2(i + 1)) + '</b><span>' + t('unit.soon') + '</span></span>') + '</span>' +
+        '<span class="umeta"><b>' + u.name() + '</b><span>' + (has ? count : '') + '</span></span>';
+      const hide = clone ? ' aria-hidden="true" tabindex="-1"' : '';
+      return has ? '<button type="button" class="uslide' + (u.apt ? ' is-apt' : '') + '" data-u="' + i + '"' + hide + (clone ? '' : ' role="group" aria-roledescription="slide" aria-label="' + u.name() + '"') + '>' + inner + '</button>'
+                 : '<div class="uslide is-empty"' + (clone ? ' aria-hidden="true"' : ' role="group" aria-roledescription="slide" aria-label="' + u.name() + '"') + '>' + inner + '</div>';
     }
-    let idx = 0, step = 0, maxIdx = 0, playing = !reduce, hover = false, onScreen = false, timer = null, t0 = 0;
-    const DELAY = 3800;
-    function layout() {
+    function render() {
+      let h = '';
+      for (let c = 0; c < COPIES; c++) h += units.map((u, i) => slideHtml(u, i, c > 0)).join('');
+      track.innerHTML = h;
+      measure();
+    }
+
+    // position: offset in px along one set (0 … setW); speed in px per second
+    let step = 0, setW = 0, offset = 0, speed = 0;
+    let playing = !reduce, hover = false, onScreen = false, dragging = null, tween = null, last = 0;
+    const SPEED = () => (window.innerWidth < 760 ? 34 : 46);
+    const wrap = (x) => ((x % setW) + setW) % setW;
+    function measure() {
       const first = track.firstElementChild; if (!first) return;
       const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const k = setW ? offset / setW : 0;
       step = first.getBoundingClientRect().width + gap;
-      const perView = Math.max(1, Math.floor((car.clientWidth - parseFloat(getComputedStyle(track).paddingLeft) + gap + 2) / step));
-      maxIdx = Math.max(0, units.length - perView);
-      go(Math.min(idx, maxIdx), true);
+      setW = step * N;
+      offset = k * setW;
+      draw();
     }
-    function go(i, instant) {
-      idx = i < 0 ? maxIdx : i > maxIdx ? 0 : i;
-      track.style.transition = instant ? 'none' : '';
-      track.style.transform = 'translateX(' + (-idx * step) + 'px)';
-      $('#ucount').textContent = pad2(idx + 1) + ' / ' + pad2(units.length);
-      restart();
+    function draw() {
+      track.style.transform = 'translate3d(' + (-offset).toFixed(2) + 'px,0,0)';
+      const i = Math.floor(wrap(offset + step * 0.5) / step) % N;
+      $('#ucount').textContent = pad2(i + 1) + ' / ' + pad2(N);
+      bar.style.transform = 'scaleX(' + (setW ? wrap(offset) / setW : 0).toFixed(4) + ')';
     }
-    const bar = $('#ubar');
-    function restart() {
-      clearTimeout(timer);
-      bar.style.transition = 'none'; bar.style.transform = 'scaleX(0)';
-      if (!(playing && onScreen && !hover)) return;
-      void bar.offsetWidth;
-      bar.style.transition = 'transform ' + DELAY + 'ms linear'; bar.style.transform = 'scaleX(1)';
-      timer = setTimeout(() => go(idx + 1), DELAY);
+    // move to a target offset with an ease, then carry on gliding
+    function glideTo(target, ms) {
+      tween = { from: offset, to: target, t0: performance.now(), ms: reduce ? 0 : (ms || 700) };
+      speed = 0;
+      kick();
+    }
+    let raf = 0;
+    function frame(now) {
+      raf = 0;
+      const dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
+      if (tween) {
+        const p = tween.ms ? Math.min(1, (now - tween.t0) / tween.ms) : 1, e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        offset = tween.from + (tween.to - tween.from) * e;
+        if (p >= 1) { tween = null; offset = wrap(offset); }
+      } else if (!dragging) {
+        const want = playing && onScreen && !hover ? SPEED() : 0;
+        speed += (want - speed) * Math.min(1, dt * 3);  // ease in and out of the motion
+        if (Math.abs(speed) < 0.5 && want === 0) speed = 0;
+        offset = wrap(offset + speed * dt);
+      }
+      draw();
+      if (tween || dragging || speed !== 0 || (playing && onScreen && !hover)) kick(); else last = 0;
+    }
+    function kick() { if (!raf && setW) raf = requestAnimationFrame(frame); }
+
+    function stepBy(d) {
+      car.classList.remove('show-apt');
+      const base = tween ? tween.to : offset;
+      glideTo((Math.round(base / step) + d) * step);
     }
     function setPlaying(p) {
       playing = p;
       const b = $('#uPlay'); b.dataset.state = p ? 'playing' : 'paused';
       b.setAttribute('aria-label', t(p ? 'u.pause' : 'u.play')); b.dataset.i18nAria = p ? 'u.pause' : 'u.play';
-      restart();
+      kick();
     }
-    // Apartment picked: show it and hold still. Rooms picked: back to room 1 and slide on.
-    window.__unitJump = (apt) => { car.classList.toggle('show-apt', apt); playing = !apt && !reduce; go(apt ? maxIdx : 0); setPlaying(playing); };
-    const free = () => car.classList.remove('show-apt');
-    $('#uPrev').addEventListener('click', () => { free(); go(idx - 1); });
-    $('#uNext').addEventListener('click', () => { free(); go(idx + 1); });
-    $('#uPlay').addEventListener('click', () => setPlaying(!playing));
-    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; restart(); } });
-    car.addEventListener('pointerleave', () => { hover = false; restart(); });
-    car.addEventListener('focusin', () => { hover = true; restart(); });
-    car.addEventListener('focusout', () => { hover = false; restart(); });
-    // swipe
-    let sx = null, sy = null, moved = false;
-    car.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; moved = false; });
-    car.addEventListener('pointerup', (e) => {
-      if (sx === null) return;
-      const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { moved = true; free(); go(idx + (dx < 0 ? 1 : -1)); }
-      sx = null;
+    // Rooms / Apartment switch above: the apartment glides into view and the strip holds still there
+    window.__unitJump = (apt) => {
+      car.classList.toggle('show-apt', apt);
+      const target = apt ? (N - 1) * step : 0;
+      let d = target - wrap(offset); if (d < 0) d += setW;  // always move forward
+      glideTo(offset + d, 900);
+      setPlaying(apt ? false : !reduce);
+    };
+    $('#uPrev').addEventListener('click', () => stepBy(-1));
+    $('#uNext').addEventListener('click', () => stepBy(1));
+    $('#uPlay').addEventListener('click', () => { car.classList.remove('show-apt'); setPlaying(!playing); });
+    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; kick(); } });
+    car.addEventListener('pointerleave', () => { hover = false; kick(); });
+    car.addEventListener('focusin', () => { hover = true; kick(); });
+    car.addEventListener('focusout', () => { hover = false; kick(); });
+    // drag with finger or mouse
+    let moved = false;
+    car.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      dragging = { x: e.clientX, y: e.clientY, o: offset, id: e.pointerId, on: false };
+      moved = false; tween = null; kick();
     });
+    car.addEventListener('pointermove', (e) => {
+      if (!dragging || e.pointerId !== dragging.id) return;
+      const dx = e.clientX - dragging.x, dy = e.clientY - dragging.y;
+      if (!dragging.on) {
+        if (Math.abs(dx) < 6) return;
+        if (Math.abs(dy) > Math.abs(dx)) { dragging = null; return; } // vertical: let the page scroll
+        dragging.on = true; moved = true; car.setPointerCapture(e.pointerId); car.classList.add('dragging');
+        car.classList.remove('show-apt');
+      }
+      offset = wrap(dragging.o - dx); speed = 0;
+    });
+    const endDrag = () => { if (!dragging) return; dragging = null; car.classList.remove('dragging'); kick(); };
+    car.addEventListener('pointerup', endDrag);
+    car.addEventListener('pointercancel', endDrag);
     track.addEventListener('click', (e) => {
-      if (moved) { moved = false; return; }
+      if (moved) { moved = false; e.preventDefault(); return; }
       const b = e.target.closest('.uslide[data-u]'); if (!b) return;
       const u = units[+b.dataset.u]; if (window.__openLb) window.__openLb(0, u.ph, u.name());
     });
-    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; restart(); }, { threshold: 0.3 }).observe(car);
-    document.addEventListener('visibilitychange', () => { onScreen = !document.hidden && onScreen; restart(); });
-    window.addEventListener('resize', layout);
+    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; kick(); }, { threshold: 0.1 }).observe(car);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) onScreen = false; kick(); });
+    window.addEventListener('resize', measure);
     render();
-    if (reduce) setPlaying(false);
+    setPlaying(playing);
     langHooks.push(() => { render(); setPlaying(playing); });
   })();
 
