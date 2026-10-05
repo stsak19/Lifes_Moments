@@ -377,6 +377,15 @@ h1, h2, h3 { text-wrap: balance; }
 .score-num b { font: 400 46px/1 var(--font-display); color: var(--accent); }
 .score-num span { color: var(--muted); font-size: 14px; }
 .score-t { margin: 0 0 4px; font-weight: 500; }
+a.score { color: inherit; text-decoration: none; transition: border-color .2s, background-color .9s; }
+a.score:hover { border-color: var(--muted); }
+.score-num { flex-direction: column; align-items: flex-start; gap: 6px; }
+.score-num .stars { display: inline-flex; gap: 2px; color: #E7A93B; }
+.score-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.map-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 2px 8px; }
+.map-foot b { display: block; font: 400 24px/1.15 var(--font-display); }
+.map-foot > div span { font-size: 14px; color: var(--muted); }
+.map-foot .btn { flex: none; }
 .place-side { display: flex; flex-direction: column; gap: 16px; position: sticky; top: calc(var(--header-h) + 32px); }
 .map { aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: var(--deep); }
 .map iframe { display: block; width: 100%; height: 100%; border: 0; filter: saturate(.55) contrast(.95); }
@@ -684,17 +693,27 @@ h1, h2, h3 { text-wrap: balance; }
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 14V4"/><path d="M4 9a8 8 0 0 1 16 0z"/></svg><span data-i18n="am.beach">Close to the beach</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16.5" cy="8.5" r="2"/><path d="M4 20v-4a4 4 0 0 1 8 0v4"/><path d="M13.5 20v-3a3 3 0 0 1 6 0v3"/></svg><span data-i18n="am.family">Families welcome</span></li>
         </ul>
-        <div class="score">
-          <div class="score-num"><b>[9.x]</b><span>/ 10</span></div>
+        <a class="score" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener">
+          <div class="score-num"><b>5.0</b><span class="stars" aria-label="5 out of 5"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg></span></div>
           <div>
-            <p class="score-t" data-i18n="score.t">Guest rating on Booking.com</p>
-            <p class="fine" data-i18n="score.fine">[number] reviews · real reviews are shown here once the owner shares the listing</p>
+            <p class="score-t" data-i18n="score.t">Rated 5 stars on Google</p>
+            <p class="fine"><span data-i18n="score.fine">180 guest reviews</span> · <span class="score-link" data-i18n="score.read">Read them</span> ↗</p>
           </div>
-        </div>
+        </a>
       </div>
       <aside class="place-side" aria-label="Location">
         <div class="map">
-          <iframe title="Map of Thasos" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=24.48%2C40.55%2C24.84%2C40.82&amp;layer=mapnik"></iframe>
+          <iframe title="Map: Life's Moments near Limenaria, Thasos" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=24.5056%2C40.5978%2C24.5956%2C40.6518&amp;layer=mapnik&amp;marker=40.624813%2C24.550563"></iframe>
+        </div>
+        <div class="map-foot">
+          <div>
+            <b data-i18n="map.where">Limenaria, Thasos</b>
+            <span data-i18n="map.sub">South-west coast of the island</span>
+          </div>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=40.624813%2C24.550563" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>
+            <span data-i18n="map.dir">Directions</span>
+          </a>
         </div>
         <ul class="dist">
           <li><b>[x] min</b><span data-i18n="dist.beach">walk to the nearest beach</span></li>
@@ -750,7 +769,7 @@ h1, h2, h3 { text-wrap: balance; }
     </div>
     <div class="foot-col">
       <h4 data-i18n="foot.contact">Contact</h4>
-      <p data-i18n-html="foot.contactP"><span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Thasos</p>
+      <p data-i18n-html="foot.contactP"><span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Limenaria, Thasos</p>
     </div>
     <div class="foot-col">
       <h4 data-i18n="cal.yours">Your stay</h4>
@@ -861,12 +880,13 @@ h1, h2, h3 { text-wrap: balance; }
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
       'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
       'am.garden': 'Garden and outdoor seating', 'am.fire': 'Fireplace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
-      'score.t': 'Guest rating on Booking.com', 'score.fine': '[number] reviews · real reviews are shown here once the owner shares the listing',
+      'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
+      'map.where': 'Limenaria, Thasos', 'map.sub': 'South-west coast of the island', 'map.dir': 'Directions',
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
       'tour.title': 'Walk through the house', 'tour.fs': 'Full screen', 'tour.hint': 'Drag to look around · pick a spot below', 'tour.fail': 'The 3D view could not load. Refresh the page.',
       'spot.Garden': 'Garden', 'spot.Entrance': 'Entrance', 'spot.Living room': 'Living room', 'spot.Kitchen': 'Kitchen', 'spot.Bedroom': 'Bedroom', 'spot.Pool': 'Pool',
       'foot.about': 'Guest rooms and a private apartment on the island of Thasos.', 'foot.contact': 'Contact', 'foot.reg': 'Registry', 'foot.place': 'Thasos · Greece',
-      'foot.contactP': '<span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Thasos',
+      'foot.contactP': '<span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Limenaria, Thasos',
       'foot.stayP': 'Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece',
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Add your name and a valid email to continue.',
@@ -905,12 +925,13 @@ h1, h2, h3 { text-wrap: balance; }
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
       'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
       'am.garden': 'Κήπος και καθιστικό έξω', 'am.fire': 'Τζάκι', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
-      'score.t': 'Βαθμολογία επισκεπτών στο Booking.com', 'score.fine': '[αριθμός] κριτικές · οι αληθινές κριτικές θα μπουν εδώ μόλις πάρουμε την καταχώριση',
+      'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
+      'map.where': 'Λιμενάρια, Θάσος', 'map.sub': 'Νοτιοδυτική ακτή του νησιού', 'map.dir': 'Οδηγίες',
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
       'tour.title': 'Περιηγηθείτε στο σπίτι', 'tour.fs': 'Πλήρης οθόνη', 'tour.hint': 'Σύρετε για να δείτε γύρω · ή διαλέξτε σημείο από κάτω', 'tour.fail': 'Η 3D προβολή δεν φόρτωσε. Ανανεώστε τη σελίδα.',
       'spot.Garden': 'Κήπος', 'spot.Entrance': 'Είσοδος', 'spot.Living room': 'Σαλόνι', 'spot.Kitchen': 'Κουζίνα', 'spot.Bedroom': 'Υπνοδωμάτιο', 'spot.Pool': 'Πισίνα',
       'foot.about': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί της Θάσου.', 'foot.contact': 'Επικοινωνία', 'foot.reg': 'Μητρώο', 'foot.place': 'Θάσος · Ελλάδα',
-      'foot.contactP': '<span class="todo">[τηλέφωνο]</span><br><span class="todo">[email]</span><br><span class="todo">[διεύθυνση]</span>, Θάσος',
+      'foot.contactP': '<span class="todo">[τηλέφωνο]</span><br><span class="todo">[email]</span><br><span class="todo">[διεύθυνση]</span>, Λιμενάρια, Θάσος',
       'foot.stayP': 'Άφιξη <span class="todo">[ώρα]</span><br>Αναχώρηση <span class="todo">[ώρα]</span><br>Και στο Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[αριθμός]</span><br>Μητρώο Ακινήτων Βραχυχρόνιας Διαμονής',
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα και ένα σωστό email για να συνεχίσετε.',
