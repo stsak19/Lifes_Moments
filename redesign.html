@@ -924,16 +924,12 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 <main>
   <section class="intro" id="intro" aria-label="Life's Moments">
-    <img class="hero-photo" id="heroPhoto" src="photos/terrace-dusk.jpg" srcset="photos/terrace-dusk-960.jpg 960w, photos/terrace-dusk.jpg 1920w" sizes="100vw" alt="The terrace at dusk, with pine trees and the sea below" fetchpriority="high">
-    <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" poster="hero-poster.jpg" aria-label="Drone video flying over the house"></video>
+    <!-- Hero: the 360 video around the building. Swap hero-1600.mp4 / hero-960.mp4 (and hero-poster.jpg) for the real footage. -->
+    <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" poster="hero-poster.jpg" aria-label="360° video around the building"></video>
     <div class="grade"></div>
     <div class="shade"></div>
     <div class="fade" id="fade"></div>
     <div class="hero-ctl">
-      <div class="hero-switch" role="group" aria-label="Hero version">
-        <button type="button" data-heromode="photo" data-i18n="hero.photo">Photo</button>
-        <button type="button" data-heromode="video" data-i18n="hero.drone">Drone video</button>
-      </div>
       <button type="button" class="play-btn" id="playBtn" aria-label="Pause video" data-state="playing">
         <svg class="i-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
         <svg class="i-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg>
@@ -1918,7 +1914,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const hv = $('#heroVideo'), playBtn = $('#playBtn'), introEl = $('#intro');
   hv.muted = true;
   const loadVideo = () => { if (!hv.getAttribute('src')) hv.src = mqMobile.matches ? 'hero-960.mp4' : 'hero-1600.mp4'; }; // only fetched if someone picks the video
-  let heroMode = location.hash === '#hero-video' ? 'video' : 'photo';
+  let heroMode = 'video'; // the hero is always the 360 video of the building
   let wantPlay = !reduce, introOnScreen = true;
   const hero3d = { playing: false, onMode: null }; // filled in by the 3D part
   const isPlaying = () => (heroMode === 'video' ? !hv.paused : hero3d.playing);
