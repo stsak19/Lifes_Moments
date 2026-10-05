@@ -687,6 +687,57 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 /* ---------- footer ---------- */
 .foot-mark { margin: 0 auto; padding: 8px 24px 0; overflow: hidden; text-align: center; font: 400 min(13.4vw, 168px)/.84 var(--font-display); letter-spacing: -.03em; white-space: nowrap; color: var(--ink); opacity: .1; user-select: none; }
 
+/* ---------- Thasos guide ---------- */
+.guide { padding-block: 120px 40px; }
+.guide-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 32px; }
+.guide-lead { margin: 0; max-width: 32ch; color: var(--muted); font-size: 17px; }
+.gtabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
+.gtabs button { min-height: 40px; padding: 0 16px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: transparent; color: var(--muted); font-size: 14px; transition: background-color .2s, color .2s, border-color .2s; }
+.gtabs button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.gcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.gcard { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; background: var(--surface); transition: background-color .9s, border-color .9s, transform .3s ease; }
+.gcard:hover { transform: translateY(-3px); }
+.gart { position: relative; height: 150px; display: grid; place-items: center; color: rgba(255, 255, 255, .92); }
+.gart svg { width: 56px; height: 56px; }
+.gart[data-c="beach"] { background: linear-gradient(160deg, #9FD3E8, #2E7BA6 70%, #1D5378); }
+.gart[data-c="village"] { background: linear-gradient(160deg, #EBC39C, #C0683F 70%, #8A4632); }
+.gart[data-c="sight"] { background: linear-gradient(160deg, #A9C7B4, #4E7C69 70%, #2E5E51); }
+.gart[data-c="taste"] { background: linear-gradient(160deg, #F4D892, #D49A36 70%, #A86E1F); }
+.gart .garea { position: absolute; left: 14px; bottom: 12px; padding: 5px 9px; border-radius: 6px; background: rgba(6, 10, 18, .32); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.gbody { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 20px; flex: 1; }
+.gbody h3 { margin: 0; font: 400 26px/1.1 var(--font-display); }
+.gbody p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.gdir { margin-top: auto; padding-top: 10px; align-self: flex-start; color: var(--accent-2); font-size: 14px; font-weight: 500; text-decoration: none; border-bottom: 1px solid currentColor; }
+@media (max-width: 980px) { .gcards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .guide { padding-block: 72px 24px; }
+  .gtabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  .gtabs button { flex: none; }
+  .gcards { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: -16px; padding: 0 16px 8px; scrollbar-width: none; }
+  .gcard { flex: 0 0 78%; scroll-snap-align: start; }
+}
+
+/* ---------- reviews (bottom of the page) ---------- */
+.reviews { padding-block: 120px 130px; }
+.rev-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.6fr); gap: 56px; margin-top: 40px; align-items: start; }
+.rev-score { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; position: sticky; top: calc(var(--header-h) + 32px); }
+.rev-score .stars { display: inline-flex; gap: 6px; color: #E7A93B; }
+.rev-list { display: grid; gap: 16px; }
+.rev { position: relative; margin: 0; padding: 28px 28px 22px 72px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); transition: background-color .9s, border-color .9s; }
+.rev::before { content: "\201C"; position: absolute; left: 22px; top: 6px; font: 400 76px/1 var(--font-display); color: var(--accent); opacity: .7; }
+.rev blockquote { margin: 0; font: 400 22px/1.4 var(--font-display); color: var(--ink); }
+.rev figcaption { margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: .03em; }
+@media (max-width: 900px) {
+  .rev-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .rev-score { position: static; }
+}
+@media (max-width: 760px) {
+  .reviews { padding-block: 72px 88px; }
+  .rev { padding: 24px 20px 18px 56px; }
+  .rev::before { left: 16px; font-size: 60px; }
+  .rev blockquote { font-size: 19px; }
+}
+
 /* ---------- reveal on scroll ---------- */
 .js-reveal [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
 .js-reveal [data-reveal].in { opacity: 1; transform: none; }
@@ -705,11 +756,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <span class="brand-txt"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span>
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="#stay" data-i18n="nav.stay">Stay</a>
       <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#tour" data-i18n="nav.tour">3D tour</a>
+      <a href="#tour" data-i18n="nav.tour">360° tour</a>
+      <a href="#guide" data-i18n="nav.guide">Guide</a>
     </nav>
     <div class="top-actions">
       <div class="lang" id="lang">
@@ -765,11 +816,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <nav aria-label="Menu">
-      <a href="#stay" data-i18n="nav.stay">Stay</a>
       <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#tour" data-i18n="nav.tour">3D tour</a>
+      <a href="#tour" data-i18n="nav.tour">360° tour</a>
+      <a href="#guide" data-i18n="nav.guide">Guide</a>
     </nav>
     <a class="btn wide" href="#stay" data-i18n="sheet.cta">Check availability</a>
   </div>
@@ -966,7 +1017,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg><span data-i18n="am.parking">Free parking</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 7c0-1 1-1 1-2"/><path d="M12 7c0-1 1-1 1-2"/><path d="M16 7c0-1 1-1 1-2"/></svg><span data-i18n="am.kitchen">Kitchen in the apartment</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6z"/><path d="M12 13c4 0 6-3 6-6-3 0-6 2-6 6z"/><path d="M5 21h14"/></svg><span data-i18n="am.garden">Garden and outdoor seating</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-4 0-6-2.5-6-6 0-4 4-6 4-10 2 1 4 3.5 4 6 1-1 1.5-2 1.5-3 2 2 2.5 4.5 2.5 7 0 3.5-2 6-6 6z"/></svg><span data-i18n="am.fire">Fireplace</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 14V4"/><path d="M4 9a8 8 0 0 1 16 0z"/></svg><span data-i18n="am.beach">Close to the beach</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16.5" cy="8.5" r="2"/><path d="M4 20v-4a4 4 0 0 1 8 0v4"/><path d="M13.5 20v-3a3 3 0 0 1 6 0v3"/></svg><span data-i18n="am.family">Families welcome</span></li>
         </ul>
@@ -994,18 +1044,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
   </section>
 
-  <section class="rate" aria-label="Guest rating">
-    <div class="wrap rate-in" data-reveal>
-      <span class="rate-rule" aria-hidden="true"></span>
-      <p class="eyebrow" data-i18n="rate.eyebrow">Guest rating</p>
-      <p class="rate-num" data-i18n="rate.num">5.0</p>
-      <span class="stars" aria-label="5 out of 5"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg></span>
-      <p class="rate-t" data-i18n="score.t">Rated 5 stars on Google</p>
-      <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span data-i18n="score.read">Read them</span> ↗</a>
-      <!-- Room for one real guest quote here, once the owner picks one. -->
-    </div>
-  </section>
-
   <section class="tour" id="tour" aria-labelledby="tourTitle">
     <div class="wrap">
       <div class="tour-head" data-reveal>
@@ -1024,26 +1062,47 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>
             <span data-i18n="tour.enter">Step inside</span>
           </button>
-          <p id="tourCoverNote" data-i18n="tour.coverNote">Demo house · drag to look around</p>
+          <p id="tourCoverNote" data-i18n="tour.coverNote">Demo house for now · the real 360° photos go here</p>
         </div>
       </div>
       <div class="spots" id="spots" role="group" aria-label="Move to"></div>
     </div>
   </section>
 
-  <!-- Thasos guide: hidden until the texts and photos are ready. Remove "hidden" to show it. -->
-  <section class="guide" id="guide" aria-labelledby="guideTitle" hidden>
+  <!-- Thasos guide. Places and texts live in GUIDE in the script; photos can replace the drawn headers later. -->
+  <section class="guide" id="guide" aria-labelledby="guideTitle">
     <div class="wrap">
-      <div class="sec-head">
+      <div class="guide-head" data-reveal>
         <div>
-          <p class="eyebrow">Coming next</p>
-          <h2 id="guideTitle">Thasos guide</h2>
+          <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="nav.guide">Guide</span></p>
+          <h2 class="sec-title" id="guideTitle" data-i18n-html="guide.title">Thasos <em>around you</em></h2>
         </div>
+        <p class="guide-lead" data-i18n="guide.lead">Beaches, villages and places worth the drive.</p>
       </div>
-      <div class="cards">
-        <article class="card"><div class="art" aria-hidden="true">B</div><h3>Beaches <span>Soon</span></h3><p>Where to swim, from busy bays to quiet coves.</p></article>
-        <article class="card"><div class="art" aria-hidden="true">V</div><h3>Villages <span>Soon</span></h3><p>Mountain villages and the old capital.</p></article>
-        <article class="card"><div class="art" aria-hidden="true">F</div><h3>Food &amp; drink <span>Soon</span></h3><p>Tavernas, honey, olive oil and where to buy them.</p></article>
+      <div class="gtabs" id="gTabs" role="group" aria-label="Guide categories"></div>
+      <div class="gcards" id="gCards"></div>
+    </div>
+  </section>
+
+  <section class="reviews" id="reviews" aria-labelledby="revTitle">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="eyebrow sec-eyebrow"><span class="num">06</span><span data-i18n="rev.eyebrow">Reviews</span></p>
+        <h2 class="sec-title" id="revTitle" data-i18n-html="rev.title">What guests <em>say</em></h2>
+      </div>
+      <div class="rev-grid">
+        <div class="rev-score" data-reveal>
+          <p class="rate-num" data-i18n="rate.num">5.0</p>
+          <span class="stars" aria-label="5 out of 5"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg></span>
+          <p class="rate-t" data-i18n="score.t">Rated 5 stars on Google</p>
+          <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span data-i18n="score.read">Read them</span> ↗</a>
+        </div>
+        <!-- Three real reviews from Google go here, once the owner picks them. -->
+        <div class="rev-list">
+          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+          <figure class="rev" data-reveal><blockquote data-i18n="rev.ph">[A guest review from Google, picked by the owner]</blockquote><figcaption><span class="todo" data-i18n="rev.name">[Name]</span> · <span class="todo" data-i18n="rev.when">[Month, year]</span> · Google</figcaption></figure>
+        </div>
       </div>
     </div>
   </section>
@@ -1146,7 +1205,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const I18N = {
     en: {
       'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
-      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '3D tour', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
+      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
       'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Guest rooms and a private apartment on the island.',
       'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
       'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
@@ -1166,14 +1225,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'tab.room': 'Rooms', 'tab.apt': 'The Apartment', 'name.room': 'A room', 'name.apt': 'The Apartment',
       'book.room': 'Book a room', 'book.apt': 'Book the apartment',
       'line.room': 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
-      'line.apt': 'A separate apartment right next to the main house, with its own kitchen, living room and fireplace.',
+      'line.apt': 'A separate apartment right next to the main house, with its own kitchen and living room.',
       'facts.room': ['4 rooms in the main house', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
-      'facts.apt': ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Living room with fireplace'],
+      'facts.apt': ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
       'ph.label': '{name}, photo {i} of 3', 'ph.open': 'Open {x}', 'ph.wait': 'Rendering…', 'ph.n': 'Photo {i}',
       'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
       'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
-      'am.garden': 'Garden and outdoor seating', 'am.fire': 'Fireplace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
+      'am.garden': 'Garden and outdoor seating', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
       'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
       'map.where': 'Limenaria, Thasos', 'map.sub': 'South-west coast of the island', 'map.dir': 'Directions',
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
@@ -1196,11 +1255,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Quiet nights', 'mom.4d': 'Stars over the garden and no alarm in the morning.',
       'mom.l': ['Morning', 'Midday', 'Golden hour', 'Night'], 'mom.nowL': 'On Thasos now', 'mom.note': 'Illustration. Photos of each moment will replace it.',
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
-      'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house · drag to look around'
+      'nav.guide': 'Guide', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
+      'g.all': 'All', 'g.beach': 'Beaches', 'g.village': 'Villages', 'g.sight': 'Sights', 'g.taste': 'Taste',
+      'rev.eyebrow': 'Reviews', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
+      'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
     },
     el: {
       'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
-      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': '3D περιήγηση', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
+      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
       'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί.',
       'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
       'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
@@ -1220,14 +1282,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'tab.room': 'Δωμάτια', 'tab.apt': 'Το διαμέρισμα', 'name.room': 'Δωμάτιο', 'name.apt': 'Το διαμέρισμα',
       'book.room': 'Κράτηση δωματίου', 'book.apt': 'Κράτηση διαμερίσματος',
       'line.room': 'Ένα από τα δωμάτια του κεντρικού σπιτιού. Εσείς διαλέγετε ημερομηνίες και ο οικοδεσπότης σάς δίνει ένα ελεύθερο δωμάτιο.',
-      'line.apt': 'Ανεξάρτητο διαμέρισμα ακριβώς δίπλα στο κεντρικό σπίτι, με δική του κουζίνα, σαλόνι και τζάκι.',
+      'line.apt': 'Ανεξάρτητο διαμέρισμα ακριβώς δίπλα στο κεντρικό σπίτι, με δική του κουζίνα και σαλόνι.',
       'facts.room': ['4 δωμάτια στο κεντρικό σπίτι', 'Έως 3 άτομα', '[κρεβάτια]', 'Το δωμάτιο το ορίζει ο οικοδεσπότης'],
-      'facts.apt': ['Ολόκληρο το διαμέρισμα', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Σαλόνι με τζάκι'],
+      'facts.apt': ['Ολόκληρο το διαμέρισμα', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Δικό του σαλόνι'],
       'ph.label': '{name}, φωτογραφία {i} από 3', 'ph.open': 'Άνοιγμα: {x}', 'ph.wait': 'Φόρτωση…', 'ph.n': 'Φωτογραφία {i}',
       'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
       'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
-      'am.garden': 'Κήπος και καθιστικό έξω', 'am.fire': 'Τζάκι', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
+      'am.garden': 'Κήπος και καθιστικό έξω', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
       'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
       'map.where': 'Λιμενάρια, Θάσος', 'map.sub': 'Νοτιοδυτική ακτή του νησιού', 'map.dir': 'Οδηγίες',
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
@@ -1250,7 +1312,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Ήσυχα βράδια', 'mom.4d': 'Αστέρια πάνω από τον κήπο και πρωινό χωρίς ξυπνητήρι.',
       'mom.l': ['Πρωί', 'Μεσημέρι', 'Δειλινό', 'Νύχτα'], 'mom.nowL': 'Τώρα στη Θάσο', 'mom.note': 'Εικονογράφηση. Θα μπουν φωτογραφίες για κάθε στιγμή.',
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
-      'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Δοκιμαστικό σπίτι · σύρετε για να κοιτάξετε γύρω'
+      'nav.guide': 'Οδηγός', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
+      'g.all': 'Όλα', 'g.beach': 'Παραλίες', 'g.village': 'Χωριά', 'g.sight': 'Αξιοθέατα', 'g.taste': 'Γεύσεις',
+      'rev.eyebrow': 'Κριτικές', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
+      'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Προς το παρόν δοκιμαστικό σπίτι · εδώ μπαίνουν οι φωτογραφίες 360°'
     }
   };
   const LOCALE = { en: 'en-GB', el: 'el-GR' };
@@ -1401,8 +1466,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       line: 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
       shots: [[[1.6, 1.6, -6.8], [-3.7, 0.6, -8.1]], [[-2.1, 1.2, -6.5], [-4.5, 0.8, -6.75]], [[-1.2, 1.6, -6.6], [2, 1.5, -9.8]]] },
     { id: 'apt', kind: 'Next door', name: 'The Apartment', tab: 'The Apartment', book: 'Book the apartment', subs: [4], guests: 5, beds: 'own kitchen',
-      facts: ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Living room with fireplace'],
-      line: 'A separate apartment right next to the main house, with its own kitchen, living room and fireplace.',
+      facts: ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
+      line: 'A separate apartment right next to the main house, with its own kitchen and living room.',
       shots: [[[2.6, 1.65, -0.8], [-3, 0.9, -4.4]], [[0.9, 1.7, -0.9], [3.0, 0.8, -2.6]], [[-1.4, 1.35, -2.0], [-2.6, 0.6, -5.6]]] }
   ];
   // Names, tabs, button labels, descriptions and facts come from the dictionary, so they follow the language.
@@ -1843,6 +1908,62 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     tickNow(); setInterval(tickNow, 30000);
   })();
 
+  /* ================= Thasos guide =================
+     To add a place: copy a line. cat is beach / village / sight / taste. q is what Google Maps searches for (leave it out for no Directions link). */
+  (function guide() {
+    const GUIDE = [
+      { cat: 'beach', q: 'Metalia beach Limenaria Thasos', area: ['Limenaria', 'Λιμενάρια'], name: ['Metalia', 'Μεταλλεία'],
+        line: ['Pebbles and flat rocks below the Palataki. Quiet, with a small beach bar and a passage through the rocks to hidden coves.', 'Βότσαλο και πλάκες κάτω από το Παλατάκι. Ήσυχη, με ένα μικρό beach bar και ένα πέρασμα στα βράχια προς κρυφούς κολπίσκους.'] },
+      { cat: 'beach', q: 'Pefkari beach Thasos', area: ['Next to Limenaria', 'Δίπλα στα Λιμενάρια'], name: ['Pefkari', 'Πευκάρι'],
+        line: ['Pine trees almost down to the water, just next door.', 'Πεύκα σχεδόν ως το νερό, ακριβώς δίπλα.'] },
+      { cat: 'beach', q: 'Giola Thasos', area: ['South coast', 'Νότια ακτή'], name: ['Giola', 'Γκιόλα'],
+        line: ['A natural pool in the rocks, right by the open sea.', 'Φυσική πισίνα μέσα στα βράχια, δίπλα στο ανοιχτό πέλαγος.'] },
+      { cat: 'beach', q: 'Alyki beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Alyki', 'Αλυκή'],
+        line: ['Two small bays next to an ancient marble quarry.', 'Δύο μικροί κόλποι δίπλα σε ένα αρχαίο λατομείο μαρμάρου.'] },
+      { cat: 'beach', q: 'Psili Ammos beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Psili Ammos', 'Ψιλή Άμμος'],
+        line: ['A long beach with fine sand and clear water.', 'Μεγάλη παραλία με ψιλή άμμο και καθαρά νερά.'] },
+      { cat: 'village', q: 'Kastro Thasos', area: ['Above Limenaria', 'Πάνω από τα Λιμενάρια'], name: ['Kastro', 'Κάστρο'],
+        line: ['A stone village up in the hills, reached by road from Limenaria. Restored houses and complete quiet.', 'Πέτρινο χωριό ψηλά στο βουνό, με δρόμο από τα Λιμενάρια. Αναπαλαιωμένα σπίτια και απόλυτη ησυχία.'] },
+      { cat: 'village', q: 'Theologos Thasos', area: ['Inland', 'Ενδοχώρα'], name: ['Theologos', 'Θεολόγος'],
+        line: ['The island\'s capital in Ottoman times. Stone houses and cobbled lanes.', 'Η πρωτεύουσα του νησιού στα χρόνια της Τουρκοκρατίας. Πέτρινα σπίτια και καλντερίμια.'] },
+      { cat: 'village', q: 'Maries Thasos', area: ['Inland', 'Ενδοχώρα'], name: ['Maries', 'Μαριές'],
+        line: ['A mountain village known for its bees and honey.', 'Ορεινό χωριό γνωστό για τα μελίσσια και το μέλι του.'] },
+      { cat: 'sight', q: 'Palataki Limenaria Thasos', area: ['Limenaria', 'Λιμενάρια'], name: ['The Palataki', 'Το Παλατάκι'],
+        line: ['Built in 1903 for a German mining company. Pine trees, benches and a wide view of the sea.', 'Χτίστηκε το 1903 για μια γερμανική εταιρεία μεταλλείων. Πεύκα, παγκάκια και ανοιχτή θέα στη θάλασσα.'] },
+      { cat: 'sight', q: 'Archangel Michael Monastery Thasos', area: ['South coast', 'Νότια ακτή'], name: ['Archangel Michael', 'Αρχάγγελος Μιχαήλ'],
+        line: ['A monastery on the cliffs, high above the sea.', 'Μοναστήρι πάνω στα βράχια, ψηλά πάνω από τη θάλασσα.'] },
+      { cat: 'sight', q: 'Ancient Agora Thasos Limenas', area: ['Limenas', 'Λιμένας'], name: ['Ancient Thasos', 'Αρχαία Θάσος'],
+        line: ['The ancient agora, the theatre and the old city walls, in the island\'s main port.', 'Η αρχαία αγορά, το θέατρο και τα τείχη της πόλης, στο κεντρικό λιμάνι του νησιού.'] },
+      { cat: 'taste', area: ['Villages', 'Χωριά'], name: ['Pine honey', 'Πευκόμελο'],
+        line: ['The island\'s best-known honey. Buy it straight from local beekeepers.', 'Το πιο γνωστό μέλι του νησιού. Πάρτε το κατευθείαν από ντόπιους μελισσοκόμους.'] },
+      { cat: 'taste', area: ['Villages', 'Χωριά'], name: ['Olives & spoon sweets', 'Ελιές & γλυκά του κουταλιού'],
+        line: ['Thasian olives, and walnut spoon sweet at the village cafés.', 'Θασίτικη ελιά και γλυκό καρυδάκι στα καφενεία των χωριών.'] }
+    ];
+    const ICON = {
+      beach: '<path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M3 21c2 0 2-1.2 4.5-1.2S9.5 21 12 21s2.5-1.2 4.5-1.2S19 21 21 21"/><circle cx="12" cy="10" r="4"/><path d="M12 2.5v1.5M4.8 5.8l1 1M19.2 5.8l-1 1"/>',
+      village: '<path d="M3 21h18"/><path d="M5 21V11l5-4 5 4v10"/><path d="M15 21v-7l3-2.5 3 2.5v7"/><path d="M8.5 21v-4h3v4"/><path d="M8 12.5h1M11 12.5h1"/>',
+      sight: '<path d="M4 21h16"/><path d="M5 18h14"/><path d="M6 18V9M10 18V9M14 18V9M18 18V9"/><path d="M4 9h16L12 4z"/>',
+      taste: '<path d="M7 8h10v9a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4z"/><path d="M6 8h12"/><path d="M9 5h6v3H9z"/><path d="M12 12c0 1.5-1.5 2-1.5 3.2a1.5 1.5 0 0 0 3 0C13.5 14 12 13.5 12 12z"/>'
+    };
+    const CATS = ['all', 'beach', 'village', 'sight', 'taste'];
+    let cat = 'all';
+    const tabsEl = $('#gTabs'), cardsEl = $('#gCards');
+    const L = () => (lang === 'el' ? 1 : 0);
+    const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    function render() {
+      tabsEl.innerHTML = CATS.map((c) => '<button type="button" data-c="' + c + '" aria-pressed="' + (c === cat) + '">' + t('g.' + c) + '</button>').join('');
+      cardsEl.innerHTML = GUIDE.filter((g) => cat === 'all' || g.cat === cat).map((g) =>
+        '<article class="gcard"><div class="gart" data-c="' + g.cat + '" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">' + ICON[g.cat] + '</svg>' +
+        '<span class="garea">' + esc(g.area[L()]) + '</span></div><div class="gbody"><h3>' + esc(g.name[L()]) + '</h3><p>' + esc(g.line[L()]) + '</p>' +
+        (g.q ? '<a class="gdir" href="https://www.google.com/maps/search/?api=1&amp;query=' + encodeURIComponent(g.q) + '" target="_blank" rel="noopener">' + t('guide.dir') + ' ↗</a>' : '') +
+        '</div></article>').join('');
+      cardsEl.scrollLeft = 0;
+    }
+    tabsEl.addEventListener('click', (e) => { const b = e.target.closest('button[data-c]'); if (b) { cat = b.dataset.c; render(); } });
+    render();
+    langHooks.push(render);
+  })();
+
   /* ================= tour cover ================= */
   (function tourCover() {
     const cover = $('#tourCover'); if (!cover) return;
@@ -2135,12 +2256,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   box(.75, .06, 1.25, MAT.darkWood, -2.85, .38, -3.1);
   [[-.3, -.55], [.3, -.55], [-.3, .55], [.3, .55]].forEach((p) => box(.06, .38, .06, MAT.darkWood, -2.85 + p[0], 0, -3.1 + p[1]));
   box(.18, .12, .18, MAT.pot, -2.75, .44, -3.3);
-  box(1.5, 1.0, .5, MAT.plaster, -2.6, 0, -5.64); box(.85, .6, .05, MAT.black, -2.6, .18, -5.38);
-  box(1.15, H - 1.0, .4, MAT.plaster, -2.6, 1.0, -5.69); box(1.7, .08, .62, MAT.darkWood, -2.6, 1.0, -5.6);
+  // sideboard with a plant and a picture above it (no fireplace: this is a summer house)
+  box(1.7, .72, .45, MAT.wood, -2.6, 0, -5.62); box(.22, .26, .22, MAT.pot, -2.05, .72, -5.6); box(.3, .06, .2, MAT.darkWood, -3.0, .72, -5.6);
+  box(1.1, .75, .04, MAT.darkWood, -2.6, 1.35, -5.86);
   const flames = [];
-  for (let i = 0; i < 5; i++) { const f = new THREE.Mesh(new THREE.ConeGeometry(rnd(.07, .12), rnd(.25, .4), 6), i % 2 ? MAT.flame : MAT.flame2); f.position.set(-2.6 + (i - 2) * .12, .35, -5.32); scene.add(f); flames.push(f); }
-  box(.6, .08, .12, MAT.darkWood, -2.6, .18, -5.33);
-  const fire = new THREE.PointLight(0xff8a3a, 2.2, 7, 2); fire.position.set(-2.6, .6, -4.9); scene.add(fire);
+  const fire = { intensity: 0 };
   box(.95, .06, 1.8, MAT.wood, 3.0, .74, -2.6);
   [[-.4, -.8], [.4, -.8], [-.4, .8], [.4, .8]].forEach((p) => box(.07, .74, .07, MAT.wood, 3.0 + p[0], 0, -2.6 + p[1]));
   [[2.25, -2.1], [2.25, -3.1], [3.75, -2.1], [3.75, -3.1]].forEach((p) => {
