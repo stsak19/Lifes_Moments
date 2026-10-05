@@ -811,6 +811,36 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rev blockquote { font-size: 19px; }
 }
 
+/* ---------- sections as stacked sheets: each one its own tone, rising over the one before ---------- */
+:root { --sec-a: #EAEEF0; --sec-b: #FBF5F0; --sheet-r: 40px; }
+.rooms { background: var(--bg); }
+.moments, .place, .units, .guide, .reviews, .foot-wrap {
+  position: relative; margin-top: calc(var(--sheet-r) * -1); border-radius: var(--sheet-r) var(--sheet-r) 0 0;
+  box-shadow: 0 -1px 0 var(--line), 0 -18px 40px -28px var(--shadow);
+  transition: background-color .6s ease;
+}
+.moments { background: var(--sec-a); }
+.place { background: var(--sec-b); }
+.units { background: var(--sec-a); }
+.guide { background: var(--bg); padding-bottom: 110px; }
+.reviews { background: var(--sec-b); }
+.foot-wrap { background: var(--deep); border-top: 0; }
+/* keep the top padding the same once the sheet overlap is counted */
+.moments { padding-top: calc(110px + var(--sheet-r)); }
+.place, .units, .guide, .reviews { padding-top: calc(110px + var(--sheet-r)); }
+.foot-wrap .foot { padding-top: calc(64px + var(--sheet-r) / 2); }
+/* a small handle at the top edge of each sheet */
+.moments::before, .place::before, .units::before, .guide::before, .reviews::before {
+  content: ""; position: absolute; top: 14px; left: 50%; width: 44px; height: 4px; border-radius: 4px; transform: translateX(-50%);
+  background: var(--accent-2); opacity: .28;
+}
+.rooms { padding-bottom: calc(96px + var(--sheet-r)); }
+@media (max-width: 760px) {
+  :root { --sheet-r: 26px; }
+  .moments, .place, .units, .guide, .reviews { padding-top: calc(64px + var(--sheet-r)); }
+  .rooms { padding-bottom: calc(64px + var(--sheet-r)); }
+}
+
 /* ---------- reveal on scroll ---------- */
 .js-reveal [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
 .js-reveal [data-reveal].in { opacity: 1; transform: none; }
@@ -1516,6 +1546,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       '--line': mixH(p.bg, p.ink, .14), '--range': mixH(p.bg, p.accent2, .13), '--nav': rgba(p.bg, .92), '--shadow': rgba(p.ink, .13)
     };
     v['--accent'] = p.accent; v['--accent-2'] = p.accent2;
+    // two extra section tones, so neighbouring sections never share a background
+    v['--sec-a'] = dark ? mixH(p.bg, p.ink, .05) : mixH(p.bg, p.accent2, .085);
+    v['--sec-b'] = dark ? mixH(p.bg, p.accent2, .09) : mixH(mixH(p.bg, '#FFFFFF', .5), p.accent, .05);
     v['--accent-ink'] = contrastH('#FFFFFF', p.accent) >= 4.5 ? '#FFFFFF' : (dark ? p.bg : '#111111');
     Object.keys(v).forEach((k) => st.setProperty(k, v[k]));
     st.setProperty('color-scheme', dark ? 'dark' : 'light');
