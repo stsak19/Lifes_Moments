@@ -841,16 +841,28 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rooms { padding-bottom: calc(64px + var(--sheet-r)); }
 }
 
-/* reviews: one card at a time, sliding on its own */
-.rev-car { overflow: hidden; }
-.rev-track { display: flex; transition: transform .9s cubic-bezier(.65, 0, .25, 1); }
-.rev-track .rev { flex: 0 0 100%; min-height: 220px; display: flex; flex-direction: column; justify-content: center; }
+/* reviews: a deck of cards. The front card flies off to the left, the next one comes forward. */
+.rev-car { position: relative; padding: 0 40px 34px 0; }
+.rev-track { display: grid; }
+.rev-track .rev { grid-area: 1 / 1; min-height: 230px; display: flex; flex-direction: column; justify-content: center;
+  transform-origin: 30% 100%; box-shadow: 0 24px 50px -30px var(--shadow);
+  transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .9s ease, filter .9s ease; }
 .rev-track .rev blockquote { font-size: clamp(22px, 2.3vw, 30px); }
-.rev-dots { display: flex; gap: 8px; margin-top: 18px; }
+.rev-track .rev[data-pos="0"] { z-index: 3; transform: none; opacity: 1; }
+.rev-track .rev[data-pos="1"] { z-index: 2; transform: translate(20px, 16px) scale(.96); opacity: .75; filter: saturate(.6); }
+.rev-track .rev[data-pos="2"] { z-index: 1; transform: translate(40px, 32px) scale(.92); opacity: .45; filter: saturate(.4); }
+.rev-track .rev[data-pos="out"] { z-index: 4; transform: translate(-70%, -14px) rotate(-7deg); opacity: 0; }
+.rev-track .rev.no-anim { transition: none; }
+.rev-track .rev:not([data-pos="0"]) { pointer-events: none; }
+.rev-track .rev[data-pos="0"] blockquote, .rev-track .rev[data-pos="0"] figcaption { animation: qin .9s .3s cubic-bezier(.2, .8, .2, 1) both; }
+.rev-track .rev[data-pos="0"] figcaption { animation-delay: .5s; }
+@keyframes qin { from { opacity: 0; transform: translateY(14px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+.rev-dots { display: flex; gap: 8px; margin-top: 4px; }
 .rev-dots button { width: 28px; height: 28px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; }
 .rev-dots button::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: width .3s, background-color .3s; }
 .rev-dots button[aria-current="true"]::before { width: 24px; border-radius: 4px; background: var(--accent); }
-@media (max-width: 760px) { .rev-track .rev { min-height: 200px; } }
+@media (max-width: 760px) { .rev-car { padding: 0 24px 24px 0; } .rev-track .rev { min-height: 210px; } .rev-track .rev[data-pos="1"] { transform: translate(12px, 12px) scale(.96); } .rev-track .rev[data-pos="2"] { transform: translate(24px, 24px) scale(.92); } }
+@media (prefers-reduced-motion: reduce) { .rev-track .rev, .rev-track .rev blockquote, .rev-track .rev figcaption { transition: none; animation: none; } }
 
 /* ---------- reveal on scroll ---------- */
 .js-reveal [data-reveal] { opacity: 0; transform: translateY(26px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
@@ -2184,26 +2196,35 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     langHooks.push(() => { render(); setPlaying(playing); });
   })();
 
-  /* ================= reviews slider ================= */
+  /* ================= reviews: card deck ================= */
   (function reviews() {
     const car = $('#revCar'); if (!car) return;
-    const track = $('#revTrack'), dots = $('#revDots'), n = track.children.length;
-    let i = 0, timer = null, hover = false, onScreen = false;
-    dots.innerHTML = Array.from({ length: n }, (_, k) => '<button type="button" aria-label="' + (k + 1) + ' / ' + n + '"></button>').join('');
+    const cards = Array.from($('#revTrack').children), dots = $('#revDots'), n = cards.length;
+    let i = 0, timer = null, hover = false, onScreen = false, first = true;
+    dots.innerHTML = cards.map((_, k) => '<button type="button" aria-label="' + (k + 1) + ' / ' + n + '"></button>').join('');
     function go(k) {
-      i = (k + n) % n;
-      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      const prev = i;
+      i = ((k % n) + n) % n;
+      cards.forEach((c, j) => {
+        const pos = (j - i + n) % n;
+        if (!first && j === prev && j !== i) {
+          c.dataset.pos = 'out'; // fly off, then slip quietly to the back of the deck
+          setTimeout(() => { if (c.dataset.pos !== 'out') return; c.classList.add('no-anim'); c.dataset.pos = String((j - i + n) % n); void c.offsetWidth; c.classList.remove('no-anim'); }, reduce ? 0 : 900);
+        } else c.dataset.pos = pos < 3 ? String(pos) : '2';
+        c.setAttribute('aria-hidden', String(j !== i));
+      });
+      first = false;
       $$('button', dots).forEach((d, j) => d.setAttribute('aria-current', String(j === i)));
-      clearTimeout(timer);
-      if (!reduce && onScreen && !hover) timer = setTimeout(() => go(i + 1), 5500);
+      schedule();
     }
-    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go($$('button', dots).indexOf(b)); });
-    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; go(i); } });
-    car.addEventListener('pointerleave', () => { hover = false; go(i); });
+    function schedule() { clearTimeout(timer); if (!reduce && onScreen && !hover) timer = setTimeout(() => go(i + 1), 5500); }
+    dots.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { const k = $$('button', dots).indexOf(b); if (k !== i) go(k); } });
+    car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; schedule(); } });
+    car.addEventListener('pointerleave', () => { hover = false; schedule(); });
     let sx = null;
     car.addEventListener('pointerdown', (e) => { sx = e.clientX; });
     car.addEventListener('pointerup', (e) => { if (sx !== null && Math.abs(e.clientX - sx) > 40) go(i + (e.clientX < sx ? 1 : -1)); sx = null; });
-    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; go(i); }, { threshold: 0.3 }).observe(car);
+    new IntersectionObserver((en) => { onScreen = en[0].isIntersecting; schedule(); }, { threshold: 0.3 }).observe(car);
     go(0);
   })();
 
