@@ -109,6 +109,32 @@ h1, h2, h3 { text-wrap: balance; }
 .top:not(.solid) .book-btn { background: rgba(248, 244, 236, .14); color: var(--cap-ink); border-color: rgba(248, 244, 236, .5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .top:not(.solid) .book-btn:hover { background: var(--cap-ink); color: #0A1220; }
 .menu-btn { display: none; border: 0; color: var(--top-ink); }
+/* language picker */
+.lang { position: relative; }
+.lang-btn {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 12px 0 13px;
+  border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--top-ink);
+  font: 500 12.5px/1 var(--font-body); letter-spacing: .1em; transition: background-color .25s, border-color .25s;
+}
+.top:not(.solid) .lang-btn { border-color: rgba(248, 244, 236, .35); }
+.lang-btn:hover { background: rgba(127, 127, 127, .14); }
+.lang-btn .chev { opacity: .7; transition: transform .25s; }
+.lang-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.lang-menu {
+  position: absolute; right: 0; top: calc(100% + 8px); min-width: 180px; padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink);
+  box-shadow: 0 20px 50px -12px var(--shadow), 0 2px 6px var(--shadow); animation: pop .18s ease;
+}
+.lang-menu button {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 42px; padding: 0 12px;
+  border: 0; border-radius: 10px; background: transparent; color: var(--ink); font-size: 14px; text-align: left;
+}
+.lang-menu button:hover { background: var(--range); }
+.lang-menu button i { font-style: normal; font-size: 11px; letter-spacing: .1em; color: var(--muted); }
+.lang-menu button[aria-checked="true"] { font-weight: 600; }
+.lang-menu button[aria-checked="true"] i { color: var(--accent); }
+@media (max-width: 760px) { .lang-btn { min-height: 40px; padding: 0 10px; } .lang-btn .chev { display: none; } }
 @media (max-width: 1100px) {
   .top-in { grid-template-columns: 1fr auto; }
   .nav { display: none; }
@@ -453,17 +479,28 @@ h1, h2, h3 { text-wrap: balance; }
   <div class="top-in">
     <a class="brand" href="#intro">
       <span class="brand-name">Life's Moments</span>
-      <span class="brand-sub">Thasos</span>
+      <span class="brand-sub" data-i18n="brand.sub">Thasos</span>
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="#stay">Stay</a>
-      <a href="#rooms">Rooms</a>
-      <a href="#place">The place</a>
-      <a href="#tour">3D tour</a>
+      <a href="#stay" data-i18n="nav.stay">Stay</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
+      <a href="#place" data-i18n="nav.place">The place</a>
+      <a href="#tour" data-i18n="nav.tour">3D tour</a>
     </nav>
     <div class="top-actions">
-      <a class="btn book-btn" href="#stay">Book now</a>
-      <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <div class="lang" id="lang">
+        <button type="button" class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu" data-i18n-aria="lang.label" aria-label="Language">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+          <span id="langCur">EN</span>
+          <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6l6-6"/></svg>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu" hidden>
+          <button type="button" role="menuitemradio" data-lang="en" aria-checked="true"><span>English</span><i>EN</i></button>
+          <button type="button" role="menuitemradio" data-lang="el" aria-checked="false"><span>Ελληνικά</span><i>ΕΛ</i></button>
+        </div>
+      </div>
+      <a class="btn book-btn" href="#stay" data-i18n="nav.book">Book now</a>
+      <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" data-i18n-aria="menu.open" aria-expanded="false">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
     </button>
     </div>
@@ -498,18 +535,18 @@ h1, h2, h3 { text-wrap: balance; }
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="sheet-head">
-      <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub">Thasos</span></span>
-      <button type="button" class="icon-btn" id="sheetClose" aria-label="Close menu">
+      <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span>
+      <button type="button" class="icon-btn" id="sheetClose" aria-label="Close menu" data-i18n-aria="menu.close">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
       </button>
     </div>
     <nav aria-label="Menu">
-      <a href="#stay">Stay</a>
-      <a href="#rooms">Rooms</a>
-      <a href="#place">The place</a>
-      <a href="#tour">3D tour</a>
+      <a href="#stay" data-i18n="nav.stay">Stay</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
+      <a href="#place" data-i18n="nav.place">The place</a>
+      <a href="#tour" data-i18n="nav.tour">3D tour</a>
     </nav>
-    <a class="btn wide" href="#stay">Check availability</a>
+    <a class="btn wide" href="#stay" data-i18n="sheet.cta">Check availability</a>
   </div>
 </div>
 
@@ -520,21 +557,21 @@ h1, h2, h3 { text-wrap: balance; }
     <div class="shade"></div>
     <div class="fade" id="fade"></div>
     <div class="hero-switch" role="group" aria-label="Hero version">
-      <button type="button" data-heromode="video">Drone video</button>
-      <button type="button" data-heromode="3d">3D house</button>
+      <button type="button" data-heromode="video" data-i18n="hero.drone">Drone video</button>
+      <button type="button" data-heromode="3d" data-i18n="hero.3d">3D house</button>
     </div>
     <ol class="rail" id="rail" aria-label="Video chapters">
-      <li><button type="button" data-ch="0"><span>Around</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="1"><span>Entrance</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="2"><span>Living room</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="3"><span>Bedroom</span><span class="bar"><i></i></span></button></li>
-      <li><button type="button" data-ch="4"><span>Sea view</span><span class="bar"><i></i></span></button></li>
+      <li><button type="button" data-ch="0"><span data-i18n="ch.around">Around</span><span class="bar"><i></i></span></button></li>
+      <li><button type="button" data-ch="1"><span data-i18n="ch.entrance">Entrance</span><span class="bar"><i></i></span></button></li>
+      <li><button type="button" data-ch="2"><span data-i18n="ch.living">Living room</span><span class="bar"><i></i></span></button></li>
+      <li><button type="button" data-ch="3"><span data-i18n="ch.bedroom">Bedroom</span><span class="bar"><i></i></span></button></li>
+      <li><button type="button" data-ch="4"><span data-i18n="ch.sea">Sea view</span><span class="bar"><i></i></span></button></li>
     </ol>
 
     <div class="cap hero">
-      <p class="eyebrow">Life's Moments · Thasos</p>
-      <h1>Moments by the Aegean</h1>
-      <p>Guest rooms and a private apartment on the island.</p>
+      <p class="eyebrow" data-i18n="hero.eyebrow">Life's Moments · Thasos</p>
+      <h1 data-i18n="hero.title">Moments by the Aegean</h1>
+      <p data-i18n="hero.sub">Guest rooms and a private apartment on the island.</p>
       <div class="hero-actions">
         <button type="button" class="btn light" id="playBtn">Pause video</button>
       </div>
@@ -548,17 +585,17 @@ h1, h2, h3 { text-wrap: balance; }
       <div class="bar-wrap" id="barWrap">
         <form class="sbar" id="sbar" onsubmit="return false">
           <div class="sb-cell sb-unit">
-            <small id="calUnit">Stay in</small>
+            <small id="calUnit" data-i18n="bar.stayin">Stay in</small>
             <div class="seg" id="units" role="group" aria-label="Room or apartment"></div>
           </div>
           <button type="button" class="sb-cell sb-date" id="ciBtn" aria-haspopup="dialog" aria-expanded="false">
-            <small>Check-in</small><b id="ciOut">Add date</b>
+            <small data-i18n="bar.ci">Check-in</small><b id="ciOut">Add date</b>
           </button>
           <button type="button" class="sb-cell sb-date" id="coBtn" aria-haspopup="dialog" aria-expanded="false">
-            <small>Check-out</small><b id="coOut">Add date</b>
+            <small data-i18n="bar.co">Check-out</small><b id="coOut">Add date</b>
           </button>
           <div class="sb-cell sb-guests">
-            <small>Guests</small>
+            <small data-i18n="bar.guests">Guests</small>
             <div class="step">
               <button type="button" class="mini" id="gMinus" aria-label="Fewer guests">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
@@ -574,7 +611,7 @@ h1, h2, h3 { text-wrap: balance; }
         <p class="sb-status" aria-live="polite">
           <span id="uOut" class="sr-only">A room</span>
           <span id="nOut"></span>
-          <span class="sb-fine">Card held, not charged · the host replies within 24 hours · synced with Booking.com</span>
+          <span class="sb-fine" data-i18n="bar.fine">Card held, not charged · the host replies within 24 hours · synced with Booking.com</span>
         </p>
 
         <div class="cal-pop" id="calPop" role="dialog" aria-label="Choose your dates" hidden>
@@ -594,8 +631,8 @@ h1, h2, h3 { text-wrap: balance; }
           </div>
           <div class="cal-months" id="calMonths"></div>
           <div class="cal-foot">
-            <span class="legend" aria-hidden="true"><span><i class="sw"></i>Your stay</span><span><s>14</s>Booked</span></span>
-            <button type="button" class="btn" id="calDone">Done</button>
+            <span class="legend" aria-hidden="true"><span><i class="sw"></i><span data-i18n="cal.yours">Your stay</span></span><span><s>14</s><span data-i18n="cal.booked">Booked</span></span></span>
+            <button type="button" class="btn" id="calDone" data-i18n="cal.done">Done</button>
           </div>
         </div>
       </div>
@@ -605,7 +642,7 @@ h1, h2, h3 { text-wrap: balance; }
   <section class="rooms" id="rooms" aria-labelledby="roomsTitle">
     <div class="wrap">
       <div class="rooms-head">
-        <h2 id="roomsTitle">Where you'll stay</h2>
+        <h2 id="roomsTitle" data-i18n="rooms.title">Where you'll stay</h2>
         <div class="tabs" role="tablist" aria-label="Rooms" id="roomTabs"></div>
       </div>
       <div class="gallery" id="gallery" role="tabpanel" aria-labelledby="roomsTitle"></div>
@@ -617,7 +654,7 @@ h1, h2, h3 { text-wrap: balance; }
         </div>
         <div class="room-cta">
           <button type="button" class="btn" id="bookThis">Book a room</button>
-          <p class="fine">Renders of the demo house. Real photos replace them.</p>
+          <p class="fine" data-i18n="rooms.renders">Renders of the demo house. Real photos replace them.</p>
         </div>
       </div>
     </div>
@@ -627,31 +664,31 @@ h1, h2, h3 { text-wrap: balance; }
   <section class="band" aria-label="Life on Thasos">
     <img class="band-img" id="bandImg" src="hero-poster.jpg" alt="" loading="lazy">
     <div class="band-in wrap">
-      <p class="band-line">Slow mornings in the garden,<br>long evenings by the sea.</p>
-      <p class="band-sub">Life's Moments · Thasos</p>
+      <p class="band-line" data-i18n-html="band.line">Slow mornings in the garden,<br>long evenings by the sea.</p>
+      <p class="band-sub" data-i18n="hero.eyebrow">Life's Moments · Thasos</p>
     </div>
   </section>
 
   <section class="place" id="place" aria-labelledby="placeTitle">
     <div class="wrap place-grid">
       <div class="place-main">
-        <h2 class="sec-title" id="placeTitle">The place</h2>
-        <p class="place-lead">Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span></p>
+        <h2 class="sec-title" id="placeTitle" data-i18n="nav.place">The place</h2>
+        <p class="place-lead" data-i18n-html="place.lead">Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span></p>
         <ul class="amen">
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8" fill="currentColor"/></svg><span>Wi-Fi throughout</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M4.5 6.5l15 11"/><path d="M19.5 6.5l-15 11"/><path d="M9 4l3 2 3-2"/><path d="M9 20l3-2 3 2"/></svg><span>Air conditioning</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg><span>Free parking</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 7c0-1 1-1 1-2"/><path d="M12 7c0-1 1-1 1-2"/><path d="M16 7c0-1 1-1 1-2"/></svg><span>Kitchen in the apartment</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6z"/><path d="M12 13c4 0 6-3 6-6-3 0-6 2-6 6z"/><path d="M5 21h14"/></svg><span>Garden and outdoor seating</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-4 0-6-2.5-6-6 0-4 4-6 4-10 2 1 4 3.5 4 6 1-1 1.5-2 1.5-3 2 2 2.5 4.5 2.5 7 0 3.5-2 6-6 6z"/></svg><span>Fireplace</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 14V4"/><path d="M4 9a8 8 0 0 1 16 0z"/></svg><span>Close to the beach</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16.5" cy="8.5" r="2"/><path d="M4 20v-4a4 4 0 0 1 8 0v4"/><path d="M13.5 20v-3a3 3 0 0 1 6 0v3"/></svg><span>Families welcome</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8" fill="currentColor"/></svg><span data-i18n="am.wifi">Wi-Fi throughout</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M4.5 6.5l15 11"/><path d="M19.5 6.5l-15 11"/><path d="M9 4l3 2 3-2"/><path d="M9 20l3-2 3 2"/></svg><span data-i18n="am.ac">Air conditioning</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg><span data-i18n="am.parking">Free parking</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 7c0-1 1-1 1-2"/><path d="M12 7c0-1 1-1 1-2"/><path d="M16 7c0-1 1-1 1-2"/></svg><span data-i18n="am.kitchen">Kitchen in the apartment</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6z"/><path d="M12 13c4 0 6-3 6-6-3 0-6 2-6 6z"/><path d="M5 21h14"/></svg><span data-i18n="am.garden">Garden and outdoor seating</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c-4 0-6-2.5-6-6 0-4 4-6 4-10 2 1 4 3.5 4 6 1-1 1.5-2 1.5-3 2 2 2.5 4.5 2.5 7 0 3.5-2 6-6 6z"/></svg><span data-i18n="am.fire">Fireplace</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 14V4"/><path d="M4 9a8 8 0 0 1 16 0z"/></svg><span data-i18n="am.beach">Close to the beach</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16.5" cy="8.5" r="2"/><path d="M4 20v-4a4 4 0 0 1 8 0v4"/><path d="M13.5 20v-3a3 3 0 0 1 6 0v3"/></svg><span data-i18n="am.family">Families welcome</span></li>
         </ul>
         <div class="score">
           <div class="score-num"><b>[9.x]</b><span>/ 10</span></div>
           <div>
-            <p class="score-t">Guest rating on Booking.com</p>
-            <p class="fine">[number] reviews · real reviews are shown here once the owner shares the listing</p>
+            <p class="score-t" data-i18n="score.t">Guest rating on Booking.com</p>
+            <p class="fine" data-i18n="score.fine">[number] reviews · real reviews are shown here once the owner shares the listing</p>
           </div>
         </div>
       </div>
@@ -660,9 +697,9 @@ h1, h2, h3 { text-wrap: balance; }
           <iframe title="Map of Thasos" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=24.48%2C40.55%2C24.84%2C40.82&amp;layer=mapnik"></iframe>
         </div>
         <ul class="dist">
-          <li><b>[x] min</b><span>walk to the nearest beach</span></li>
-          <li><b>[x] min</b><span>drive to the port</span></li>
-          <li><b>Ferry</b><span>from Keramoti or Kavala</span></li>
+          <li><b>[x] min</b><span data-i18n="dist.beach">walk to the nearest beach</span></li>
+          <li><b>[x] min</b><span data-i18n="dist.port">drive to the port</span></li>
+          <li><b data-i18n="dist.ferry">Ferry</b><span data-i18n="dist.ferryfrom">from Keramoti or Kavala</span></li>
         </ul>
       </aside>
     </div>
@@ -671,12 +708,12 @@ h1, h2, h3 { text-wrap: balance; }
   <section class="tour" id="tour" aria-labelledby="tourTitle">
     <div class="wrap">
       <div class="tour-head">
-        <h2 class="sec-title" id="tourTitle">Walk through the house</h2>
-        <button type="button" class="btn ghost" id="fsBtn">Full screen</button>
+        <h2 class="sec-title" id="tourTitle" data-i18n="tour.title">Walk through the house</h2>
+        <button type="button" class="btn ghost" id="fsBtn" data-i18n="tour.fs">Full screen</button>
       </div>
       <div class="tour-frame" id="tourFrame">
         <div class="stage" id="tourStage"></div>
-        <div class="tour-hint" id="tourHint">Drag to look around · pick a spot below</div>
+        <div class="tour-hint" id="tourHint" data-i18n="tour.hint">Drag to look around · pick a spot below</div>
       </div>
       <div class="spots" id="spots" role="group" aria-label="Move to"></div>
     </div>
@@ -707,26 +744,26 @@ h1, h2, h3 { text-wrap: balance; }
 <footer class="foot-wrap">
   <div class="wrap foot">
     <div class="foot-brand">
-      <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub">Thasos</span></span>
-      <p>Guest rooms and a private apartment on the island of Thasos.</p>
-      <a class="btn" href="#stay">Check dates</a>
+      <span class="brand"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span>
+      <p data-i18n="foot.about">Guest rooms and a private apartment on the island of Thasos.</p>
+      <a class="btn" href="#stay" data-i18n="bar.go">Check dates</a>
     </div>
     <div class="foot-col">
-      <h4>Contact</h4>
-      <p><span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Thasos</p>
+      <h4 data-i18n="foot.contact">Contact</h4>
+      <p data-i18n-html="foot.contactP"><span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Thasos</p>
     </div>
     <div class="foot-col">
-      <h4>Your stay</h4>
-      <p>Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com</p>
+      <h4 data-i18n="cal.yours">Your stay</h4>
+      <p data-i18n-html="foot.stayP">Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com</p>
     </div>
     <div class="foot-col">
-      <h4>Registry</h4>
-      <p>ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece</p>
+      <h4 data-i18n="foot.reg">Registry</h4>
+      <p data-i18n-html="foot.regP">ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece</p>
     </div>
   </div>
   <div class="wrap foot-end">
     <span>© 2026 Life's Moments</span>
-    <span>Thasos · Greece</span>
+    <span data-i18n="foot.place">Thasos · Greece</span>
   </div>
 </footer>
 
@@ -736,28 +773,28 @@ h1, h2, h3 { text-wrap: balance; }
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
     </button>
     <form id="reqForm" novalidate>
-      <h3 id="mTitle">Request your stay</h3>
+      <h3 id="mTitle" data-i18n="m.title">Request your stay</h3>
       <p class="fine" id="mSum"></p>
       <div class="form">
-        <label for="fName">Full name<input id="fName" name="name" autocomplete="name" required></label>
-        <label for="fEmail">Email<input id="fEmail" name="email" type="email" autocomplete="email" required></label>
-        <label for="fPhone">Phone<input id="fPhone" name="phone" type="tel" autocomplete="tel"></label>
-        <div class="card-ph"><span>Card details</span><span>Stripe field</span></div>
-        <p class="fine" id="fErr" hidden>Add your name and a valid email to continue.</p>
-        <button type="submit" class="btn wide">Hold card and send request</button>
-        <p class="fine">You are charged only if the host accepts within 24 hours.</p>
+        <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
+        <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
+        <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel"></label>
+        <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
+        <p class="fine" id="fErr" data-i18n="m.err" hidden>Add your name and a valid email to continue.</p>
+        <button type="submit" class="btn wide" data-i18n="m.submit">Hold card and send request</button>
+        <p class="fine" data-i18n="m.charged">You are charged only if the host accepts within 24 hours.</p>
       </div>
     </form>
     <div id="reqDone" hidden>
-      <h3>Request sent</h3>
+      <h3 data-i18n="m.sent">Request sent</h3>
       <p class="fine" id="dSum"></p>
       <ol class="steps">
-        <li class="now"><div><b>Card held</b><span>The amount is reserved, not charged.</span></div></li>
-        <li><div><b>Host replies within 24 hours</b><span>You get an email either way.</span></div></li>
-        <li><div><b>Accepted: you're charged and booked</b><span>Declined or no reply: the hold is released.</span></div></li>
+        <li class="now"><div><b data-i18n="m.s1">Card held</b><span data-i18n="m.s1d">The amount is reserved, not charged.</span></div></li>
+        <li><div><b data-i18n="m.s2">Host replies within 24 hours</b><span data-i18n="m.s2d">You get an email either way.</span></div></li>
+        <li><div><b data-i18n="m.s3">Accepted: you're charged and booked</b><span data-i18n="m.s3d">Declined or no reply: the hold is released.</span></div></li>
       </ol>
-      <p class="fine" style="margin-bottom: 16px">Demo only. Nothing was held or sent.</p>
-      <button type="button" class="btn wide" id="dClose">Done</button>
+      <p class="fine" style="margin-bottom: 16px" data-i18n="m.demo">Demo only. Nothing was held or sent.</p>
+      <button type="button" class="btn wide" id="dClose" data-i18n="cal.done">Done</button>
     </div>
   </div>
 </div>
@@ -789,6 +826,136 @@ h1, h2, h3 { text-wrap: balance; }
   const mqMobile = window.matchMedia('(max-width: 760px)');
   const hasGsap = !!(window.gsap && window.ScrollTrigger);
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+
+  /* ================= languages =================
+     Every visible text lives here. To add a language, copy the "el" block, translate it,
+     and add a button with data-lang="xx" in the header menu. */
+  const I18N = {
+    en: {
+      'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
+      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '3D tour', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
+      'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the Aegean', 'hero.sub': 'Guest rooms and a private apartment on the island.',
+      'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
+      'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
+      'bar.stayin': 'Stay in', 'bar.ci': 'Check-in', 'bar.co': 'Check-out', 'bar.guests': 'Guests', 'bar.add': 'Add date',
+      'bar.go': 'Check dates', 'bar.request': 'Request booking',
+      'bar.fine': 'Card held, not charged · the host replies within 24 hours · synced with Booking.com',
+      'u.room': 'A room', 'u.apt': 'Apartment',
+      'st.rooms': '{n} rooms in the main house · up to {g} guests each', 'st.apt': 'Private apartment next door · up to {g} guests',
+      'st.sleeps': '{name} sleeps up to {g}', 'night': 'night', 'nights': 'nights',
+      'st.booked': 'Booked on your dates', 'st.last': 'Last room free', 'st.some': '{f} of {t} rooms free', 'st.free': 'Free on your dates', 'st.price': 'from [price] / night',
+      'note.guests': '{name} sleeps up to {g}. Guests set to {g}.', 'note.noroom': 'No room is free on those dates. Pick new dates.', 'note.aptbooked': 'The apartment is booked on those dates. Pick new dates.',
+      'note.gaproom': 'No single room is free for all those nights. Pick a shorter stay or other dates.', 'note.gapapt': 'The apartment is booked in between. Pick other dates.',
+      'hint.1': 'Tap your check-in day, then your check-out day.', 'hint.2': 'Now tap your check-out day.', 'hint.3': 'Looks good. Tap a new day to start over.',
+      'cal.yours': 'Your stay', 'cal.booked': 'Booked', 'cal.done': 'Done', 'cal.isbooked': ', booked', 'cal.past': ', past',
+      'cal.dow': ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+      'rooms.title': "Where you'll stay", 'rooms.renders': 'Renders of the demo house. Real photos replace them.',
+      'tab.room': 'Rooms', 'tab.apt': 'The Apartment', 'name.room': 'A room', 'name.apt': 'The Apartment',
+      'book.room': 'Book a room', 'book.apt': 'Book the apartment',
+      'line.room': 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
+      'line.apt': 'A separate apartment right next to the main house, with its own kitchen, living room and fireplace.',
+      'facts.room': ['4 rooms in the main house', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
+      'facts.apt': ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Living room with fireplace'],
+      'ph.label': '{name}, photo {i} of 3', 'ph.open': 'Open {x}', 'ph.wait': 'Rendering…', 'ph.n': 'Photo {i}',
+      'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
+      'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
+      'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
+      'am.garden': 'Garden and outdoor seating', 'am.fire': 'Fireplace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
+      'score.t': 'Guest rating on Booking.com', 'score.fine': '[number] reviews · real reviews are shown here once the owner shares the listing',
+      'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
+      'tour.title': 'Walk through the house', 'tour.fs': 'Full screen', 'tour.hint': 'Drag to look around · pick a spot below', 'tour.fail': 'The 3D view could not load. Refresh the page.',
+      'spot.Garden': 'Garden', 'spot.Entrance': 'Entrance', 'spot.Living room': 'Living room', 'spot.Kitchen': 'Kitchen', 'spot.Bedroom': 'Bedroom', 'spot.Pool': 'Pool',
+      'foot.about': 'Guest rooms and a private apartment on the island of Thasos.', 'foot.contact': 'Contact', 'foot.reg': 'Registry', 'foot.place': 'Thasos · Greece',
+      'foot.contactP': '<span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Thasos',
+      'foot.stayP': 'Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com',
+      'foot.regP': 'ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece',
+      'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Add your name and a valid email to continue.',
+      'm.submit': 'Hold card and send request', 'm.charged': 'You are charged only if the host accepts within 24 hours.', 'm.sent': 'Request sent',
+      'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. Nothing was held or sent.',
+      'guest': 'guest', 'guests': 'guests', 'm.emailed': 'We emailed {e} a copy.'
+    },
+    el: {
+      'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
+      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': '3D περιήγηση', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
+      'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο Αιγαίο', 'hero.sub': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί.',
+      'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
+      'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
+      'bar.stayin': 'Διαμονή σε', 'bar.ci': 'Άφιξη', 'bar.co': 'Αναχώρηση', 'bar.guests': 'Άτομα', 'bar.add': 'Επιλογή',
+      'bar.go': 'Δείτε ημερομηνίες', 'bar.request': 'Αίτημα κράτησης',
+      'bar.fine': 'Η κάρτα δεσμεύεται, δεν χρεώνεται · απάντηση από τον οικοδεσπότη μέσα σε 24 ώρες · συγχρονισμός με το Booking.com',
+      'u.room': 'Δωμάτιο', 'u.apt': 'Διαμέρισμα',
+      'st.rooms': '{n} δωμάτια στο κεντρικό σπίτι · έως {g} άτομα το καθένα', 'st.apt': 'Ιδιωτικό διαμέρισμα ακριβώς δίπλα · έως {g} άτομα',
+      'st.sleeps': '{name}: έως {g} άτομα', 'night': 'νύχτα', 'nights': 'νύχτες',
+      'st.booked': 'Δεν είναι διαθέσιμο αυτές τις μέρες', 'st.last': 'Ένα δωμάτιο ελεύθερο', 'st.some': '{f} από {t} δωμάτια ελεύθερα', 'st.free': 'Διαθέσιμο αυτές τις μέρες', 'st.price': 'από [τιμή] / βράδυ',
+      'note.guests': '{name}: έως {g} άτομα. Τα άτομα ορίστηκαν σε {g}.', 'note.noroom': 'Δεν υπάρχει ελεύθερο δωμάτιο αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.', 'note.aptbooked': 'Το διαμέρισμα είναι κλεισμένο αυτές τις μέρες. Διαλέξτε άλλες ημερομηνίες.',
+      'note.gaproom': 'Κανένα δωμάτιο δεν είναι ελεύθερο για όλες αυτές τις νύχτες. Διαλέξτε λιγότερες νύχτες ή άλλες ημερομηνίες.', 'note.gapapt': 'Το διαμέρισμα είναι κλεισμένο ενδιάμεσα. Διαλέξτε άλλες ημερομηνίες.',
+      'hint.1': 'Πατήστε την ημέρα άφιξης και μετά την ημέρα αναχώρησης.', 'hint.2': 'Τώρα πατήστε την ημέρα αναχώρησης.', 'hint.3': 'Τέλεια. Πατήστε άλλη ημέρα για να ξεκινήσετε από την αρχή.',
+      'cal.yours': 'Η διαμονή σας', 'cal.booked': 'Κλεισμένο', 'cal.done': 'Τέλος', 'cal.isbooked': ', κλεισμένο', 'cal.past': ', έχει περάσει',
+      'cal.dow': ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
+      'rooms.title': 'Πού θα μείνετε', 'rooms.renders': 'Απεικονίσεις του δοκιμαστικού σπιτιού. Θα μπουν πραγματικές φωτογραφίες.',
+      'tab.room': 'Δωμάτια', 'tab.apt': 'Το διαμέρισμα', 'name.room': 'Δωμάτιο', 'name.apt': 'Το διαμέρισμα',
+      'book.room': 'Κράτηση δωματίου', 'book.apt': 'Κράτηση διαμερίσματος',
+      'line.room': 'Ένα από τα δωμάτια του κεντρικού σπιτιού. Εσείς διαλέγετε ημερομηνίες και ο οικοδεσπότης σάς δίνει ένα ελεύθερο δωμάτιο.',
+      'line.apt': 'Ανεξάρτητο διαμέρισμα ακριβώς δίπλα στο κεντρικό σπίτι, με δική του κουζίνα, σαλόνι και τζάκι.',
+      'facts.room': ['4 δωμάτια στο κεντρικό σπίτι', 'Έως 3 άτομα', '[κρεβάτια]', 'Το δωμάτιο το ορίζει ο οικοδεσπότης'],
+      'facts.apt': ['Ολόκληρο το διαμέρισμα', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Σαλόνι με τζάκι'],
+      'ph.label': '{name}, φωτογραφία {i} από 3', 'ph.open': 'Άνοιγμα: {x}', 'ph.wait': 'Φόρτωση…', 'ph.n': 'Φωτογραφία {i}',
+      'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
+      'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
+      'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
+      'am.garden': 'Κήπος και καθιστικό έξω', 'am.fire': 'Τζάκι', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
+      'score.t': 'Βαθμολογία επισκεπτών στο Booking.com', 'score.fine': '[αριθμός] κριτικές · οι αληθινές κριτικές θα μπουν εδώ μόλις πάρουμε την καταχώριση',
+      'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
+      'tour.title': 'Περιηγηθείτε στο σπίτι', 'tour.fs': 'Πλήρης οθόνη', 'tour.hint': 'Σύρετε για να δείτε γύρω · ή διαλέξτε σημείο από κάτω', 'tour.fail': 'Η 3D προβολή δεν φόρτωσε. Ανανεώστε τη σελίδα.',
+      'spot.Garden': 'Κήπος', 'spot.Entrance': 'Είσοδος', 'spot.Living room': 'Σαλόνι', 'spot.Kitchen': 'Κουζίνα', 'spot.Bedroom': 'Υπνοδωμάτιο', 'spot.Pool': 'Πισίνα',
+      'foot.about': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί της Θάσου.', 'foot.contact': 'Επικοινωνία', 'foot.reg': 'Μητρώο', 'foot.place': 'Θάσος · Ελλάδα',
+      'foot.contactP': '<span class="todo">[τηλέφωνο]</span><br><span class="todo">[email]</span><br><span class="todo">[διεύθυνση]</span>, Θάσος',
+      'foot.stayP': 'Άφιξη <span class="todo">[ώρα]</span><br>Αναχώρηση <span class="todo">[ώρα]</span><br>Και στο Booking.com',
+      'foot.regP': 'ΑΜΑ <span class="todo">[αριθμός]</span><br>Μητρώο Ακινήτων Βραχυχρόνιας Διαμονής',
+      'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα και ένα σωστό email για να συνεχίσετε.',
+      'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Χρεώνεστε μόνο αν ο οικοδεσπότης δεχτεί μέσα σε 24 ώρες.', 'm.sent': 'Το αίτημα στάλθηκε',
+      'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε ούτε στάλθηκε τίποτα.',
+      'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Στείλαμε αντίγραφο στο {e}.'
+    }
+  };
+  const LOCALE = { en: 'en-GB', el: 'el-GR' };
+  let lang = 'en';
+  try { lang = localStorage.getItem('lm-lang') || ''; } catch (e) { lang = ''; }
+  if (!I18N[lang]) lang = /^el\b/i.test(navigator.language || '') ? 'el' : 'en';
+  function t(k, v) {
+    let s = I18N[lang][k];
+    if (s === undefined) s = I18N.en[k];
+    if (s === undefined) return k;
+    if (v && typeof s === 'string') s = s.replace(/\{(\w+)\}/g, (m, n) => (v[n] !== undefined ? v[n] : m));
+    return s;
+  }
+  const plural = (n, one, many) => n + ' ' + t(n === 1 ? one : many);
+  const langHooks = [];
+  function applyLang() {
+    document.documentElement.lang = lang;
+    $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    $$('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
+    $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+    $('#langCur').textContent = lang === 'el' ? 'ΕΛ' : lang.toUpperCase();
+    $$('[data-lang]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
+    langHooks.forEach((f) => f());
+  }
+  function setLang(l) {
+    if (!I18N[l]) return;
+    lang = l;
+    try { localStorage.setItem('lm-lang', l); } catch (e) { /* not stored, that's fine */ }
+    applyLang();
+  }
+  window.__applyLang = applyLang;
+  // language menu
+  const langBtn = $('#langBtn'), langMenu = $('#langMenu');
+  function langOpen(open) { langMenu.hidden = !open; langBtn.setAttribute('aria-expanded', String(open)); }
+  langBtn.addEventListener('click', () => langOpen(langMenu.hidden));
+  langMenu.addEventListener('click', (e) => { const b = e.target.closest('[data-lang]'); if (b) { setLang(b.dataset.lang); langOpen(false); langBtn.focus(); } });
+  document.addEventListener('pointerdown', (e) => { if (!langMenu.hidden && !e.target.closest('#lang')) langOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !langMenu.hidden) { langOpen(false); langBtn.focus(); } });
 
   /* ================= time on Thasos ================= */
   function athensNow() {
@@ -905,6 +1072,13 @@ h1, h2, h3 { text-wrap: balance; }
       line: 'A separate apartment right next to the main house, with its own kitchen, living room and fireplace.',
       shots: [[[2.6, 1.65, -0.8], [-3, 0.9, -4.4]], [[0.9, 1.7, -0.9], [3.0, 0.8, -2.6]], [[-1.4, 1.35, -2.0], [-2.6, 0.6, -5.6]]] }
   ];
+  // Names, tabs, button labels, descriptions and facts come from the dictionary, so they follow the language.
+  UNITS.forEach((u) => {
+    const k = u.id === 'room' ? 'room' : 'apt';
+    [['name', 'name.'], ['tab', 'tab.'], ['book', 'book.'], ['line', 'line.'], ['facts', 'facts.']].forEach(([p, pre]) => {
+      Object.defineProperty(u, p, { get: () => t(pre + k), configurable: true });
+    });
+  });
   const shotCache = {}; // mood -> unit id -> [image data URLs]
   function shotsFor(u) {
     const id = UNITS[u].id;
@@ -921,9 +1095,14 @@ h1, h2, h3 { text-wrap: balance; }
   const kNext = (k) => { const d = kDate(k); d.setUTCDate(d.getUTCDate() + 1); return key(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); };
   const dayNum = (k) => Math.round(kDate(k).getTime() / 864e5);
   const todayKey = key(today.y, today.m, today.d);
-  const fmtShort = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
-  const fmtLong = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-  const fmtMonth = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  let fmtShort, fmtLong, fmtMonth;
+  function makeFormats() {
+    const loc = LOCALE[lang] || 'en-GB';
+    fmtShort = new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+    fmtLong = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    fmtMonth = new Intl.DateTimeFormat(loc, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  makeFormats();
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   const bookedCache = {};
   // Demo bookings, one calendar per physical room (4 rooms + the apartment). Later each reads its own Booking.com calendar.
@@ -950,36 +1129,38 @@ h1, h2, h3 { text-wrap: balance; }
   // The room/apartment toggle in the booking bar, plus the availability line under it.
   function renderUnits() {
     $('#units').innerHTML = UNITS.map((u, i) =>
-      '<button type="button" data-u="' + i + '" aria-pressed="' + (i === cal.unit) + '">' + (i === 0 ? 'A room' : 'Apartment') + '</button>').join('');
+      '<button type="button" data-u="' + i + '" aria-pressed="' + (i === cal.unit) + '">' + t(i === 0 ? 'u.room' : 'u.apt') + '</button>').join('');
     renderStatus();
   }
   function renderStatus() {
     const u = UNITS[cal.unit], many = u.subs.length > 1;
     const n = cal.ci && cal.co ? dayNum(cal.co) - dayNum(cal.ci) : 0;
     let h = '';
-    if (cal.guests > u.guests) h = '<span class="no">' + u.name + ' sleeps up to ' + u.guests + '</span>';
+    if (cal.guests > u.guests) h = '<span class="no">' + t('st.sleeps', { name: u.name, g: u.guests }) + '</span>';
     else if (n) {
       const free = freeSubs(cal.unit, cal.ci, cal.co).length;
-      const st = !free ? '<span class="no">Booked on your dates</span>'
-        : many ? '<span class="ok">' + (free === 1 ? 'Last room free' : free + ' of ' + u.subs.length + ' rooms free') + '</span>'
-        : '<span class="ok">Free on your dates</span>';
-      h = n + (n === 1 ? ' night' : ' nights') + ' · ' + st + ' · from [price] / night';
-    } else h = many ? u.subs.length + ' rooms in the main house · up to ' + u.guests + ' guests each' : 'Private apartment next door · up to ' + u.guests + ' guests';
+      const st = !free ? '<span class="no">' + t('st.booked') + '</span>'
+        : many ? '<span class="ok">' + (free === 1 ? t('st.last') : t('st.some', { f: free, t: u.subs.length })) + '</span>'
+        : '<span class="ok">' + t('st.free') + '</span>';
+      h = plural(n, 'night', 'nights') + ' · ' + st + ' · ' + t('st.price');
+    } else h = many ? t('st.rooms', { n: u.subs.length, g: u.guests }) : t('st.apt', { g: u.guests });
     $('#nOut').innerHTML = h;
   }
   function selectUnit(i) {
     cal.unit = i;
     const u = UNITS[i];
     cal.note = '';
-    if (cal.guests > u.guests) { cal.guests = u.guests; cal.note = u.name + ' sleeps up to ' + u.guests + '. Guests set to ' + u.guests + '.'; }
-    if (cal.ci && cal.co && !rangeFree(i, cal.ci, cal.co)) { cal.ci = null; cal.co = null; cal.note = (i === 0 ? 'No room is free' : 'The apartment is booked') + ' on those dates. Pick new dates.'; }
+    if (cal.guests > u.guests) { cal.guests = u.guests; cal.note = t('note.guests', { name: u.name, g: u.guests }); }
+    if (cal.ci && cal.co && !rangeFree(i, cal.ci, cal.co)) { cal.ci = null; cal.co = null; cal.note = t(i === 0 ? 'note.noroom' : 'note.aptbooked'); }
     renderCal();
+    // keep the rooms section showing the same choice
+    if (window.__showRoom) window.__showRoom(i);
   }
   $('#units').addEventListener('click', (e) => { const b = e.target.closest('button[data-u]'); if (b) selectUnit(+b.dataset.u); });
 
   function monthHTML(y, m) {
     const off = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7, n = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-    let h = '<div class="month"><h3>' + fmtMonth.format(new Date(Date.UTC(y, m, 1))) + '</h3><div class="dow" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div><div class="days">';
+    let h = '<div class="month"><h3>' + fmtMonth.format(new Date(Date.UTC(y, m, 1))) + '</h3><div class="dow" aria-hidden="true">' + t('cal.dow').map((d) => '<span>' + d + '</span>').join('') + '</div><div class="days">';
     for (let i = 0; i < off; i++) h += '<span></span>';
     for (let d = 1; d <= n; d++) {
       const k = key(y, m, d), past = k < todayKey, bk = isBooked(k);
@@ -989,7 +1170,7 @@ h1, h2, h3 { text-wrap: balance; }
       if (k === cal.ci) cls.push('start');
       if (k === cal.co) cls.push('end');
       if (cal.ci && cal.co && k > cal.ci && k < cal.co) cls.push('in');
-      const label = fmtLong.format(kDate(k)) + (bk && !past ? ', booked' : past ? ', past' : '');
+      const label = fmtLong.format(kDate(k)) + (bk && !past ? t('cal.isbooked') : past ? t('cal.past') : '');
       h += '<button type="button" class="' + cls.join(' ') + '" data-k="' + k + '"' + (past || bk ? ' disabled' : '') +
         ' aria-label="' + label + '" aria-pressed="' + (k === cal.ci || k === cal.co) + '">' + d + '</button>';
     }
@@ -1007,16 +1188,16 @@ h1, h2, h3 { text-wrap: balance; }
   function renderSum() {
     const u = UNITS[cal.unit];
     $('#uOut').textContent = u.name;
-    $('#ciOut').textContent = cal.ci ? fmtShort.format(kDate(cal.ci)) : 'Add date';
-    $('#coOut').textContent = cal.co ? fmtShort.format(kDate(cal.co)) : 'Add date';
+    $('#ciOut').textContent = cal.ci ? fmtShort.format(kDate(cal.ci)) : t('bar.add');
+    $('#coOut').textContent = cal.co ? fmtShort.format(kDate(cal.co)) : t('bar.add');
     $('#ciBtn').classList.toggle('empty', !cal.ci);
     $('#coBtn').classList.toggle('empty', !cal.co);
     const ready = cal.ci && cal.co && cal.guests <= u.guests;
-    $('#reqBtn').textContent = ready ? 'Request booking' : 'Check dates';
+    $('#reqBtn').textContent = t(ready ? 'bar.request' : 'bar.go');
     $('#gOut').textContent = cal.guests;
     $('#gPlus').disabled = cal.guests >= u.guests;
     $('#gMinus').disabled = cal.guests <= 1;
-    $('#calHint').textContent = cal.note || (!cal.ci ? 'Tap your check-in day, then your check-out day.' : !cal.co ? 'Now tap your check-out day.' : 'Looks good. Tap a new day to start over.');
+    $('#calHint').textContent = cal.note || t(!cal.ci ? 'hint.1' : !cal.co ? 'hint.2' : 'hint.3');
     renderStatus();
   }
 
@@ -1064,7 +1245,7 @@ h1, h2, h3 { text-wrap: balance; }
     cal.note = '';
     if (!cal.ci || cal.co || k <= cal.ci) { cal.ci = k; cal.co = null; }
     else if (rangeFree(cal.unit, cal.ci, k)) cal.co = k;
-    else { cal.ci = k; cal.co = null; cal.note = cal.unit === 0 ? 'No single room is free for all those nights. Pick a shorter stay or other dates.' : 'The apartment is booked in between. Pick other dates.'; }
+    else { cal.ci = k; cal.co = null; cal.note = t(cal.unit === 0 ? 'note.gaproom' : 'note.gapapt'); }
     renderCal();
     const again = $('#calMonths button[data-k="' + k + '"]');
     if (again) again.focus();
@@ -1082,7 +1263,7 @@ h1, h2, h3 { text-wrap: balance; }
   let lastFocus = null;
   function staySummary() {
     const n = dayNum(cal.co) - dayNum(cal.ci);
-    return UNITS[cal.unit].name + ' · ' + fmtShort.format(kDate(cal.ci)) + ' → ' + fmtShort.format(kDate(cal.co)) + ' · ' + n + (n === 1 ? ' night' : ' nights') + ' · ' + cal.guests + (cal.guests === 1 ? ' guest' : ' guests');
+    return UNITS[cal.unit].name + ' · ' + fmtShort.format(kDate(cal.ci)) + ' → ' + fmtShort.format(kDate(cal.co)) + ' · ' + plural(n, 'night', 'nights') + ' · ' + plural(cal.guests, 'guest', 'guests');
   }
   function openModal() {
     lastFocus = document.activeElement;
@@ -1103,7 +1284,7 @@ h1, h2, h3 { text-wrap: balance; }
     const ok = $('#fName').value.trim() && /.+@.+\..+/.test($('#fEmail').value.trim());
     $('#fErr').hidden = !!ok;
     if (!ok) return;
-    $('#dSum').textContent = staySummary() + '. We emailed ' + $('#fEmail').value.trim() + ' a copy.';
+    $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: $('#fEmail').value.trim() });
     $('#reqForm').hidden = true; $('#reqDone').hidden = false;
     $('#dClose').focus();
   });
@@ -1129,7 +1310,9 @@ h1, h2, h3 { text-wrap: balance; }
     roomInfo(i);
     renderGallery();
     if (window.__queueRoom) window.__queueRoom(i);
+    if (cal.unit !== i) selectUnit(i);
   }
+  window.__showRoom = (i) => { if (roomIdx !== i) selectRoom(i); };
   tabs.forEach((t, i) => {
     t.addEventListener('click', () => selectRoom(i));
     t.addEventListener('keydown', (e) => {
@@ -1148,9 +1331,9 @@ h1, h2, h3 { text-wrap: balance; }
     const r = ROOMS[roomIdx], shots = currentShots();
     let h = '';
     for (let i = 0; i < 3; i++) {
-      const label = r.name + ', photo ' + (i + 1) + ' of 3';
-      h += '<button type="button" class="ph" data-i="' + i + '" aria-label="Open ' + label + '">' +
-        (shots ? '<img src="' + shots[i] + '" alt="' + label + '">' : '<span class="wait">' + (window.THREE ? 'Rendering…' : 'Photo ' + (i + 1)) + '</span>') + '</button>';
+      const label = t('ph.label', { name: r.name, i: i + 1 });
+      h += '<button type="button" class="ph" data-i="' + i + '" aria-label="' + t('ph.open', { x: label }) + '">' +
+        (shots ? '<img src="' + shots[i] + '" alt="' + label + '">' : '<span class="wait">' + (window.THREE ? t('ph.wait') : t('ph.n', { i: i + 1 })) + '</span>') + '</button>';
     }
     gal.innerHTML = h;
   }
@@ -1160,6 +1343,14 @@ h1, h2, h3 { text-wrap: balance; }
   });
   roomInfo(0);
   renderGallery();
+  langHooks.push(() => {
+    tabs.forEach((tb, i) => { tb.textContent = ROOMS[i].tab; });
+    roomInfo(roomIdx);
+    renderGallery();
+    makeFormats();
+    renderCal();
+  });
+  applyLang();
 
   /* ================= lightbox ================= */
   const lb = $('#lb');
@@ -1167,7 +1358,7 @@ h1, h2, h3 { text-wrap: balance; }
   function showLb() {
     const s = currentShots(); if (!s) return;
     $('#lbImg').src = s[lbI];
-    $('#lbImg').alt = ROOMS[roomIdx].name + ', photo ' + (lbI + 1);
+    $('#lbImg').alt = t('ph.label', { name: ROOMS[roomIdx].name, i: lbI + 1 });
     $('#lbCap').textContent = ROOMS[roomIdx].name + ' · ' + (lbI + 1) + ' / 3';
   }
   function openLb(i) { lastFocus = document.activeElement; lbI = i; showLb(); lb.hidden = false; lenis && lenis.stop(); $('#lbClose').focus(); }
@@ -1193,7 +1384,8 @@ h1, h2, h3 { text-wrap: balance; }
   let wantPlay = !reduce, introOnScreen = true;
   const hero3d = { playing: false, onMode: null }; // filled in by the 3D part
   const isPlaying = () => (heroMode === 'video' ? !hv.paused : hero3d.playing);
-  const setPlayLabel = () => { playBtn.textContent = isPlaying() ? 'Pause video' : 'Play video'; };
+  const setPlayLabel = () => { playBtn.textContent = t(isPlaying() ? 'hero.pause' : 'hero.play'); };
+  langHooks.push(setPlayLabel);
   function tryPlay() { const p = hv.play(); if (p && p.catch) p.catch(setPlayLabel); }
   function syncPlayback() {
     if (heroMode === 'video') { hero3d.playing = false; if (wantPlay && introOnScreen) tryPlay(); else hv.pause(); }
@@ -1218,7 +1410,8 @@ h1, h2, h3 { text-wrap: balance; }
 
   /* ================= 3D (hero, tour, room renders) ================= */
   if (!window.THREE) {
-    $('#tourHint').textContent = 'The 3D view could not load. Refresh the page.';
+    $('#tourHint').dataset.i18n = 'tour.fail';
+    $('#tourHint').textContent = t('tour.fail');
     return;
   }
   const THREE = window.THREE;
@@ -1687,7 +1880,7 @@ h1, h2, h3 { text-wrap: balance; }
     if (instant || reduce || !window.gsap) Object.assign(tour, to);
     else tourTween = gsap.to(tour, Object.assign({ duration: 1.8, ease: 'power2.inOut' }, to));
   }
-  $('#spots').innerHTML = SPOTS.map((s, i) => '<button type="button" class="spot" aria-pressed="' + (i === 0) + '">' + s.name + '</button>').join('');
+  $('#spots').innerHTML = SPOTS.map((s, i) => '<button type="button" class="spot" aria-pressed="' + (i === 0) + '" data-i18n="spot.' + s.name + '">' + t('spot.' + s.name) + '</button>').join('');
   $$('.spot').forEach((b, i) => b.addEventListener('click', () => goSpot(i)));
   goSpot(0, true);
   let drag = null;
