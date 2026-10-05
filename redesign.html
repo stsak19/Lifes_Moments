@@ -717,6 +717,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .gcard { flex: 0 0 78%; scroll-snap-align: start; }
 }
 
+/* guide: photo header + photo cards */
+.guide-head { position: relative; isolation: isolate; min-height: 420px; padding: 40px; border-radius: var(--r-card); overflow: hidden; align-items: flex-end; color: #F8F4EC; background: #1B2D55; }
+.guide-head::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgba(6, 10, 18, .78), rgba(6, 10, 18, .1) 70%); }
+.guide-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
+.guide-head .eyebrow, .guide-head .sec-eyebrow span { color: rgba(248, 244, 236, .8); }
+.guide-head .sec-eyebrow .num { color: #F2C08A; }
+.guide-head em { color: #F2C08A; }
+.guide-head .guide-lead { color: rgba(248, 244, 236, .85); }
+.gcredit { position: absolute; right: 10px; top: 10px; z-index: 1; padding: 3px 7px; border-radius: 5px; background: rgba(6, 10, 18, .4); color: rgba(255, 255, 255, .85); font-size: 10.5px; letter-spacing: .02em; }
+.gart.has-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.gcard:hover .gart.has-img img { transform: scale(1.05); }
+.gart.has-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(6, 10, 18, .45), transparent 55%); }
+.gart .garea { z-index: 1; }
+.gart { height: 170px; }
+@media (max-width: 760px) { .guide-head { min-height: 380px; padding: 24px 20px; margin-inline: -4px; } }
+
 /* ---------- reviews (bottom of the page) ---------- */
 .reviews { padding-block: 120px 130px; }
 .rev-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.6fr); gap: 56px; margin-top: 40px; align-items: start; }
@@ -1073,6 +1089,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   <section class="guide" id="guide" aria-labelledby="guideTitle">
     <div class="wrap">
       <div class="guide-head" data-reveal>
+        <img class="guide-img" src="https://images.pexels.com/photos/39567764/pexels-photo-39567764.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="" loading="lazy">
+        <span class="gcredit">Ricardo Oliveira · Pexels</span>
         <div>
           <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="nav.guide">Guide</span></p>
           <h2 class="sec-title" id="guideTitle" data-i18n-html="guide.title">Thasos <em>around you</em></h2>
@@ -1918,7 +1936,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         line: ['Pine trees almost down to the water, just next door.', 'Πεύκα σχεδόν ως το νερό, ακριβώς δίπλα.'] },
       { cat: 'beach', q: 'Giola Thasos', area: ['South coast', 'Νότια ακτή'], name: ['Giola', 'Γκιόλα'],
         line: ['A natural pool in the rocks, right by the open sea.', 'Φυσική πισίνα μέσα στα βράχια, δίπλα στο ανοιχτό πέλαγος.'] },
+      { cat: 'beach', q: 'Golden Beach Thasos', area: ['East coast', 'Ανατολική ακτή'], name: ['Golden Beach', 'Χρυσή Αμμουδιά'],
+        img: 'https://images.pexels.com/photos/28498153/pexels-photo-28498153.jpeg?auto=compress&cs=tinysrgb&w=800', credit: 'Artiom Petrachi',
+        line: ['A long beach with golden sand below green hills.', 'Μεγάλη παραλία με χρυσή άμμο, κάτω από πράσινους λόφους.'] },
       { cat: 'beach', q: 'Alyki beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Alyki', 'Αλυκή'],
+        img: 'https://images.pexels.com/photos/14987668/pexels-photo-14987668.jpeg?auto=compress&cs=tinysrgb&w=800', credit: 'Adelina Andreea',
         line: ['Two small bays next to an ancient marble quarry.', 'Δύο μικροί κόλποι δίπλα σε ένα αρχαίο λατομείο μαρμάρου.'] },
       { cat: 'beach', q: 'Psili Ammos beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Psili Ammos', 'Ψιλή Άμμος'],
         line: ['A long beach with fine sand and clear water.', 'Μεγάλη παραλία με ψιλή άμμο και καθαρά νερά.'] },
@@ -1953,7 +1975,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     function render() {
       tabsEl.innerHTML = CATS.map((c) => '<button type="button" data-c="' + c + '" aria-pressed="' + (c === cat) + '">' + t('g.' + c) + '</button>').join('');
       cardsEl.innerHTML = GUIDE.filter((g) => cat === 'all' || g.cat === cat).map((g) =>
-        '<article class="gcard"><div class="gart" data-c="' + g.cat + '" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">' + ICON[g.cat] + '</svg>' +
+        '<article class="gcard"><div class="gart' + (g.img ? ' has-img' : '') + '" data-c="' + g.cat + '">' +
+        (g.img ? '<img src="' + g.img + '" alt="' + esc(g.name[L()]) + '" loading="lazy"><span class="gcredit">' + esc(g.credit) + ' · Pexels</span>'
+               : '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">' + ICON[g.cat] + '</svg>') +
         '<span class="garea">' + esc(g.area[L()]) + '</span></div><div class="gbody"><h3>' + esc(g.name[L()]) + '</h3><p>' + esc(g.line[L()]) + '</p>' +
         (g.q ? '<a class="gdir" href="https://www.google.com/maps/search/?api=1&amp;query=' + encodeURIComponent(g.q) + '" target="_blank" rel="noopener">' + t('guide.dir') + ' ↗</a>' : '') +
         '</div></article>').join('');
