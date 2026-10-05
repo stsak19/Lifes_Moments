@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Commissioner:wght@300;400;500;600&family=Noto+Serif+Display:ital,wght@1,300;1,400&display=swap">
 <style>
-/* Layout: fixed glass header; a pinned 3D intro (scroll drives the camera); booking right under it; room tabs + gallery; a 3D tour frame that borrows the same canvas; guide teaser; footer.
+/* Layout: fixed glass header; hero video; booking bar with the Google rating; a day at the house; rooms (switch + every unit sliding); the place; Thasos guide; reviews; footer.
    The palette follows the time on Thasos (data-mood on <html>), not the OS theme. */
 :root {
   --bg: #0A1220; --surface: #111C2E; --deep: #060C17; --ink: #E8EDF4; --muted: #9AA7BA;
@@ -632,8 +632,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .mom-clock { position: absolute; left: 24px; bottom: 20px; display: flex; flex-direction: column; gap: 6px; color: #F8F4EC; text-shadow: 0 2px 18px rgba(0, 0, 0, .35); pointer-events: none; }
 .mom-clock b { font: 400 clamp(48px, 6vw, 84px)/.9 var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
 .mom-clock span { font-size: 11px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; opacity: .85; }
-.mom-now { position: absolute; right: 16px; top: 16px; margin: 0; padding: 7px 12px; border-radius: var(--r-ctl); background: rgba(6, 10, 18, .4); color: #F8F4EC; font-size: 12px; letter-spacing: .04em; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.mom-now b { font-weight: 600; font-variant-numeric: tabular-nums; }
 .mom-list { margin: 0; padding: 0; list-style: none; }
 .mom { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding-block: 24px; opacity: .28; transition: opacity .6s ease; }
 .mom:first-child { min-height: 60vh; justify-content: flex-start; padding-top: 12vh; }
@@ -744,7 +742,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 @media (max-width: 760px) { .hero-photo { object-position: 42% 60%; } }
 
 /* ---------- every unit: auto-sliding photos (light background) ---------- */
-.units { padding-block: 120px 100px; overflow: hidden; }
+
 .units-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 36px; }
 .units-lead { margin: 0; max-width: 34ch; color: var(--muted); font-size: 17px; }
 .ucar { overflow: hidden; touch-action: pan-y; }
@@ -771,7 +769,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 #uPlay[data-state="paused"] .i-pause { display: none; }
 @media (max-width: 980px) { .uslide { flex-basis: calc((100vw - 48px - 20px) / 2); } }
 @media (max-width: 760px) {
-  .units { padding-block: 72px 64px; }
   .utrack { --side: 16px; column-gap: 12px; }
   .uslide { flex-basis: calc(100vw - 32px - 48px); }
   .umeta b { font-size: 21px; }
@@ -813,33 +810,46 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ---------- sections as stacked sheets: each one its own tone, rising over the one before ---------- */
 :root { --sec-a: #EAEEF0; --sec-b: #FBF5F0; --sheet-r: 40px; }
-.rooms { background: var(--bg); }
-.moments, .place, .units, .guide, .reviews, .foot-wrap {
+.moments { background: var(--bg); }
+.rooms, .place, .guide, .reviews, .foot-wrap {
   position: relative; margin-top: calc(var(--sheet-r) * -1); border-radius: var(--sheet-r) var(--sheet-r) 0 0;
   box-shadow: 0 -1px 0 var(--line), 0 -18px 40px -28px var(--shadow);
   transition: background-color .6s ease;
 }
-.moments { background: var(--sec-a); }
+.rooms { background: var(--sec-a); }
 .place { background: var(--sec-b); }
-.units { background: var(--sec-a); }
 .guide { background: var(--bg); padding-bottom: 110px; }
 .reviews { background: var(--sec-b); }
 .foot-wrap { background: var(--deep); border-top: 0; }
 /* keep the top padding the same once the sheet overlap is counted */
-.moments { padding-top: calc(110px + var(--sheet-r)); }
-.place, .units, .guide, .reviews { padding-top: calc(110px + var(--sheet-r)); }
+.moments { padding-top: 96px; }
+.rooms, .place, .guide, .reviews { padding-top: calc(110px + var(--sheet-r)); }
 .foot-wrap .foot { padding-top: calc(64px + var(--sheet-r) / 2); }
 /* a small handle at the top edge of each sheet */
-.moments::before, .place::before, .units::before, .guide::before, .reviews::before {
+.rooms::before, .place::before, .guide::before, .reviews::before {
   content: ""; position: absolute; top: 14px; left: 50%; width: 44px; height: 4px; border-radius: 4px; transform: translateX(-50%);
   background: var(--accent-2); opacity: .28;
 }
-.rooms { padding-bottom: calc(96px + var(--sheet-r)); }
+.moments { padding-bottom: calc(64px + var(--sheet-r)); }
+.rooms { padding-bottom: 100px; overflow: hidden; }
 @media (max-width: 760px) {
   :root { --sheet-r: 26px; }
-  .moments, .place, .units, .guide, .reviews { padding-top: calc(64px + var(--sheet-r)); }
-  .rooms { padding-bottom: calc(64px + var(--sheet-r)); }
+  .moments { padding-top: 64px; padding-bottom: calc(40px + var(--sheet-r)); }
+  .rooms, .place, .guide, .reviews { padding-top: calc(64px + var(--sheet-r)); }
+  .rooms { padding-bottom: 64px; }
 }
+/* rooms head: title + line on the left, the Rooms / Apartment switch on the right */
+.rooms-head .units-lead { margin-top: 18px; }
+.rooms-head { margin-bottom: 36px; }
+/* when the apartment is picked, the rooms step back a little */
+.ucar .uslide { transition: opacity .5s ease; }
+.ucar.show-apt .uslide:not(.is-apt) { opacity: .45; }
+/* the Google rating, right under the booking bar */
+.stay-rate { display: flex; align-items: center; justify-content: center; gap: 10px; width: max-content; max-width: 100%; margin: 14px auto 0; padding: 6px 12px; border-radius: 999px; color: var(--muted); font-size: 14px; text-decoration: none; transition: color .2s; }
+.stay-rate:hover { color: var(--ink); }
+.stay-rate b { color: var(--ink); font-weight: 600; }
+.stay-stars { color: var(--accent); letter-spacing: 2px; font-size: 13px; }
+@media (max-width: 760px) { .stay-rate { font-size: 13px; gap: 8px; } }
 
 /* reviews: a stack you can drag. Pull the front card away and the next one rises from behind. */
 .reviews { overflow-x: clip; }
@@ -884,11 +894,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <span class="brand-txt"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span>
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#photos" data-i18n="nav.photos">Photos</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
+      <a href="#reviews" data-i18n="rev.eyebrow">Reviews</a>
     </nav>
     <div class="top-actions">
       <div class="lang" id="lang">
@@ -937,11 +947,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <nav aria-label="Menu">
-      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#moments" data-i18n="nav.day">A day</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#place" data-i18n="nav.place">The place</a>
-      <a href="#photos" data-i18n="nav.photos">Photos</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
+      <a href="#reviews" data-i18n="rev.eyebrow">Reviews</a>
     </nav>
     <a class="btn wide" href="#stay" data-i18n="sheet.cta">Check availability</a>
   </div>
@@ -1022,27 +1032,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           </div>
         </div>
       </div>
+      <a class="stay-rate" href="#reviews"><span class="stay-stars" aria-hidden="true">★★★★★</span><span data-i18n-html="stay.rate"><b>5.0</b> on Google · 180 guest reviews</span></a>
     </div>
   </section>
 
-  <section class="rooms" id="rooms" aria-labelledby="roomsTitle">
-    <div class="wrap">
-      <div class="rooms-head" data-reveal>
-        <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">01</span><span data-i18n="nav.rooms">Rooms</span></p>
-          <h2 id="roomsTitle" data-i18n-html="rooms.title">Where you'll <em>stay</em></h2>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Rooms" id="roomTabs"></div>
-      </div>
-      <div class="gallery" id="gallery" role="tabpanel" aria-labelledby="roomsTitle"></div>
-    </div>
-  </section>
+
 
   <!-- A day at the house: the picture is an illustration driven by scroll. Swap in real photos of each moment later. -->
   <section class="moments" id="moments" aria-labelledby="momTitle">
     <div class="wrap mom-head" data-reveal>
       <div>
-        <p class="eyebrow sec-eyebrow"><span class="num">02</span><span data-i18n="mom.eyebrow">A day at Life's Moments</span></p>
+        <p class="eyebrow sec-eyebrow"><span class="num">01</span><span data-i18n="mom.eyebrow">A day at Life's Moments</span></p>
         <h2 class="sec-title" id="momTitle" data-i18n-html="mom.title">Every hour has its <em>moment</em></h2>
       </div>
       <p class="mom-lead" data-i18n="mom.lead">A summer day at the house, from morning to night.</p>
@@ -1088,7 +1088,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           </svg>
           <div class="mom-clock"><b id="momClock">08:00</b><span id="momLabel">Morning</span></div>
         </div>
-        <p class="mom-now"><span data-i18n="mom.nowL">On Thasos now</span> <b id="momNow">--:--</b></p>
       </div>
       <ol class="mom-list" id="momList">
         <li class="mom on"><span class="mom-t">08:00</span><h3 data-i18n="mom.1t">Coffee on the terrace</h3><p data-i18n="mom.1d">The sea below, pine trees all around, and the day just starting.</p></li>
@@ -1098,6 +1097,32 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </ol>
     </div>
     <p class="wrap fine mom-note" data-i18n="mom.note">Illustration. Photos of each moment will replace it.</p>
+  </section>
+
+  <!-- Rooms: pick rooms or the apartment, then every unit slides by on its own. Photos per unit live in UNIT_PHOTOS in the script. -->
+  <section class="rooms" id="rooms" aria-labelledby="roomsTitle">
+    <div class="wrap">
+      <div class="rooms-head" data-reveal>
+        <div>
+          <p class="eyebrow sec-eyebrow"><span class="num">02</span><span data-i18n="nav.rooms">Rooms</span></p>
+          <h2 class="sec-title" id="roomsTitle" data-i18n-html="rooms.title">Where you'll <em>stay</em></h2>
+          <p class="units-lead" data-i18n="units.lead">Eleven rooms and a separate apartment. Tap one to see all its photos.</p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Rooms" id="roomTabs"></div>
+      </div>
+    </div>
+    <div class="ucar" id="ucar" role="tabpanel" aria-labelledby="tab-room" aria-roledescription="carousel">
+      <div class="utrack" id="utrack"></div>
+    </div>
+    <div class="wrap uctl">
+      <span class="ucount" id="ucount" aria-live="polite">01 / 12</span>
+      <span class="ubar" aria-hidden="true"><i id="ubar"></i></span>
+      <div class="ubtns">
+        <button type="button" class="icon-btn" id="uPrev" data-i18n-aria="u.prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg></button>
+        <button type="button" class="icon-btn" id="uPlay" data-i18n-aria="u.pause" aria-label="Pause" data-state="playing"><svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg></button>
+        <button type="button" class="icon-btn" id="uNext" data-i18n-aria="u.next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg></button>
+      </div>
+    </div>
   </section>
 
   <section class="place" id="place" aria-labelledby="placeTitle">
@@ -1139,30 +1164,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
   </section>
 
-  <!-- Photos of every unit, sliding on their own. Photos per unit live in UNIT_PHOTOS in the script. -->
-  <section class="units" id="photos" aria-labelledby="unitsTitle">
-    <div class="wrap">
-      <div class="units-head" data-reveal>
-        <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.photos">Photos</span></p>
-          <h2 class="sec-title" id="unitsTitle" data-i18n-html="units.title">Every room, <em>one by one</em></h2>
-        </div>
-        <p class="units-lead" data-i18n="units.lead">Eleven rooms and a separate apartment. Tap one to see all its photos.</p>
-      </div>
-    </div>
-    <div class="ucar" id="ucar" aria-roledescription="carousel" aria-labelledby="unitsTitle">
-      <div class="utrack" id="utrack"></div>
-    </div>
-    <div class="wrap uctl">
-      <span class="ucount" id="ucount" aria-live="polite">01 / 12</span>
-      <span class="ubar" aria-hidden="true"><i id="ubar"></i></span>
-      <div class="ubtns">
-        <button type="button" class="icon-btn" id="uPrev" data-i18n-aria="u.prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg></button>
-        <button type="button" class="icon-btn" id="uPlay" data-i18n-aria="u.pause" aria-label="Pause" data-state="playing"><svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg></button>
-        <button type="button" class="icon-btn" id="uNext" data-i18n-aria="u.next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg></button>
-      </div>
-    </div>
-  </section>
 
   <!-- Thasos guide. Places and texts live in GUIDE in the script; photos can replace the drawn headers later. -->
   <section class="guide" id="guide" aria-labelledby="guideTitle">
@@ -1171,7 +1172,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <img class="guide-img" src="https://images.pexels.com/photos/39567764/pexels-photo-39567764.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="" loading="lazy">
         <span class="gcredit">Ricardo Oliveira · Pexels</span>
         <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="nav.guide">Guide</span></p>
+          <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.guide">Guide</span></p>
           <h2 class="sec-title" id="guideTitle" data-i18n-html="guide.title">Thasos <em>around you</em></h2>
         </div>
         <p class="guide-lead" data-i18n="guide.lead">Beaches, villages and places worth the drive.</p>
@@ -1184,7 +1185,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   <section class="reviews" id="reviews" aria-labelledby="revTitle">
     <div class="wrap">
       <div data-reveal>
-        <p class="eyebrow sec-eyebrow"><span class="num">06</span><span data-i18n="rev.eyebrow">Reviews</span></p>
+        <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="rev.eyebrow">Reviews</span></p>
         <h2 class="sec-title" id="revTitle" data-i18n-html="rev.title">What guests <em>say</em></h2>
       </div>
       <div class="rev-grid">
@@ -1330,7 +1331,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
       'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
       'am.garden': 'Sea-view terrace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
-      'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
+      'stay.rate': '<b>5.0</b> on Google · 180 guest reviews', 'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
       'map.where': 'Limenaria, Thasos', 'map.sub': 'South-west coast of the island', 'map.dir': 'Directions',
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
       'tour.title': 'Walk through the <em>house</em>', 'tour.fs': 'Full screen', 'tour.hint': 'Drag to look around · pick a spot below', 'tour.fail': 'The 3D view could not load. Refresh the page.',
@@ -1387,7 +1388,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
       'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
       'am.garden': 'Βεράντα με θέα στη θάλασσα', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
-      'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
+      'stay.rate': '<b>5,0</b> στο Google · 180 κριτικές', 'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
       'map.where': 'Λιμενάρια, Θάσος', 'map.sub': 'Νοτιοδυτική ακτή του νησιού', 'map.dir': 'Οδηγίες',
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
       'tour.title': 'Περιηγηθείτε στο <em>σπίτι</em>', 'tour.fs': 'Πλήρης οθόνη', 'tour.hint': 'Σύρετε για να δείτε γύρω · ή διαλέξτε σημείο από κάτω', 'tour.fail': 'Η 3D προβολή δεν φόρτωσε. Ανανεώστε τη σελίδα.',
@@ -1836,9 +1837,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     roomIdx = i;
     tabs.forEach((t, j) => { t.setAttribute('aria-selected', String(j === i)); t.tabIndex = j === i ? 0 : -1; });
     if (focus) tabs[i].focus();
-    gal.setAttribute('aria-labelledby', tabs[i].id);
+    $('#ucar').setAttribute('aria-labelledby', tabs[i].id);
     roomInfo(i);
-    renderGallery();
+    if (window.__unitJump) window.__unitJump(ROOMS[i].id === 'apt');
     if (window.__queueRoom) window.__queueRoom(i);
     if (cal.unit !== i) selectUnit(i);
   }
@@ -1860,6 +1861,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   window.__realPhotos = true;
   const currentShots = () => PHOTOS[ROOMS[roomIdx].id] || shotsFor(roomIdx);
   function renderGallery() {
+    if (!gal) return; // the gallery was replaced by the carousel of every unit
     const r = ROOMS[roomIdx], shots = currentShots();
     let h = '';
     for (let i = 0; i < 3; i++) {
@@ -1869,7 +1871,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     }
     gal.innerHTML = h;
   }
-  gal.addEventListener('click', (e) => {
+  if (gal) gal.addEventListener('click', (e) => {
     const b = e.target.closest('.ph');
     if (b && currentShots()) openLb(+b.dataset.i);
   });
@@ -1952,9 +1954,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const revIO = new IntersectionObserver((en) => {
       en.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); revIO.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -12% 0px' });
-    $$('[data-reveal], #gallery').forEach((el) => revIO.observe(el));
-  } else {
-    $('#gallery').classList.add('in');
+    $$('[data-reveal]').forEach((el) => revIO.observe(el));
   }
 
   /* ================= a day at the house =================
@@ -2042,10 +2042,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     window.addEventListener('resize', () => { lastT = -1; measure(); });
     paint(0);
     langHooks.push(() => { if (active >= 0) labelEl.textContent = t('mom.l')[active]; });
-    // the real time on the island, in the corner of the picture
-    const nowEl = $('#momNow');
-    const tickNow = () => { nowEl.textContent = athensNow().clock; };
-    tickNow(); setInterval(tickNow, 30000);
   })();
 
   /* ================= Thasos guide =================
@@ -2165,8 +2161,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       b.setAttribute('aria-label', t(p ? 'u.pause' : 'u.play')); b.dataset.i18nAria = p ? 'u.pause' : 'u.play';
       restart();
     }
-    $('#uPrev').addEventListener('click', () => go(idx - 1));
-    $('#uNext').addEventListener('click', () => go(idx + 1));
+    // Apartment picked: show it and hold still. Rooms picked: back to room 1 and slide on.
+    window.__unitJump = (apt) => { car.classList.toggle('show-apt', apt); playing = !apt && !reduce; go(apt ? maxIdx : 0); setPlaying(playing); };
+    const free = () => car.classList.remove('show-apt');
+    $('#uPrev').addEventListener('click', () => { free(); go(idx - 1); });
+    $('#uNext').addEventListener('click', () => { free(); go(idx + 1); });
     $('#uPlay').addEventListener('click', () => setPlaying(!playing));
     car.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hover = true; restart(); } });
     car.addEventListener('pointerleave', () => { hover = false; restart(); });
@@ -2178,7 +2177,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     car.addEventListener('pointerup', (e) => {
       if (sx === null) return;
       const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { moved = true; go(idx + (dx < 0 ? 1 : -1)); }
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { moved = true; free(); go(idx + (dx < 0 ? 1 : -1)); }
       sx = null;
     });
     track.addEventListener('click', (e) => {
