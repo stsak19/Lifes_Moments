@@ -733,6 +733,16 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .gart { height: 170px; }
 @media (max-width: 760px) { .guide-head { min-height: 380px; padding: 24px 20px; margin-inline: -4px; } }
 
+/* hero photo: a very slow push-in so the still image feels alive */
+.hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform-origin: 62% 55%; animation: kb 26s ease-in-out infinite alternate; }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.09) translate(-1%, -.5%); } }
+.intro:not([data-hero="photo"]) .hero-photo { display: none; }
+.intro[data-hero="photo"] .rail { display: none; }
+.intro[data-hero="photo"] .play-btn { display: none; }
+.intro[data-hero="photo"] .grade { opacity: .35; }
+@media (prefers-reduced-motion: reduce) { .hero-photo { animation: none; } }
+@media (max-width: 760px) { .hero-photo { object-position: 42% 60%; } }
+
 /* ---------- reviews (bottom of the page) ---------- */
 .reviews { padding-block: 120px 130px; }
 .rev-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.6fr); gap: 56px; margin-top: 40px; align-items: start; }
@@ -845,12 +855,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 <main>
   <section class="intro" id="intro" aria-label="Life's Moments">
     <div class="stage" id="introStage"></div>
+    <img class="hero-photo" id="heroPhoto" src="photos/terrace-dusk.jpg" srcset="photos/terrace-dusk-960.jpg 960w, photos/terrace-dusk.jpg 1920w" sizes="100vw" alt="The terrace at dusk, with pine trees and the sea below" fetchpriority="high">
     <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" poster="hero-poster.jpg" aria-label="Drone video flying over the house"></video>
     <div class="grade"></div>
     <div class="shade"></div>
     <div class="fade" id="fade"></div>
     <div class="hero-ctl">
       <div class="hero-switch" role="group" aria-label="Hero version">
+        <button type="button" data-heromode="photo" data-i18n="hero.photo">Photo</button>
         <button type="button" data-heromode="video" data-i18n="hero.drone">Drone video</button>
         <button type="button" data-heromode="3d" data-i18n="hero.3d">3D house</button>
       </div>
@@ -954,7 +966,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         </div>
         <div class="room-cta">
           <button type="button" class="btn" id="bookThis">Book a room</button>
-          <p class="fine" data-i18n="rooms.renders">Renders of the demo house. Real photos replace them.</p>
         </div>
       </div>
     </div>
@@ -995,11 +1006,12 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             <path id="mHillL" d="M0 1000 L0 896 C70 878 150 896 230 1000 Z"/>
             <path id="mHill" d="M250 1000 C330 902 460 852 600 840 C690 832 760 838 800 844 L800 1000 Z"/>
             <g id="mHouse">
-              <rect class="m-wall" x="520" y="800" width="62" height="48"/><polygon class="m-roof" points="514,802 551,780 588,802"/>
-              <rect class="m-wall" x="572" y="770" width="150" height="78"/><polygon class="m-roof" points="562,772 647,726 732,772"/>
-              <rect class="m-win" x="536" y="812" width="14" height="18"/>
-              <rect class="m-win" x="590" y="790" width="16" height="22"/><rect class="m-win" x="618" y="790" width="16" height="22"/>
-              <rect class="m-win" x="680" y="790" width="16" height="22"/><rect class="m-win" x="650" y="806" width="18" height="42"/>
+              <rect class="m-wall" x="556" y="732" width="170" height="116"/>
+              <rect class="m-roof" x="548" y="726" width="186" height="8"/>
+              <rect class="m-roof" x="548" y="768" width="140" height="5"/><rect class="m-roof" x="548" y="806" width="140" height="5"/>
+              <rect class="m-win" x="566" y="744" width="22" height="22"/><rect class="m-win" x="600" y="744" width="22" height="22"/><rect class="m-win" x="634" y="744" width="22" height="22"/><rect class="m-win" x="696" y="744" width="18" height="22"/>
+              <rect class="m-win" x="566" y="782" width="22" height="22"/><rect class="m-win" x="600" y="782" width="22" height="22"/><rect class="m-win" x="634" y="782" width="22" height="22"/><rect class="m-win" x="696" y="782" width="18" height="22"/>
+              <rect class="m-win" x="566" y="820" width="22" height="24"/><rect class="m-win" x="600" y="820" width="22" height="24"/><rect class="m-win" x="634" y="820" width="22" height="24"/><rect class="m-win" x="696" y="820" width="18" height="24"/>
             </g>
             <g id="mTrees">
               <path d="M152 940 C150 905 162 885 150 852" fill="none" stroke-width="9" stroke-linecap="round"/>
@@ -1012,10 +1024,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <p class="mom-now"><span data-i18n="mom.nowL">On Thasos now</span> <b id="momNow">--:--</b></p>
       </div>
       <ol class="mom-list" id="momList">
-        <li class="mom on"><span class="mom-t">08:00</span><h3 data-i18n="mom.1t">Coffee in the garden</h3><p data-i18n="mom.1d">The garden is still cool and the island is just waking up.</p></li>
+        <li class="mom on"><span class="mom-t">08:00</span><h3 data-i18n="mom.1t">Coffee on the terrace</h3><p data-i18n="mom.1d">The sea below, pine trees all around, and the day just starting.</p></li>
         <li class="mom"><span class="mom-t">13:00</span><h3 data-i18n="mom.2t">Down to the sea</h3><p data-i18n="mom.2d">A short way to the beach, and back in time for a long lunch.</p></li>
         <li class="mom"><span class="mom-t">19:30</span><h3 data-i18n="mom.3t">Golden hour</h3><p data-i18n="mom.3d">A drink outside while the light turns gold.</p></li>
-        <li class="mom"><span class="mom-t">22:00</span><h3 data-i18n="mom.4t">Quiet nights</h3><p data-i18n="mom.4d">Stars over the garden and no alarm in the morning.</p></li>
+        <li class="mom"><span class="mom-t">22:00</span><h3 data-i18n="mom.4t">Quiet nights</h3><p data-i18n="mom.4d">Stars over the terrace and no alarm in the morning.</p></li>
       </ol>
     </div>
     <p class="wrap fine mom-note" data-i18n="mom.note">Illustration. Photos of each moment will replace it.</p>
@@ -1032,7 +1044,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M4.5 6.5l15 11"/><path d="M19.5 6.5l-15 11"/><path d="M9 4l3 2 3-2"/><path d="M9 20l3-2 3 2"/></svg><span data-i18n="am.ac">Air conditioning</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg><span data-i18n="am.parking">Free parking</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 7c0-1 1-1 1-2"/><path d="M12 7c0-1 1-1 1-2"/><path d="M16 7c0-1 1-1 1-2"/></svg><span data-i18n="am.kitchen">Kitchen in the apartment</span></li>
-            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6z"/><path d="M12 13c4 0 6-3 6-6-3 0-6 2-6 6z"/><path d="M5 21h14"/></svg><span data-i18n="am.garden">Garden and outdoor seating</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13c-4 0-6-3-6-6 3 0 6 2 6 6z"/><path d="M12 13c4 0 6-3 6-6-3 0-6 2-6 6z"/><path d="M5 21h14"/></svg><span data-i18n="am.garden">Sea-view terrace</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 14V4"/><path d="M4 9a8 8 0 0 1 16 0z"/></svg><span data-i18n="am.beach">Close to the beach</span></li>
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="6" r="2.5"/><circle cx="16.5" cy="8.5" r="2"/><path d="M4 20v-4a4 4 0 0 1 8 0v4"/><path d="M13.5 20v-3a3 3 0 0 1 6 0v3"/></svg><span data-i18n="am.family">Families welcome</span></li>
         </ul>
@@ -1073,7 +1085,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <div class="stage" id="tourStage"></div>
         <div class="tour-hint" id="tourHint" data-i18n="tour.hint">Drag to look around · pick a spot below</div>
         <div class="tour-cover" id="tourCover">
-          <img src="hero-poster.jpg" alt="" loading="lazy">
+          <img src="photos/exterior-dusk.jpg" alt="" loading="lazy">
           <button type="button" class="btn tour-enter" id="tourEnter">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>
             <span data-i18n="tour.enter">Step inside</span>
@@ -1225,7 +1237,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
       'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
       'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Guest rooms and a private apartment on the island.',
-      'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
+      'hero.photo': 'Photo', 'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
       'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
       'bar.stayin': 'Stay in', 'bar.ci': 'Check-in', 'bar.co': 'Check-out', 'bar.guests': 'Guests', 'bar.add': 'Add date',
       'bar.go': 'Check dates', 'bar.request': 'Request booking',
@@ -1250,7 +1262,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
       'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
-      'am.garden': 'Garden and outdoor seating', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
+      'am.garden': 'Sea-view terrace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome',
       'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
       'map.where': 'Limenaria, Thasos', 'map.sub': 'South-west coast of the island', 'map.dir': 'Directions',
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
@@ -1267,10 +1279,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'guest': 'guest', 'guests': 'guests', 'm.emailed': 'We emailed {e} a copy.',
       'nav.day': 'A day', 'place.title': 'The <em>place</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
-      'mom.1t': 'Coffee in the garden', 'mom.1d': 'The garden is still cool and the island is just waking up.',
+      'mom.1t': 'Coffee on the terrace', 'mom.1d': 'The sea below, pine trees all around, and the day just starting.',
       'mom.2t': 'Down to the sea', 'mom.2d': 'A short way to the beach, and back in time for a long lunch.',
       'mom.3t': 'Golden hour', 'mom.3d': 'A drink outside while the light turns gold.',
-      'mom.4t': 'Quiet nights', 'mom.4d': 'Stars over the garden and no alarm in the morning.',
+      'mom.4t': 'Quiet nights', 'mom.4d': 'Stars over the terrace and no alarm in the morning.',
       'mom.l': ['Morning', 'Midday', 'Golden hour', 'Night'], 'mom.nowL': 'On Thasos now', 'mom.note': 'Illustration. Photos of each moment will replace it.',
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
       'nav.guide': 'Guide', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
@@ -1282,7 +1294,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
       'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
       'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': 'Δωμάτια και ένα ιδιωτικό διαμέρισμα στο νησί.',
-      'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
+      'hero.photo': 'Φωτογραφία', 'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
       'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
       'bar.stayin': 'Διαμονή σε', 'bar.ci': 'Άφιξη', 'bar.co': 'Αναχώρηση', 'bar.guests': 'Άτομα', 'bar.add': 'Επιλογή',
       'bar.go': 'Δείτε ημερομηνίες', 'bar.request': 'Αίτημα κράτησης',
@@ -1307,7 +1319,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
       'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
-      'am.garden': 'Κήπος και καθιστικό έξω', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
+      'am.garden': 'Βεράντα με θέα στη θάλασσα', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες',
       'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
       'map.where': 'Λιμενάρια, Θάσος', 'map.sub': 'Νοτιοδυτική ακτή του νησιού', 'map.dir': 'Οδηγίες',
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
@@ -1324,10 +1336,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Στείλαμε αντίγραφο στο {e}.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ο <em>χώρος</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
-      'mom.1t': 'Καφές στον κήπο', 'mom.1d': 'Ο κήπος είναι ακόμα δροσερός και το νησί μόλις ξυπνάει.',
+      'mom.1t': 'Καφές στη βεράντα', 'mom.1d': 'Η θάλασσα από κάτω, πεύκα γύρω γύρω και η μέρα μόλις ξεκινάει.',
       'mom.2t': 'Βουτιά στη θάλασσα', 'mom.2d': 'Λίγος δρόμος ως την παραλία, και πίσω για ένα χαλαρό μεσημεριανό.',
       'mom.3t': 'Χρυσή ώρα', 'mom.3d': 'Ένα ποτό έξω, όσο το φως γίνεται χρυσό.',
-      'mom.4t': 'Ήσυχα βράδια', 'mom.4d': 'Αστέρια πάνω από τον κήπο και πρωινό χωρίς ξυπνητήρι.',
+      'mom.4t': 'Ήσυχα βράδια', 'mom.4d': 'Αστέρια πάνω από τη βεράντα και πρωινό χωρίς ξυπνητήρι.',
       'mom.l': ['Πρωί', 'Μεσημέρι', 'Δειλινό', 'Νύχτα'], 'mom.nowL': 'Τώρα στη Θάσο', 'mom.note': 'Εικονογράφηση. Θα μπουν φωτογραφίες για κάθε στιγμή.',
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
       'nav.guide': 'Οδηγός', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
@@ -1742,7 +1754,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     selectUnit(roomIdx); goTo('#stay');
     if (!(cal.ci && cal.co)) setTimeout(() => openCal($('#ciBtn')), reduce ? 50 : 1100);
   });
-  const currentShots = () => shotsFor(roomIdx);
+  // Real photos of the property. The first one is the big image.
+  const PHOTOS = {
+    room: ['photos/room-blue.jpg', 'photos/room-grey.jpg', 'photos/balcony-sea.jpg'],
+    apt: ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg', 'photos/bathroom.jpg']
+  };
+  window.__realPhotos = true;
+  const currentShots = () => PHOTOS[ROOMS[roomIdx].id] || shotsFor(roomIdx);
   function renderGallery() {
     const r = ROOMS[roomIdx], shots = currentShots();
     let h = '';
@@ -1795,8 +1813,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   /* ================= hero: drone video or 3D house ================= */
   const hv = $('#heroVideo'), playBtn = $('#playBtn'), introEl = $('#intro');
   hv.muted = true;
-  hv.src = mqMobile.matches ? 'hero-960.mp4' : 'hero-1600.mp4';
-  let heroMode = location.hash === '#hero-3d' ? '3d' : 'video';
+  const loadVideo = () => { if (!hv.getAttribute('src')) hv.src = mqMobile.matches ? 'hero-960.mp4' : 'hero-1600.mp4'; }; // only fetched if someone picks the video
+  let heroMode = location.hash === '#hero-3d' ? '3d' : location.hash === '#hero-video' ? 'video' : 'photo';
   let wantPlay = !reduce, introOnScreen = true;
   const hero3d = { playing: false, onMode: null }; // filled in by the 3D part
   const isPlaying = () => (heroMode === 'video' ? !hv.paused : hero3d.playing);
@@ -1804,7 +1822,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   langHooks.push(setPlayLabel);
   function tryPlay() { const p = hv.play(); if (p && p.catch) p.catch(setPlayLabel); }
   function syncPlayback() {
-    if (heroMode === 'video') { hero3d.playing = false; if (wantPlay && introOnScreen) tryPlay(); else hv.pause(); }
+    if (heroMode === 'photo') { hv.pause(); hero3d.playing = false; }
+    else if (heroMode === 'video') { hero3d.playing = false; if (wantPlay && introOnScreen) tryPlay(); else hv.pause(); }
     else { hv.pause(); hero3d.playing = wantPlay; }
     setPlayLabel();
   }
@@ -1815,6 +1834,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   function setHeroMode(m) {
     if (m === '3d' && !window.THREE) m = 'video';
     heroMode = m;
+    if (m === 'video') loadVideo();
     introEl.dataset.hero = m;
     hv.hidden = m !== 'video';
     $$('[data-heromode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.heromode === m)));
@@ -2497,6 +2517,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   // ---------- room renders (stand-ins for real photos) ----------
   const jobs = [];
   function queueRoom(i) {
+    if (window.__realPhotos) return; // real photos are in, no need to render the demo rooms
     const r = ROOMS[i];
     if (shotCache[mood] && shotCache[mood][r.id]) return;
     if (!jobs.some((j) => j.mood === mood && j.i === i)) jobs.unshift({ mood: mood, i: i });
