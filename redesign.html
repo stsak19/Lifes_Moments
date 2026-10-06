@@ -2,6 +2,7 @@
 <title>Life's Moments Redesign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Commissioner:wght@300;400;500;600&family=Noto+Serif+Display:ital,wght@1,300;1,400&display=swap">
 <style>
 /* Layout: fixed glass header; hero video; booking bar with the Google rating; a day at the house; rooms (switch + every unit sliding); the place; Thasos guide; reviews; footer.
@@ -388,9 +389,16 @@ a.score:hover { border-color: var(--muted); }
 .map-foot .btn { flex: none; }
 .place-side { display: flex; flex-direction: column; gap: 16px; position: sticky; top: calc(var(--header-h) + 32px); }
 .map { aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: var(--deep); }
-.map iframe { display: block; width: 100%; height: 100%; border: 0; filter: saturate(.55) contrast(.95); }
-:root[data-mood="night"] .map iframe, :root:not([data-mood]) .map iframe { filter: invert(.9) hue-rotate(180deg) saturate(.5) brightness(.9); }
-:root[data-mood="golden"] .map iframe { filter: sepia(.45) saturate(.8) brightness(.85); }
+.map { position: relative; }
+#lm-map { position: absolute; inset: 0; background: var(--deep); font-family: var(--font-body); }
+#lm-map .leaflet-tile-pane { filter: saturate(.55) contrast(.95); }
+:root[data-mood="night"] #lm-map .leaflet-tile-pane, :root:not([data-mood]) #lm-map .leaflet-tile-pane { filter: invert(.9) hue-rotate(180deg) saturate(.5) brightness(.9); }
+:root[data-mood="golden"] #lm-map .leaflet-tile-pane { filter: sepia(.45) saturate(.8) brightness(.85); }
+#lm-map .leaflet-control-attribution { font-size: 9px; line-height: 1.4; padding: 1px 6px; background: rgba(0, 0, 0, .28); color: rgba(255, 255, 255, .6); border-top-left-radius: 6px; }
+#lm-map .leaflet-control-attribution a { color: inherit; text-decoration: none; }
+#lm-map .leaflet-control-zoom { border: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); border-radius: 12px; overflow: hidden; }
+#lm-map .leaflet-control-zoom a { width: 34px; height: 34px; line-height: 32px; background: var(--surface); color: var(--ink); border-color: var(--line); }
+.lm-pin { width: 22px; height: 22px; border-radius: 999px; background: var(--accent); border: 3px solid #fff; box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 30%, transparent), 0 4px 12px rgba(0, 0, 0, .35); }
 .dist { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
 .dist li { display: flex; align-items: baseline; gap: 14px; padding: 12px 2px; border-bottom: 1px solid var(--line); }
 .dist b { min-width: 74px; font: 400 22px/1 var(--font-display); }
@@ -1194,7 +1202,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </div>
       <aside class="place-side" aria-label="Location">
         <div class="map">
-          <iframe title="Map: Life's Moments near Limenaria, Thasos" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=24.5056%2C40.5978%2C24.5956%2C40.6518&amp;layer=mapnik&amp;marker=40.624813%2C24.550563"></iframe>
+          <div id="lm-map" role="region" aria-label="Map: Life's Moments near Limenaria, Thasos"></div>
         </div>
         <div class="map-foot">
           <div>
@@ -2367,4 +2375,26 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 })();
 </script>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* Location map: Leaflet + OSM tiles, with a small "© OpenStreetMap" credit (required by the OSM licence) instead of the iframe's full footer. */
+(function () {
+  var el = document.getElementById('lm-map');
+  if (!el || !window.L) return;
+  var pos = [40.624813, 24.550563];
+  function init() {
+    var map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false }).setView(pos, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>'
+    }).addTo(map);
+    map.attributionControl.setPrefix(false);
+    L.marker(pos, { icon: L.divIcon({ className: '', html: '<div class="lm-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }), title: "Life's Moments" }).addTo(map);
+  }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); init(); } }, { rootMargin: '300px' });
+    io.observe(el);
+  } else init();
+})();
+</script>
 </body></html>
