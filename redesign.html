@@ -944,69 +944,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rev-dots button:hover::before { background: var(--muted); }
   .rev-dots button[aria-current="true"]:hover::before { background: var(--accent); }
 }
-
-/* ---------- booking bar that moves with the page ----------
-   Leaves its place under the hero once you scroll past it. In "A day" it becomes a shorter version of the same bar,
-   bottom-right next to the picture. Then it drops into the Rooms section and stays there, scrolling with it.
-   Not shown in The place, Guide or Reviews. The moves are animated (FLIP) in JS. */
-.bar-wrap.lifted { height: var(--slot-h); }
-/* the bar's place in Rooms keeps its height even before the bar lands, so nothing below jumps */
-.rooms-book { margin-top: 40px; min-height: var(--book-h, 133px); }
-.sbar.is-dock, .sbar.is-float { position: fixed; z-index: 35; margin: 0; transition: opacity .35s ease, translate .45s cubic-bezier(.2, .8, .2, 1), background-color .9s, border-color .9s; }
-.sbar.is-away { opacity: 0; translate: 0 18px; pointer-events: none; }
-.sbar.no-trans { transition: none !important; }
-.sbar.is-dock {
-  bottom: var(--dock-bottom); left: var(--dock-left); width: max-content;
-  grid-template-columns: auto minmax(98px, auto) minmax(98px, auto) auto auto; padding: 8px; border-radius: 24px;
-  box-shadow: 0 28px 60px -24px var(--shadow), 0 2px 8px var(--shadow);
-}
-.sbar.is-dock .sb-cell { padding: 11px 13px; gap: 7px; border-radius: 16px; }
-.sbar.is-dock .sb-cell small { font-size: 11px; letter-spacing: .12em; white-space: nowrap; }
-.sbar.is-dock .sb-date b { font-size: 21px; }
-.sbar.is-dock .seg button { min-height: 35px; padding: 0 11px; font-size: 12.5px; }
-.sbar.is-dock .mini { width: 30px; height: 30px; }
-.sbar.is-dock .sb-guests .step { gap: 8px; }
-.sbar.is-dock .sb-guests output { font-size: 18px; min-width: 14px; }
-.sbar.is-dock .sb-go { height: 48px; margin: 0 3px 0 5px; padding: 0 17px; border-radius: 14px; font-size: 14px; }
-.sbar.is-dock.is-tight { grid-template-columns: auto minmax(98px, auto) minmax(98px, auto) auto; }
-.sbar.is-dock.is-tight .sb-guests { display: none; }
-/* last resort on small laptop screens: a smaller version of the same row */
-.sbar.is-dock.is-small .sb-cell { padding: 8px 10px; gap: 5px; }
-.sbar.is-dock.is-small .sb-cell small { font-size: 10px; }
-.sbar.is-dock.is-small .sb-date b { font-size: 18px; }
-.sbar.is-dock.is-small .seg button { min-height: 30px; padding: 0 9px; font-size: 12px; }
-.sbar.is-dock.is-small .sb-go { height: 42px; padding: 0 13px; font-size: 13px; }
-.sbar.is-dock.is-small { grid-template-columns: auto minmax(84px, auto) minmax(84px, auto) auto; }
-/* the lighter option for "A day": just a small "Check dates" button in the corner instead of the whole bar */
-.aday-pill {
-  position: fixed; z-index: 35; right: var(--pill-right, 24px); bottom: var(--pill-bottom, 24px);
-  display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px 0 18px;
-  border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
-  font: 500 15px/1 var(--font-body); letter-spacing: .02em;
-  box-shadow: 0 18px 40px -16px var(--shadow), 0 2px 8px var(--shadow);
-  opacity: 0; translate: 0 14px; pointer-events: none;
-  transition: opacity .4s ease, translate .5s cubic-bezier(.2, .8, .2, 1), background-color .2s, box-shadow .2s;
-}
-.aday-pill.on { opacity: 1; translate: 0 0; pointer-events: auto; }
-.aday-pill:hover { box-shadow: 0 22px 46px -16px var(--shadow), 0 3px 10px var(--shadow); }
-@media (max-width: 980px) { .aday-pill { min-height: 48px; font-size: 14px; } }
-/* preview switch for the two "A day" options */
-.dev-row { margin: 0 0 12px; }
-.dev-row > span { display: block; margin-bottom: 6px; color: #A1A1A6; font-size: 11px; }
-.dev-seg { display: flex; gap: 2px; padding: 3px; border-radius: 8px; background: #2C2C2E; }
-.dev-seg button { flex: 1; min-height: 30px; border: 0; border-radius: 6px; background: transparent; color: #A1A1A6; font: 500 12px/1 inherit; font-family: inherit; }
-.dev-seg button[aria-pressed="true"] { background: #F5B83D; color: #1C1C1E; }
-/* tablets and phones have no right column: during "A day" the bar is one slim row at the bottom */
-@media (max-width: 980px) {
-  .sbar.is-float { left: 0; right: 0; margin-inline: auto; width: calc(100vw - 24px); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); grid-template-columns: 1fr 1fr auto; gap: 4px; padding: 6px; border-radius: 18px; box-shadow: 0 24px 50px -18px var(--shadow), 0 4px 14px var(--shadow); }
-  .sbar.is-float .sb-unit, .sbar.is-float .sb-guests { display: none; }
-  .sbar.is-float .sb-cell { padding: 8px 12px; gap: 4px; }
-  .sbar.is-float .sb-cell small { font-size: 10px; }
-  .sbar.is-float .sb-date b { font-size: 17px; }
-  .sbar.is-float .sb-go { grid-column: auto; align-self: stretch; height: auto; margin: 0 0 0 2px; padding: 0 16px; font-size: 14px; }
-  .rooms-book { margin-top: 28px; }
-}
-
 </style>
 
 <header class="top" id="top">
@@ -1056,13 +993,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <p class="dev-note">Δεν φαίνεται στο κανονικό site. Πατήστε ένα συνδυασμό για να τον δείτε σε όλη τη σελίδα.</p>
-    <div class="dev-row">
-      <span>Κράτηση στο «A day»</span>
-      <div class="dev-seg" id="adaySeg" role="group" aria-label="Booking in A day">
-        <button type="button" data-v="light" aria-pressed="true">Ελαφριά</button>
-        <button type="button" data-v="full" aria-pressed="false">Πλήρης μπάρα</button>
-      </div>
-    </div>
     <div class="pal-list" id="palList" role="group" aria-label="Colour options"></div>
   </div>
 </aside>
@@ -1168,11 +1098,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 
   <!-- A day at the house: the picture is an illustration driven by scroll. Swap in real photos of each moment later. -->
-  <button type="button" class="aday-pill" id="adayPill" tabindex="-1" aria-hidden="true">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
-    <span data-i18n="bar.go">Check dates</span>
-  </button>
-
   <section class="moments" id="moments" aria-labelledby="momTitle">
     <div class="wrap mom-head" data-reveal>
       <div>
@@ -1257,7 +1182,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <button type="button" class="icon-btn" id="uNext" data-i18n-aria="u.next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6l-6 6"/></svg></button>
       </div>
     </div>
-    <div class="wrap rooms-book" id="roomsBook"></div>
   </section>
 
   <section class="place" id="place" aria-labelledby="placeTitle">
@@ -1754,139 +1678,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   window.addEventListener('scroll', updateTop, { passive: true });
   window.addEventListener('resize', updateTop);
   updateTop();
-
-  /* ================= booking bar that moves with the page ================= */
-  (function () {
-    const wrap = $('#barWrap'), bar = $('#sbar'), calPopEl = $('#calPop'), roomsBook = $('#roomsBook');
-    const body = $('.mom-body'), stage = $('.mom-stage'), list = $('.mom-list');
-    if (!wrap || !bar || !roomsBook) return;
-    const wide = window.matchMedia('(min-width: 981px)');
-    let mode = 'inline', anim = null, raf = 0;
-    const stickTop = () => parseFloat(getComputedStyle(stage).top) || 0;
-    // Two options for "A day", switchable in the preview panel: 'light' = a small "Check dates" button,
-    // 'full' = the whole bar, shorter, bottom-right. Rooms behaves the same in both.
-    const pill = $('#adayPill'), seg = $('#adaySeg');
-    let aday = 'light';
-    try { if (localStorage.getItem('lm-aday') === 'full') aday = 'full'; } catch (e) {}
-    function showSeg() { if (seg) $$('button', seg).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === aday))); }
-    if (seg) seg.addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-v]'); if (!b) return;
-      aday = b.dataset.v; showSeg();
-      try { localStorage.setItem('lm-aday', aday); } catch (err) {}
-      ask();
-    });
-    showSeg();
-    if (pill) pill.addEventListener('click', () => { if (window.__openCal) window.__openCal($('#ciBtn')); });
-    function setPill(on) {
-      if (!pill) return;
-      if (on) {
-        if (wide.matches && list) {
-          const r = list.getBoundingClientRect();
-          pill.style.setProperty('--pill-right', Math.max(24, window.innerWidth - r.right) + 'px');
-          pill.style.setProperty('--pill-bottom', Math.max(16, window.innerHeight - (stickTop() + stage.offsetHeight)) + 'px');
-        } else {
-          pill.style.setProperty('--pill-right', '16px');
-          pill.style.setProperty('--pill-bottom', 'calc(env(safe-area-inset-bottom, 0px) + 16px)');
-        }
-      }
-      pill.classList.toggle('on', on);
-      pill.tabIndex = on ? 0 : -1;
-      pill.setAttribute('aria-hidden', String(!on));
-    }
-
-    function pick() {
-      const headB = topBar.getBoundingClientRect().bottom;
-      if (wrap.getBoundingClientRect().bottom > headB + 8) return 'inline';
-      // Rooms: the bar has its own place at the bottom of the section and scrolls with it from there on
-      if (roomsBook.getBoundingClientRect().top < window.innerHeight - 40) return 'rooms';
-      if (!body || !stage) return 'away';
-      const b = body.getBoundingClientRect();
-      if (wide.matches) {
-        if (b.top > stickTop() + 2) return 'inline'; // between the bar's place and "A day": nothing shows yet
-        return b.bottom > stickTop() + stage.offsetHeight + 40 ? 'dock' : 'away';
-      }
-      return b.top < window.innerHeight * 0.5 && b.bottom > window.innerHeight * 0.6 ? 'float' : 'away';
-    }
-    function placeDock() {
-      // Never on the picture: the bar lives in the open space to its right. It starts where the text starts and,
-      // if it needs more room, may reach past the text column towards the edge of the window.
-      // If even that isn't enough, Guests steps out (it's still in the full bar).
-      const r = list.getBoundingClientRect(), st = stage.getBoundingClientRect();
-      const minLeft = st.right + 24, maxRight = window.innerWidth - 24;
-      bar.style.setProperty('--dock-bottom', Math.max(16, window.innerHeight - (stickTop() + stage.offsetHeight)) + 'px');
-      if (!bar.classList.contains('is-dock')) return;
-      bar.classList.remove('is-tight', 'is-small');
-      if (maxRight - minLeft < bar.offsetWidth) bar.classList.add('is-tight');
-      if (maxRight - minLeft < bar.offsetWidth) bar.classList.add('is-small');
-      const w = bar.offsetWidth;
-      const left = r.left + w <= maxRight ? r.left : Math.max(minLeft, maxRight - w);
-      bar.style.setProperty('--dock-left', left + 'px');
-    }
-    function sizeBook() { if (mode === 'inline') roomsBook.style.setProperty('--book-h', bar.offsetHeight + 'px'); }
-    function home(el) { if (bar.parentNode !== el) el === wrap ? wrap.insertBefore(bar, calPopEl) : el.appendChild(bar); }
-    function apply(m, was) {
-      if (m === 'inline') {
-        home(wrap); wrap.classList.remove('lifted');
-        bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight', 'is-small'); return;
-      }
-      if (!wrap.classList.contains('lifted')) { wrap.style.setProperty('--slot-h', bar.offsetHeight + 'px'); wrap.classList.add('lifted'); }
-      if (m === 'rooms') { home(roomsBook); bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight', 'is-small'); return; }
-      home(wrap);
-      // Coming from a place in the page (Rooms, or the bar's own place) straight to hidden: hide at once,
-      // without the fade, or the bar flashes up at its fixed spot on the way out.
-      const jump = m === 'away' && (was === 'rooms' || was === 'inline');
-      if (jump) { bar.classList.add('no-trans'); requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.remove('no-trans'))); }
-      const kind = m === 'dock' || (m === 'away' && wide.matches) ? 'dock' : 'float';
-      bar.classList.toggle('is-dock', kind === 'dock');
-      if (kind === 'dock') placeDock();
-      bar.classList.toggle('is-float', kind === 'float');
-      bar.classList.toggle('is-away', m === 'away');
-    }
-    function go(m) {
-      const was = mode; mode = m;
-      if (anim) { anim.cancel(); anim = null; }
-      // showing / hiding in place is a plain CSS fade; every real move morphs from where the bar was to where it goes
-      if (m === 'away' || (was === 'away' && (m === 'dock' || m === 'float'))) { apply(m, was); return; }
-      const a = bar.getBoundingClientRect();
-      if (anim) anim.cancel();
-      apply(m, was);
-      if (reduce) return;
-      const z = bar.getBoundingClientRect();
-      if (z.bottom < 0 || z.top > window.innerHeight) return; // going somewhere you can't see: no need to animate
-      const outOfView = a.bottom < 0 || a.top > window.innerHeight;
-      const offscreen = outOfView || was === 'away';
-      // coming from somewhere you can't see (e.g. its own place far above): just rise softly into place
-      const k = outOfView ? 0.96 : Math.max(0.35, Math.min(2.6, a.width / z.width));
-      const dx = outOfView ? 0 : (a.left + a.width / 2) - (z.left + z.width / 2);
-      const dy = outOfView ? 36 : (a.top + a.height / 2) - (z.top + z.height / 2);
-      anim = bar.animate([
-        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + k + ')', opacity: offscreen ? 0 : 0.55 },
-        { opacity: 1, offset: 0.55 },
-        { transform: 'none', opacity: 1 }
-      ], { duration: 700, easing: 'cubic-bezier(.22, .9, .25, 1)' });
-      anim.onfinish = () => { anim = null; };
-    }
-    function tick() {
-      raf = 0;
-      // The calendar opens under the bar's own place (desktop), so the bar goes back home while it's open.
-      // On phones the calendar is a bottom sheet and the bar can stay where it is.
-      const calOpen = !calPopEl.hidden;
-      if (calOpen && mqMobile.matches) { setPill(false); return; }
-      let m = calOpen ? 'inline' : pick();
-      // light option: the bar itself stays in its own place during "A day"; the small button shows instead
-      if (aday === 'light' && (m === 'dock' || m === 'float' || m === 'away')) {
-        setPill(m !== 'away');
-        m = 'inline';
-      } else setPill(false);
-      if (m !== mode) go(m);
-      else if (m === 'dock' || m === 'away') { if (wide.matches) placeDock(); }
-    }
-    const ask = () => { if (!raf) raf = requestAnimationFrame(tick); };
-    window.addEventListener('scroll', ask, { passive: true });
-    window.addEventListener('resize', () => { sizeBook(); ask(); });
-    sizeBook();
-    tick();
-  })();
 
   /* ================= the rooms and the apartment ================= */
   // Two choices for the guest: a room in the main house (the host picks which one) or the apartment next door.
