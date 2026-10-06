@@ -970,6 +970,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .sbar.is-dock .sb-go { height: 48px; margin: 0 3px 0 5px; padding: 0 17px; border-radius: 14px; font-size: 14px; }
 .sbar.is-dock.is-tight { grid-template-columns: auto minmax(98px, auto) minmax(98px, auto) auto; }
 .sbar.is-dock.is-tight .sb-guests { display: none; }
+/* last resort on small laptop screens: a smaller version of the same row */
+.sbar.is-dock.is-small .sb-cell { padding: 8px 10px; gap: 5px; }
+.sbar.is-dock.is-small .sb-cell small { font-size: 10px; }
+.sbar.is-dock.is-small .sb-date b { font-size: 18px; }
+.sbar.is-dock.is-small .seg button { min-height: 30px; padding: 0 9px; font-size: 12px; }
+.sbar.is-dock.is-small .sb-go { height: 42px; padding: 0 13px; font-size: 13px; }
+.sbar.is-dock.is-small { grid-template-columns: auto minmax(84px, auto) minmax(84px, auto) auto; }
 /* tablets and phones have no right column: during "A day" the bar is one slim row at the bottom */
 @media (max-width: 980px) {
   .sbar.is-float { left: 0; right: 0; margin-inline: auto; width: calc(100vw - 24px); bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); grid-template-columns: 1fr 1fr auto; gap: 4px; padding: 6px; border-radius: 18px; box-shadow: 0 24px 50px -18px var(--shadow), 0 4px 14px var(--shadow); }
@@ -1740,25 +1747,29 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       return b.top < window.innerHeight * 0.5 && b.bottom > window.innerHeight * 0.6 ? 'float' : 'away';
     }
     function placeDock() {
-      // Right edge lines up with the text column; the bar keeps a comfortable size and may overlap the picture's
-      // corner a little, but never more than about half of it. If even that isn't enough room, Guests steps out.
+      // Never on the picture: the bar lives in the open space to its right. It starts where the text starts and,
+      // if it needs more room, may reach past the text column towards the edge of the window.
+      // If even that isn't enough, Guests steps out (it's still in the full bar).
       const r = list.getBoundingClientRect(), st = stage.getBoundingClientRect();
-      const minLeft = st.left + st.width * 0.5;
+      const minLeft = st.right + 24, maxRight = window.innerWidth - 24;
       bar.style.setProperty('--dock-bottom', Math.max(16, window.innerHeight - (stickTop() + stage.offsetHeight)) + 'px');
       if (!bar.classList.contains('is-dock')) return;
-      bar.classList.remove('is-tight');
-      if (r.right - bar.offsetWidth < minLeft) bar.classList.add('is-tight');
-      bar.style.setProperty('--dock-left', Math.max(minLeft, r.right - bar.offsetWidth) + 'px');
+      bar.classList.remove('is-tight', 'is-small');
+      if (maxRight - minLeft < bar.offsetWidth) bar.classList.add('is-tight');
+      if (maxRight - minLeft < bar.offsetWidth) bar.classList.add('is-small');
+      const w = bar.offsetWidth;
+      const left = r.left + w <= maxRight ? r.left : Math.max(minLeft, maxRight - w);
+      bar.style.setProperty('--dock-left', left + 'px');
     }
     function sizeBook() { if (mode === 'inline') roomsBook.style.setProperty('--book-h', bar.offsetHeight + 'px'); }
     function home(el) { if (bar.parentNode !== el) el === wrap ? wrap.insertBefore(bar, calPopEl) : el.appendChild(bar); }
     function apply(m, was) {
       if (m === 'inline') {
         home(wrap); wrap.classList.remove('lifted');
-        bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight'); return;
+        bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight', 'is-small'); return;
       }
       if (!wrap.classList.contains('lifted')) { wrap.style.setProperty('--slot-h', bar.offsetHeight + 'px'); wrap.classList.add('lifted'); }
-      if (m === 'rooms') { home(roomsBook); bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight'); return; }
+      if (m === 'rooms') { home(roomsBook); bar.classList.remove('is-dock', 'is-float', 'is-away', 'is-tight', 'is-small'); return; }
       home(wrap);
       // Coming from a place in the page (Rooms, or the bar's own place) straight to hidden: hide at once,
       // without the fade, or the bar flashes up at its fixed spot on the way out.
