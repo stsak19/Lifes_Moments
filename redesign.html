@@ -2383,7 +2383,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   if (!el || !window.L) return;
   var pos = [40.624813, 24.550563];
   function init() {
-    var map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false }).setView(pos, 14);
+    var map = L.map(el, { scrollWheelZoom: false, dragging: !L.Browser.mobile, tap: false, zoomSnap: 0.25 });
+    /* Open on the whole island; fitBounds adapts to the map's size on desktop and mobile. */
+    map.fitBounds([[40.565, 24.505], [40.815, 24.795]], { padding: [12, 12] });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>'
