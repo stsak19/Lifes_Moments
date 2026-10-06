@@ -78,8 +78,8 @@ h1, h2, h3 { text-wrap: balance; }
   transition: opacity .5s ease;
 }
 .top.solid {
-  --top-ink: var(--ink);
-  background: var(--nav); border-bottom-color: var(--line);
+  --top-ink: var(--top-ink-s, var(--ink));
+  background: var(--top-bg, var(--nav)); border-bottom-color: var(--top-line, var(--line));
   backdrop-filter: blur(16px) saturate(1.2); -webkit-backdrop-filter: blur(16px) saturate(1.2);
   box-shadow: 0 10px 30px -18px var(--shadow);
 }
@@ -1647,8 +1647,33 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   function updateTop() {
     const hero = $('#intro');
     const limit = hero ? hero.offsetHeight - topBar.offsetHeight - 40 : 80;
-    topBar.classList.toggle('solid', window.scrollY > Math.max(60, limit));
+    const solid = window.scrollY > Math.max(60, limit);
+    topBar.classList.toggle('solid', solid);
+    if (solid) tintTop();
   }
+  /* The solid bar takes on the tone of the section under it, but a step darker (or lighter on dark tones)
+     with its own line and shadow, so it never melts into the page. */
+  const tintSecs = ['.moments', '.rooms', '.place', '.guide', '.reviews', '.foot-wrap'].map((q) => $(q)).filter(Boolean);
+  let lastTint = '';
+  function tintTop() {
+    const y = topBar.getBoundingClientRect().bottom;
+    let sec = null;
+    for (const el of tintSecs) if (el.getBoundingClientRect().top <= y) sec = el;
+    const c = getComputedStyle(sec || document.body).backgroundColor.match(/[\d.]+/g);
+    if (!c || (c[3] !== undefined && +c[3] === 0)) return;
+    const [r, g, b] = c.slice(0, 3).map(Number);
+    const key = r + ',' + g + ',' + b;
+    if (key === lastTint) return;
+    lastTint = key;
+    const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    const dark = lum < 0.45;
+    const to = dark ? 255 : 0;
+    const mix = (k) => [r, g, b].map((v) => Math.round(v + (to - v) * k));
+    topBar.style.setProperty('--top-bg', 'rgba(' + mix(dark ? 0.07 : 0.045).join(', ') + ', .9)');
+    topBar.style.setProperty('--top-line', 'rgba(' + mix(dark ? 0.2 : 0.14).join(', ') + ', 1)');
+    topBar.style.setProperty('--top-ink-s', dark ? 'var(--cap-ink)' : 'var(--ink)');
+  }
+  document.addEventListener('transitionend', (e) => { if (e.propertyName === 'background-color' && tintSecs.includes(e.target)) { lastTint = ''; updateTop(); } });
   if (hasGsap && !reduce) gsap.fromTo('#bandImg', { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: '.band', start: 'top bottom', end: 'bottom top', scrub: true } });
   window.addEventListener('scroll', updateTop, { passive: true });
   window.addEventListener('resize', updateTop);
