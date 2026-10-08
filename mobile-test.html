@@ -1000,11 +1000,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .stay.bk-open .sb-date { display: none; }
   .stay.bk-open .cal-pop, .stay.bk-open .cal-pop[hidden] {
     order: 3; display: block !important; position: static; max-height: none; overflow: visible;
-    padding: 10px 14px 0; border: 0; border-radius: 0; background: none; box-shadow: none; animation: none;
+    padding: 26px 14px 22px; border: 0; border-radius: 0; background: none; box-shadow: none; animation: none;
   }
   .stay.bk-open #calClose, .stay.bk-open .cal-foot, .stay.bk-open .cal-scrim { display: none !important; }
-  .stay.bk-open .cal-top { margin-bottom: 4px; }
-  .stay.bk-open .month h3 { font-size: 22px; margin-bottom: 8px; }
+  .stay.bk-open .cal-top { margin-bottom: 14px; }
+  .stay.bk-open .month h3 { font-size: 22px; margin-bottom: 14px; }
   .stay.bk-open .d { height: 44px; }
   /* guests right under Room / Apartment, as a clear row of its own */
   .stay.bk-open .sb-guests {
@@ -1024,14 +1024,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     background: var(--ink); color: var(--bg); font-weight: 600; opacity: 1;
   }
   .stay.bk-open .sb-foot {
-    order: 4; position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    order: 4; position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 14px;
     margin-top: 14px; padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
     background: var(--surface); border-top: 1px solid var(--line);
   }
-  .stay.bk-open .bk-sum { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .stay.bk-open .bk-sum { display: none; } /* the calendar already shows what you picked */
   .bk-sum b { font: 400 19px/1.15 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .bk-sum small { font-size: 12.5px; color: var(--muted); }
-  .stay.bk-open .sb-go { flex: none; height: 50px; margin: 0; padding: 0 24px; align-self: auto; }
+  .stay.bk-open .sb-go { flex: none; min-width: 230px; height: 52px; margin: 0; padding: 0 32px; align-self: auto; }
   .bk-scrim:not([hidden]) { display: block; position: fixed; inset: 0; z-index: 62; background: rgba(4, 7, 13, .45); animation: fadeIn .25s ease; }
   @keyframes fadeIn { from { opacity: 0; } }
   .stay-rate { margin-top: 8px; }
