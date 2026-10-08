@@ -1143,6 +1143,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rooms, .place, .guide, .reviews, .foot-wrap { border-radius: 0; box-shadow: none; }
   .rooms::before, .place::before, .guide::before, .reviews::before { display: none; }
 
+  /* menu: a soft fade in and out */
+  .sheet { animation: menuFadeIn .45s cubic-bezier(.2, .7, .2, 1) both; }
+  .sheet.closing { animation: menuFadeOut .34s ease forwards; pointer-events: none; }
+  .sheet-card { transition: transform .34s ease; }
+  .sheet.closing .sheet-card { transform: translateY(-8px); }
+  .sheet nav a { animation-duration: .6s; }
+  .sheet nav a:nth-child(2) { animation-delay: .1s; }
+  .sheet nav a:nth-child(3) { animation-delay: .16s; }
+  .sheet nav a:nth-child(4) { animation-delay: .22s; }
+  .sheet nav a:nth-child(5) { animation-delay: .28s; }
+  .sheet-lang, .sheet .btn.wide { animation: menuRise .6s .32s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes menuRise { from { opacity: 0; transform: translateY(10px); } }
+  @keyframes menuFadeIn { from { opacity: 0; } }
+  @keyframes menuFadeOut { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .sheet, .sheet.closing, .sheet-lang, .sheet .btn.wide { animation: none; } }
+
   /* preview tools: a small tab so it stays out of the way */
   .devpanel { top: auto; bottom: 96px; transform: none; }
   .dev-tab { padding: 10px 6px; }
@@ -1786,8 +1802,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
   /* ================= menu sheet ================= */
   const sheet = $('#sheet'), menuBtn = $('#menuBtn');
-  function openSheet() { document.documentElement.classList.add('scroll-lock'); sheet.hidden = false; menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop(); $('#sheetClose').focus(); }
-  function closeSheet() { if (sheet.hidden) return; document.documentElement.classList.remove('scroll-lock'); sheet.hidden = true; menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start(); }
+  let sheetTimer = 0;
+  function openSheet() {
+    clearTimeout(sheetTimer); sheet.classList.remove('closing');
+    document.documentElement.classList.add('scroll-lock'); sheet.hidden = false;
+    menuBtn.setAttribute('aria-expanded', 'true'); lenis && lenis.stop(); $('#sheetClose').focus({ preventScroll: true });
+  }
+  function closeSheet() {
+    if (sheet.hidden || sheet.classList.contains('closing')) return;
+    document.documentElement.classList.remove('scroll-lock');
+    menuBtn.setAttribute('aria-expanded', 'false'); lenis && lenis.start();
+    // fade out first (phones), then hide
+    const ms = mqMobile.matches && !reduce ? 340 : 0;
+    if (!ms) { sheet.hidden = true; return; }
+    sheet.classList.add('closing');
+    sheetTimer = setTimeout(() => { sheet.hidden = true; sheet.classList.remove('closing'); }, ms);
+  }
   menuBtn.addEventListener('click', openSheet);
   $('#sheetClose').addEventListener('click', closeSheet);
   sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
