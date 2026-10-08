@@ -999,14 +999,27 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .stay.bk-open .sb-unit small { display: none; }
   .stay.bk-open .sb-date { display: none; }
   .stay.bk-open .cal-pop, .stay.bk-open .cal-pop[hidden] {
-    order: 2; display: block !important; position: static; max-height: none; overflow: visible;
+    order: 3; display: block !important; position: static; max-height: none; overflow: visible;
     padding: 10px 14px 0; border: 0; border-radius: 0; background: none; box-shadow: none; animation: none;
   }
   .stay.bk-open #calClose, .stay.bk-open .cal-foot, .stay.bk-open .cal-scrim { display: none !important; }
   .stay.bk-open .cal-top { margin-bottom: 4px; }
   .stay.bk-open .month h3 { font-size: 22px; margin-bottom: 8px; }
   .stay.bk-open .d { height: 44px; }
-  .stay.bk-open .sb-guests { order: 3; margin: 10px 16px 0; padding: 12px 16px; border-radius: 16px; background: var(--bg); }
+  /* guests right under Room / Apartment, as a clear row of its own */
+  .stay.bk-open .sb-guests {
+    order: 2; display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    margin: 8px 16px 2px; padding: 8px 8px 8px 18px; border: 1px solid var(--line); border-radius: 16px; background: #FFFFFF;
+  }
+  .stay.bk-open .sb-guests small { font: 500 16px/1 var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink); }
+  .stay.bk-open .sb-guests .mini { width: 42px; height: 42px; border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
+  .stay.bk-open .sb-guests output { min-width: 22px; font-size: 21px; }
+  /* chosen days: solid and dark, so it's obvious what you tapped (a tap must not leave the pale hover colour behind) */
+  .stay.bk-open .d:hover:not(:disabled) { background: transparent; }
+  .stay.bk-open .d.in, .stay.bk-open .d.in:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+  .stay.bk-open .d.start, .stay.bk-open .d.end, .stay.bk-open .d.start:hover:not(:disabled), .stay.bk-open .d.end:hover:not(:disabled) {
+    background: var(--ink); color: var(--bg); font-weight: 600; opacity: 1;
+  }
   .stay.bk-open .sb-foot {
     order: 4; position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 14px;
     margin-top: 14px; padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
