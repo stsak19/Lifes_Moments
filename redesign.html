@@ -787,6 +787,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .umeta b { font-size: 21px; }
 }
 
+/* ---------- font picker in the preview panel (Greek headings) ---------- */
+.font-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.font-list button { display: flex; flex-direction: column; gap: 3px; padding: 9px 10px; border: 1px solid #3A3A3C; border-radius: 8px; background: transparent; color: #EDEDED; text-align: left; }
+.font-list button[aria-pressed="true"] { border-color: #F5B83D; background: #2C2C2E; }
+.font-list button span { font: 600 10.5px/1.2 ui-monospace, Menlo, monospace; color: #A1A1A6; letter-spacing: .04em; }
+.font-list button b { font-weight: 400; font-size: 21px; line-height: 1.15; }
+.dev-sub { margin: 0 0 8px; color: #F5B83D; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; }
+
 /* ---------- colour picker in the preview panel ---------- */
 .dev-body { width: 300px; max-height: 84vh; overflow: auto; }
 .pal-list { display: flex; flex-direction: column; gap: 6px; }
@@ -958,6 +966,38 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .rev-dots button:hover::before { background: var(--muted); }
   .rev-dots button[aria-current="true"]:hover::before { background: var(--accent); }
 }
+.mfab { display: none; }
+/* ================= PC: things brought over from the phone version ================= */
+@media (min-width: 761px) {
+  /* calendar: no step-by-step hints; only a real warning (e.g. booked nights) shows, on the left */
+  .cal-top { justify-content: flex-end; }
+  #calHint:not(.has-note) { display: none; }
+  #calHint.has-note { margin-right: auto; color: #A44A26; }
+  /* chosen days: solid and dark, so it's obvious what you picked */
+  .d.in, .d.in:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+  .d.start, .d.end, .d.start:hover:not(:disabled), .d.end:hover:not(:disabled) { background: var(--ink); color: var(--bg); font-weight: 600; opacity: 1; }
+  .legend .sw { background: var(--ink); }
+  /* sections: flat tops, no curves and no little handle; the spacing stays exactly as it was */
+  .rooms, .place, .guide, .reviews, .foot-wrap { border-radius: 0; box-shadow: 0 -1px 0 var(--line), 0 -16px 28px -20px var(--shadow); }
+  .rooms::before, .place::before, .guide::before, .reviews::before { display: none; }
+  /* Greek headings: the font picked in the preview panel (Literata by default); the name stays in GFS Didot */
+  html[lang="el"] { --font-display: var(--m-font-display, "GFS Didot", Georgia, serif); --font-italic: var(--m-font-italic, "Noto Serif Display", Georgia, serif); }
+  .brand-name, .foot-mark { font-family: "GFS Didot", "Didot", "Bodoni 72", Georgia, serif; }
+  /* a quiet booking button at the bottom right once the booking bar has scrolled away */
+  .mfab {
+    display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 44;
+    right: 28px; bottom: 28px; height: 44px; padding: 0 18px 0 15px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink);
+    font: 500 14px/1 var(--font-body); letter-spacing: .02em; cursor: pointer;
+    box-shadow: 0 12px 26px -16px var(--shadow);
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .4s ease, transform .5s cubic-bezier(.2, .8, .2, 1), background-color .25s, color .25s, border-color .25s;
+  }
+  .mfab.show { opacity: 1; transform: none; pointer-events: auto; }
+  .mfab:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .mfab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .mfab { transform: none; } }
+}
 </style>
 
 <header class="top" id="top">
@@ -993,6 +1033,12 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   </div>
 </header>
 
+<!-- PC: once the booking bar scrolls away, a small booking button waits at the bottom right. -->
+<button type="button" class="mfab" id="mfab" tabindex="-1" aria-hidden="true">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+  <span data-i18n="fab.book">Book</span>
+</button>
+
 <!-- Preview tools: only for showing the design. Remove this block (and .devpanel CSS) for the live site. -->
 <aside class="devpanel" id="devpanel" aria-label="Preview tools">
   <button type="button" class="dev-tab" id="devTab" aria-expanded="false" aria-controls="devBody">
@@ -1007,6 +1053,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <p class="dev-note">Δεν φαίνεται στο κανονικό site. Πατήστε ένα συνδυασμό για να τον δείτε σε όλη τη σελίδα.</p>
+    <p class="dev-sub">Γραμματοσειρά τίτλων · ελληνικά</p>
+    <div class="font-list" id="fontList" role="group" aria-label="Greek heading font"></div>
+    <p class="dev-sub">Χρώματα</p>
     <div class="pal-list" id="palList" role="group" aria-label="Colour options"></div>
   </div>
 </aside>
@@ -1205,7 +1254,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     <div class="wrap place-grid">
       <div class="place-main" data-reveal>
         <p class="eyebrow sec-eyebrow"><span class="num">03</span><span data-i18n="nav.place">The place</span></p>
-        <h2 class="sec-title" id="placeTitle" data-i18n-html="place.title">The <em>place</em></h2>
+        <h2 class="sec-title" id="placeTitle" data-i18n-html="place.title">Quiet, by the <em>sea</em></h2>
         <p class="place-lead" data-i18n-html="place.lead">Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span></p>
         <ul class="amen">
             <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8" fill="currentColor"/></svg><span data-i18n="am.wifi">Wi-Fi throughout</span></li>
@@ -1379,7 +1428,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const I18N = {
     en: {
       'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
-      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.photos': 'Photos', 'units.title': 'Every room, <em>one by one</em>', 'units.lead': 'Eleven rooms and a separate apartment. Tap one to see all its photos.', 'unit.n': 'Room {n}', 'unit.apt': 'The Apartment', 'unit.photos': '{n} photos', 'unit.photo1': '1 photo', 'unit.soon': 'Photos coming soon', 'u.prev': 'Previous', 'u.next': 'Next', 'u.pause': 'Pause slideshow', 'u.play': 'Play slideshow', 'nav.book': 'Book now', 'sheet.cta': 'Check availability',
+      'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.photos': 'Photos', 'units.title': 'Every room, <em>one by one</em>', 'units.lead': 'Eleven rooms and a separate apartment. Tap one to see all its photos.', 'unit.n': 'Room {n}', 'unit.apt': 'The Apartment', 'unit.photos': '{n} photos', 'unit.photo1': '1 photo', 'unit.soon': 'Photos coming soon', 'u.prev': 'Previous', 'u.next': 'Next', 'u.pause': 'Pause slideshow', 'u.play': 'Play slideshow', 'nav.book': 'Book now', 'sheet.cta': 'Check availability', 'fab.book': 'Book',
       'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Eleven rooms and a separate apartment on the island.',
       'hero.photo': 'Photo', 'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
       'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
@@ -1421,7 +1470,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
       'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. Nothing was held or sent.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': 'We emailed {e} a copy.',
-      'nav.day': 'A day', 'place.title': 'The <em>place</em>',
+      'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
       'mom.1t': 'Coffee on the terrace', 'mom.1d': 'The sea below, pine trees all around, and the day just starting.',
       'mom.2t': 'Down to the sea', 'mom.2d': 'A short way to the beach, and back in time for a long lunch.',
@@ -1436,7 +1485,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     },
     el: {
       'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
-      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.photos': 'Φωτογραφίες', 'units.title': 'Κάθε διαμέρισμα, <em>ένα ένα</em>', 'units.lead': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ. Πατήστε ένα για να δείτε όλες τις φωτογραφίες του.', 'unit.n': 'Διαμέρισμα {n}', 'unit.apt': 'Απαρτμέντ', 'unit.photos': '{n} φωτογραφίες', 'unit.photo1': '1 φωτογραφία', 'unit.soon': 'Φωτογραφίες σύντομα', 'u.prev': 'Προηγούμενο', 'u.next': 'Επόμενο', 'u.pause': 'Παύση', 'u.play': 'Αναπαραγωγή', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα',
+      'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.photos': 'Φωτογραφίες', 'units.title': 'Κάθε διαμέρισμα, <em>ένα ένα</em>', 'units.lead': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ. Πατήστε ένα για να δείτε όλες τις φωτογραφίες του.', 'unit.n': 'Διαμέρισμα {n}', 'unit.apt': 'Απαρτμέντ', 'unit.photos': '{n} φωτογραφίες', 'unit.photo1': '1 φωτογραφία', 'unit.soon': 'Φωτογραφίες σύντομα', 'u.prev': 'Προηγούμενο', 'u.next': 'Επόμενο', 'u.pause': 'Παύση', 'u.play': 'Αναπαραγωγή', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα', 'fab.book': 'Κράτηση',
       'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ στο νησί.',
       'hero.photo': 'Φωτογραφία', 'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
       'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
@@ -1478,7 +1527,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
       'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε ούτε στάλθηκε τίποτα.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Στείλαμε αντίγραφο στο {e}.',
-      'nav.day': 'Μια μέρα', 'place.title': 'Ο <em>χώρος</em>',
+      'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
       'mom.1t': 'Καφές στη βεράντα', 'mom.1d': 'Η θάλασσα από κάτω, πεύκα γύρω γύρω και η μέρα μόλις ξεκινάει.',
       'mom.2t': 'Βουτιά στη θάλασσα', 'mom.2d': 'Λίγος δρόμος ως την παραλία, και πίσω για ένα χαλαρό μεσημεριανό.',
@@ -1655,6 +1704,35 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     devBody.hidden = !open;
     devTab.setAttribute('aria-expanded', String(open));
   }
+  /* Greek heading font: try them here, the choice is remembered on this device */
+  const MFONTS = [
+    { id: 'didot', name: 'GFS Didot (σημερινή)', display: '"GFS Didot", Georgia, serif', italic: '"Noto Serif Display", "GFS Didot", Georgia, serif', gf: '' },
+    { id: 'literata', name: 'Literata', display: '"Literata", Georgia, serif', italic: '"Literata", Georgia, serif', gf: 'Literata:ital,opsz,wght@0,7..72,300;0,7..72,400;1,7..72,300;1,7..72,400' },
+    { id: 'notodisplay', name: 'Noto Serif Display', display: '"Noto Serif Display", Georgia, serif', italic: '"Noto Serif Display", Georgia, serif', gf: 'Noto+Serif+Display:ital,wght@0,400;1,300;1,400' },
+    { id: 'piazzolla', name: 'Piazzolla', display: '"Piazzolla", Georgia, serif', italic: '"Piazzolla", Georgia, serif', gf: 'Piazzolla:ital,wght@0,300;0,400;1,300;1,400' },
+    { id: 'commissioner', name: 'Commissioner (όπως το κείμενο)', display: '"Commissioner", system-ui, sans-serif', italic: '"Commissioner", system-ui, sans-serif', gf: '' },
+    { id: 'manrope', name: 'Manrope', display: '"Manrope", system-ui, sans-serif', italic: '"Manrope", system-ui, sans-serif', gf: 'Manrope:wght@300;400;500' }
+  ];
+  const loadedFonts = {};
+  function applyMFont(id) {
+    const f = MFONTS.find((x) => x.id === id) || MFONTS[1];
+    if (f.gf && !loadedFonts[f.id]) {
+      const l = document.createElement('link'); l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=' + f.gf + '&display=swap';
+      document.head.appendChild(l); loadedFonts[f.id] = true;
+    }
+    document.documentElement.style.setProperty('--m-font-display', f.display);
+    document.documentElement.style.setProperty('--m-font-italic', f.italic);
+    try { localStorage.setItem('lm-mfont', f.id); } catch (e) { /* fine */ }
+    $$('#fontList button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === f.id)));
+  }
+  $('#fontList').innerHTML = MFONTS.map((f) => '<button type="button" data-f="' + f.id + '" aria-pressed="false"><span>' + f.name + '</span><b style="font-family:' + f.display.replace(/"/g, "'") + '">Στιγμές δίπλα στο Αιγαίο</b></button>').join('');
+  MFONTS.forEach((f) => { if (f.gf) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=' + f.gf + '&text=' + encodeURIComponent('Στιγμές δίπλα στο Αιγαίο') + '&display=swap'; document.head.appendChild(l); } });
+  $('#fontList').addEventListener('click', (e) => { const b = e.target.closest('button[data-f]'); if (b) applyMFont(b.dataset.f); });
+  let savedMFont = 'literata';
+  try { savedMFont = localStorage.getItem('lm-mfont') || 'literata'; } catch (e) { /* fine */ }
+  applyMFont(savedMFont);
+
   devTab.addEventListener('click', () => { setDev(true); $('#devClose').focus(); });
   $('#devClose').addEventListener('click', () => { setDev(false); devTab.focus(); });
   setDev(window.innerWidth >= 1500);
@@ -1838,6 +1916,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#gPlus').disabled = cal.guests >= u.guests;
     $('#gMinus').disabled = cal.guests <= 1;
     $('#calHint').textContent = cal.note || t(!cal.ci ? 'hint.1' : !cal.co ? 'hint.2' : 'hint.3');
+    $('#calHint').classList.toggle('has-note', !!cal.note); // only real warnings show (e.g. booked nights)
     renderStatus();
   }
 
@@ -1867,6 +1946,34 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     if (back !== false && calOpener) calOpener.focus({ preventScroll: true });
   }
   window.__openCal = openCal;
+
+  /* PC: once the booking bar has scrolled away, a quiet "Book" button waits at the bottom right.
+     It does what the "Book now" in the header does: back to the bar, and the calendar opens if no dates yet. */
+  (function () {
+    const fab = $('#mfab'), bar = $('#sbar'), pop = $('#calPop');
+    if (!fab || !bar || !pop || !('IntersectionObserver' in window)) return;
+    const mqDesk = window.matchMedia('(min-width: 761px)');
+    let gone = false;
+    function sync() {
+      if (!mqDesk.matches) return;
+      const on = gone && pop.hidden;
+      fab.classList.toggle('show', on);
+      fab.setAttribute('aria-hidden', String(!on)); fab.tabIndex = on ? 0 : -1;
+    }
+    const headH = ($('#top') && $('#top').offsetHeight) || 72;
+    new IntersectionObserver((en) => {
+      const e = en[0];
+      gone = !e.isIntersecting && e.boundingClientRect.top < headH;
+      sync();
+    }, { threshold: 0, rootMargin: '-' + headH + 'px 0px 0px 0px' }).observe(bar);
+    new MutationObserver(sync).observe(pop, { attributes: true, attributeFilter: ['hidden'] });
+    if (mqDesk.addEventListener) mqDesk.addEventListener('change', sync);
+    fab.addEventListener('click', () => {
+      if (!mqDesk.matches) return;
+      const a = document.createElement('a'); a.href = '#stay'; a.hidden = true;
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  })();
   window.__needDates = () => !(cal.ci && cal.co);
   $('#ciBtn').addEventListener('click', () => openCal($('#ciBtn')));
   $('#coBtn').addEventListener('click', () => openCal($('#coBtn')));

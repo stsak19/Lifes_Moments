@@ -787,7 +787,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .umeta b { font-size: 21px; }
 }
 
-/* ---------- font picker in the preview panel (Greek, phones) ---------- */
+/* ---------- font picker in the preview panel (Greek headings) ---------- */
 .font-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
 .font-list button { display: flex; flex-direction: column; gap: 3px; padding: 9px 10px; border: 1px solid #3A3A3C; border-radius: 8px; background: transparent; color: #EDEDED; text-align: left; }
 .font-list button[aria-pressed="true"] { border-color: #F5B83D; background: #2C2C2E; }
@@ -1238,6 +1238,37 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .dev-tab { padding: 10px 6px; }
   .dev-tab-text { display: none; }
 }
+/* ================= PC: things brought over from the phone version ================= */
+@media (min-width: 761px) {
+  /* calendar: no step-by-step hints; only a real warning (e.g. booked nights) shows, on the left */
+  .cal-top { justify-content: flex-end; }
+  #calHint:not(.has-note) { display: none; }
+  #calHint.has-note { margin-right: auto; color: #A44A26; }
+  /* chosen days: solid and dark, so it's obvious what you picked */
+  .d.in, .d.in:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+  .d.start, .d.end, .d.start:hover:not(:disabled), .d.end:hover:not(:disabled) { background: var(--ink); color: var(--bg); font-weight: 600; opacity: 1; }
+  .legend .sw { background: var(--ink); }
+  /* sections: flat tops, no curves and no little handle; the spacing stays exactly as it was */
+  .rooms, .place, .guide, .reviews, .foot-wrap { border-radius: 0; box-shadow: 0 -1px 0 var(--line), 0 -16px 28px -20px var(--shadow); }
+  .rooms::before, .place::before, .guide::before, .reviews::before { display: none; }
+  /* Greek headings: the font picked in the preview panel (Literata by default); the name stays in GFS Didot */
+  html[lang="el"] { --font-display: var(--m-font-display, "GFS Didot", Georgia, serif); --font-italic: var(--m-font-italic, "Noto Serif Display", Georgia, serif); }
+  .brand-name, .foot-mark { font-family: "GFS Didot", "Didot", "Bodoni 72", Georgia, serif; }
+  /* a quiet booking button at the bottom right once the booking bar has scrolled away */
+  .mfab {
+    display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 44;
+    right: 28px; bottom: 28px; height: 44px; padding: 0 18px 0 15px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink);
+    font: 500 14px/1 var(--font-body); letter-spacing: .02em; cursor: pointer;
+    box-shadow: 0 12px 26px -16px var(--shadow);
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .4s ease, transform .5s cubic-bezier(.2, .8, .2, 1), background-color .25s, color .25s, border-color .25s;
+  }
+  .mfab.show { opacity: 1; transform: none; pointer-events: auto; }
+  .mfab:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .mfab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .mfab { transform: none; } }
+}
 </style>
 
 <header class="top" id="top">
@@ -1294,8 +1325,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <p class="dev-note">Δεν φαίνεται στο κανονικό site. Πατήστε ένα συνδυασμό για να τον δείτε σε όλη τη σελίδα.</p>
-    <p class="dev-sub">Γραμματοσειρά τίτλων · ελληνικά · κινητό</p>
-    <div class="font-list" id="fontList" role="group" aria-label="Greek heading font on phones"></div>
+    <p class="dev-sub">Γραμματοσειρά τίτλων · ελληνικά</p>
+    <div class="font-list" id="fontList" role="group" aria-label="Greek heading font"></div>
     <p class="dev-sub">Χρώματα</p>
     <div class="pal-list" id="palList" role="group" aria-label="Colour options"></div>
   </div>
@@ -2221,6 +2252,34 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     if (back !== false && calOpener) calOpener.focus({ preventScroll: true });
   }
   window.__openCal = openCal;
+
+  /* PC: once the booking bar has scrolled away, a quiet "Book" button waits at the bottom right.
+     It does what the "Book now" in the header does: back to the bar, and the calendar opens if no dates yet. */
+  (function () {
+    const fab = $('#mfab'), bar = $('#sbar'), pop = $('#calPop');
+    if (!fab || !bar || !pop || !('IntersectionObserver' in window)) return;
+    const mqDesk = window.matchMedia('(min-width: 761px)');
+    let gone = false;
+    function sync() {
+      if (!mqDesk.matches) return;
+      const on = gone && pop.hidden;
+      fab.classList.toggle('show', on);
+      fab.setAttribute('aria-hidden', String(!on)); fab.tabIndex = on ? 0 : -1;
+    }
+    const headH = ($('#top') && $('#top').offsetHeight) || 72;
+    new IntersectionObserver((en) => {
+      const e = en[0];
+      gone = !e.isIntersecting && e.boundingClientRect.top < headH;
+      sync();
+    }, { threshold: 0, rootMargin: '-' + headH + 'px 0px 0px 0px' }).observe(bar);
+    new MutationObserver(sync).observe(pop, { attributes: true, attributeFilter: ['hidden'] });
+    if (mqDesk.addEventListener) mqDesk.addEventListener('change', sync);
+    fab.addEventListener('click', () => {
+      if (!mqDesk.matches) return;
+      const a = document.createElement('a'); a.href = '#stay'; a.hidden = true;
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  })();
   window.__needDates = () => !(cal.ci && cal.co);
 
   /* ---- phones: the bar folds into one line; tapping it opens the full form as a sheet from below ---- */
@@ -2256,7 +2315,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     mfab.classList.toggle('show', on);
     mfab.setAttribute('aria-hidden', String(!on)); mfab.tabIndex = on ? 0 : -1;
   }
-  mfab.addEventListener('click', () => bkOpen(true));
+  mfab.addEventListener('click', () => { if (mqMobile.matches) bkOpen(true); });
   if ('IntersectionObserver' in window) {
     // the moment the bar slides under the header counts as "gone"
     const headH = ($('#top') && $('#top').offsetHeight) || 60;
