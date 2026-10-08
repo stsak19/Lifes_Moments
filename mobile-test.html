@@ -1142,7 +1142,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   html[lang="el"] { --font-display: var(--m-font-display, "GFS Didot", Georgia, serif); --font-italic: var(--m-font-italic, "Noto Serif Display", Georgia, serif); }
   /* sections: flat tops, no curves and no little handle; the change of background is the divider */
   :root { --sheet-r: 0px; }
-  .rooms, .place, .guide, .reviews, .foot-wrap { border-radius: 0; box-shadow: none; }
+  /* each section casts a light shadow up onto the one before it, with a hairline, so they read as separate layers */
+  .rooms, .place, .guide, .reviews, .foot-wrap { border-radius: 0; box-shadow: 0 -1px 0 var(--line), 0 -16px 28px -20px var(--shadow); }
   .rooms::before, .place::before, .guide::before, .reviews::before { display: none; }
 
   /* menu: a soft fade in and out */
