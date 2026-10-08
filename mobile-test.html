@@ -871,6 +871,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .stay-rate b { color: var(--ink); font-weight: 600; }
 .stay-stars { color: var(--accent); letter-spacing: 2px; font-size: 13px; }
 @media (max-width: 760px) { .stay-rate { font-size: 13px; gap: 8px; } }
+/* desktop: the Google rating lines a bit bigger, easier to read */
+@media (min-width: 761px) {
+  .stay-rate { margin-top: 18px; gap: 12px; font-size: 17px; }
+  .stay-stars { font-size: 17px; letter-spacing: 3px; }
+  .rate-link { font-size: 16px; padding-bottom: 4px; }
+  .rl-read { white-space: nowrap; }
+}
 
 
 /* ---------- booking bar: bigger ---------- */
@@ -1562,7 +1569,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <p class="rate-num" data-i18n="rate.num">5.0</p>
           <span class="stars" aria-label="5 out of 5"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z"/></svg></span>
           <p class="rate-t" data-i18n="score.t">Rated 5 stars on Google</p>
-          <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span data-i18n="score.read">Read them</span> ↗</a>
+          <a class="rate-link" href="https://maps.app.goo.gl/uo2tGVGuHdGBuDB96" target="_blank" rel="noopener"><span data-i18n="score.fine">180 guest reviews</span> · <span class="rl-read"><span data-i18n="score.read">Read them</span> ↗</span></a>
         </div>
         <!-- Real Google reviews. Texts live in the dictionary as rev.1 / rev.2 / rev.3 (EN original, EL translation). -->
         <div class="rev-car" id="revCar" data-reveal aria-roledescription="carousel" aria-label="Guest reviews">
