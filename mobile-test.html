@@ -955,7 +955,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ================= phones: a quieter, more minimal layout (mobile test) =================
    Everything below applies only up to 760px. Desktop is unchanged. */
-.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum { display: none; }
+.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum, .edge-cap { display: none; }
+/* the map layers (z-index 400) stay under the header and the overlays */
+.map { isolation: isolate; }
 .sb-foot { display: contents; }
 @media (max-width: 760px) {
   /* header: brand and menu only; the language switch moves into the menu */
@@ -1111,15 +1113,18 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   @media (prefers-reduced-motion: reduce) { .sheet nav a { opacity: 1; transform: none; animation: none; } }
 
 
-  /* iPhone Safari leaves strips above/below fixed bars while its toolbars move. Every fixed layer gets an
-     overhang in its own colour (a solid box-shadow), so no page shows through, and the page stops scrolling under open sheets. */
-  .top:not(.solid) { box-shadow: 0 -120px 0 120px rgba(5, 9, 16, .46); }
-  .top.solid { background: var(--top-bg-o, var(--bg)); box-shadow: 0 -120px 0 120px var(--top-bg-o, var(--bg)), 0 10px 30px -18px var(--shadow); }
-  .stay.bk-open .bar-wrap { box-shadow: 0 -24px 60px -20px var(--shadow), 0 260px 0 0 var(--surface); }
-  .bk-scrim:not([hidden]) { box-shadow: 0 0 0 400px rgba(4, 7, 13, .45); }
-  .sheet { box-shadow: 0 0 0 400px var(--bg); }
-  .modal, .lb { box-shadow: 0 0 0 400px rgba(4, 7, 13, .62); }
-  .lb { box-shadow: 0 0 0 400px rgba(4, 7, 13, .94); }
+  /* iPhone Safari 26 paints the status bar and the strip under its bottom toolbar from the fixed bars that touch
+     the screen edges, but only from full-width, solid bars with no backdrop blur. Anything else leaves the page showing
+     there. So on phones: a solid header, and the menu and the booking sheet each have a solid bar at the bottom edge. */
+  html { background: var(--bg); }
+  .top, .top.solid { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .top:not(.solid) { background: #0D1420; border-bottom-color: rgba(248, 244, 236, .08); }
+  .top.solid { background: var(--top-bg-o, var(--bg)); box-shadow: 0 10px 30px -18px var(--shadow); }
+  .edge-cap { display: block; position: fixed; left: 0; right: 0; height: 12px; pointer-events: none; background: var(--bg); }
+  .edge-cap.t { top: 0; }
+  .edge-cap.b { bottom: 0; }
+  .stay.bk-open .bar-wrap { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); animation: fadeIn .25s ease; }
+  .stay.bk-open .sb-foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 64; margin: 0; }
   html.scroll-lock, html.scroll-lock body { overflow: hidden; }
 
   /* Greek headings on phones: the font picked in the preview panel (GFS Didot reads thin at this size) */
@@ -1191,6 +1196,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 </aside>
 
 <div class="sheet" id="sheet" hidden>
+  <span class="edge-cap t" aria-hidden="true"></span><span class="edge-cap b" aria-hidden="true"></span>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="sheet-head">
       <span class="brand"><svg class="mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg><span class="brand-txt"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span></span>
