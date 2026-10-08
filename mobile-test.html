@@ -877,6 +877,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .stay { margin-top: -64px; }
 .sbar { padding: 10px; border-radius: 26px; }
 @media (min-width: 981px) { .sbar { grid-template-columns: minmax(250px, auto) 1fr 1fr minmax(190px, auto) auto; } }
+/* desktop: one "choose dates" cell instead of check-in / check-out */
+.sb-dates { display: none; }
+@media (min-width: 981px) {
+  .sbar { grid-template-columns: minmax(250px, auto) 1fr minmax(190px, auto) auto; }
+  #ciBtn, #coBtn { display: none; }
+  .sb-dates { display: flex; }
+}
 .sb-cell { gap: 10px; padding: 18px 26px; border-radius: 18px; }
 .sb-cell small { font-size: 12px; }
 .sb-date b { font-size: 26px; line-height: 1.1; }
@@ -1353,6 +1360,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <button type="button" class="sb-cell sb-date" id="coBtn" aria-haspopup="dialog" aria-expanded="false">
             <small data-i18n="bar.co">Check-out</small><b id="coOut">Add date</b>
           </button>
+          <button type="button" class="sb-cell sb-date sb-dates empty" id="dBtn" aria-haspopup="dialog" aria-expanded="false">
+            <small data-i18n="bar.dates">Dates</small><b id="dOut">Choose dates</b>
+          </button>
           <div class="sb-cell sb-guests">
             <small data-i18n="bar.guests">Guests</small>
             <div class="step">
@@ -1666,7 +1676,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Eleven rooms and a separate apartment on the island.',
       'hero.photo': 'Photo', 'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
       'ch.around': 'Around', 'ch.entrance': 'Entrance', 'ch.living': 'Living room', 'ch.bedroom': 'Bedroom', 'ch.sea': 'Sea view',
-      'bar.stayin': 'Stay in', 'bar.ci': 'Check-in', 'bar.co': 'Check-out', 'bar.guests': 'Guests', 'bar.add': 'Add date',
+      'bar.stayin': 'Stay in', 'bar.ci': 'Check-in', 'bar.co': 'Check-out', 'bar.guests': 'Guests', 'bar.add': 'Add date', 'bar.dates': 'Dates', 'bar.pick': 'Choose dates',
       'bar.go': 'Check dates', 'bar.request': 'Request booking',
       'bar.fine': 'Card held, not charged · the host replies within 24 hours · synced with Booking.com',
       'u.room': 'A room', 'u.apt': 'Apartment',
@@ -1723,7 +1733,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ στο νησί.',
       'hero.photo': 'Φωτογραφία', 'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
       'ch.around': 'Γύρω γύρω', 'ch.entrance': 'Είσοδος', 'ch.living': 'Σαλόνι', 'ch.bedroom': 'Υπνοδωμάτιο', 'ch.sea': 'Θέα στη θάλασσα',
-      'bar.stayin': 'Διαμονή σε', 'bar.ci': 'Άφιξη', 'bar.co': 'Αναχώρηση', 'bar.guests': 'Άτομα', 'bar.add': 'Επιλογή',
+      'bar.stayin': 'Διαμονή σε', 'bar.ci': 'Άφιξη', 'bar.co': 'Αναχώρηση', 'bar.guests': 'Άτομα', 'bar.add': 'Επιλογή', 'bar.dates': 'Ημερομηνίες', 'bar.pick': 'Επιλογή ημερών',
       'bar.go': 'Δείτε ημερομηνίες', 'bar.request': 'Αίτημα κράτησης',
       'bar.fine': 'Η κάρτα δεσμεύεται, δεν χρεώνεται · απάντηση από τον οικοδεσπότη μέσα σε 24 ώρες · συγχρονισμός με το Booking.com',
       'u.room': 'Διαμέρισμα', 'u.apt': 'Απαρτμέντ',
@@ -2065,13 +2075,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const kNext = (k) => { const d = kDate(k); d.setUTCDate(d.getUTCDate() + 1); return key(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); };
   const dayNum = (k) => Math.round(kDate(k).getTime() / 864e5);
   const todayKey = key(today.y, today.m, today.d);
-  let fmtShort, fmtLong, fmtMonth, fmtDM;
+  let fmtShort, fmtLong, fmtMonth, fmtDM, fmtDay;
   function makeFormats() {
     const loc = LOCALE[lang] || 'en-GB';
     fmtShort = new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
     fmtLong = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
     fmtMonth = new Intl.DateTimeFormat(loc, { month: 'long', year: 'numeric', timeZone: 'UTC' });
-    fmtDM = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'short', timeZone: 'UTC' });
+    fmtDay = fmtDM = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'short', timeZone: 'UTC' });
   }
   makeFormats();
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -2163,6 +2173,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#coOut').textContent = cal.co ? fmtShort.format(kDate(cal.co)) : t('bar.add');
     $('#ciBtn').classList.toggle('empty', !cal.ci);
     $('#coBtn').classList.toggle('empty', !cal.co);
+    $('#dOut').textContent = cal.ci ? fmtDay.format(kDate(cal.ci)) + ' – ' + (cal.co ? fmtDay.format(kDate(cal.co)) : '…') : t('bar.pick');
+    $('#dBtn').classList.toggle('empty', !cal.ci);
     const ready = cal.ci && cal.co && cal.guests <= u.guests;
     $('#reqBtn').textContent = t(ready ? 'bar.request' : 'bar.go');
     $('#gOut').textContent = cal.guests;
@@ -2182,13 +2194,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   $('#barWrap').appendChild(scrim); // same stacking context as the calendar
   let calOpener = null;
   function openCal(opener) {
-    calOpener = opener || $('#ciBtn');
+    calOpener = opener || ($('#dBtn').offsetParent ? $('#dBtn') : $('#ciBtn'));
     const bt = $('#barWrap').getBoundingClientRect().top;
     if (!mqMobile.matches && (bt > window.innerHeight * 0.4 || bt < 0)) goTo('#stay');
     if (cal.ci) { cal.y = kY(cal.ci); cal.m = kM(cal.ci); }
     renderCal();
     calPop.hidden = false; scrim.hidden = false; $('#stay').classList.add('cal-open');
-    $('#ciBtn').setAttribute('aria-expanded', 'true'); $('#coBtn').setAttribute('aria-expanded', 'true');
+    $('#ciBtn').setAttribute('aria-expanded', 'true'); $('#coBtn').setAttribute('aria-expanded', 'true'); $('#dBtn').setAttribute('aria-expanded', 'true');
     if (mqMobile.matches && lenis) lenis.stop();
     const first = $('#calMonths .d.start') || $('#calMonths .d:not(:disabled)');
     if (first) first.focus({ preventScroll: true });
@@ -2197,7 +2209,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     if (calPop.hidden) return;
     if ($('#stay').classList.contains('bk-open')) return; // phones: the calendar is part of the booking sheet
     calPop.hidden = true; scrim.hidden = true; $('#stay').classList.remove('cal-open');
-    $('#ciBtn').setAttribute('aria-expanded', 'false'); $('#coBtn').setAttribute('aria-expanded', 'false');
+    $('#ciBtn').setAttribute('aria-expanded', 'false'); $('#coBtn').setAttribute('aria-expanded', 'false'); $('#dBtn').setAttribute('aria-expanded', 'false');
     if (lenis) lenis.start();
     if (back !== false && calOpener) calOpener.focus({ preventScroll: true });
   }
@@ -2253,12 +2265,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   window.__mbarSync();
   $('#ciBtn').addEventListener('click', () => openCal($('#ciBtn')));
   $('#coBtn').addEventListener('click', () => openCal($('#coBtn')));
+  $('#dBtn').addEventListener('click', () => openCal($('#dBtn')));
   $('#calClose').addEventListener('click', () => closeCal());
   $('#calDone').addEventListener('click', () => closeCal());
   scrim.addEventListener('click', () => closeCal());
   document.addEventListener('pointerdown', (e) => {
     if (calPop.hidden || mqMobile.matches) return;
-    if (!e.target.closest('#calPop, #ciBtn, #coBtn')) closeCal(false);
+    if (!e.target.closest('#calPop, #ciBtn, #coBtn, #dBtn')) closeCal(false);
   });
 
   $('#calMonths').addEventListener('click', (e) => {
@@ -2297,7 +2310,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   function closeModal() { modal.hidden = true; lenis && lenis.start(); lastFocus && lastFocus.focus && lastFocus.focus(); }
   $('#reqBtn').addEventListener('click', () => {
-    if (cal.ci && cal.co && cal.guests <= UNITS[cal.unit].guests) { if (window.__bkClose) window.__bkClose(); openModal(); } else openCal($('#ciBtn'));
+    if (cal.ci && cal.co && cal.guests <= UNITS[cal.unit].guests) { if (window.__bkClose) window.__bkClose(); openModal(); } else openCal();
   });
   $('#mClose').addEventListener('click', closeModal);
   $('#dClose').addEventListener('click', closeModal);
