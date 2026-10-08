@@ -955,7 +955,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ================= phones: a quieter, more minimal layout (mobile test) =================
    Everything below applies only up to 760px. Desktop is unchanged. */
-.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum, .edge-cap { display: none; }
+.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum, .edge-cap, .mlang { display: none; }
+/* the name is a logo: same letters in every language */
+.brand-name { font-family: "GFS Didot", "Didot", "Bodoni 72", Georgia, serif; }
 /* the map layers (z-index 400) stay under the header and the overlays */
 .map { isolation: isolate; }
 .sb-foot { display: contents; }
@@ -1159,6 +1161,15 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   @keyframes menuFadeOut { to { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .sheet, .sheet.closing, .sheet-lang, .sheet .btn.wide { animation: none; } }
 
+  /* language: a small EN / ΕΛ switch right next to the menu button, not inside the menu */
+  .sheet-lang { display: none; }
+  .mlang { display: flex; align-items: center; }
+  .mlang button { min-width: 36px; min-height: 44px; padding: 0 6px; border: 0; background: none; color: var(--muted); font: 500 12px/1 var(--font-body); letter-spacing: .14em; transition: color .25s; }
+  .mlang button + button { position: relative; }
+  .mlang button + button::before { content: ""; position: absolute; left: 0; top: 50%; width: 1px; height: 12px; margin-top: -6px; background: var(--line); }
+  .mlang button[aria-pressed="true"] { color: var(--top-ink, var(--ink)); }
+  .top-actions { gap: 2px; }
+
   /* preview tools: a small tab so it stays out of the way */
   .devpanel { top: auto; bottom: 96px; transform: none; }
   .dev-tab { padding: 10px 6px; }
@@ -1192,6 +1203,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         </div>
       </div>
       <a class="btn book-btn" href="#stay" data-i18n="nav.book">Book now</a>
+      <div class="mlang" id="mLang" role="group" aria-label="Language" data-i18n-aria="lang.label"><button type="button" data-sl="en" aria-label="English">EN</button><button type="button" data-sl="el" aria-label="Ελληνικά">ΕΛ</button></div>
       <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" data-i18n-aria="menu.open" aria-expanded="false">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16"/><path d="M4 16h16"/></svg>
     </button>
@@ -1747,6 +1759,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   // phones: the language switch lives in the menu
   const syncSheetLang = () => $$('[data-sl]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sl === lang)));
   $('#sheetLang').addEventListener('click', (e) => { const b = e.target.closest('[data-sl]'); if (b) setLang(b.dataset.sl); });
+  $('#mLang').addEventListener('click', (e) => { const b = e.target.closest('[data-sl]'); if (b) setLang(b.dataset.sl); });
   langHooks.push(syncSheetLang); syncSheetLang();
 
   /* ================= time on Thasos ================= */
