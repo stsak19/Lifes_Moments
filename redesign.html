@@ -997,7 +997,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .mfab.show { opacity: 1; transform: none; pointer-events: auto; }
   .mfab:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
   .mfab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) { .mfab { transform: none; } }
+  /* a small, quiet hop every few seconds so the eye finds it; it stops while the mouse is on it */
+  .mfab.show { animation: fabHop 7s ease-in-out 1.4s infinite; }
+  .mfab.show:hover { animation-play-state: paused; }
+  @keyframes fabHop {
+    0%, 86%, 100% { transform: translateY(0); }
+    89% { transform: translateY(-7px); }
+    92% { transform: translateY(0); }
+    94.5% { transform: translateY(-3px); }
+    97% { transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .mfab { transform: none; } .mfab.show { animation: none; } }
 }
 </style>
 
