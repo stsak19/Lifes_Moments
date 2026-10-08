@@ -955,7 +955,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ================= phones: a quieter, more minimal layout (mobile test) =================
    Everything below applies only up to 760px. Desktop is unchanged. */
-.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum, .edge-cap, .mlang { display: none; }
+.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum, .edge-cap, .mlang, .mfab { display: none; }
 /* the name is a logo: same letters in every language */
 .brand-name { font-family: "GFS Didot", "Didot", "Bodoni 72", Georgia, serif; }
 /* the map layers (z-index 400) stay under the header and the overlays */
@@ -1171,8 +1171,23 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .mlang button[aria-pressed="true"] { color: var(--top-ink, var(--ink)); }
   .top-actions { gap: 2px; }
 
+  /* floating booking button: rises and fades in at the bottom right once the booking bar is gone */
+  .mfab {
+    display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 55;
+    right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); height: 52px; padding: 0 22px 0 18px;
+    border: 0; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+    font: 500 15px/1 var(--font-body); letter-spacing: .02em;
+    box-shadow: 0 14px 30px -12px var(--shadow), 0 2px 6px var(--shadow);
+    opacity: 0; transform: translateY(18px) scale(.86); transform-origin: 100% 100%; pointer-events: none;
+    transition: opacity .45s ease, transform .55s cubic-bezier(.2, .9, .25, 1.15);
+  }
+  .mfab.show { opacity: 1; transform: none; pointer-events: auto; }
+  .mfab:active { transform: scale(.96); }
+  html.scroll-lock .mfab { opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .mfab { transition: opacity .2s; transform: none; } }
+
   /* preview tools: a small tab so it stays out of the way */
-  .devpanel { top: auto; bottom: 96px; transform: none; }
+  .devpanel { top: auto; bottom: 170px; transform: none; }
   .dev-tab { padding: 10px 6px; }
   .dev-tab-text { display: none; }
 }
@@ -1211,6 +1226,12 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
   </div>
 </header>
+
+<!-- Phones: once the booking bar scrolls away, a booking button waits in the bottom-right corner. -->
+<button type="button" class="mfab" id="mfab" tabindex="-1" aria-hidden="true">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
+  <span data-i18n="fab.book">Book</span>
+</button>
 
 <!-- Preview tools: only for showing the design. Remove this block (and .devpanel CSS) for the live site. -->
 <aside class="devpanel" id="devpanel" aria-label="Preview tools">
@@ -1635,7 +1656,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
       'am.wifi': 'Wi-Fi throughout', 'am.ac': 'Air conditioning', 'am.parking': 'Free parking', 'am.kitchen': 'Kitchen in the apartment',
-      'am.garden': 'Sea-view terrace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome', 'ams.wifi': 'Wi-Fi', 'ams.ac': 'A/C', 'ams.parking': 'Parking', 'ams.kitchen': 'Kitchen', 'ams.garden': 'Sea view', 'ams.beach': 'Beach', 'ams.family': 'Families', 'mbar.go': 'Check', 'mbar.title': 'Your stay', 'mbar.close': 'Close', 'mbar.add': 'Add dates',
+      'am.garden': 'Sea-view terrace', 'am.beach': 'Close to the beach', 'am.family': 'Families welcome', 'ams.wifi': 'Wi-Fi', 'ams.ac': 'A/C', 'ams.parking': 'Parking', 'ams.kitchen': 'Kitchen', 'ams.garden': 'Sea view', 'ams.beach': 'Beach', 'ams.family': 'Families', 'mbar.go': 'Check', 'fab.book': 'Book', 'mbar.title': 'Your stay', 'mbar.close': 'Close', 'mbar.add': 'Add dates',
       'stay.rate': '<b>5.0</b> on Google · 180 guest reviews', 'score.t': 'Rated 5 stars on Google', 'score.fine': '180 guest reviews', 'score.read': 'Read them',
       'map.where': 'Limenaria, Thasos', 'map.sub': 'South-west coast of the island', 'map.dir': 'Directions',
       'dist.beach': 'walk to the nearest beach', 'dist.port': 'drive to the port', 'dist.ferry': 'Ferry', 'dist.ferryfrom': 'from Keramoti or Kavala',
@@ -1692,7 +1713,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
       'am.wifi': 'Wi-Fi σε όλο τον χώρο', 'am.ac': 'Κλιματισμός', 'am.parking': 'Δωρεάν στάθμευση', 'am.kitchen': 'Κουζίνα στο διαμέρισμα',
-      'am.garden': 'Βεράντα με θέα στη θάλασσα', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες', 'ams.wifi': 'Wi-Fi', 'ams.ac': 'Κλιματισμός', 'ams.parking': 'Πάρκινγκ', 'ams.kitchen': 'Κουζίνα', 'ams.garden': 'Θέα θάλασσα', 'ams.beach': 'Παραλία', 'ams.family': 'Οικογένειες', 'mbar.go': 'Έλεγχος', 'mbar.title': 'Η διαμονή σας', 'mbar.close': 'Κλείσιμο', 'mbar.add': 'Ημερομηνίες',
+      'am.garden': 'Βεράντα με θέα στη θάλασσα', 'am.beach': 'Κοντά στην παραλία', 'am.family': 'Ιδανικό για οικογένειες', 'ams.wifi': 'Wi-Fi', 'ams.ac': 'Κλιματισμός', 'ams.parking': 'Πάρκινγκ', 'ams.kitchen': 'Κουζίνα', 'ams.garden': 'Θέα θάλασσα', 'ams.beach': 'Παραλία', 'ams.family': 'Οικογένειες', 'mbar.go': 'Κράτηση', 'fab.book': 'Κράτηση', 'mbar.title': 'Η διαμονή σας', 'mbar.close': 'Κλείσιμο', 'mbar.add': 'Ημερομηνίες',
       'stay.rate': '<b>5,0</b> στο Google · 180 κριτικές', 'score.t': '5 αστέρια στο Google', 'score.fine': '180 κριτικές επισκεπτών', 'score.read': 'Διαβάστε τες',
       'map.where': 'Λιμενάρια, Θάσος', 'map.sub': 'Νοτιοδυτική ακτή του νησιού', 'map.dir': 'Οδηγίες',
       'dist.beach': 'με τα πόδια ως την κοντινότερη παραλία', 'dist.port': 'με το αυτοκίνητο ως το λιμάνι', 'dist.ferry': 'Πλοίο', 'dist.ferryfrom': 'από Κεραμωτή ή Καβάλα',
@@ -2174,6 +2195,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#bkSum').innerHTML = '<b>' + d + '</b><small>' + (nights ? plural(nights, 'night', 'nights') + ' · ' : '') + plural(cal.guests, 'guest', 'guests') + '</small>';
   };
   window.__bkOpen = () => bkOpen(true);
+
+  /* the floating button: shows once the one-line bar has scrolled off the top, hides when you're back at it */
+  const mfab = $('#mfab');
+  function fabShow(on) {
+    mfab.classList.toggle('show', on);
+    mfab.setAttribute('aria-hidden', String(!on)); mfab.tabIndex = on ? 0 : -1;
+  }
+  mfab.addEventListener('click', () => bkOpen(true));
+  if ('IntersectionObserver' in window) {
+    // the moment the bar slides under the header counts as "gone"
+    const headH = ($('#top') && $('#top').offsetHeight) || 60;
+    new IntersectionObserver((en) => {
+      const e = en[0];
+      fabShow(mqMobile.matches && !e.isIntersecting && e.boundingClientRect.top < headH);
+    }, { threshold: 0, rootMargin: '-' + headH + 'px 0px 0px 0px' }).observe(mbar);
+  }
   mbar.addEventListener('click', () => bkOpen(true));
   $('#sbClose').addEventListener('click', () => bkOpen(false));
   bkScrim.addEventListener('click', () => bkOpen(false));
