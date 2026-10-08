@@ -1174,6 +1174,19 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .stay.bk-open .bar-wrap { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); animation: fadeIn .25s ease; }
   .stay.bk-open .sb-foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 64; margin: 0; }
   html.scroll-lock, html.scroll-lock body { overflow: hidden; }
+  /* booking sheet: rises softly from below and sinks back down when it closes (sheet and its footer move together) */
+  .stay.bk-open .bar-wrap { animation: bkIn .6s cubic-bezier(.32, .72, 0, 1) both; }
+  .stay.bk-open .sb-foot { animation: bkIn .6s cubic-bezier(.32, .72, 0, 1) both; }
+  .stay.bk-open .bk-scrim:not([hidden]) { animation: fadeIn .45s ease both; }
+  .stay.bk-closing .bar-wrap, .stay.bk-closing .sb-foot { animation: bkOut .34s cubic-bezier(.4, 0, .8, .4) both; }
+  .stay.bk-closing .bk-scrim:not([hidden]) { animation: bkFade .34s ease both; }
+  @keyframes bkIn { from { transform: translateY(110px); opacity: 0; } 50% { opacity: 1; } }
+  @keyframes bkOut { to { transform: translateY(90px); opacity: 0; } }
+  @keyframes bkFade { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .stay.bk-open .bar-wrap, .stay.bk-open .sb-foot { animation: fadeIn .25s ease both; }
+    .stay.bk-closing .bar-wrap, .stay.bk-closing .sb-foot { animation: bkFade .2s ease both; }
+  }
 
   /* Greek headings on phones: the font picked in the preview panel (GFS Didot reads thin at this size) */
   html[lang="el"] { --font-display: var(--m-font-display, "GFS Didot", Georgia, serif); --font-italic: var(--m-font-italic, "Noto Serif Display", Georgia, serif); }
@@ -2323,16 +2336,32 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const bkScrim = document.createElement('div');
   bkScrim.className = 'bk-scrim'; bkScrim.hidden = true;
   stayEl.appendChild(bkScrim);
+  let bkTimer = 0;
   function bkOpen(open) {
-    if (stayEl.classList.contains('bk-open') === open) return;
-    if (open) { if (cal.ci) { cal.y = kY(cal.ci); cal.m = kM(cal.ci); } }
-    stayEl.classList.toggle('bk-open', open); bkScrim.hidden = !open;
-    document.documentElement.classList.toggle('scroll-lock', open);
+    const isOpen = stayEl.classList.contains('bk-open') && !stayEl.classList.contains('bk-closing');
+    if (isOpen === open) return;
+    clearTimeout(bkTimer);
     mbar.setAttribute('aria-expanded', String(open));
-    if (open) renderCal(); else closeCal(false);
-    if (lenis) open ? lenis.stop() : lenis.start();
-    if (open) setTimeout(() => $('#sbClose').focus({ preventScroll: true }), 30);
-    else mbar.focus({ preventScroll: true });
+    if (open) {
+      if (cal.ci) { cal.y = kY(cal.ci); cal.m = kM(cal.ci); }
+      stayEl.classList.remove('bk-closing');
+      stayEl.classList.add('bk-open'); bkScrim.hidden = false;
+      document.documentElement.classList.add('scroll-lock');
+      renderCal();
+      if (lenis) lenis.stop();
+      setTimeout(() => $('#sbClose').focus({ preventScroll: true }), 30);
+      return;
+    }
+    // closing: let the sheet sink first, then take it away and give the page back
+    closeCal(false);
+    stayEl.classList.add('bk-closing');
+    const done = () => {
+      stayEl.classList.remove('bk-open', 'bk-closing'); bkScrim.hidden = true;
+      document.documentElement.classList.remove('scroll-lock');
+      if (lenis) lenis.start();
+      mbar.focus({ preventScroll: true });
+    };
+    if (!mqMobile.matches) done(); else bkTimer = setTimeout(done, reduce ? 200 : 340);
   }
   window.__bkClose = () => bkOpen(false);
   window.__mbarSync = () => {
