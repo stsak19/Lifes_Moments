@@ -999,13 +999,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .stay.bk-open .sb-unit small { display: none; }
   .stay.bk-open .sb-date { display: none; }
   .stay.bk-open .cal-pop, .stay.bk-open .cal-pop[hidden] {
-    order: 3; display: block !important; position: static; max-height: none; overflow: visible;
+    order: 3; display: block !important; position: relative; max-height: none; overflow: visible;
     padding: 26px 14px 22px; border: 0; border-radius: 0; background: none; box-shadow: none; animation: none;
   }
   .stay.bk-open #calClose, .stay.bk-open .cal-foot, .stay.bk-open .cal-scrim { display: none !important; }
-  .stay.bk-open .cal-top { margin-bottom: 14px; }
-  .stay.bk-open #calHint.is-done { visibility: hidden; }
-  .stay.bk-open .month h3 { font-size: 22px; margin-bottom: 14px; }
+  /* top row: month and year on the left, the arrows on the right; the step-by-step hints are gone,
+     only a real warning (e.g. booked nights) shows, on its own line under the row */
+  .stay.bk-open .cal-top { flex-wrap: wrap; justify-content: flex-end; min-height: 44px; margin-bottom: 14px; }
+  .stay.bk-open #calHint { display: none; }
+  .stay.bk-open #calHint.has-note { display: block; order: 2; flex-basis: 100%; color: #A44A26; }
+  .stay.bk-open .month h3 { position: absolute; left: 14px; top: 26px; height: 44px; display: flex; align-items: center; margin: 0; }
+  .stay.bk-open .month h3 { font-size: 22px; }
   .stay.bk-open .d { height: 44px; }
   /* guests right under Room / Apartment, as a clear row of its own */
   .stay.bk-open .sb-guests {
@@ -2154,6 +2158,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#gMinus').disabled = cal.guests <= 1;
     $('#calHint').textContent = cal.note || t(!cal.ci ? 'hint.1' : !cal.co ? 'hint.2' : 'hint.3');
     $('#calHint').classList.toggle('is-done', !cal.note && !!(cal.ci && cal.co)); // phones hide the "looks good" line
+    $('#calHint').classList.toggle('has-note', !!cal.note); // phones show only real warnings (e.g. booked nights)
     renderStatus();
     if (window.__mbarSync) window.__mbarSync();
   }
