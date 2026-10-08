@@ -1009,11 +1009,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   /* guests right under Room / Apartment, as a clear row of its own */
   .stay.bk-open .sb-guests {
     order: 2; display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-    margin: 8px 16px 2px; padding: 8px 8px 8px 18px; border: 1px solid var(--line); border-radius: 16px; background: #FFFFFF;
+    box-sizing: border-box; height: 46px; margin: 8px 16px 2px; padding: 0 3px 0 16px;
+    border: 1px solid var(--line); border-radius: calc(var(--r-ctl) + 3px); background: #FFFFFF;
   }
   .stay.bk-open .sb-guests small { font: 500 16px/1 var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink); }
-  .stay.bk-open .sb-guests .mini { width: 42px; height: 42px; border-color: color-mix(in srgb, var(--ink) 25%, var(--line)); }
-  .stay.bk-open .sb-guests output { min-width: 22px; font-size: 21px; }
+  .stay.bk-open .sb-guests .step { gap: 4px; }
+  .stay.bk-open .sb-guests .mini { width: 40px; height: 38px; border: 0; border-radius: var(--r-ctl); background: var(--deep); }
+  .stay.bk-open .sb-guests output { min-width: 26px; font-size: 18px; }
+  .stay.bk-open .sb-guests small { font-size: 15px; }
   /* chosen days: solid and dark, so it's obvious what you tapped (a tap must not leave the pale hover colour behind) */
   .stay.bk-open .d:hover:not(:disabled) { background: transparent; }
   .stay.bk-open .d.in, .stay.bk-open .d.in:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
