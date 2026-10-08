@@ -1271,17 +1271,34 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   /* a small hop every few seconds so the eye finds it; during the hop the outline takes the site's colour.
      It stops while the mouse is on it. */
   .mfab.show { animation: fabHop 3.5s ease-in-out 1.2s infinite; }
-  .mfab.show:hover { animation: none; }
+  .mfab.show:hover, .mfab.show:hover::after { animation: none; }
   @keyframes fabHop {
     0%, 66%, 100% { transform: translateY(0); border-color: var(--line); box-shadow: 0 12px 26px -16px var(--shadow), 0 0 0 0 transparent; }
-    71% { transform: translateY(-7px); border-color: var(--accent); box-shadow: 0 18px 30px -16px var(--shadow), 0 0 0 1px var(--accent); }
+    71% { transform: translateY(-14px); border-color: var(--accent); box-shadow: 0 22px 34px -18px var(--shadow), 0 0 0 1px var(--accent); }
     77% { transform: translateY(0); }
-    82% { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 14px 28px -16px var(--shadow), 0 0 0 1px var(--accent); }
+    82% { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 16px 28px -16px var(--shadow), 0 0 0 1px var(--accent); }
     87% { transform: translateY(0); }
+  }
+  /* a soft shadow on the "ground" under the button: it stays put while the button jumps,
+     shrinking and fading as the button goes up, and is gone again once it has landed */
+  .mfab::after {
+    content: ""; position: absolute; left: 14%; right: 14%; bottom: -16px; height: 10px; z-index: -1;
+    border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--ink) 38%, transparent), transparent);
+    opacity: 0; pointer-events: none;
+  }
+  .mfab.show::after { animation: fabGround 3.5s ease-in-out 1.2s infinite; }
+  @keyframes fabGround {
+    0%, 66%, 100% { transform: translateY(0) scaleX(1); opacity: 0; }
+    71% { transform: translateY(14px) scaleX(.62); opacity: .45; }
+    77% { transform: translateY(0) scaleX(1); opacity: .8; }
+    82% { transform: translateY(5px) scaleX(.85); opacity: .55; }
+    87% { transform: translateY(0) scaleX(1); opacity: .7; }
+    94% { transform: translateY(0) scaleX(1); opacity: 0; }
   }
   /* no movement for people who turned motion off: only the outline lights up */
   @media (prefers-reduced-motion: reduce) {
     .mfab { transform: none; }
+    .mfab.show::after { animation: none; }
     @keyframes fabHop {
       0%, 66%, 100% { border-color: var(--line); box-shadow: 0 12px 26px -16px var(--shadow), 0 0 0 0 transparent; }
       74%, 84% { border-color: var(--accent); box-shadow: 0 12px 26px -16px var(--shadow), 0 0 0 1px var(--accent); }
