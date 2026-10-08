@@ -1116,11 +1116,20 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   /* iPhone Safari 26 paints the status bar and the strip under its bottom toolbar from the fixed bars that touch
      the screen edges, but only from full-width, solid bars with no backdrop blur. Anything else leaves the page showing
      there. So on phones: a solid header, and the menu and the booking sheet each have a solid bar at the bottom edge. */
-  html { background: var(--bg); }
-  .top, .top.solid { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .top:not(.solid) { background: #0D1420; border-bottom-color: rgba(248, 244, 236, .08); }
-  .top.solid { background: var(--top-bg-o, var(--bg)); box-shadow: 0 10px 30px -18px var(--shadow); }
-  .edge-cap { display: block; position: fixed; left: 0; right: 0; height: 12px; pointer-events: none; background: var(--bg); }
+  /* The paper-grain layer is fixed over the whole screen and above everything, so Safari found it at every edge
+     instead of our bars, and it has no solid colour to copy. Phones go without the grain. */
+  body::before { display: none; }
+  /* A white bar on top, and white wherever Safari falls back to the page colour, so the two always match */
+  html, body { background: #FFFFFF !important; }
+  .top, .top.solid, .top:not(.solid) {
+    --top-ink: var(--ink); background: #FFFFFF; border-bottom-color: var(--line);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+  .top::before { display: none; }
+  .top.solid { box-shadow: 0 10px 30px -18px var(--shadow); }
+  .sheet { background: #FFFFFF; }
+  .stay.bk-open .bar-wrap, .stay.bk-open .sb-head, .stay.bk-open .sb-foot { background: #FFFFFF; }
+  .edge-cap { display: block; position: fixed; left: 0; right: 0; height: 12px; pointer-events: none; background: #FFFFFF; }
   .edge-cap.t { top: 0; }
   .edge-cap.b { bottom: 0; }
   .stay.bk-open .bar-wrap { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); animation: fadeIn .25s ease; }
