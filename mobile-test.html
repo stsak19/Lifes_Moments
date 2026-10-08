@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Life's Moments Mobile Test</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -947,7 +947,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ================= phones: a quieter, more minimal layout (mobile test) =================
    Everything below applies only up to 760px. Desktop is unchanged. */
-.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim { display: none; }
+.mbar, .sb-head, .mom-tabs, .am-s, .ucnt, .sheet-lang, .bk-scrim, .bk-sum { display: none; }
+.sb-foot { display: contents; }
 @media (max-width: 760px) {
   /* header: brand and menu only; the language switch moves into the menu */
   .top-actions .lang { display: none; }
@@ -966,16 +967,45 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .mbar-txt small { font-size: 10.5px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .mbar-txt b { font: 400 18px/1.15 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mbar-go { flex: none; display: grid; place-items: center; height: 46px; padding: 0 18px; border-radius: var(--r-ctl, 12px); background: var(--accent); color: var(--accent-ink); font-size: 15px; font-weight: 500; }
-  .stay:not(.bk-open) .sbar { display: none; }
+  .stay:not(.bk-open) .bar-wrap { display: none; }
   .stay.bk-open { z-index: 66; }
-  .stay.bk-open .sbar {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 63; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    max-height: 90vh; overflow: auto; padding: 12px 14px calc(env(safe-area-inset-bottom, 0px) + 16px);
-    border-width: 1px 0 0; border-radius: 22px 22px 0 0; animation: sheetUp .3s cubic-bezier(.2, .8, .2, 1);
+  /* one sheet: stay type, the calendar itself, guests, and a footer that always shows what you picked */
+  .stay.bk-open .bar-wrap {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 63; display: flex; flex-direction: column;
+    max-height: calc(100svh - env(safe-area-inset-top, 0px) - 16px); overflow-y: auto; overscroll-behavior: contain;
+    background: var(--surface); color: var(--ink); border-radius: 24px 24px 0 0; box-shadow: 0 -24px 60px -20px var(--shadow);
+    animation: sheetUp .32s cubic-bezier(.2, .8, .2, 1);
   }
-  @keyframes sheetUp { from { transform: translateY(48px); opacity: 0; } }
-  .sb-head { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 2px 2px 6px 6px; font: 400 24px/1.2 var(--font-display); }
-  .bk-scrim:not([hidden]) { display: block; position: fixed; inset: 0; z-index: 62; background: rgba(4, 7, 13, .45); }
+  @keyframes sheetUp { from { transform: translateY(56px); opacity: 0; } }
+  .stay.bk-open .sbar { display: contents; }
+  .stay.bk-open .sb-head {
+    order: 0; position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 12px 8px 20px; background: var(--surface); font: 400 26px/1.1 var(--font-display);
+  }
+  .stay.bk-open .sb-head .icon-btn { border: 0; background: transparent; }
+  .stay.bk-open .sb-unit { order: 1; padding: 6px 16px 4px; background: none; }
+  .stay.bk-open .sb-unit small { display: none; }
+  .stay.bk-open .sb-date { display: none; }
+  .stay.bk-open .cal-pop, .stay.bk-open .cal-pop[hidden] {
+    order: 2; display: block !important; position: static; max-height: none; overflow: visible;
+    padding: 10px 14px 0; border: 0; border-radius: 0; background: none; box-shadow: none; animation: none;
+  }
+  .stay.bk-open #calClose, .stay.bk-open .cal-foot, .stay.bk-open .cal-scrim { display: none !important; }
+  .stay.bk-open .cal-top { margin-bottom: 4px; }
+  .stay.bk-open .month h3 { font-size: 22px; margin-bottom: 8px; }
+  .stay.bk-open .d { height: 44px; }
+  .stay.bk-open .sb-guests { order: 3; margin: 10px 16px 0; padding: 12px 16px; border-radius: 16px; background: var(--bg); }
+  .stay.bk-open .sb-foot {
+    order: 4; position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    margin-top: 14px; padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    background: var(--surface); border-top: 1px solid var(--line);
+  }
+  .stay.bk-open .bk-sum { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .bk-sum b { font: 400 19px/1.15 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bk-sum small { font-size: 12.5px; color: var(--muted); }
+  .stay.bk-open .sb-go { flex: none; height: 50px; margin: 0; padding: 0 24px; align-self: auto; }
+  .bk-scrim:not([hidden]) { display: block; position: fixed; inset: 0; z-index: 62; background: rgba(4, 7, 13, .45); animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } }
   .stay-rate { margin-top: 8px; }
 
   /* sections: a little less air between them */
@@ -1043,6 +1073,34 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   .foot-brand .brand-name { font-size: 24px; }
   .foot-col p { line-height: 1.7; }
   .foot-col:last-child { grid-column: 1 / -1; }
+
+  /* no "A day" on phones; the page goes from booking straight to the rooms */
+  .moments, a[href="#moments"] { display: none !important; }
+  .stay { padding-bottom: calc(var(--sheet-r) + 22px); }
+  .sec-eyebrow .num { display: none; }
+
+  /* menu: a full, quiet screen. Same brand and spot as the header, big links, language and booking at the bottom */
+  .sheet { background: var(--bg); animation: fadeIn .25s ease; }
+  .sheet-card {
+    position: absolute; inset: 0; height: 100%; display: flex; flex-direction: column; gap: 0;
+    padding: env(safe-area-inset-top, 0px) 0 calc(env(safe-area-inset-bottom, 0px) + 24px); box-shadow: none; background: none;
+  }
+  .sheet-head { min-height: var(--header-h); padding: 8px 8px 8px 18px; }
+  .sheet-head .brand-name { font-size: 22px; }
+  .sheet-head .brand-sub { font-size: 9px; }
+  .sheet-head .icon-btn { width: 44px; height: 44px; border: 0; background: transparent; }
+  .sheet nav { flex: 1; justify-content: center; gap: 6px; padding: 0 28px; }
+  .sheet nav a { padding: 6px 0; border: 0; font-size: 42px; line-height: 1.1; opacity: 0; transform: translateY(10px); animation: menuIn .5s cubic-bezier(.2, .8, .2, 1) forwards; }
+  .sheet nav a:nth-child(2) { animation-delay: .05s; }
+  .sheet nav a:nth-child(3) { animation-delay: .1s; }
+  .sheet nav a:nth-child(4) { animation-delay: .15s; }
+  .sheet nav a:nth-child(5) { animation-delay: .2s; }
+  @keyframes menuIn { to { opacity: 1; transform: none; } }
+  .sheet-lang { width: auto; gap: 22px; margin: 0 28px 18px; padding: 0; border-radius: 0; background: none; }
+  .sheet-lang button { flex: none; min-height: 32px; padding: 0; border-radius: 0; background: none; box-shadow: none; color: var(--muted); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+  .sheet-lang button[aria-pressed="true"] { background: none; box-shadow: none; color: var(--ink); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+  .sheet .btn.wide { width: auto; margin: 0 20px; min-height: 52px; }
+  @media (prefers-reduced-motion: reduce) { .sheet nav a { opacity: 1; transform: none; animation: none; } }
 
   /* preview tools: a small tab so it stays out of the way */
   .devpanel { top: auto; bottom: 96px; transform: none; }
@@ -1179,7 +1237,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
               </button>
             </div>
           </div>
-          <button type="button" class="btn sb-go" id="reqBtn">Check dates</button>
+          <div class="sb-foot"><span class="bk-sum" id="bkSum" aria-live="polite"></span><button type="button" class="btn sb-go" id="reqBtn">Check dates</button></div>
         </form>
 
         <div class="cal-pop" id="calPop" role="dialog" aria-label="Choose your dates" hidden>
@@ -1677,6 +1735,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     closeSheet();
     goTo(sel);
     // Going to the booking bar without dates yet: open the calendar once the scroll lands.
+    if (sel === '#stay' && mqMobile.matches && window.__bkOpen) { setTimeout(() => window.__bkOpen(), reduce ? 50 : 700); return; }
     if (sel === '#stay' && window.__openCal && window.__needDates && window.__needDates()) setTimeout(() => window.__openCal(), reduce ? 50 : 1100);
   });
 
@@ -1833,12 +1892,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const kNext = (k) => { const d = kDate(k); d.setUTCDate(d.getUTCDate() + 1); return key(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); };
   const dayNum = (k) => Math.round(kDate(k).getTime() / 864e5);
   const todayKey = key(today.y, today.m, today.d);
-  let fmtShort, fmtLong, fmtMonth;
+  let fmtShort, fmtLong, fmtMonth, fmtDM;
   function makeFormats() {
     const loc = LOCALE[lang] || 'en-GB';
     fmtShort = new Intl.DateTimeFormat(loc, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
     fmtLong = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
     fmtMonth = new Intl.DateTimeFormat(loc, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    fmtDM = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'short', timeZone: 'UTC' });
   }
   makeFormats();
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -1960,6 +2020,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   function closeCal(back) {
     if (calPop.hidden) return;
+    if ($('#stay').classList.contains('bk-open')) return; // phones: the calendar is part of the booking sheet
     calPop.hidden = true; scrim.hidden = true; $('#stay').classList.remove('cal-open');
     $('#ciBtn').setAttribute('aria-expanded', 'false'); $('#coBtn').setAttribute('aria-expanded', 'false');
     if (lenis) lenis.start();
@@ -1972,11 +2033,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const stayEl = $('#stay'), mbar = $('#mbar');
   const bkScrim = document.createElement('div');
   bkScrim.className = 'bk-scrim'; bkScrim.hidden = true;
-  $('#barWrap').appendChild(bkScrim);
+  stayEl.appendChild(bkScrim);
   function bkOpen(open) {
     if (stayEl.classList.contains('bk-open') === open) return;
+    if (open) { if (cal.ci) { cal.y = kY(cal.ci); cal.m = kM(cal.ci); } }
     stayEl.classList.toggle('bk-open', open); bkScrim.hidden = !open;
     mbar.setAttribute('aria-expanded', String(open));
+    if (open) renderCal(); else closeCal(false);
     if (lenis) open ? lenis.stop() : lenis.start();
     if (open) setTimeout(() => $('#sbClose').focus({ preventScroll: true }), 30);
     else mbar.focus({ preventScroll: true });
@@ -1984,9 +2047,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   window.__bkClose = () => bkOpen(false);
   window.__mbarSync = () => {
     $('#mbarUnit').textContent = t(cal.unit === 0 ? 'u.room' : 'u.apt');
-    const d = cal.ci && cal.co ? fmtShort.format(kDate(cal.ci)) + ' – ' + fmtShort.format(kDate(cal.co)) : t('mbar.add');
+    // short range for small screens: "13–16 Oct"
+    const d = cal.ci && cal.co ? (fmtDM.formatRange ? fmtDM.formatRange(kDate(cal.ci), kDate(cal.co)) : fmtDM.format(kDate(cal.ci)) + ' – ' + fmtDM.format(kDate(cal.co))) : t('mbar.add');
     $('#mbarSum').textContent = d + ' · ' + plural(cal.guests, 'guest', 'guests');
+    const nights = cal.ci && cal.co ? dayNum(cal.co) - dayNum(cal.ci) : 0;
+    $('#bkSum').innerHTML = '<b>' + d + '</b><small>' + (nights ? plural(nights, 'night', 'nights') + ' · ' : '') + plural(cal.guests, 'guest', 'guests') + '</small>';
   };
+  window.__bkOpen = () => bkOpen(true);
   mbar.addEventListener('click', () => bkOpen(true));
   $('#sbClose').addEventListener('click', () => bkOpen(false));
   bkScrim.addEventListener('click', () => bkOpen(false));
