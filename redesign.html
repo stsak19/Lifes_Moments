@@ -473,6 +473,9 @@ a.score:hover { border-color: var(--muted); }
 .form { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 .form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
 .form input { min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); }
+.form label:has(input[required]) > span::after { content: " *"; color: var(--accent); }
+.form input[aria-invalid="true"] { border-color: #D65A4A; box-shadow: 0 0 0 1px #D65A4A; }
+#fErr { color: #D65A4A; }
 .card-ph { display: flex; justify-content: space-between; align-items: center; min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; }
 .steps { margin: 18px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; counter-reset: s; }
 .steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
@@ -1411,9 +1414,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <div class="form">
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
-        <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel"></label>
+        <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
-        <p class="fine" id="fErr" data-i18n="m.err" hidden>Add your name and a valid email to continue.</p>
+        <p class="fine" id="fErr" data-i18n="m.err" role="alert" hidden>Fill in your name, a valid email and your phone to continue.</p>
         <button type="submit" class="btn wide" data-i18n="m.submit">Hold card and send request</button>
         <p class="fine" data-i18n="m.charged">You are charged only if the host accepts within 24 hours.</p>
       </div>
@@ -1502,7 +1505,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'foot.contactP': '<span class="todo">[phone]</span><br><span class="todo">[email]</span><br><span class="todo">[address]</span>, Limenaria, Thasos',
       'foot.stayP': 'Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece',
-      'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Add your name and a valid email to continue.',
+      'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': 'You are charged only if the host accepts within 24 hours.', 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
       'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. Nothing was held or sent.',
@@ -1559,7 +1562,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'foot.contactP': '<span class="todo">[τηλέφωνο]</span><br><span class="todo">[email]</span><br><span class="todo">[διεύθυνση]</span>, Λιμενάρια, Θάσος',
       'foot.stayP': 'Άφιξη <span class="todo">[ώρα]</span><br>Αναχώρηση <span class="todo">[ώρα]</span><br>Και στο Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[αριθμός]</span><br>Μητρώο Ακινήτων Βραχυχρόνιας Διαμονής',
-      'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα και ένα σωστό email για να συνεχίσετε.',
+      'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Χρεώνεστε μόνο αν ο οικοδεσπότης δεχτεί μέσα σε 24 ώρες.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
       'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε ούτε στάλθηκε τίποτα.',
@@ -2054,6 +2057,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     lastFocus = document.activeElement;
     $('#mSum').textContent = staySummary();
     $('#reqForm').hidden = false; $('#reqDone').hidden = true; $('#fErr').hidden = true;
+    ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).removeAttribute('aria-invalid'));
     modal.hidden = false; lenis && lenis.stop();
     setTimeout(() => $('#fName').focus(), 30);
   }
@@ -2064,11 +2068,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   $('#mClose').addEventListener('click', closeModal);
   $('#dClose').addEventListener('click', closeModal);
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  // a field marked as missing clears its mark as soon as the guest types in it
+  ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).addEventListener('input', () => {
+    $(id).removeAttribute('aria-invalid');
+    if (!$('#reqForm').querySelector('[aria-invalid="true"]')) $('#fErr').hidden = true;
+  }));
   $('#reqForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    const ok = $('#fName').value.trim() && /.+@.+\..+/.test($('#fEmail').value.trim());
-    $('#fErr').hidden = !!ok;
-    if (!ok) return;
+    const checks = [
+      ['#fName', (v) => v.length > 1],
+      ['#fEmail', (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)],
+      ['#fPhone', (v) => v.replace(/\D/g, '').length >= 8],
+    ];
+    const bad = checks.filter(([id, test]) => !test($(id).value.trim())).map(([id]) => id);
+    checks.forEach(([id]) => bad.includes(id) ? $(id).setAttribute('aria-invalid', 'true') : $(id).removeAttribute('aria-invalid'));
+    $('#fErr').hidden = !bad.length;
+    if (bad.length) { $(bad[0]).focus({ preventScroll: true }); return; }
     $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: $('#fEmail').value.trim() });
     $('#reqForm').hidden = true; $('#reqDone').hidden = false;
     $('#dClose').focus();
