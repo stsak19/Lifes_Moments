@@ -44,7 +44,8 @@ button:disabled{cursor:default}
 /* Messages fill the screen. The extra 64px at the bottom is room for the preview bar; without it use 28px and 100vh - 113px */
 @media (min-width:900px){#app main:has(#inbox){padding-bottom:92px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 177px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
-@media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"]{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
+@media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
+@media (max-width:899px){aside.panel-slot{display:none !important}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
@@ -306,7 +307,7 @@ button:disabled{cursor:default}
 </div>
 <div style="font-size: 13px; color: #4A5B5E">{{listSummary}}</div>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
-<div style="min-width: 880px">
+<div style="min-width: 720px">
 <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.5fr 0.8fr 1fr 0.9fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
 <span>Πελάτης</span><span>Ημερομηνίες</span><span>Χώρος</span><span>Άτομα</span><span>Ποσό</span><span>Προμήθεια Booking</span><span>Κατάσταση</span>
 </div>
@@ -750,6 +751,14 @@ button:disabled{cursor:default}
 <sc-if value="{{detail.hasGuest}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{detail.openGuest}}" style="height: 40px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Καρτέλα πελάτη</button>
 </sc-if>
+</aside>
+</sc-if>
+
+<sc-if value="{{showSlot}}" hint-placeholder-val="{{false}}">
+<aside aria-label="Κενό πάνελ" class="panel-slot" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; min-height: 320px; border: 2px dashed #CFDADB; border-radius: 20px; padding: 28px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; color: #4A5B5E">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#8E9A9C" aria-hidden="true" style="stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+<div style="font-size: 14px; max-width: 240px">{{slotText}}</div>
+<sc-if value="{{slotNew}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{openNew}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #0F5257; font-size: 13px; font-weight: 600; cursor: pointer">+ Νέα κράτηση</button></sc-if>
 </aside>
 </sc-if>
 
@@ -2000,6 +2009,9 @@ class Component extends DCLogic {
       guests: guests, noGuests: guests.length === 0, guestTotal: allG.length + ' συνολικά', gFilters: gFilters, gQuery: s.gQuery,
       setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
       guest: guest, hasGuest: hasGuest,
+      showSlot: (s.tab === 'list' || s.tab === 'guests') && !hasDetail && !hasGuest && !(s.newOpen && s.nb),
+      slotText: s.tab === 'guests' ? 'Διάλεξε έναν πελάτη για να δεις εδώ τις διαμονές και τις σημειώσεις του.' : 'Διάλεξε μια κράτηση από τη λίστα για να δεις εδώ τις λεπτομέρειες.',
+      slotNew: s.tab === 'list',
       goToday: () => this.go('today'), goCal: () => this.go('cal'), goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
       navBadge: String(badgeN), hasNavBadge: badgeN > 0,
       isAuto: auto, isManual: !auto,
