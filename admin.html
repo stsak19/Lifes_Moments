@@ -182,7 +182,7 @@ button:disabled{cursor:default}
 </div>
 <sc-if value="{{hasReqRows}}" hint-placeholder-val="{{true}}">
 <div>
-<div style="font-size: 12px; font-weight: 600; color: #7A4708; margin: 10px 0 6px">Αιτήματα χωρίς δωμάτιο</div>
+<div style="font-size: 12px; font-weight: 600; color: #8A3412; margin: 10px 0 6px">Αιτήματα που δεν χωράνε σε κανένα δωμάτιο</div>
 <sc-for list="{{reqRows}}" as="row" hint-placeholder-count="3">
 <div style="{{calRowStyle}}">
 <span style="font-size: 12px; color: #4A5B5E; display: flex; align-items: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{row.label}}</span>
@@ -826,6 +826,18 @@ class Component extends DCLogic {
     const occupancy = Math.round(busy / (this.UNITS.length * 7) * 100) + '%';
     const siteRevenue = this.money(confirmed.filter(b => b.source === 'site' && b.start.slice(5, 7) === '07').reduce((a, b) => a + b.total, 0));
 
+    /* Where each pending request sits on the calendar: most urgent first, the owner's pick if it fits, else the first room that fits */
+    const tentative = {};
+    const clashT = (unit, b) => pending.some(p => p.id !== b.id && tentative[p.id] === unit && p.start < this.endOf(b) && b.start < this.endOf(p));
+    const fitsT = (unit, b) => this.isFree(unit, b.start, b.nights) && !clashT(unit, b);
+    if (!auto) pending.forEach(b => {
+      const cands = this.candidates(b);
+      const want = s.picks[b.id];
+      let u = (want && cands.some(c => c.id === want) && fitsT(want, b)) ? want : null;
+      if (!u) { const c = cands.find(c2 => fitsT(c2.id, b)); u = c ? c.id : null; }
+      if (u) tentative[b.id] = u;
+    });
+
     /* Request view */
     let req = { back: () => this.setState({ req: null }), accept: () => {}, reject: () => {}, rooms: [] };
     let showReq = false;
@@ -835,7 +847,7 @@ class Component extends DCLogic {
         showReq = true;
         const cands = this.candidates(rb);
         const freeIds = cands.filter(u => this.isFree(u.id, rb.start, rb.nights)).map(u => u.id);
-        const suggested = freeIds[0] || null;
+        const suggested = freeIds.find(id => !clashT(id, rb)) || freeIds[0] || null;
         const picked = (s.picks[rb.id] && freeIds.indexOf(s.picks[rb.id]) !== -1) ? s.picks[rb.id] : suggested;
         const left = 24 - rb.ago;
         const tag = 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
@@ -847,6 +859,9 @@ class Component extends DCLogic {
           if (!free) {
             const c = this.firstClash(u.id, rb.start, rb.nights);
             sub = 'Έως ' + u.cap + ' άτομα · ' + (c === 'block' ? 'κλειστό αυτές τις μέρες' : c.name + ' ως ' + this.fmt(this.endOf(c)));
+          } else if (clashT(u.id, rb)) {
+            const other = pending.find(p => p.id !== rb.id && tentative[p.id] === u.id && p.start < this.endOf(rb) && rb.start < this.endOf(p));
+            sub += ' · το ζητάει και το αίτημα του/της ' + (other ? other.name : 'άλλου πελάτη');
           } else if (u.id === suggested && rb.type !== 'apt') {
             sub += ' · αφήνει τα μεγαλύτερα ελεύθερα';
           }
@@ -900,6 +915,7 @@ class Component extends DCLogic {
     });
     const segBase = 'height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
     const emptyCell = (aria, x, tap) => ({ label: '', aria: aria, tap: tap, style: segBase + 'padding: 0; border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7') });
+    const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const rows = this.UNITS.map(u => {
       const segs = [];
       let i = 0;
@@ -917,6 +933,14 @@ class Component extends DCLogic {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', style: segBase + 'text-align: center; padding: 0; border: 0; background: #E4E1DB; color: #4A4F5C',
             tap: () => { const nb = Object.assign({}, s.blocks); delete nb[u.id + '|' + x]; this.setState({ blocks: nb }); this.say(u.name + ' · ' + this.fmt(x) + ' άνοιξε ξανά.'); } });
           i++;
+        } else if (pendAt(u.id, x)) {
+          const p = pendAt(u.id, x);
+          let j = i;
+          while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
+          const span = j - i + 1;
+          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', aria: 'Αίτημα ' + p.name + ', προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)), tap: () => this.openReq(p.id),
+            style: segBase + 'grid-column: span ' + span + '; border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606; font-weight: 600' });
+          i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }));
           i++;
@@ -924,7 +948,7 @@ class Component extends DCLogic {
       }
       return { label: u.name, segs: segs };
     });
-    const reqRows = auto ? [] : pending.map(b => {
+    const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
       const segs = [];
       const end = this.endOf(b);
       let i = 0;
@@ -1215,7 +1239,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: this.add(T, -4) }),
       calNote: auto
         ? 'Κλικ σε κενή μέρα για να την κλείσεις, κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε κενή μέρα για να την κλείσεις. Κλικ σε κράτηση για λεπτομέρειες, ή σε αίτημα για να απαντήσεις.',
+        : 'Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες, σε κενή μέρα για να την κλείσεις.',
       filters: filters, items: items, noItems: items.length === 0, query: s.query,
       setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '' }),
       seasons: seasons, extraText: this.money(s.extra),
