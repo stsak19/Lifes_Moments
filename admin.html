@@ -43,7 +43,7 @@ button:disabled{cursor:default}
 #inbox{min-height:520px}
 #conv-msgs{min-height:220px;max-height:420px}
 /* Messages fill the screen */
-@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
+@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#app main:has(#inbox) aside[aria-label="Λεπτομέρειες κράτησης"]{top:28px;max-height:calc(100vh - 56px)}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 260px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
@@ -388,7 +388,6 @@ button:disabled{cursor:default}
 <div style="flex: 999 1 380px; min-width: 0; display: flex; flex-direction: column">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #EEF2F2">
 <div><div style="font-weight: 600; font-size: 16px">{{conv.name}}</div><div style="font-size: 13px; color: #4A5B5E">{{conv.meta}}</div></div>
-<button type="button" onClick="{{conv.openBooking}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Δες την κράτηση</button>
 </div>
 <div id="conv-msgs" style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #F7FAFA; overflow-y: auto">
 <sc-for list="{{conv.msgs}}" as="m" hint-placeholder-count="2"><div style="{{m.style}}">{{m.text}}<span style="display: block; font-size: 11px; color: #4A5B5E; margin-top: 4px">{{m.when}}</span></div></sc-for>
@@ -717,7 +716,7 @@ button:disabled{cursor:default}
 <h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{detail.name}}</h2>
 <div style="font-size: 13px; color: #4A5B5E">{{detail.sourceText}}</div>
 </div>
-<button type="button" onClick="{{detail.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+<sc-if value="{{detail.canClose}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{detail.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
 </div>
 <div style="border-top: 1px solid #EEF2F2">
 <div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Ημερομηνίες</span><span style="font-weight: 500">{{detail.dates}}</span></div>
@@ -991,7 +990,13 @@ class Component extends DCLogic {
     const key = this.isAuto() ? 'bookingsAuto' : 'bookings';
     this.setState({ [key]: this.state[key].map(b => b.id === id ? Object.assign({}, b, ch) : b) });
   }
-  go(tab) { this.setState({ tab: tab, detail: null, req: null, customer: null, sel: null, calSel: null, calEdit: false, replyOpen: null, newOpen: false }); }
+  threadBid() {
+    const L = this.list();
+    const site = this.state.threads.filter(t => { const b = L.find(x => x.id === t.bid); return b && b.source === 'site'; });
+    const cur = site.find(t => t.id === this.state.thread) || site[0];
+    return cur ? cur.bid : null;
+  }
+  go(tab) { this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, replyOpen: null, newOpen: false }); }
   openNew(pre) {
     const base = { kind: 'paid', type: 'room', name: '', phone: '', email: '', start: this.TODAY, end: this.add(this.TODAY, 2), guests: '2', unit: '', amount: '', pay: 'cash', note: '', error: '' };
     this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, req: null, calSel: null, calEdit: false });
@@ -1023,7 +1028,7 @@ class Component extends DCLogic {
     let t = this.state.threads.find(x => x.bid === bid);
     let threads = this.state.threads;
     if (!t) { t = { id: 't' + Date.now(), bid: bid, unread: false, msgs: [] }; threads = [t].concat(threads); }
-    this.setState({ threads: threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x), thread: t.id, tab: 'msgs', detail: null, customer: null, req: null, calSel: null, calEdit: false });
+    this.setState({ threads: threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x), thread: t.id, tab: 'msgs', detail: t.bid, customer: null, req: null, calSel: null, calEdit: false });
   }
   csv(rows, name) {
     const text = '﻿' + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(';')).join('\r\n');
@@ -1544,7 +1549,8 @@ class Component extends DCLogic {
           canCancel: (b.source === 'site' || b.source === 'direct') && b.status === 'confirmed',
           cancelLabel: b.source === 'direct' ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
-          canMessage: b.source === 'site',
+          canMessage: b.source === 'site' && s.tab !== 'msgs',
+          canClose: s.tab !== 'msgs',
           isPending: b.status === 'pending',
           canMove: canMove, noMoves: canMove && moveIds.length === 0,
           moves: moveIds.map(id => ({ label: this.unitName(id), style: chipOff, pick: () => {
@@ -1912,7 +1918,7 @@ class Component extends DCLogic {
         preview: last ? (last.from === 'host' ? 'Εσύ: ' : '') + last.text : 'Χωρίς μηνύματα',
         nameStyle: 'flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: ' + (t.unread ? '700' : '500'),
         style: 'width: 100%; display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border: 0; border-bottom: 1px solid #EEF2F2; text-align: left; color: #18282B; font-size: 14px; cursor: pointer;' + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
-        open: () => this.setState({ thread: t.id, msgDraft: '', threads: this.state.threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x) })
+        open: () => this.setState({ thread: t.id, msgDraft: '', detail: t.bid, customer: null, threads: this.state.threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x) })
       };
     });
     const cb = curT ? findB(curT.bid) : null;
