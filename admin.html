@@ -394,12 +394,12 @@ button:disabled{cursor:default}
 <sc-if value="{{conv.empty}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #4A5B5E">Δεν έχετε μιλήσει ακόμα. Γράψε το πρώτο μήνυμα.</div></sc-if>
 </div>
 <div style="padding: 14px 18px; border-top: 1px solid #EEF2F2; display: flex; flex-direction: column; gap: 10px">
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
-<sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><button type="button" onClick="{{q.click}}" title="{{q.title}}" style="{{q.style}}">{{q.label}}</button></sc-for>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 8px; padding-top: 6px">
+<sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><span style="position: relative; display: inline-flex"><button type="button" onClick="{{q.click}}" title="{{q.title}}" style="{{q.style}}">{{q.label}}</button><sc-if value="{{q.showX}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{q.remove}}" aria-label="{{q.removeLabel}}" title="Διαγραφή" style="position: absolute; top: -8px; right: -8px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 10px; border: 2px solid #FFFFFF; background: #D92D20; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,.2)"><svg width="8" height="8" viewBox="0 0 10 10" aria-hidden="true" style="stroke: #FFFFFF; stroke-width: 2.2; stroke-linecap: round"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7"></path></svg></button></sc-if></span></sc-for>
 <button type="button" onClick="{{quickNew}}" style="min-height: 32px; padding: 0 12px; border-radius: 16px; border: 1px dashed #0F5257; background: #FFFFFF; color: #0F5257; font-size: 12px; font-weight: 600; cursor: pointer">+ Νέο κουμπί</button>
 <sc-if value="{{hasQuick}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{quickToggleEdit}}" style="min-height: 32px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer">{{quickEditLabel}}</button></sc-if>
 </div>
-<sc-if value="{{quickEditHint}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; color: #4A5B5E; margin-top: -4px">Πάτα ένα κουμπί για να το αλλάξεις ή να το σβήσεις.</div></sc-if>
+<sc-if value="{{quickEditHint}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; color: #4A5B5E; margin-top: -4px">Πάτα το × για να σβήσεις ένα κουμπί, ή το ίδιο το κουμπί για να το αλλάξεις.</div></sc-if>
 <sc-if value="{{qf.open}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #F4F7F7; border: 1px solid #E6ECED">
 <div style="font-weight: 600; font-size: 13px">{{qf.title}}</div>
@@ -1976,7 +1976,13 @@ class Component extends DCLogic {
       msgBadge: String(unreadN), hasMsgBadge: unreadN > 0,
       threads: threads, conv: conv, msgDraft: s.msgDraft,
       quick: s.quick.map(q => ({
-        label: q.label, title: s.quickEdit ? 'Αλλαγή ή διαγραφή' : q.text,
+        label: q.label, title: s.quickEdit ? 'Αλλαγή' : q.text,
+        showX: s.quickEdit, removeLabel: 'Διαγραφή κουμπιού ' + q.label,
+        remove: () => {
+          this.saveQuick(this.state.quick.filter(x => x.id !== q.id));
+          if (this.state.qf && this.state.qf.id === q.id) this.setState({ qf: null });
+          this.say('Το κουμπί «' + q.label + '» σβήστηκε.');
+        },
         style: 'min-height: 32px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer;' + (s.quickEdit ? 'border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         click: () => {
           if (this.state.quickEdit) this.setState({ qf: { id: q.id, label: q.label, text: q.text, error: '' } });
