@@ -399,21 +399,10 @@ button:disabled{cursor:default}
 <sc-if value="{{show.reviews}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Κριτικές</h1>
-<section style="display: flex; flex-wrap: wrap; gap: 14px">
-<div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; align-items: center; gap: 14px">
-<div style="flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px; background: #0F5257; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{revBkAvg}}</div>
-<div><div style="font-weight: 600; font-size: 16px">Booking.com · {{revBkWord}}</div><div style="font-size: 13px; color: #4A5B5E">{{revBkCount}}</div></div>
-</div>
-<div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; align-items: center; gap: 14px">
+<section style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
 <div style="flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px; background: #E9B949; color: #3A2604; display: flex; align-items: center; justify-content: center; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{revGoAvg}}</div>
-<div><div style="font-weight: 600; font-size: 16px">Google · από 5</div><div style="font-size: 13px; color: #4A5B5E">{{revGoCount}}</div></div>
-</div>
-</section>
-<section style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
-<h2 style="margin: 0 0 12px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Τι βαθμολογούν στο Booking</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px 28px">
-<sc-for list="{{revCats}}" as="c" hint-placeholder-count="7"><div><div style="display: flex; justify-content: space-between; font-size: 13px"><span>{{c.name}}</span><span style="font-weight: 600">{{c.v}}</span></div><div style="height: 8px; border-radius: 4px; background: #EEF3F4; overflow: hidden; margin-top: 4px"><div style="{{c.fill}}"></div></div></div></sc-for>
-</div>
+<div style="flex: 1 1 240px"><div style="font-weight: 600; font-size: 16px">Google · από 5</div><div style="font-size: 13px; color: #4A5B5E">{{revGoCount}} · αυτές φαίνονται και στο σάιτ</div></div>
+<div style="flex: 1 1 260px; font-size: 12px; color: #4A5B5E">Οι κριτικές του Booking.com απαντιούνται από το Booking.</div>
 </section>
 <div style="display: flex; flex-wrap: wrap; gap: 6px">
 <sc-for list="{{revFilters}}" as="f" hint-placeholder-count="4"><button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button></sc-for>
@@ -749,12 +738,12 @@ button:disabled{cursor:default}
 </sc-if>
 </div>
 </sc-if>
-<button type="button" onClick="{{detail.message}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Μήνυμα στον πελάτη</button>
+<sc-if value="{{detail.canMessage}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{detail.message}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Μήνυμα στον πελάτη</button></sc-if>
 <sc-if value="{{detail.canCancel}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{detail.cancel}}" style="height: 46px; border-radius: 23px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 14px; font-weight: 500; cursor: pointer">{{detail.cancelLabel}}</button>
 </sc-if>
 <sc-if value="{{detail.isBooking}}" hint-placeholder-val="{{false}}">
-<div style="font-size: 12px; color: #4A5B5E">Οι κρατήσεις του Booking.com αλλάζουν ή ακυρώνονται από το extranet του Booking.</div>
+<div style="font-size: 12px; color: #4A5B5E">Κράτηση του Booking.com: μηνύματα, αλλαγές και ακυρώσεις γίνονται από το Booking. Εδώ φαίνεται μόνο για να κλείνει το δωμάτιο.</div>
 </sc-if>
 <sc-if value="{{detail.hasGuest}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{detail.openGuest}}" style="height: 40px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Καρτέλα πελάτη</button>
@@ -800,7 +789,7 @@ button:disabled{cursor:default}
 <textarea id="gnote" value="{{guest.note}}" onChange="{{guest.setNote}}" placeholder="π.χ. προτιμά ισόγειο, φτάνει αργά, γιορτάζει επέτειο" style="width: 100%; box-sizing: border-box; min-height: 88px; padding: 10px 12px; border-radius: 12px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.45; resize: vertical"></textarea>
 <div style="font-size: 12px; color: #4A5B5E; margin-top: 4px">Τις βλέπεις μόνο εσύ. Αποθηκεύονται αυτόματα.</div>
 </div>
-<button type="button" onClick="{{guest.message}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">{{guest.messageLabel}}</button>
+<sc-if value="{{guest.canMessage}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{guest.message}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">{{guest.messageLabel}}</button></sc-if>
 <div style="font-size: 12px; color: #4A5B5E">Τα στοιχεία σβήνονται αυτόματα [χρόνια] μετά την τελευταία διαμονή, για τον GDPR.</div>
 </aside>
 </sc-if>
@@ -871,19 +860,18 @@ class Component extends DCLogic {
       tab: 'today', detail: null, req: null, customer: null, statMonth: '2026-07', gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '', bkRoom: '', bkApt: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '', replyOpen: null, replyDraft: '', revFilter: 'all',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
-        { id: 't1', bid: 'b2', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Hi! We land in Kavala at 15:30 and take the ferry from Keramoti. Around what time can we check in?' }] },
+        { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
         { id: 't2', bid: 'p1', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 08:40', text: 'Καλημέρα! Έστειλα αίτημα για 15–19 Ιουλίου. Είναι η επέτειός μας, μήπως υπάρχει δωμάτιο με θέα;' }] },
-        { id: 't3', bid: 'b5', unread: false, msgs: [{ from: 'guest', t: '12 Ιουλ 18:05', text: 'Ciao! Is there parking near the house? We are coming with a rented car.' }, { from: 'host', t: '12 Ιουλ 19:20', text: 'Hi Luca! Yes, there is free parking right in front of the building. See you on the 15th!' }] },
+        { id: 't3', bid: 'b13', unread: false, msgs: [{ from: 'guest', t: '12 Ιουλ 18:05', text: 'Γεια σας! Υπάρχει πάρκινγκ κοντά; Ερχόμαστε με αυτοκίνητο.' }, { from: 'host', t: '12 Ιουλ 19:20', text: 'Γεια σας! Ναι, υπάρχει δωρεάν πάρκινγκ ακριβώς μπροστά στο κτίριο. Σας περιμένουμε στις 20!' }] },
         { id: 't4', bid: 'b4', unread: false, msgs: [{ from: 'host', t: '10 Ιουλ 12:00', text: 'Καλώς ήρθατε ξανά! Το διαμέρισμα είναι έτοιμο από τις 14:00.' }, { from: 'guest', t: '11 Ιουλ 16:32', text: 'Φτάσαμε, όλα τέλεια όπως κάθε χρόνο. Ευχαριστούμε!' }] },
-        { id: 't5', bid: 'b7', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Hello, can we get an extra bed for our son (8 years old)?' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Hi James, the room is set for 3 people, so the extra bed is already there.' }] }
+        { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       reviews: [
-        { id: 'v1', src: 'booking', name: 'Pieter', cc: 'NL', date: '2026-07-14', score: 10, unit: 'Δωμάτιο', pos: 'Spotless room, the terrace at sunset, and great tips for beaches.', neg: '', reply: '' },
-        { id: 'v2', src: 'google', name: 'Κατερίνα Π.', cc: '', date: '2026-07-06', score: 5, unit: '', pos: 'Πολύ ήσυχα, δίπλα στη θάλασσα. Καθαρό και ευρύχωρο.', neg: '', reply: '' },
-        { id: 'v3', src: 'booking', name: 'Marta', cc: 'PL', date: '2026-07-02', score: 8.8, unit: 'Δωμάτιο', pos: 'Lovely hosts and a very comfortable bed.', neg: 'Shower pressure could be better.', reply: 'Thank you Marta! We fixed the shower in room 4 the same week.' },
-        { id: 'v4', src: 'booking', name: 'Oliver', cc: 'GB', date: '2026-06-24', score: 10, unit: 'Δωμάτιο', pos: 'Felt like staying with friends. Walking distance to tavernas.', neg: '', reply: '' },
-        { id: 'v5', src: 'google', name: 'Γιάννης Μ.', cc: '', date: '2026-06-19', score: 5, unit: '', pos: 'Υπέροχη βεράντα, δύο λεπτά από τη θάλασσα.', neg: '', reply: 'Σας ευχαριστούμε πολύ, σας περιμένουμε ξανά!' },
-        { id: 'v6', src: 'booking', name: 'Lena', cc: 'DE', date: '2026-06-04', score: 8.3, unit: 'Δωμάτιο', pos: 'Good value, clean and quiet.', neg: 'Breakfast is not included and there is no kettle in the room.', reply: '' }
+        { id: 'v1', src: 'google', name: 'Κατερίνα Π.', cc: '', date: '2026-07-12', score: 5, unit: '', pos: 'Πολύ ήσυχα, δίπλα στη θάλασσα. Καθαρό και ευρύχωρο.', neg: '', reply: '' },
+        { id: 'v2', src: 'google', name: 'Pieter V.', cc: '', date: '2026-07-09', score: 5, unit: '', pos: 'Spotless room, a lovely terrace at sunset and great tips for beaches.', neg: '', reply: '' },
+        { id: 'v3', src: 'google', name: 'Marta K.', cc: '', date: '2026-07-02', score: 4, unit: '', pos: 'Lovely hosts and a very comfortable bed.', neg: 'Shower pressure could be better.', reply: 'Thank you Marta! We fixed the shower the same week.' },
+        { id: 'v4', src: 'google', name: 'Γιάννης Μ.', cc: '', date: '2026-06-19', score: 5, unit: '', pos: 'Υπέροχη βεράντα, δύο λεπτά από τη θάλασσα.', neg: '', reply: 'Σας ευχαριστούμε πολύ, σας περιμένουμε ξανά!' },
+        { id: 'v5', src: 'google', name: 'Oliver B.', cc: '', date: '2026-06-11', score: 5, unit: '', pos: 'Felt like staying with friends. Walking distance to tavernas.', neg: '', reply: '' }
       ],
       blocks: blocks,
       toggles: { push: true, pre: true, review: true },
@@ -920,7 +908,6 @@ class Component extends DCLogic {
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
     this.COMMISSION = 0.15;
-    this.CATS = [['Προσωπικό', 9.8], ['Παροχές', 9.0], ['Καθαριότητα', 9.6], ['Άνεση', 9.3], ['Σχέση ποιότητας / τιμής', 9.1], ['Τοποθεσία', 9.5], ['Δωρεάν Wi‑Fi', 8.7]];
     this.QUICK = [
       ['Ώρα check-in', 'Check-in is from 14:00 and check-out until 11:00. If you arrive earlier, you can leave your bags with us.'],
       ['Οδηγίες άφιξης', 'We are in Limenaria, 2 minutes from the beach. Send us a message when you leave the ferry and we will wait for you at the entrance.'],
@@ -1008,6 +995,8 @@ class Component extends DCLogic {
   who(what) { const u = this.state.user; return u ? what + ' · ' + u.name + ' · ' + this.fmt(this.TODAY) : ''; }
   bookedOn(b) { return this.ON[b.id] || this.TODAY; }
   openThread(bid) {
+    const ob = this.list().find(x => x.id === bid);
+    if (!ob || ob.source !== 'site') { this.say('Μηνύματα εδώ μόνο για κρατήσεις από το σάιτ.'); return; }
     let t = this.state.threads.find(x => x.bid === bid);
     let threads = this.state.threads;
     if (!t) { t = { id: 't' + Date.now(), bid: bid, unread: false, msgs: [] }; threads = [t].concat(threads); }
@@ -1537,6 +1526,7 @@ class Component extends DCLogic {
           canCancel: (b.source === 'site' || b.source === 'direct') && b.status === 'confirmed',
           cancelLabel: b.source === 'direct' ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
+          canMessage: b.source === 'site',
           isPending: b.status === 'pending',
           canMove: canMove, noMoves: canMove && moveIds.length === 0,
           moves: moveIds.map(id => ({ label: this.unitName(id), style: chipOff, pick: () => {
@@ -1642,8 +1632,9 @@ class Component extends DCLogic {
         })),
         note: s.notes[g.name] || '',
         setNote: (e) => this.setState({ notes: Object.assign({}, s.notes, { [g.name]: e && e.target ? e.target.value : '' }) }),
-        messageLabel: viaBooking ? 'Μήνυμα μέσω Booking' : 'Email στον πελάτη',
-        message: () => { const gb = B.find(x => x.name === g.name && x.status !== 'rejected'); if (gb) this.openThread(gb.id); else this.say('Ανοίγει νέο email προς ' + g.name + '.'); },
+        messageLabel: 'Μήνυμα στον πελάτη',
+        canMessage: B.some(x => x.name === g.name && x.source === 'site' && x.status !== 'rejected'),
+        message: () => { const gb = B.find(x => x.name === g.name && x.source === 'site' && x.status !== 'rejected'); if (gb) this.openThread(gb.id); },
         close: () => this.setState({ customer: null })
       };
     }
@@ -1895,8 +1886,9 @@ class Component extends DCLogic {
     /* Messages */
     const findB = id => B.find(x => x.id === id) || s.bookings.find(x => x.id === id);
     const nowHM = () => { const d = new Date(); return (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes(); };
-    const curT = s.threads.find(t => t.id === s.thread) || s.threads[0];
-    const threads = s.threads.map(t => {
+    const curT = s.threads.filter(t => { const b = findB(t.bid); return b && b.source === 'site'; }).find(t => t.id === s.thread) || s.threads.find(t => { const b = findB(t.bid); return b && b.source === 'site'; });
+    const siteThreads = s.threads.filter(t => { const b = findB(t.bid); return b && b.source === 'site'; });
+    const threads = siteThreads.map(t => {
       const b = findB(t.bid);
       const last = t.msgs[t.msgs.length - 1];
       const on = curT && t.id === curT.id;
@@ -1914,23 +1906,21 @@ class Component extends DCLogic {
     const conv = {
       name: cb ? cb.name : '', empty: !!curT && curT.msgs.length === 0,
       meta: cb ? this.range(cb.start, this.endOf(cb)) + ' · ' + cb.guests + ' άτομα · ' + (cb.unit ? this.unitName(cb.unit) : (cb.type === 'apt' ? 'Διαμέρισμα' : 'χωρίς δωμάτιο ακόμα')) : '',
-      via: cb && cb.source === 'booking' ? 'Φτάνει στον πελάτη μέσα από το Booking.com' : 'Φτάνει στον πελάτη με email',
+      via: 'Φτάνει στον πελάτη με email' + (cb && cb.email ? ' (' + cb.email + ')' : ''),
       openBooking: () => { if (cb) this.setState({ detail: cb.id }); },
       msgs: curT ? curT.msgs.map(m => ({ text: m.text, when: (m.from === 'host' ? 'Εσύ · ' : '') + m.t,
         style: 'max-width: 78%; box-sizing: border-box; padding: 10px 13px; border-radius: 14px; white-space: pre-wrap; font-size: 14px;' + (m.from === 'host' ? 'align-self: flex-end; background: #DCEBEA; color: #0A3A3E' : 'align-self: flex-start; background: #FFFFFF; border: 1px solid #E6ECED') })) : []
     };
-    const unreadN = s.threads.filter(t => t.unread).length;
+    const unreadN = siteThreads.filter(t => t.unread).length;
 
     /* Reviews */
-    const bkRev = s.reviews.filter(r => r.src === 'booking'), goRev = s.reviews.filter(r => r.src === 'google');
+    const goRev = s.reviews.filter(r => r.src === 'google');
     const avgOf = L => L.length ? L.reduce((a, r) => a + r.score, 0) / L.length : 0;
     const dec = v => v.toFixed(1).replace('.', ',');
-    const bkAvg = avgOf(bkRev);
     const rfDefs = [
       { id: 'all', label: 'Όλες', fn: () => true },
       { id: 'open', label: 'Χωρίς απάντηση', fn: r => !r.reply },
-      { id: 'booking', label: 'Booking', fn: r => r.src === 'booking' },
-      { id: 'google', label: 'Google', fn: r => r.src === 'google' }
+      { id: 'done', label: 'Με απάντηση', fn: r => !!r.reply }
     ];
     const rfn = (rfDefs.find(f => f.id === s.revFilter) || rfDefs[0]).fn;
     const reviews = s.reviews.filter(rfn).map(r => {
@@ -1979,10 +1969,7 @@ class Component extends DCLogic {
       setReplyDraft: (e) => this.setState({ replyDraft: e && e.target ? e.target.value : '' }),
       closeReply: () => this.setState({ replyOpen: null, replyDraft: '' }),
       revFilters: rfDefs.map(f => ({ label: f.label + ' · ' + s.reviews.filter(f.fn).length, style: f.id === s.revFilter ? chipOn : chipOff, pick: () => this.setState({ revFilter: f.id }) })),
-      revBkAvg: dec(bkAvg), revBkWord: bkAvg >= 9 ? 'Εξαιρετικό' : (bkAvg >= 8 ? 'Πολύ καλό' : 'Καλό'),
-      revBkCount: bkRev.length + ' πρόσφατες κριτικές · από 10',
       revGoAvg: dec(avgOf(goRev)), revGoCount: goRev.length + ' πρόσφατες κριτικές',
-      revCats: this.CATS.map(c => ({ name: c[0], v: dec(c[1]), fill: 'height: 8px; border-radius: 4px; background: #0F5257; width: ' + (c[1] * 10) + '%' })),
       savedText: this.money(savedAmt),
       savedSub: 'Η προμήθεια Booking (' + Math.round(this.COMMISSION * 100) + '%) που δεν πληρώθηκε για τα ' + this.money(revSite) + ' από το σάιτ, μείον περίπου ' + this.money(cardFees) + ' χρεώσεις κάρτας. Για τα ' + this.money(revBooking) + ' από το Booking πληρώνεις περίπου ' + this.money(revBooking * this.COMMISSION) + ' προμήθεια.',
       dateByOpts: [['arr', 'Άφιξης'], ['dep', 'Αναχώρησης'], ['on', 'Κράτησης']].map(o => ({ v: o[0], t: o[1], sel: s.dateBy === o[0] })),
