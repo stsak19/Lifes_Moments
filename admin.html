@@ -43,6 +43,8 @@ button:disabled{cursor:default}
 #conv-msgs{min-height:220px;max-height:420px}
 /* Messages fill the screen. The extra 64px at the bottom is room for the preview bar; without it use 28px and 100vh - 113px */
 @media (min-width:900px){#app main:has(#inbox){padding-bottom:92px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 177px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
+/* Side panels (booking, guest, new booking) stay in view while the list scrolls */
+@media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"]{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
@@ -74,7 +76,7 @@ button:disabled{cursor:default}
 <div role="status" style="background: #0A3A3E; color: #FFFFFF; border-radius: 14px; padding: 12px 18px; font-size: 14px">{{toast}}</div>
 </sc-if>
 
-<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 22px">
+<div class="content-row" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 22px">
 <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
 
 <sc-if value="{{show.today}}" hint-placeholder-val="{{true}}">
