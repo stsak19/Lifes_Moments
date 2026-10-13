@@ -65,14 +65,15 @@ button:disabled{cursor:default}
 <section style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
 <h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 30px; font-weight: 500">Το κατάλυμα σήμερα <span style="font-size: 16px; color: #4A5B5E">· {{occupiedText}}</span></h1>
-<div style="display: flex; flex-wrap: wrap; gap: 8px">
-<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #DCEBEA; color: #0F5257">Μένουν</span>
-<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #DCE5F3; color: #1E3A5F">Άφιξη</span>
-<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #FBEFD9; color: #7A4708">Αναχώρηση</span>
-<span style="font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 12px; background: #FFFFFF; color: #3E4656; border: 1px dashed #A7B4B6">Ελεύθερο</span>
-<span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px; background: #E4E1DB; color: #4A4F5C">Κλειστό</span>
+<div role="group" aria-label="Φίλτρο δωματίων" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{statusChips}}" as="c" hint-placeholder-count="6">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}<span style="{{c.countStyle}}">{{c.count}}</span></button>
+</sc-for>
 </div>
 </div>
+<sc-if value="{{noTiles}}" hint-placeholder-val="{{false}}">
+<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Κανένα δωμάτιο σε αυτή την κατάσταση σήμερα.</div>
+</sc-if>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px">
 <sc-for list="{{tiles}}" as="t" hint-placeholder-count="12">
 <article style="{{t.card}}">
@@ -629,11 +630,33 @@ class Component extends DCLogic {
         doAction = () => { this.unblockFrom(u.id, T); this.say(u.name + ' άνοιξε ξανά.'); };
       }
       return {
+        st: st,
         unit: u.name, status: ST[st].label, pill: ST[st].pill,
         card: 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column;' + ST[st].card,
         guest: guest, sub: sub, hasLink: !!linkTo, noLink: !linkTo,
         openGuest: () => { if (linkTo) this.open(linkTo); },
         action: action, actionStyle: actionStyle, hasAction: !!action, doAction: doAction
+      };
+    });
+
+    const tf = s.tileFilter || null;
+    const shownTiles = tf ? tiles.filter(x => x.st === tf) : tiles;
+    const chipDefs = [
+      { id: null, label: 'Όλα', soft: 'background: #FFFFFF; color: #18282B; border: 1px solid #C3D1D3', solid: 'background: #18282B; color: #FFFFFF; border: 1px solid #18282B' },
+      { id: 'stay', label: 'Μένουν', soft: 'background: #DCEBEA; color: #0F5257; border: 1px solid #DCEBEA', solid: 'background: #0F5257; color: #FFFFFF; border: 1px solid #0F5257' },
+      { id: 'arr', label: 'Άφιξη', soft: 'background: #DCE5F3; color: #1E3A5F; border: 1px solid #DCE5F3', solid: 'background: #1E3A5F; color: #FFFFFF; border: 1px solid #1E3A5F' },
+      { id: 'dep', label: 'Αναχώρηση', soft: 'background: #FBEFD9; color: #7A4708; border: 1px solid #FBEFD9', solid: 'background: #7A4708; color: #FFFFFF; border: 1px solid #7A4708' },
+      { id: 'free', label: 'Ελεύθερο', soft: 'background: #FFFFFF; color: #3E4656; border: 1px dashed #A7B4B6', solid: 'background: #3E4656; color: #FFFFFF; border: 1px solid #3E4656' },
+      { id: 'shut', label: 'Κλειστό', soft: 'background: #E4E1DB; color: #4A4F5C; border: 1px solid #E4E1DB', solid: 'background: #4A4F5C; color: #FFFFFF; border: 1px solid #4A4F5C' }
+    ];
+    const statusChips = chipDefs.map(c => {
+      const on = c.id === tf;
+      const n = c.id ? tiles.filter(x => x.st === c.id).length : tiles.length;
+      return {
+        label: c.label, count: String(n), pressed: on ? 'true' : 'false',
+        style: 'display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer;' + (on ? c.solid : c.soft) + (n === 0 && c.id ? '; opacity: 0.6' : ''),
+        countStyle: 'min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; font-size: 11px; display: inline-flex; align-items: center; justify-content: center;' + (on ? 'background: rgba(255,255,255,0.22)' : 'background: rgba(24,40,43,0.08)'),
+        pick: () => this.setState({ tileFilter: on ? null : c.id })
       };
     });
 
@@ -865,7 +888,7 @@ class Component extends DCLogic {
       syncNow: () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
       toast: s.toast, hasToast: !!s.toast,
       stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, hasStripBtn: hasStripBtn, stripBtn: stripBtn,
-      tiles: tiles, occupiedText: occupied + ' από 12 με πελάτες',
+      tiles: shownTiles, noTiles: shownTiles.length === 0, statusChips: statusChips, occupiedText: occupied + ' από 12 με πελάτες',
       occupancy: occupancy, siteRevenue: siteRevenue, todayMoves: arrivals + ' · ' + departures,
       req: req,
       calTitle: calTitle, calRowStyle: calRowStyle, head: head, rows: rows, reqRows: reqRows, hasReqRows: reqRows.length > 0,
