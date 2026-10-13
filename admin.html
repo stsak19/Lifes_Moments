@@ -98,11 +98,6 @@ button:disabled{cursor:default}
 </div>
 </section>
 
-<section style="display: flex; flex-wrap: wrap; gap: 14px">
-<div style="flex: 1 1 200px; background: #FFFFFF; border-radius: 16px; padding: 16px 18px"><div style="font-size: 13px; color: #4A5B5E">Πληρότητα εβδομάδας</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 600">{{occupancy}}</div></div>
-<div style="flex: 1 1 200px; background: #FFFFFF; border-radius: 16px; padding: 16px 18px"><div style="font-size: 13px; color: #4A5B5E">Αφίξεις · αναχωρήσεις σήμερα</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 600">{{todayMoves}}</div></div>
-<div style="flex: 1 1 200px; background: #FFFFFF; border-radius: 16px; padding: 16px 18px"><div style="font-size: 13px; color: #4A5B5E">Ιούλιος από το σάιτ</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 600">{{siteRevenue}}</div></div>
-</section>
 </div>
 </sc-if>
 
@@ -282,6 +277,76 @@ button:disabled{cursor:default}
 <div style="padding: 18px; color: #4A5B5E">Κανένας πελάτης δεν ταιριάζει.</div>
 </sc-if>
 </div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{show.stats}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Στατιστικά</h1>
+<div style="display: flex; align-items: center; gap: 8px">
+<button type="button" onClick="{{statPrev}}" aria-label="Προηγούμενος μήνας" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<div style="min-width: 150px; text-align: center; font-family: Piazzolla, Georgia, serif; font-size: 20px; font-weight: 600">{{statLabel}}</div>
+<button type="button" onClick="{{statNext}}" aria-label="Επόμενος μήνας" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+
+<section style="display: flex; flex-wrap: wrap; gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="6">
+<div style="flex: 1 1 200px; background: #FFFFFF; border-radius: 16px; padding: 16px 18px">
+<div style="font-size: 13px; color: #4A5B5E">{{k.label}}</div>
+<div style="font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 600">{{k.value}}</div>
+<div style="font-size: 12px; color: #4A5B5E">{{k.sub}}</div>
+</div>
+</sc-for>
+</section>
+
+<section style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 14px">
+<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Πληρότητα ανά μέρα</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #0F5257"></span>Έχουν περάσει</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #8FBFBB"></span>Κλεισμένες, έρχονται</span>
+</div>
+</div>
+<div role="img" aria-label="{{dayChartLabel}}" style="display: flex; align-items: flex-end; gap: 3px; height: 190px; overflow-x: auto">
+<sc-for list="{{dayBars}}" as="d" hint-placeholder-count="31">
+<div style="flex: 1 1 0; min-width: 12px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px">
+<div style="{{d.bar}}"></div>
+<span style="{{d.labelStyle}}">{{d.label}}</span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
+<section style="flex: 999 1 380px; min-width: 0; background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Πληρότητα ανά δωμάτιο</h2>
+<sc-for list="{{unitBars}}" as="u" hint-placeholder-count="12">
+<div style="display: grid; grid-template-columns: 104px minmax(0, 1fr) 48px; gap: 10px; align-items: center; min-height: 30px">
+<span style="font-size: 13px">{{u.name}}</span>
+<span style="height: 10px; border-radius: 5px; background: #EEF3F4; overflow: hidden"><span style="{{u.fill}}"></span></span>
+<span style="font-size: 13px; font-weight: 600; text-align: right">{{u.pct}}</span>
+</div>
+</sc-for>
+</section>
+<section style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+<div style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<h2 style="margin: 0 0 12px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Από πού έρχονται τα έσοδα</h2>
+<div style="display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: #EEF3F4"><span style="{{srcSiteBar}}"></span><span style="{{srcBookingBar}}"></span></div>
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
+<div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #0F5257"></span>Σάιτ</span><span style="font-weight: 600">{{srcSiteText}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #8DB3E2"></span>Booking.com</span><span style="font-weight: 600">{{srcBookingText}}</span></div>
+</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 10px">Τα ποσά του Booking είναι πριν την προμήθεια. Κάθε κράτηση από το σάιτ αντί για Booking γλιτώνει την προμήθεια.</div>
+</div>
+<div style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<h2 style="margin: 0 0 6px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Πελάτες που επιστρέφουν</h2>
+<div style="font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 600">{{returningText}}</div>
+<div style="font-size: 12px; color: #4A5B5E">{{returningSub}}</div>
+</div>
+</section>
 </div>
 </div>
 </sc-if>
@@ -476,6 +541,7 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg><span style="flex: 1">Ημερολόγιο</span></button>
 <button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
 <button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
+<button type="button" onClick="{{goStats}}" style="{{nav.stats}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg><span style="flex: 1">Στατιστικά</span></button>
 <button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path d="M5 10h8M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
 </nav>
@@ -517,7 +583,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, markup: 15,
+      tab: 'today', detail: null, req: null, customer: null, statMonth: '2026-07', gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, markup: 15,
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       blocks: blocks,
       toggles: { push: true, pre: true, review: true },
@@ -1058,14 +1124,77 @@ class Component extends DCLogic {
       };
     }
 
+    /* Stats */
+    const MONFULL = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
+    const smp = s.statMonth.split('-').map(Number);
+    const smDays = new Date(Date.UTC(smp[0], smp[1], 0)).getUTCDate();
+    const nUnits = this.UNITS.length;
+    let bookedNights = 0, revSite = 0, revBooking = 0;
+    const perUnit = {};
+    const dayBars = [];
+    for (let i = 1; i <= smDays; i++) {
+      const x = s.statMonth + '-' + (i < 10 ? '0' + i : String(i));
+      let n = 0;
+      this.UNITS.forEach(u => {
+        const o = this.occ(u.id, x);
+        if (o && o !== 'block') {
+          n++;
+          perUnit[u.id] = (perUnit[u.id] || 0) + 1;
+          if (o.source === 'site') revSite += o.total / o.nights; else revBooking += o.total / o.nights;
+        }
+      });
+      bookedNights += n;
+      const pct = n / nUnits;
+      const isToday = x === T;
+      const showLabel = i === 1 || i % 5 === 0 || isToday;
+      dayBars.push({
+        bar: 'width: 100%; max-width: 26px; border-radius: 5px 5px 2px 2px; height: ' + Math.max(3, Math.round(pct * 150)) + 'px; background: ' + (x <= T ? '#0F5257' : '#8FBFBB') + (isToday ? '; box-shadow: 0 0 0 2px #E9B949' : ''),
+        label: showLabel ? String(i) : '',
+        labelStyle: 'height: 16px; font-size: 11px;' + (isToday ? 'font-weight: 700; color: #18282B' : 'color: #4A5B5E')
+      });
+    }
+    const revTotal = revSite + revBooking;
+    const startsIn = confirmed.filter(b => b.start.slice(0, 7) === s.statMonth);
+    const avgStay = startsIn.length ? (startsIn.reduce((a, b) => a + b.nights, 0) / startsIn.length) : 0;
+    const siteCount = startsIn.filter(b => b.source === 'site').length;
+    const occPct = Math.round(bookedNights / (nUnits * smDays) * 100);
+    const kpis = [
+      { label: 'Πληρότητα', value: occPct + '%', sub: bookedNights + ' από ' + (nUnits * smDays) + ' νύχτες δωματίων' },
+      { label: 'Έσοδα', value: this.money(revTotal), sub: 'Από νύχτες μέσα στον μήνα' },
+      { label: 'Μέση τιμή ανά νύχτα', value: bookedNights ? this.money(revTotal / bookedNights) : '–', sub: 'Όλα τα δωμάτια μαζί' },
+      { label: 'Μέση διαμονή', value: avgStay ? avgStay.toFixed(1).replace('.', ',') + ' νύχτες' : '–', sub: startsIn.length + ' κρατήσεις με άφιξη στον μήνα' },
+      { label: 'Κρατήσεις από το σάιτ', value: startsIn.length ? Math.round(siteCount / startsIn.length * 100) + '%' : '–', sub: siteCount + ' από ' + startsIn.length + ' · οι υπόλοιπες από Booking' },
+      { label: 'Σήμερα', value: arrivals + ' · ' + departures, sub: 'Αφίξεις · αναχωρήσεις' }
+    ];
+    const unitBars = this.UNITS.map(u => {
+      const p = Math.round((perUnit[u.id] || 0) / smDays * 100);
+      return { name: u.name, pct: p + '%', fill: 'display: block; height: 10px; border-radius: 5px; background: #0F5257; width: ' + p + '%' };
+    });
+    const sitePct = revTotal ? Math.round(revSite / revTotal * 100) : 0;
+    const siteBookings = startsIn.filter(b => b.source === 'site').length;
+    const bookingBookings = startsIn.length - siteBookings;
+    const returningN = allG.filter(g => g.count >= 2).length;
+
     const navBase = 'flex: 1 1 180px; display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 14px; border: 0; border-radius: 12px; font-size: 15px; text-align: left; cursor: pointer;';
     const navOn = navBase + 'background: #0F5257; color: #FFFFFF; font-weight: 600';
     const navOff = navBase + 'background: transparent; color: #2E4448; font-weight: 500';
     const badgeN = auto ? feed.length : pending.length;
 
     return {
-      nav: { today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      nav: { today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, stats: s.tab === 'stats' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
+      show: { today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', stats: s.tab === 'stats', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      goStats: () => this.go('stats'),
+      statLabel: MONFULL[smp[1] - 1] + ' ' + smp[0],
+      statPrev: () => { const d = new Date(Date.UTC(smp[0], smp[1] - 2, 1)); this.setState({ statMonth: d.toISOString().slice(0, 7) }); },
+      statNext: () => { const d = new Date(Date.UTC(smp[0], smp[1], 1)); this.setState({ statMonth: d.toISOString().slice(0, 7) }); },
+      kpis: kpis, dayBars: dayBars, unitBars: unitBars,
+      dayChartLabel: 'Πληρότητα ανά μέρα, ' + MONFULL[smp[1] - 1] + ': ' + occPct + '% συνολικά',
+      srcSiteBar: 'display: block; height: 14px; background: #0F5257; width: ' + sitePct + '%',
+      srcBookingBar: 'display: block; height: 14px; background: #8DB3E2; width: ' + (revTotal ? 100 - sitePct : 0) + '%',
+      srcSiteText: this.money(revSite) + ' · ' + siteBookings + (siteBookings === 1 ? ' κράτηση' : ' κρατήσεις'),
+      srcBookingText: this.money(revBooking) + ' · ' + bookingBookings + (bookingBookings === 1 ? ' κράτηση' : ' κρατήσεις'),
+      returningText: returningN + ' από ' + allG.length,
+      returningSub: 'Πελάτες που έχουν μείνει 2 ή περισσότερες φορές',
       goGuests: () => this.go('guests'),
       guests: guests, noGuests: guests.length === 0, guestTotal: allG.length + ' συνολικά', gFilters: gFilters, gQuery: s.gQuery,
       setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
