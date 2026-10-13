@@ -364,7 +364,7 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{priceNext}}" aria-label="Επόμενος μήνας" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #C3D1D3; background: #FFFFFF"></span>Τιμή σεζόν</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #C3D1D3; background: #FFFFFF"></span>Βασική τιμή</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 2px solid #0F5257; background: #FFFFFF"></span>Ειδική τιμή</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #DCEBEA"></span>Επιλογή</span>
 </div>
@@ -408,11 +408,11 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-wrap: wrap; gap: 6px">
 <button type="button" onClick="{{draftDown}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">−10%</button>
 <button type="button" onClick="{{draftUp}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">+10%</button>
-<button type="button" onClick="{{draftSeason}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Τιμή σεζόν</button>
+<button type="button" onClick="{{draftSeason}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Βασική τιμή</button>
 </div>
 <button type="button" onClick="{{applyPrice}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{applyLabel}}</button>
 <sc-if value="{{selHasOver}}" hint-placeholder-val="{{false}}">
-<button type="button" onClick="{{resetPrice}}" style="height: 44px; border-radius: 22px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Επαναφορά στην τιμή σεζόν</button>
+<button type="button" onClick="{{resetPrice}}" style="height: 44px; border-radius: 22px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Επαναφορά στη βασική τιμή</button>
 </sc-if>
 <button type="button" onClick="{{clearSel}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ακύρωση επιλογής</button>
 <div style="font-size: 12px; color: #4A5B5E">{{priceChannelNote}} Οι κρατήσεις που έχουν ήδη γίνει δεν αλλάζουν.</div>
@@ -421,22 +421,6 @@ button:disabled{cursor:default}
 </aside>
 </div>
 
-<h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 21px; font-weight: 600">Βασικές τιμές σεζόν <span style="font-size: 14px; font-weight: 400; color: #4A5B5E">· ισχύουν όπου δεν υπάρχει ειδική τιμή</span></h2>
-<div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
-<div style="min-width: 760px">
-<div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
-<span>Σεζόν</span><span>Δωμάτιο / νύχτα</span><span>Διαμέρισμα / νύχτα</span><span>Ελάχιστες νύχτες</span>
-</div>
-<sc-for list="{{seasons}}" as="se" hint-placeholder-count="3">
-<div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 12px; align-items: center; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
-<span><span style="display: block; font-weight: 600">{{se.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{se.range}}</span></span>
-<span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{se.roomDown}}" aria-label="Μείωση τιμής δωματίου" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 52px; text-align: center; font-weight: 600">{{se.roomText}}</span><button type="button" onClick="{{se.roomUp}}" aria-label="Αύξηση τιμής δωματίου" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
-<span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{se.aptDown}}" aria-label="Μείωση τιμής διαμερίσματος" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 52px; text-align: center; font-weight: 600">{{se.aptText}}</span><button type="button" onClick="{{se.aptUp}}" aria-label="Αύξηση τιμής διαμερίσματος" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
-<span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{se.minDown}}" aria-label="Λιγότερες νύχτες" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 32px; text-align: center; font-weight: 600">{{se.min}}</span><button type="button" onClick="{{se.minUp}}" aria-label="Περισσότερες νύχτες" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
-</div>
-</sc-for>
-</div>
-</div>
 <div style="display: flex; flex-wrap: wrap; gap: 14px">
 <div style="flex: 1 1 300px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFFFFF; border-radius: 16px; padding: 12px 18px">
 <span><span style="display: block; font-weight: 600">Επιπλέον άτομο</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ανά νύχτα, πάνω από τα 2 άτομα</span></span>
@@ -1307,7 +1291,7 @@ class Component extends DCLogic {
       draftDown: () => scaleDraft(0.9),
       draftSeason: () => {
         const se = hasSel ? this.seasonFor(selSet[0]) : null;
-        if (!se) { this.say('Αυτή η μέρα είναι εκτός σεζόν, δεν έχει τιμή σεζόν.'); return; }
+        if (!se) { this.say('Αυτή η μέρα είναι εκτός σεζόν, δεν έχει βασική τιμή.'); return; }
         this.setState({ draft: { room: String(se.room), apt: String(se.apt), min: String(se.min) } });
       },
       applyLabel: 'Εφαρμογή σε ' + selSet.length + (selSet.length === 1 ? ' νύχτα' : ' νύχτες'),
@@ -1324,7 +1308,7 @@ class Component extends DCLogic {
         const no = Object.assign({}, s.overrides);
         selSet.forEach(d => { delete no[d]; });
         this.setState({ overrides: no, sel: null });
-        this.say('Επανήλθε η τιμή σεζόν.');
+        this.say('Επανήλθε η βασική τιμή.');
       },
       clearSel: () => this.setState({ sel: null }),
       priceChannelNote: auto ? 'Η τιμή πάει αυτόματα και στο Booking, +' + s.markup + '%.' : 'Ισχύει για το σάιτ. Στο Booking άλλαξέ την από το extranet.'
