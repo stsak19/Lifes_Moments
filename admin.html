@@ -18,13 +18,45 @@ button:disabled{cursor:default}
 #app main{padding-bottom:96px !important}
 @media (min-width:900px){aside[aria-label="Ενότητες"]{position:sticky;top:0;height:100vh;align-self:flex-end;overflow-y:auto}}
 #preview-bar{position:fixed;left:16px;bottom:16px;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:24px;background:#FFFFFF;box-shadow:0 4px 18px rgba(10,58,62,.18);font-family:Commissioner,system-ui,sans-serif;font-size:12px;color:#4A5B5E}
+#login{min-height:100vh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#EEF3F4;font-family:Commissioner,system-ui,sans-serif;color:#18282B}
+#login[hidden],#app[hidden],#preview-bar[hidden]{display:none}
+#login form{width:100%;max-width:380px;box-sizing:border-box;background:#FFFFFF;border-radius:22px;padding:32px 28px 26px;display:flex;flex-direction:column;gap:16px;box-shadow:0 10px 40px rgba(10,58,62,.08)}
+#login .brand{font-family:'GFS Didot',Georgia,serif;font-size:32px;line-height:1.1;color:#0F5257;margin:0}
+#login .sub{font-size:14px;color:#4A5B5E;margin:2px 0 6px}
+#login label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:#4A5B5E}
+#login input[type=email],#login input[type=password],#login input[type=text]{height:46px;box-sizing:border-box;width:100%;padding:0 14px;border-radius:12px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:15px;font-family:inherit}
+#login input:focus,#login button:focus-visible{outline:2px solid #E9B949;outline-offset:1px}
+#login .pw{position:relative}
+#login .pw input{padding-right:84px}
+#login .pw button{position:absolute;right:6px;top:6px;height:34px;padding:0 10px;border:0;border-radius:9px;background:#EEF3F4;color:#2E4448;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+#login .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}
+#login .row label{display:flex;align-items:center;gap:8px;cursor:pointer}
+#login .link{border:0;background:none;padding:0;color:#0F5257;font:inherit;font-weight:600;text-decoration:underline;cursor:pointer}
+#login .go{height:48px;border:0;border-radius:24px;background:#0F5257;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+#login .go:disabled{opacity:.6;cursor:default}
+#login .err{font-size:13px;font-weight:600;color:#8A3412;min-height:0}
+#login .err:empty{display:none}
+#login .demo{border-top:1px solid #EEF2F2;padding-top:14px;font-size:12px;color:#4A5B5E;display:flex;flex-direction:column;gap:8px}
+#login .demo div{display:flex;gap:6px;flex-wrap:wrap}
+#login .demo button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
 <!-- Admin preview with fake data. Built from the Design canvas artboard Desktop.dc.html. -->
-<div id="app"></div>
-<div id="preview-bar" role="group" aria-label="Εκδοχή προεπισκόπησης">
+<div id="login" hidden>
+<form id="login-form" novalidate aria-labelledby="login-title">
+<div><h1 class="brand" id="login-title">Life's Moments</h1><p class="sub">Διαχείριση · σύνδεση ιδιοκτήτη</p></div>
+<label class="f">Email<input id="login-email" type="email" autocomplete="username" required></label>
+<label class="f">Κωδικός<span class="pw"><input id="login-pass" type="password" autocomplete="current-password" required><button type="button" id="login-show" aria-pressed="false">Εμφάνιση</button></span></label>
+<div class="row"><label><input id="login-remember" type="checkbox" checked> Να με θυμάσαι</label><button type="button" class="link" id="login-forgot">Ξέχασες τον κωδικό;</button></div>
+<div class="err" id="login-err" role="alert"></div>
+<button type="submit" class="go" id="login-go">Σύνδεση</button>
+<div class="demo" id="login-demo"><span>Προεπισκόπηση · δοκιμαστικοί λογαριασμοί μέχρι να φτιαχτούν τα προφίλ (κωδικός <b>demo1234</b>):</span><div id="login-demo-list"></div></div>
+</form>
+</div>
+<div id="app" hidden></div>
+<div id="preview-bar" role="group" aria-label="Εκδοχή προεπισκόπησης" hidden>
 <span>Προεπισκόπηση · ψεύτικα δεδομένα</span>
 <button type="button" data-mode="manual">Με έγκριση</button>
 <button type="button" data-mode="auto">Αυτόματη (Beds24)</button>
@@ -591,7 +623,9 @@ button:disabled{cursor:default}
 <section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Χρήστες</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">Ιδιοκτήτης</span><span style="display: block; font-size: 12px; color: #4A5B5E">Πλήρης πρόσβαση</span></span><span style="font-size: 12px; color: #4A5B5E">Εσύ</span></div>
+<sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #0F5257">{{ow.you}}</span></div>
+</sc-for>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span><span style="display: block; font-weight: 500">Καθαρισμός</span><span style="display: block; font-size: 12px; color: #4A5B5E">Βλέπει μόνο τον πίνακα δωματίων, χωρίς ποσά και στοιχεία πελατών</span></span><span style="color: #4A5B5E">›</span></div>
 </div>
 </section>
@@ -680,6 +714,7 @@ button:disabled{cursor:default}
 <div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Χώρος</span><span style="font-weight: 500">{{detail.unit}}</span></div>
 <div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Σύνολο</span><span style="font-weight: 600">{{detail.total}}</span></div>
 <div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Πληρωμή</span><span style="font-weight: 500; text-align: right">{{detail.pay}}</span></div>
+<sc-if value="{{detail.hasBy}}" hint-placeholder-val="{{false}}"><div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Χειρίστηκε</span><span style="font-weight: 500; text-align: right">{{detail.by}}</span></div></sc-if>
 <div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Email</span><span>{{detail.email}}</span></div>
 <div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center"><span style="color: #4A5B5E">Τηλέφωνο</span><span>{{detail.phone}}</span></div>
 </div>
@@ -763,6 +798,12 @@ button:disabled{cursor:default}
 <div style="font-family: 'GFS Didot', Georgia, serif; font-size: 27px; line-height: 1.1; color: #0F5257">Life's Moments</div>
 <div style="font-size: 13px; color: #4A5B5E; margin-top: 4px">Τρίτη 14 Ιουλίου</div>
 </div>
+<sc-if value="{{hasUser}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #F4F7F7">
+<span aria-hidden="true" style="flex-shrink: 0; width: 34px; height: 34px; border-radius: 17px; background: #E9B949; color: #3A2604; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{userInitials}}</span>
+<span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" title="{{userName}}">{{userName}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Συνδεδεμένος · <button type="button" onClick="{{logout}}" style="padding: 0; border: 0; background: none; color: #0F5257; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer">Έξοδος</button></span></span>
+</div>
+</sc-if>
 <nav aria-label="Μενού" style="display: flex; flex-wrap: wrap; gap: 4px">
 <button type="button" onClick="{{goToday}}" style="{{nav.today}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="flex: 1">Σήμερα</span><sc-if value="{{hasNavBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{navBadge}}</span></sc-if></button>
 <button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg><span style="flex: 1">Ημερολόγιο</span></button>
@@ -949,6 +990,7 @@ class Component extends DCLogic {
     }
     return sum;
   }
+  who(what) { const u = this.state.user; return u ? what + ' · ' + u.name + ' · ' + this.fmt(this.TODAY) : ''; }
   bookedOn(b) { return this.ON[b.id] || this.TODAY; }
   openThread(bid) {
     let t = this.state.threads.find(x => x.bid === bid);
@@ -1209,12 +1251,12 @@ class Component extends DCLogic {
           back: () => this.setState({ req: null }),
           accept: () => {
             if (!picked) return;
-            this.patch(rb.id, { status: 'confirmed', unit: picked });
+            this.patch(rb.id, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') });
             this.setState({ req: null });
             this.say('Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '. Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
           },
           reject: () => {
-            this.patch(rb.id, { status: 'rejected' });
+            this.patch(rb.id, { status: 'rejected', by: this.who('Απόρριψη') });
             this.setState({ req: null });
             this.say('Απορρίφθηκε · η δέσμευση των ' + this.money(rb.total) + ' λύθηκε και ο πελάτης ενημερώθηκε.');
           }
@@ -1466,6 +1508,7 @@ class Component extends DCLogic {
           nightsGuests: b.nights + ' νύχτες · ' + b.guests + ' άτομα',
           unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο, όχι ακόμα'),
           total: this.money(b.total), pay: pay, email: b.email || '–', phone: b.phone || '–',
+          hasBy: !!b.by, by: b.by || '',
           canCancel: (b.source === 'site' || b.source === 'direct') && b.status === 'confirmed',
           cancelLabel: b.source === 'direct' ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
@@ -1481,7 +1524,7 @@ class Component extends DCLogic {
           close: () => this.setState({ detail: null }),
           message: () => this.openThread(b.id),
           cancel: () => {
-            this.patch(b.id, { status: 'cancelled' });
+            this.patch(b.id, { status: 'cancelled', by: this.who('Ακύρωση') });
             if (b.source === 'direct') { this.say('Ακυρώθηκε η κράτηση του/της ' + b.name + '. Το δωμάτιο ελευθερώθηκε και στο Booking.'); return; }
             this.say('Ακυρώθηκε · επιστροφή ' + this.money(b.total) + ' στην κάρτα. Το δωμάτιο ελευθερώθηκε και στο Booking.');
           }
@@ -1810,7 +1853,7 @@ class Component extends DCLogic {
           if (f.kind === 'paid' && !(amt >= 0)) { upd({ error: 'Βάλε το ποσό που πληρώνει.' }); return; }
           if (f.kind === 'paid' && amt === 0) { upd({ error: 'Αν δεν πληρώνει τίποτα, διάλεξε «Χωρίς χρέωση».' }); return; }
           const id = 'm' + Date.now();
-          const rec = { id: id, name: name, type: f.type, unit: unit, start: f.start, nights: nights, guests: g, total: f.kind === 'paid' ? amt : 0, source: 'direct', kind: f.kind, pay: f.pay, status: 'confirmed', email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim() };
+          const rec = { by: this.who('Καταχώριση'), id: id, name: name, type: f.type, unit: unit, start: f.start, nights: nights, guests: g, total: f.kind === 'paid' ? amt : 0, source: 'direct', kind: f.kind, pay: f.pay, status: 'confirmed', email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim() };
           this.ON[id] = T;
           this.setState({ bookings: this.state.bookings.concat([rec]), bookingsAuto: this.state.bookingsAuto.concat([Object.assign({}, rec)]), newOpen: false, nb: null, detail: id });
           const what = f.kind === 'paid' ? this.money(amt) + (disc ? ' (έκπτωση ' + disc + '%)' : '') : (f.kind === 'free' ? 'χωρίς χρέωση' : 'δοκιμή');
@@ -1886,6 +1929,9 @@ class Component extends DCLogic {
       nav: { msgs: s.tab === 'msgs' ? navOn : navOff, reviews: s.tab === 'reviews' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, stats: s.tab === 'stats' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
       show: { msgs: s.tab === 'msgs', reviews: s.tab === 'reviews', today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', stats: s.tab === 'stats', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       goStats: () => this.go('stats'),
+      hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
+      logout: () => { if (this.props.onLogout) this.props.onLogout(); },
+      owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
       nb: nb, hasNew: !!s.newOpen && !!s.nb, openNew: () => this.openNew(),
       goMsgs: () => this.go('msgs'), goReviews: () => this.go('reviews'),
       msgBadge: String(unreadN), hasMsgBadge: unreadN > 0,
@@ -2001,7 +2047,53 @@ class Component extends DCLogic {
   const WHOLE = /^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/;
   const params = new URLSearchParams(location.search);
   let mode = params.get('mode') === 'auto' ? 'auto' : 'manual';
-  const comp = new Component({ mode: mode });
+  /*
+   * Auth. Everything else talks only to AUTH.signIn / signOut / current / users.
+   * Today: PREVIEW adapter, accounts in this file. That protects nothing, the page is public;
+   * it is only here so the screens and flow can be tried.
+   * Later: swap in the Supabase adapter (supabase.auth.signInWithPassword, signOut,
+   * getSession, resetPasswordForEmail) and lock the data with Row Level Security,
+   * so only these two owner accounts can read or change bookings.
+   */
+  const AUTH = (function () {
+    const PREVIEW_USERS = [
+      { id: 'owner-1', name: 'Ιδιοκτήτης Α', email: 'idioktitis.a@example.com', password: 'demo1234' },
+      { id: 'owner-2', name: 'Ιδιοκτήτης Β', email: 'idioktitis.b@example.com', password: 'demo1234' }
+    ];
+    const KEY = 'lm-admin-session';
+    const DAYS = 30;
+    const pub = u => ({ id: u.id, name: u.name, email: u.email });
+    const read = st => { try { return JSON.parse(st.getItem(KEY) || 'null'); } catch (e) { return null; } };
+    const clear = () => { [localStorage, sessionStorage].forEach(st => { try { st.removeItem(KEY); } catch (e) {} }); };
+    return {
+      users: () => PREVIEW_USERS.map(pub),
+      current: function () {
+        let sess = null;
+        try { sess = read(sessionStorage) || read(localStorage); } catch (e) {}
+        if (!sess || !sess.id) return null;
+        if (sess.exp && Date.now() > sess.exp) { clear(); return null; }
+        const u = PREVIEW_USERS.find(x => x.id === sess.id);
+        return u ? pub(u) : null;
+      },
+      signIn: function (email, password, remember) {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            const e = String(email || '').trim().toLowerCase();
+            const u = PREVIEW_USERS.find(x => x.email === e && x.password === password);
+            if (!u) { reject(new Error('Λάθος email ή κωδικός.')); return; }
+            clear();
+            const sess = JSON.stringify({ id: u.id, exp: remember ? Date.now() + DAYS * 864e5 : null });
+            try { (remember ? localStorage : sessionStorage).setItem(KEY, sess); } catch (err) {}
+            resolve(pub(u));
+          }, 350);
+        });
+      },
+      signOut: function () { clear(); return Promise.resolve(); },
+      resetPassword: function () { return Promise.resolve(); }
+    };
+  })();
+
+  const comp = new Component({ mode: mode, owners: AUTH.users(), onLogout: function () { AUTH.signOut().then(showLogin); } });
   let queued = false;
 
   window.scheduleRender = function () {
@@ -2100,14 +2192,67 @@ class Component extends DCLogic {
     const b = e.target.closest('button');
     if (!b) return;
     mode = b.dataset.mode;
-    comp.props = { mode: mode };
+    comp.props = Object.assign({}, comp.props, { mode: mode });
     comp.setState({ detail: null, req: null, filter: 'all' });
     const u = new URL(location.href);
     if (mode === 'auto') u.searchParams.set('mode', 'auto'); else u.searchParams.delete('mode');
     history.replaceState(null, '', u);
   });
 
+  /* Login screen */
+  const login = document.getElementById('login');
+  const form = document.getElementById('login-form');
+  const fEmail = document.getElementById('login-email');
+  const fPass = document.getElementById('login-pass');
+  const fRemember = document.getElementById('login-remember');
+  const fErr = document.getElementById('login-err');
+  const fGo = document.getElementById('login-go');
+  const fShow = document.getElementById('login-show');
+  const demoList = document.getElementById('login-demo-list');
+  AUTH.users().forEach(function (u) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = u.name;
+    b.addEventListener('click', function () { fEmail.value = u.email; fPass.value = 'demo1234'; fErr.textContent = ''; fGo.focus(); });
+    demoList.appendChild(b);
+  });
+  fShow.addEventListener('click', function () {
+    const show = fPass.type === 'password';
+    fPass.type = show ? 'text' : 'password';
+    fShow.textContent = show ? 'Απόκρυψη' : 'Εμφάνιση';
+    fShow.setAttribute('aria-pressed', show ? 'true' : 'false');
+    fPass.focus();
+  });
+  document.getElementById('login-forgot').addEventListener('click', function () {
+    fErr.textContent = fEmail.value.trim() ? '' : 'Γράψε πρώτα το email σου.';
+    if (!fEmail.value.trim()) { fEmail.focus(); return; }
+    AUTH.resetPassword(fEmail.value.trim()).then(function () {
+      fErr.textContent = '';
+      alert('Όταν συνδεθεί η βάση, θα έρχεται email στο ' + fEmail.value.trim() + ' με σύνδεσμο για νέο κωδικό.');
+    });
+  });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!fEmail.value.trim() || !fPass.value) { fErr.textContent = 'Συμπλήρωσε email και κωδικό.'; (fEmail.value.trim() ? fPass : fEmail).focus(); return; }
+    fGo.disabled = true; fGo.textContent = 'Σύνδεση…'; fErr.textContent = '';
+    AUTH.signIn(fEmail.value, fPass.value, fRemember.checked).then(enter, function (err) {
+      fErr.textContent = err.message; fPass.value = ''; fPass.focus();
+    }).then(function () { fGo.disabled = false; fGo.textContent = 'Σύνδεση'; });
+  });
+  function showLogin() {
+    comp.setState({ user: null, tab: 'today', detail: null, req: null, customer: null, newOpen: false, nb: null, calSel: null, calEdit: false });
+    root.hidden = true; bar.hidden = true; login.hidden = false;
+    fPass.value = ''; fPass.type = 'password'; fShow.textContent = 'Εμφάνιση';
+    setTimeout(function () { (fEmail.value ? fPass : fEmail).focus(); }, 0);
+  }
+  function enter(user) {
+    comp.setState({ user: user });
+    login.hidden = true; root.hidden = false; bar.hidden = false;
+    comp.say('Καλώς ήρθες, ' + user.name + '.');
+  }
+
   render();
+  const who = AUTH.current();
+  if (who) enter(who); else showLogin();
 })();
 
 </script>
