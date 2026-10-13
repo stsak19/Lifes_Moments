@@ -50,6 +50,9 @@ button:disabled{cursor:default}
 /* Search and filters stay at the top while the list scrolls (desktop) */
 .list-head{display:flex;flex-direction:column;gap:16px}
 @media (min-width:900px){.list-head{position:sticky;top:0;z-index:6;background:#EEF3F4;padding:20px 0 14px;margin:-20px 0 -14px}}
+/* Confirmations float over the page so nothing below them moves */
+#app .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;box-sizing:border-box;width:max-content;max-width:min(640px,calc(100% - 32px));box-shadow:0 8px 28px rgba(10,58,62,.28)}
+@media (min-width:900px){#app .toast{left:calc(50% + 124px)}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
@@ -78,7 +81,7 @@ button:disabled{cursor:default}
 <main style="flex: 999 1 640px; min-width: 0; box-sizing: border-box; padding: 28px 36px 56px; display: flex; flex-direction: column; gap: 22px">
 
 <sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
-<div role="status" style="background: #0A3A3E; color: #FFFFFF; border-radius: 14px; padding: 12px 18px; font-size: 14px">{{toast}}</div>
+<div role="status" class="toast" style="background: #0A3A3E; color: #FFFFFF; border-radius: 14px; padding: 12px 18px; font-size: 14px">{{toast}}</div>
 </sc-if>
 
 <div class="content-row" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 22px">
@@ -392,7 +395,26 @@ button:disabled{cursor:default}
 <sc-if value="{{conv.empty}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #4A5B5E">Δεν έχετε μιλήσει ακόμα. Γράψε το πρώτο μήνυμα.</div></sc-if>
 </div>
 <div style="padding: 14px 18px; border-top: 1px solid #EEF2F2; display: flex; flex-direction: column; gap: 10px">
-<div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><button type="button" onClick="{{q.use}}" style="min-height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448; font-size: 12px; font-weight: 600; cursor: pointer">{{q.label}}</button></sc-for></div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 6px">
+<sc-for list="{{quick}}" as="q" hint-placeholder-count="4"><button type="button" onClick="{{q.click}}" title="{{q.title}}" style="{{q.style}}">{{q.label}}</button></sc-for>
+<button type="button" onClick="{{quickNew}}" style="min-height: 32px; padding: 0 12px; border-radius: 16px; border: 1px dashed #0F5257; background: #FFFFFF; color: #0F5257; font-size: 12px; font-weight: 600; cursor: pointer">+ Νέο κουμπί</button>
+<sc-if value="{{hasQuick}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{quickToggleEdit}}" style="min-height: 32px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer">{{quickEditLabel}}</button></sc-if>
+</div>
+<sc-if value="{{quickEditHint}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; color: #4A5B5E; margin-top: -4px">Πάτα ένα κουμπί για να το αλλάξεις ή να το σβήσεις.</div></sc-if>
+<sc-if value="{{qf.open}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #F4F7F7; border: 1px solid #E6ECED">
+<div style="font-weight: 600; font-size: 13px">{{qf.title}}</div>
+<div><label for="qf-label" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Όνομα κουμπιού</label><input id="qf-label" type="text" maxlength="24" value="{{qf.label}}" onChange="{{qf.setLabel}}" placeholder="π.χ. Ψάρεμα, Πρωινό, Ferry" style="width: 100%; box-sizing: border-box; height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="qf-text" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Κείμενο που μπαίνει στην απάντηση</label><textarea id="qf-text" value="{{qf.text}}" onChange="{{qf.setText}}" placeholder="Γράψε το μήνυμα όπως θα το στέλνεις" style="width: 100%; box-sizing: border-box; min-height: 70px; padding: 8px 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.45; resize: vertical"></textarea></div>
+<sc-if value="{{qf.hasError}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 13px; font-weight: 600; color: #8A3412">{{qf.error}}</div></sc-if>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<button type="button" onClick="{{qf.save}}" style="height: 38px; padding: 0 16px; border-radius: 19px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer">Αποθήκευση</button>
+<button type="button" onClick="{{qf.cancel}}" style="height: 38px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Άκυρο</button>
+<span style="flex: 1 1 0"></span>
+<sc-if value="{{qf.canDelete}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{qf.remove}}" style="height: 38px; padding: 0 14px; border-radius: 19px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 13px; font-weight: 600; cursor: pointer">Διαγραφή</button></sc-if>
+</div>
+</div>
+</sc-if>
 <label for="msg" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Απάντηση</label>
 <textarea id="msg" value="{{msgDraft}}" onChange="{{setMsgDraft}}" placeholder="Γράψε απάντηση…" style="width: 100%; box-sizing: border-box; min-height: 84px; padding: 10px 12px; border-radius: 12px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.45; resize: vertical"></textarea>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px"><button type="button" onClick="{{sendMsg}}" style="height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Αποστολή</button><span style="font-size: 12px; color: #4A5B5E">{{conv.via}}</span></div>
@@ -897,12 +919,16 @@ class Component extends DCLogic {
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
     this.COMMISSION = 0.15;
+    this.QKEY = 'lm-admin-quick-replies';
     this.QUICK = [
       ['Ώρα check-in', 'Check-in is from 14:00 and check-out until 11:00. If you arrive earlier, you can leave your bags with us.'],
       ['Οδηγίες άφιξης', 'We are in Limenaria, 2 minutes from the beach. Send us a message when you leave the ferry and we will wait for you at the entrance.'],
       ['Πάρκινγκ', 'There is free parking right in front of the building.'],
       ['Ευχαριστώ', 'Thank you for your message, we will get back to you shortly!']
     ];
+    this.state.quick = this.loadQuick();
+    this.state.quickEdit = false;
+    this.state.qf = null;
     this.PAST = [
       { name: 'Οικογένεια Μαρκοπούλου', date: '2024-07-20', when: '20–27 Ιουλ 2024', unit: 'Διαμέρισμα', nights: 7, total: 1190, source: 'site' },
       { name: 'Οικογένεια Μαρκοπούλου', date: '2025-07-12', when: '12–19 Ιουλ 2025', unit: 'Διαμέρισμα', nights: 7, total: 1260, source: 'site' },
@@ -982,6 +1008,14 @@ class Component extends DCLogic {
     return sum;
   }
   who(what) { const u = this.state.user; return u ? what + ' · ' + u.name + ' · ' + this.fmt(this.TODAY) : ''; }
+  loadQuick() {
+    try { const v = JSON.parse(localStorage.getItem(this.QKEY) || 'null'); if (Array.isArray(v)) return v.filter(q => q && q.label && q.text); } catch (e) {}
+    return this.QUICK.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1] }));
+  }
+  saveQuick(list) {
+    try { localStorage.setItem(this.QKEY, JSON.stringify(list)); } catch (e) {}
+    this.setState({ quick: list });
+  }
   bookedOn(b) { return this.ON[b.id] || this.TODAY; }
   openThread(bid) {
     const ob = this.list().find(x => x.id === bid);
@@ -1935,7 +1969,45 @@ class Component extends DCLogic {
       goMsgs: () => this.go('msgs'), goReviews: () => this.go('reviews'),
       msgBadge: String(unreadN), hasMsgBadge: unreadN > 0,
       threads: threads, conv: conv, msgDraft: s.msgDraft,
-      quick: this.QUICK.map(qq => ({ label: qq[0], use: () => this.setState({ msgDraft: qq[1] }) })),
+      quick: s.quick.map(q => ({
+        label: q.label, title: s.quickEdit ? 'Αλλαγή ή διαγραφή' : q.text,
+        style: 'min-height: 32px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer;' + (s.quickEdit ? 'border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
+        click: () => {
+          if (this.state.quickEdit) this.setState({ qf: { id: q.id, label: q.label, text: q.text, error: '' } });
+          else { const cur = (this.state.msgDraft || '').trim(); this.setState({ msgDraft: cur ? cur + '\n\n' + q.text : q.text }); }
+        }
+      })),
+      hasQuick: s.quick.length > 0,
+      quickEditLabel: s.quickEdit ? 'Τέλος' : 'Επεξεργασία',
+      quickEditHint: s.quickEdit && !s.qf,
+      quickToggleEdit: () => this.setState({ quickEdit: !this.state.quickEdit, qf: null }),
+      quickNew: () => this.setState({ qf: { id: null, label: '', text: (this.state.msgDraft || '').trim(), error: '' } }),
+      qf: (() => {
+        const f = s.qf;
+        if (!f) return { open: false };
+        const upd = ch => this.setState({ qf: Object.assign({}, this.state.qf, { error: '' }, ch) });
+        return {
+          open: true, title: f.id ? 'Αλλαγή κουμπιού' : 'Νέο κουμπί', label: f.label, text: f.text, error: f.error, hasError: !!f.error, canDelete: !!f.id,
+          setLabel: e => upd({ label: e && e.target ? e.target.value : '' }),
+          setText: e => upd({ text: e && e.target ? e.target.value : '' }),
+          cancel: () => this.setState({ qf: null }),
+          save: () => {
+            const label = (f.label || '').trim(), text = (f.text || '').trim();
+            if (!label) { upd({ error: 'Γράψε όνομα για το κουμπί.' }); return; }
+            if (!text) { upd({ error: 'Γράψε το κείμενο που θα μπαίνει.' }); return; }
+            if (this.state.quick.some(q => q.id !== f.id && q.label.toLowerCase() === label.toLowerCase())) { upd({ error: 'Υπάρχει ήδη κουμπί με αυτό το όνομα.' }); return; }
+            const list = f.id ? this.state.quick.map(q => q.id === f.id ? Object.assign({}, q, { label: label, text: text }) : q) : this.state.quick.concat([{ id: 'q' + Date.now(), label: label, text: text }]);
+            this.saveQuick(list);
+            this.setState({ qf: null });
+            this.say(f.id ? 'Το κουμπί «' + label + '» άλλαξε.' : 'Προστέθηκε το κουμπί «' + label + '».');
+          },
+          remove: () => {
+            this.saveQuick(this.state.quick.filter(q => q.id !== f.id));
+            this.setState({ qf: null });
+            this.say('Το κουμπί «' + f.label + '» σβήστηκε.');
+          }
+        };
+      })(),
       setMsgDraft: (e) => this.setState({ msgDraft: e && e.target ? e.target.value : '' }),
       sendMsg: () => {
         const v = (this.state.msgDraft || '').trim();
