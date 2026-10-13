@@ -39,6 +39,10 @@ button:disabled{cursor:default}
 #login .demo{border-top:1px solid #EEF2F2;padding-top:14px;font-size:12px;color:#4A5B5E;display:flex;flex-direction:column;gap:8px}
 #login .demo div{display:flex;gap:6px;flex-wrap:wrap}
 #login .demo button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+#inbox{min-height:520px}
+#conv-msgs{min-height:220px;max-height:420px}
+/* Messages fill the screen. The extra 64px at the bottom is room for the preview bar; without it use 28px and 100vh - 113px */
+@media (min-width:900px){#app main:has(#inbox){padding-bottom:92px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 177px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
@@ -362,8 +366,8 @@ button:disabled{cursor:default}
 <sc-if value="{{show.msgs}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Μηνύματα</h1>
-<div style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border-radius: 18px; overflow: hidden; min-height: 520px">
-<div role="list" aria-label="Συζητήσεις" style="flex: 1 1 260px; min-width: 0; border-right: 1px solid #EEF2F2; display: flex; flex-direction: column">
+<div id="inbox" style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<div role="list" aria-label="Συζητήσεις" class="inbox-list" style="flex: 1 1 260px; min-width: 0; border-right: 1px solid #EEF2F2; display: flex; flex-direction: column">
 <sc-for list="{{threads}}" as="th" hint-placeholder-count="5">
 <button type="button" role="listitem" onClick="{{th.open}}" style="{{th.style}}">
 <span style="display: flex; align-items: center; gap: 8px"><sc-if value="{{th.unread}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; width: 8px; height: 8px; border-radius: 4px; background: #C2502A"></span></sc-if><span style="{{th.nameStyle}}">{{th.name}}</span><span style="flex-shrink: 0; font-size: 12px; color: #4A5B5E">{{th.when}}</span></span>
@@ -377,7 +381,7 @@ button:disabled{cursor:default}
 <div><div style="font-weight: 600; font-size: 16px">{{conv.name}}</div><div style="font-size: 13px; color: #4A5B5E">{{conv.meta}}</div></div>
 <button type="button" onClick="{{conv.openBooking}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Δες την κράτηση</button>
 </div>
-<div id="conv-msgs" style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #F7FAFA; min-height: 220px; max-height: 420px; overflow-y: auto">
+<div id="conv-msgs" style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #F7FAFA; overflow-y: auto">
 <sc-for list="{{conv.msgs}}" as="m" hint-placeholder-count="2"><div style="{{m.style}}">{{m.text}}<span style="display: block; font-size: 11px; color: #4A5B5E; margin-top: 4px">{{m.when}}</span></div></sc-for>
 <sc-if value="{{conv.empty}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #4A5B5E">Δεν έχετε μιλήσει ακόμα. Γράψε το πρώτο μήνυμα.</div></sc-if>
 </div>
@@ -2196,6 +2200,8 @@ class Component extends DCLogic {
     const out = [];
     tpl.childNodes.forEach(function (c) { build(c, scope, out); });
     root.replaceChildren.apply(root, out);
+    const cm = document.getElementById('conv-msgs');
+    if (cm) cm.scrollTop = cm.scrollHeight;
     if (id) {
       const n = document.getElementById(id);
       if (n) { n.focus(); if (sel && n.setSelectionRange) { try { n.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
