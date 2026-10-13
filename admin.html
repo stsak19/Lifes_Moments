@@ -47,6 +47,9 @@ button:disabled{cursor:default}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
+/* Search and filters stay at the top while the list scrolls (desktop) */
+.list-head{display:flex;flex-direction:column;gap:16px}
+@media (min-width:900px){.list-head{position:sticky;top:0;z-index:6;background:#EEF3F4;padding:20px 0 14px;margin:-20px 0 -14px}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 </style>
 </head>
@@ -279,6 +282,7 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.list}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
+<div class="list-head">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; flex: 1 1 520px">
 <div style="flex: 0 1 300px; min-width: 200px">
@@ -304,6 +308,7 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{downloadCsv}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Λήψη σε CSV</button>
 </div>
 <div style="font-size: 13px; color: #4A5B5E">{{listSummary}}</div>
+</div>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
 <div style="min-width: 720px">
 <div style="display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.5fr 0.8fr 1fr 0.9fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
@@ -330,6 +335,7 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.guests}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
+<div class="list-head">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
 <div style="flex: 0 1 300px">
 <label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
@@ -340,6 +346,7 @@ button:disabled{cursor:default}
 <sc-for list="{{gFilters}}" as="f" hint-placeholder-count="5">
 <button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
 </sc-for>
+</div>
 </div>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
 <div style="min-width: 760px">
