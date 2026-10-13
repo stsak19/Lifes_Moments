@@ -250,6 +250,42 @@ button:disabled{cursor:default}
 </div>
 </sc-if>
 
+<sc-if value="{{show.guests}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Πελάτες <span style="font-size: 16px; color: #4A5B5E">· {{guestTotal}}</span></h1>
+<div style="flex: 0 1 300px">
+<label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
+<input id="gsearch" type="search" value="{{gQuery}}" onChange="{{setGQuery}}" placeholder="Όνομα, email ή τηλέφωνο" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{gFilters}}" as="f" hint-placeholder-count="5">
+<button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
+</sc-for>
+</div>
+<div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
+<div style="min-width: 760px">
+<div style="display: grid; grid-template-columns: 2.2fr 0.9fr 0.9fr 1.5fr 1fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
+<span>Πελάτης</span><span>Διαμονές</span><span>Σύνολο</span><span>Πότε</span><span>Από</span>
+</div>
+<sc-for list="{{guests}}" as="g" hint-placeholder-count="8">
+<button type="button" onClick="{{g.open}}" style="{{g.rowStyle}}">
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.name}}</span><sc-if value="{{g.returning}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #F3E3F0; color: #6B2F5F">Επιστρέφει</span></sc-if></span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.contact}}</span></span>
+<span>{{g.staysText}}</span>
+<span style="font-weight: 500">{{g.spentText}}</span>
+<span style="{{g.whenStyle}}">{{g.whenText}}</span>
+<span style="color: #2E4448">{{g.srcText}}</span>
+</button>
+</sc-for>
+<sc-if value="{{noGuests}}" hint-placeholder-val="{{false}}">
+<div style="padding: 18px; color: #4A5B5E">Κανένας πελάτης δεν ταιριάζει.</div>
+</sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{show.prices}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Τιμές</h1>
@@ -378,6 +414,52 @@ button:disabled{cursor:default}
 <sc-if value="{{detail.isBooking}}" hint-placeholder-val="{{false}}">
 <div style="font-size: 12px; color: #4A5B5E">Οι κρατήσεις του Booking.com αλλάζουν ή ακυρώνονται από το extranet του Booking.</div>
 </sc-if>
+<sc-if value="{{detail.hasGuest}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{detail.openGuest}}" style="height: 40px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Καρτέλα πελάτη</button>
+</sc-if>
+</aside>
+</sc-if>
+
+<sc-if value="{{hasGuest}}" hint-placeholder-val="{{false}}">
+<aside aria-label="Καρτέλα πελάτη" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{guest.badges}}" as="bd" hint-placeholder-count="2">
+<span style="{{bd.style}}">{{bd.label}}</span>
+</sc-for>
+</div>
+<h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{guest.name}}</h2>
+<div style="font-size: 13px; color: #4A5B5E">{{guest.srcText}}</div>
+</div>
+<button type="button" onClick="{{guest.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Διαμονές</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{guest.count}}</div></div>
+<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Σύνολο</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{guest.spent}}</div></div>
+</div>
+<div style="border-top: 1px solid #EEF2F2">
+<div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Email</span><span>{{guest.email}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center"><span style="color: #4A5B5E">Τηλέφωνο</span><span>{{guest.phone}}</span></div>
+</div>
+<div>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Διαμονές</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{guest.stays}}" as="st" hint-placeholder-count="2">
+<button type="button" onClick="{{st.open}}" disabled="{{st.disabled}}" style="{{st.style}}">
+<span style="min-width: 0"><span style="display: block; font-weight: 600">{{st.when}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{st.what}}</span></span>
+<span style="flex-shrink: 0; text-align: right"><span style="display: block; font-weight: 500">{{st.money}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{st.status}}</span></span>
+</button>
+</sc-for>
+</div>
+</div>
+<div>
+<label for="gnote" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px">Σημειώσεις</label>
+<textarea id="gnote" value="{{guest.note}}" onChange="{{guest.setNote}}" placeholder="π.χ. προτιμά ισόγειο, φτάνει αργά, γιορτάζει επέτειο" style="width: 100%; box-sizing: border-box; min-height: 88px; padding: 10px 12px; border-radius: 12px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.45; resize: vertical"></textarea>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 4px">Τις βλέπεις μόνο εσύ. Αποθηκεύονται αυτόματα.</div>
+</div>
+<button type="button" onClick="{{guest.message}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">{{guest.messageLabel}}</button>
+<div style="font-size: 12px; color: #4A5B5E">Τα στοιχεία σβήνονται αυτόματα [χρόνια] μετά την τελευταία διαμονή, για τον GDPR.</div>
 </aside>
 </sc-if>
 </div>
@@ -393,6 +475,7 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{goToday}}" style="{{nav.today}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="flex: 1">Σήμερα</span><sc-if value="{{hasNavBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{navBadge}}</span></sc-if></button>
 <button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg><span style="flex: 1">Ημερολόγιο</span></button>
 <button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
+<button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
 <button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path d="M5 10h8M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
 </nav>
@@ -434,7 +517,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, markup: 15,
+      tab: 'today', detail: null, req: null, customer: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, markup: 15,
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       blocks: blocks,
       toggles: { push: true, pre: true, review: true },
@@ -467,6 +550,14 @@ class Component extends DCLogic {
       ]
     };
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
+    this.PAST = [
+      { name: 'Οικογένεια Μαρκοπούλου', date: '2024-07-20', when: '20–27 Ιουλ 2024', unit: 'Διαμέρισμα', nights: 7, total: 1190, source: 'site' },
+      { name: 'Οικογένεια Μαρκοπούλου', date: '2025-07-12', when: '12–19 Ιουλ 2025', unit: 'Διαμέρισμα', nights: 7, total: 1260, source: 'site' },
+      { name: 'Νίκος Παπαδόπουλος', date: '2025-08-21', when: '21–25 Αυγ 2025', unit: 'Δωμάτιο 3', nights: 4, total: 460, source: 'booking' },
+      { name: 'Anna Schmidt', date: '2025-06-08', when: '8–12 Ιουν 2025', unit: 'Δωμάτιο 2', nights: 4, total: 340, source: 'booking' },
+      { name: 'Ελισάβετ Ραφαηλίδου', date: '2025-09-02', when: '2–6 Σεπ 2025', unit: 'Δωμάτιο 4', nights: 4, total: 340, source: 'site', email: 'elisavet@example.com', phone: '+30 69xx xxx xxx' },
+      { name: 'Martin Dvořák', date: '2025-08-10', when: '10–15 Αυγ 2025', unit: 'Δωμάτιο 9', nights: 5, total: 675, source: 'booking', email: 'μέσω Booking', phone: '+420 6xx xxx xxx' }
+    ];
   }
 
   dt(s) { const p = s.split('-').map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
@@ -521,8 +612,9 @@ class Component extends DCLogic {
     const key = this.isAuto() ? 'bookingsAuto' : 'bookings';
     this.setState({ [key]: this.state[key].map(b => b.id === id ? Object.assign({}, b, ch) : b) });
   }
-  go(tab) { this.setState({ tab: tab, detail: null, req: null }); }
-  open(id) { this.setState({ detail: id }); }
+  go(tab) { this.setState({ tab: tab, detail: null, req: null, customer: null }); }
+  open(id) { this.setState({ detail: id, customer: null }); }
+  openGuest(name) { this.setState({ customer: name, detail: null }); }
   openReq(id) { this.setState({ tab: 'today', req: id, detail: null }); }
   block(unit, date) { this.setState({ blocks: Object.assign({}, this.state.blocks, { [unit + '|' + date]: true }) }); }
   unblockFrom(unit, date) {
@@ -863,6 +955,8 @@ class Component extends DCLogic {
             this.say(b.name + ' μεταφέρθηκε στο ' + this.unitName(id) + '.' + (auto ? ' Ενημερώθηκε και το Beds24.' : ''));
           } })),
           answer: () => this.openReq(b.id),
+          hasGuest: true,
+          openGuest: () => this.openGuest(b.name),
           close: () => this.setState({ detail: null }),
           message: () => this.say('Ανοίγει νέο email προς ' + b.name + '.'),
           cancel: () => {
@@ -873,14 +967,109 @@ class Component extends DCLogic {
       }
     }
 
+    /* Guests */
+    const gmap = {};
+    const addG = name => gmap[name] || (gmap[name] = { name: name, email: '', phone: '', sources: {}, stays: [], spent: 0, count: 0, current: null, next: null, last: null, pending: false });
+    this.PAST.forEach(p => {
+      const g = addG(p.name);
+      if (!g.email && p.email) { g.email = p.email; g.phone = p.phone; }
+      g.sources[p.source] = 1;
+      g.stays.push({ key: p.date, when: p.when, what: p.unit + ' · ' + p.nights + ' νύχτες', money: p.total, status: 'Ολοκληρώθηκε', id: null });
+      g.spent += p.total; g.count++;
+      if (!g.last || p.date > g.last) g.last = p.date;
+    });
+    B.forEach(b => {
+      if (b.status === 'rejected') return;
+      const g = addG(b.name);
+      g.email = b.email; g.phone = b.phone;
+      g.sources[b.source] = 1;
+      const end = this.endOf(b);
+      let status = 'Επιβεβαιωμένη';
+      if (b.status === 'pending') { status = 'Αίτημα'; g.pending = true; }
+      else if (b.status === 'cancelled') status = 'Ακυρώθηκε';
+      else if (b.start <= T && T < end) { status = 'Μένει τώρα'; g.current = b; }
+      else if (end <= T) { status = 'Ολοκληρώθηκε'; if (!g.last || end > g.last) g.last = end; }
+      else { status = 'Έρχεται'; if (!g.next || b.start < g.next.start) g.next = b; }
+      if (b.status === 'confirmed') { g.spent += b.total; g.count++; }
+      g.stays.push({ key: b.start, when: this.range(b.start, end) + ' 2026', what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
+    });
+    const MONY = s2 => { const d = this.dt(s2); return this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+    const srcLabel = g => g.sources.site && g.sources.booking ? 'Σάιτ και Booking' : (g.sources.site ? 'Σάιτ' : 'Booking');
+    const rank = g => g.current ? 0 : (g.next ? 1 : (g.pending ? 2 : 3));
+    const gq = (s.gQuery || '').trim().toLowerCase();
+    const gDefs = [
+      { id: 'all', label: 'Όλοι', fn: () => true },
+      { id: 'here', label: 'Μένουν τώρα', fn: g => !!g.current },
+      { id: 'back', label: 'Επιστρέφουν', fn: g => g.count >= 2 },
+      { id: 'site', label: 'Από το σάιτ', fn: g => !!g.sources.site },
+      { id: 'booking', label: 'Από Booking', fn: g => !!g.sources.booking }
+    ];
+    const allG = Object.keys(gmap).map(k => gmap[k]);
+    const gFilters = gDefs.map(f => ({ label: f.label + ' · ' + allG.filter(f.fn).length, style: f.id === s.gFilter ? chipOn : chipOff, pick: () => this.setState({ gFilter: f.id }) }));
+    const gfn = (gDefs.find(f => f.id === s.gFilter) || gDefs[0]).fn;
+    const guests = allG.filter(gfn)
+      .filter(g => !gq || (g.name + ' ' + g.email + ' ' + g.phone).toLowerCase().indexOf(gq) !== -1)
+      .sort((a, c) => rank(a) - rank(c) || (a.next && c.next ? (a.next.start < c.next.start ? -1 : 1) : 0) || (c.last || '').localeCompare(a.last || '') || a.name.localeCompare(c.name, 'el'))
+      .map(g => {
+        let whenText = '', whenColor = '#2E4448';
+        if (g.current) { whenText = 'Μένει τώρα · ως ' + this.fmt(this.endOf(g.current)); whenColor = '#0F5257'; }
+        else if (g.next) { whenText = 'Έρχεται ' + this.fmt(g.next.start); whenColor = '#1E3A5F'; }
+        else if (g.pending) { whenText = 'Αίτημα σε αναμονή'; whenColor = '#7A4708'; }
+        else if (g.last) whenText = 'Τελευταία ' + MONY(g.last);
+        return {
+          name: g.name, contact: g.email + (g.phone ? ' · ' + g.phone : ''),
+          returning: g.count >= 2,
+          staysText: g.count + (g.count === 1 ? ' διαμονή' : ' διαμονές'),
+          spentText: this.money(g.spent),
+          whenText: whenText, whenStyle: 'font-size: 13px; font-weight: 500; color: ' + whenColor,
+          srcText: srcLabel(g),
+          rowStyle: 'width: 100%; display: grid; grid-template-columns: 2.2fr 0.9fr 0.9fr 1.5fr 1fr; gap: 12px; align-items: center; padding: 8px 18px; min-height: 60px; border: 0; border-bottom: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.customer === g.name ? 'background: #F0F6F6' : 'background: #FFFFFF'),
+          open: () => this.openGuest(g.name)
+        };
+      });
+    let guest = { close: () => {}, setNote: () => {}, message: () => {}, stays: [], badges: [] };
+    let hasGuest = false;
+    if (s.customer && gmap[s.customer]) {
+      const g = gmap[s.customer];
+      hasGuest = true;
+      const bdBase = 'font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
+      const badges = [];
+      if (g.count >= 2) badges.push({ label: 'Επιστρέφει', style: bdBase + 'background: #F3E3F0; color: #6B2F5F' });
+      if (g.current) badges.push({ label: 'Μένει τώρα', style: bdBase + 'background: #DCEBEA; color: #0F5257' });
+      else if (g.next) badges.push({ label: 'Έρχεται ' + this.fmt(g.next.start), style: bdBase + 'background: #DCE5F3; color: #1E3A5F' });
+      if (g.pending) badges.push({ label: 'Αίτημα', style: bdBase + 'background: #FBEFD9; color: #7A4708' });
+      const viaBooking = g.email === 'μέσω Booking';
+      guest = {
+        name: g.name, badges: badges,
+        srcText: 'Κλείνει από: ' + srcLabel(g),
+        count: String(g.count), spent: this.money(g.spent),
+        email: g.email, phone: g.phone || '–',
+        stays: g.stays.slice().sort((a, c) => c.key.localeCompare(a.key)).map(st => ({
+          when: st.when, what: st.what, money: this.money(st.money), status: st.status,
+          disabled: !st.id,
+          style: 'width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid #E6ECED; background: #FFFFFF; color: #18282B; font-size: 14px; text-align: left;' + (st.id ? 'cursor: pointer' : 'cursor: default'),
+          open: () => { if (st.id) this.open(st.id); }
+        })),
+        note: s.notes[g.name] || '',
+        setNote: (e) => this.setState({ notes: Object.assign({}, s.notes, { [g.name]: e && e.target ? e.target.value : '' }) }),
+        messageLabel: viaBooking ? 'Μήνυμα μέσω Booking' : 'Email στον πελάτη',
+        message: () => this.say(viaBooking ? 'Το Booking κρύβει το email του πελάτη. Το μήνυμα πάει μέσω του Booking.' : 'Ανοίγει νέο email προς ' + g.name + '.'),
+        close: () => this.setState({ customer: null })
+      };
+    }
+
     const navBase = 'flex: 1 1 180px; display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 14px; border: 0; border-radius: 12px; font-size: 15px; text-align: left; cursor: pointer;';
     const navOn = navBase + 'background: #0F5257; color: #FFFFFF; font-weight: 600';
     const navOff = navBase + 'background: transparent; color: #2E4448; font-weight: 500';
     const badgeN = auto ? feed.length : pending.length;
 
     return {
-      nav: { today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      nav: { today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
+      show: { today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      goGuests: () => this.go('guests'),
+      guests: guests, noGuests: guests.length === 0, guestTotal: allG.length + ' συνολικά', gFilters: gFilters, gQuery: s.gQuery,
+      setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
+      guest: guest, hasGuest: hasGuest,
       goToday: () => this.go('today'), goCal: () => this.go('cal'), goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
       navBadge: String(badgeN), hasNavBadge: badgeN > 0,
       isAuto: auto, isManual: !auto,
