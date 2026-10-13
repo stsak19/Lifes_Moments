@@ -805,6 +805,19 @@ button:disabled{cursor:default}
 </sc-if>
 </div>
 
+<sc-if value="{{qdel.open}}" hint-placeholder-val="{{false}}">
+<div onClick="{{qdel.cancel}}" style="position: fixed; inset: 0; z-index: 80; background: rgba(10,30,32,.38); display: flex; align-items: center; justify-content: center; padding: 16px">
+<div role="alertdialog" aria-modal="true" aria-labelledby="qdel-title" aria-describedby="qdel-text" onClick="{{qdel.stop}}" style="width: 100%; max-width: 380px; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(10,58,62,.3)">
+<div style="width: 44px; height: 44px; border-radius: 22px; background: #FDECEA; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D92D20" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path></svg></div>
+<div><div id="qdel-title" style="font-size: 17px; font-weight: 600">Να σβηστεί το κουμπί «{{qdel.label}}»;</div><div style="font-size: 13px; color: #4A5B5E; margin-top: 2px">Δεν θα εμφανίζεται πια στις έτοιμες απαντήσεις.</div></div>
+<div id="qdel-text" style="font-size: 13px; color: #2E4448; background: #F4F7F7; border-radius: 10px; padding: 10px 12px; max-height: 120px; overflow-y: auto; white-space: pre-wrap">{{qdel.text}}</div>
+<div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px">
+<button type="button" id="qdel-cancel" onClick="{{qdel.cancel}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">Άκυρο</button>
+<button type="button" onClick="{{qdel.confirm}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #D92D20; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Διαγραφή</button>
+</div>
+</div>
+</div>
+</sc-if>
 </main>
 
 <aside aria-label="Ενότητες" style="flex: 1 1 248px; box-sizing: border-box; padding: 28px 18px 24px; background: #FFFFFF; border-left: 1px solid #D5E0E1; display: flex; flex-direction: column; gap: 26px">
@@ -927,6 +940,8 @@ class Component extends DCLogic {
     ];
     this.state.quick = this.loadQuick();
     this.state.quickEdit = false;
+    this.state.quickDel = null;
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.state.quickDel) this.setState({ quickDel: null }); });
     this.state.qf = null;
     this.PAST = [
       { name: 'Οικογένεια Μαρκοπούλου', date: '2024-07-20', when: '20–27 Ιουλ 2024', unit: 'Διαμέρισμα', nights: 7, total: 1190, source: 'site' },
@@ -1979,9 +1994,8 @@ class Component extends DCLogic {
         label: q.label, title: s.quickEdit ? 'Αλλαγή' : q.text,
         showX: s.quickEdit, removeLabel: 'Διαγραφή κουμπιού ' + q.label,
         remove: () => {
-          this.saveQuick(this.state.quick.filter(x => x.id !== q.id));
-          if (this.state.qf && this.state.qf.id === q.id) this.setState({ qf: null });
-          this.say('Το κουμπί «' + q.label + '» σβήστηκε.');
+          this.setState({ quickDel: q.id });
+          setTimeout(() => { const c = document.getElementById('qdel-cancel'); if (c) c.focus(); }, 0);
         },
         style: 'min-height: 32px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer;' + (s.quickEdit ? 'border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         click: () => {
@@ -1990,6 +2004,20 @@ class Component extends DCLogic {
         }
       })),
       hasQuick: s.quick.length > 0,
+      qdel: (() => {
+        const q = s.quickDel ? s.quick.find(x => x.id === s.quickDel) : null;
+        if (!q) return { open: false };
+        return {
+          open: true, label: q.label, text: q.text,
+          stop: e => { if (e) e.stopPropagation(); },
+          cancel: () => this.setState({ quickDel: null }),
+          confirm: () => {
+            this.saveQuick(this.state.quick.filter(x => x.id !== q.id));
+            this.setState({ quickDel: null, qf: this.state.qf && this.state.qf.id === q.id ? null : this.state.qf });
+            this.say('Το κουμπί «' + q.label + '» σβήστηκε.');
+          }
+        };
+      })(),
       quickEditLabel: s.quickEdit ? 'Τέλος' : 'Επεξεργασία',
       quickEditHint: s.quickEdit && !s.qf,
       quickToggleEdit: () => this.setState({ quickEdit: !this.state.quickEdit, qf: null }),
@@ -2014,9 +2042,8 @@ class Component extends DCLogic {
             this.say(f.id ? 'Το κουμπί «' + label + '» άλλαξε.' : 'Προστέθηκε το κουμπί «' + label + '».');
           },
           remove: () => {
-            this.saveQuick(this.state.quick.filter(q => q.id !== f.id));
-            this.setState({ qf: null });
-            this.say('Το κουμπί «' + f.label + '» σβήστηκε.');
+            this.setState({ quickDel: f.id });
+            setTimeout(() => { const c = document.getElementById('qdel-cancel'); if (c) c.focus(); }, 0);
           }
         };
       })(),
