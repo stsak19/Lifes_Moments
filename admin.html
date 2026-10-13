@@ -16,7 +16,8 @@ button,input{font-family:inherit}
 button:disabled{cursor:default}
 #app > div{min-height:100vh !important}
 #app main{padding-bottom:96px !important}
-@media (min-width:900px){aside[aria-label="Ενότητες"]{position:sticky;top:0;height:100vh;align-self:flex-end;overflow-y:auto}}
+/* Desktop: sections menu on the left, page in the middle, detail panel on the right. The preview bar sits at the bottom of the menu. */
+@media (min-width:900px){#app > div{flex-wrap:nowrap !important}aside[aria-label="Ενότητες"]{order:-1;position:sticky;top:0;height:100vh;align-self:flex-start;overflow-y:auto;border-left:0 !important;border-right:1px solid #D5E0E1;padding-bottom:84px !important}#preview-bar{box-sizing:border-box;width:216px;flex-wrap:nowrap;justify-content:center;padding:8px}#preview-bar .pv-label{display:none}}
 #preview-bar{position:fixed;left:16px;bottom:16px;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:24px;background:#FFFFFF;box-shadow:0 4px 18px rgba(10,58,62,.18);font-family:Commissioner,system-ui,sans-serif;font-size:12px;color:#4A5B5E}
 #login{min-height:100vh;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#EEF3F4;font-family:Commissioner,system-ui,sans-serif;color:#18282B}
 #login[hidden],#app[hidden],#preview-bar[hidden]{display:none}
@@ -41,8 +42,8 @@ button:disabled{cursor:default}
 #login .demo button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 #inbox{min-height:520px}
 #conv-msgs{min-height:220px;max-height:420px}
-/* Messages fill the screen. The extra 64px at the bottom is room for the preview bar; without it use 28px and 100vh - 113px */
-@media (min-width:900px){#app main:has(#inbox){padding-bottom:92px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 177px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
+/* Messages fill the screen */
+@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 113px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
@@ -63,10 +64,10 @@ button:disabled{cursor:default}
 </form>
 </div>
 <div id="app" hidden></div>
-<div id="preview-bar" role="group" aria-label="Εκδοχή προεπισκόπησης" hidden>
-<span>Προεπισκόπηση · ψεύτικα δεδομένα</span>
+<div id="preview-bar" role="group" aria-label="Εκδοχή προεπισκόπησης" title="Προεπισκόπηση με ψεύτικα δεδομένα" hidden>
+<span class="pv-label">Προεπισκόπηση · ψεύτικα δεδομένα</span>
 <button type="button" data-mode="manual">Με έγκριση</button>
-<button type="button" data-mode="auto">Αυτόματη (Beds24)</button>
+<button type="button" data-mode="auto">Beds24</button>
 </div>
 <template id="tpl">
 <div onPointerUp="{{priceDragEnd}}" style="min-height: 1000px; display: flex; flex-wrap: wrap-reverse; align-items: stretch; background: #EEF3F4; color: #18282B; font-family: Commissioner, system-ui, sans-serif; font-size: 14px; line-height: 1.45">
