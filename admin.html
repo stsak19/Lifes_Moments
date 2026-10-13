@@ -28,7 +28,7 @@ button:disabled{cursor:default}
 <button type="button" data-mode="auto">Αυτόματη (Beds24)</button>
 </div>
 <template id="tpl">
-<div style="min-height: 1000px; display: flex; flex-wrap: wrap-reverse; align-items: stretch; background: #EEF3F4; color: #18282B; font-family: Commissioner, system-ui, sans-serif; font-size: 14px; line-height: 1.45">
+<div onPointerUp="{{priceDragEnd}}" style="min-height: 1000px; display: flex; flex-wrap: wrap-reverse; align-items: stretch; background: #EEF3F4; color: #18282B; font-family: Commissioner, system-ui, sans-serif; font-size: 14px; line-height: 1.45">
 
 <main style="flex: 999 1 640px; min-width: 0; box-sizing: border-box; padding: 28px 36px 56px; display: flex; flex-direction: column; gap: 22px">
 
@@ -374,11 +374,11 @@ button:disabled{cursor:default}
 <div style="text-align: center; font-size: 12px; font-weight: 600; color: #4A5B5E">{{w}}</div>
 </sc-for>
 </div>
-<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<div onPointerMove="{{priceDragMove}}" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
 <sc-for list="{{priceCells}}" as="c" hint-placeholder-count="35">
 <sc-if value="{{c.blank}}" hint-placeholder-val="{{false}}"><div></div></sc-if>
 <sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
+<button type="button" data-date="{{c.date}}" onPointerDown="{{c.down}}" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
 <span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.isOver}}" hint-placeholder-val="{{false}}"><span style="width: 7px; height: 7px; border-radius: 4px; background: #0F5257"></span></sc-if></span>
 <span style="display: block; font-size: 15px; font-weight: 600; margin-top: 4px">{{c.room}}</span>
 <span style="display: block; font-size: 11px; color: #4A5B5E">{{c.sub}}</span>
@@ -392,7 +392,7 @@ button:disabled{cursor:default}
 <aside aria-label="Ειδική τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
 <h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Ειδική τιμή</h2>
 <sc-if value="{{noSel}}" hint-placeholder-val="{{true}}">
-<div style="font-size: 14px; color: #4A5B5E">Πάτα μια μέρα στο ημερολόγιο. Για διάστημα, πάτα την πρώτη και μετά την τελευταία μέρα.</div>
+<div style="font-size: 14px; color: #4A5B5E">Πάτα μια μέρα στο ημερολόγιο. Για διάστημα, σύρε πάνω από τις μέρες με πατημένο το κλικ, ή πάτα την πρώτη και μετά την τελευταία.</div>
 </sc-if>
 <sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 14px">
@@ -1261,8 +1261,14 @@ class Component extends DCLogic {
         sub: pr.room != null ? 'Δ ' + this.money(pr.apt) + ' · ' + booked + '/12' : 'εκτός σεζόν',
         disabled: past, pressed: on ? 'true' : 'false',
         aria: this.fmt(x) + (pr.room != null ? ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt) : ', εκτός σεζόν') + (pr.over ? ', ειδική τιμή' : ''),
-        style: 'width: 100%; min-height: 76px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
-        pick: () => { if (!past) this.pickPriceDay(x); }
+        style: 'touch-action: none; user-select: none; -webkit-user-select: none; width: 100%; min-height: 76px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
+        date: x,
+        down: (e) => {
+          if (past) return;
+          if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
+          this.drag = { anchor: x, moved: false };
+        },
+        pick: () => { if (this.justDragged) { this.justDragged = false; return; } if (!past) this.pickPriceDay(x); }
       });
     }
     const hasSel = selSet.length > 0;
@@ -1311,6 +1317,27 @@ class Component extends DCLogic {
         this.say('Επανήλθε η βασική τιμή.');
       },
       clearSel: () => this.setState({ sel: null }),
+      priceDragMove: (e) => {
+        const d = this.drag;
+        if (!d || !e) return;
+        if (e.pointerType === 'mouse' && e.buttons === 0) { this.drag = null; return; }
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const cell = el && el.closest ? el.closest('[data-date]') : null;
+        const x = cell ? cell.getAttribute('data-date') : null;
+        if (!x || x < T) return;
+        if (x === d.anchor && !d.moved) return;
+        d.moved = true;
+        const a = x < d.anchor ? x : d.anchor, b = x < d.anchor ? d.anchor : x;
+        const cur = this.state.sel;
+        if (cur && cur.a === a && cur.b === b) return;
+        const pr = this.priceFor(a);
+        const keep = cur && cur.a === a;
+        this.setState({ sel: { a: a, b: b }, draft: keep ? this.state.draft : { room: pr.room != null ? String(pr.room) : '', apt: pr.apt != null ? String(pr.apt) : '', min: pr.min != null ? String(pr.min) : '2' } });
+      },
+      priceDragEnd: () => {
+        if (this.drag && this.drag.moved) { this.justDragged = true; setTimeout(() => { this.justDragged = false; }, 0); }
+        this.drag = null;
+      },
       priceChannelNote: auto ? 'Η τιμή πάει αυτόματα και στο Booking, +' + s.markup + '%.' : 'Ισχύει για το σάιτ. Στο Booking άλλαξέ την από το extranet.'
     };
 
