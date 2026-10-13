@@ -112,7 +112,6 @@ button:disabled{cursor:default}
 
 <section style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
-<div style="font-size: 15px; font-weight: 600; color: #2E4448">{{occupiedText}}</div>
 <div role="group" aria-label="Φίλτρο δωματίων" style="display: flex; flex-wrap: wrap; gap: 8px">
 <sc-for list="{{statusChips}}" as="c" hint-placeholder-count="6">
 <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}<span style="{{c.countStyle}}">{{c.count}}</span></button>
