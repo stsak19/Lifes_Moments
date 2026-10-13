@@ -354,6 +354,74 @@ button:disabled{cursor:default}
 <sc-if value="{{show.prices}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Τιμές</h1>
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
+<section aria-label="Τιμές ανά μέρα" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px">
+<div style="display: flex; align-items: center; gap: 8px">
+<button type="button" onClick="{{pricePrev}}" aria-label="Προηγούμενος μήνας" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg></button>
+<div style="min-width: 140px; text-align: center; font-family: Piazzolla, Georgia, serif; font-size: 20px; font-weight: 600">{{priceLabel}}</div>
+<button type="button" onClick="{{priceNext}}" aria-label="Επόμενος μήνας" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #C3D1D3; background: #FFFFFF"></span>Τιμή σεζόν</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 2px solid #0F5257; background: #FFFFFF"></span>Ειδική τιμή</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #DCEBEA"></span>Επιλογή</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px">
+<sc-for list="{{priceDow}}" as="w" hint-placeholder-count="7">
+<div style="text-align: center; font-size: 12px; font-weight: 600; color: #4A5B5E">{{w}}</div>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{priceCells}}" as="c" hint-placeholder-count="35">
+<sc-if value="{{c.blank}}" hint-placeholder-val="{{false}}"><div></div></sc-if>
+<sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.isOver}}" hint-placeholder-val="{{false}}"><span style="width: 7px; height: 7px; border-radius: 4px; background: #0F5257"></span></sc-if></span>
+<span style="display: block; font-size: 15px; font-weight: 600; margin-top: 4px">{{c.room}}</span>
+<span style="display: block; font-size: 11px; color: #4A5B5E">{{c.sub}}</span>
+</button>
+</sc-if>
+</sc-for>
+</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 12px">{{priceNote}}</div>
+</section>
+
+<aside aria-label="Ειδική τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Ειδική τιμή</h2>
+<sc-if value="{{noSel}}" hint-placeholder-val="{{true}}">
+<div style="font-size: 14px; color: #4A5B5E">Πάτα μια μέρα στο ημερολόγιο. Για διάστημα, πάτα την πρώτη και μετά την τελευταία μέρα.</div>
+</sc-if>
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div>
+<div style="font-size: 17px; font-weight: 600">{{selLabel}}</div>
+<div style="font-size: 13px; color: #4A5B5E">{{selSub}}</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div><label for="p-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο (€/νύχτα)</label><input id="p-room" type="number" inputmode="numeric" min="0" value="{{draft.room}}" onChange="{{setDraftRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div><label for="p-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμέρισμα (€)</label><input id="p-apt" type="number" inputmode="numeric" min="0" value="{{draft.apt}}" onChange="{{setDraftApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+</div>
+<div><label for="p-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="p-min" type="number" inputmode="numeric" min="1" value="{{draft.min}}" onChange="{{setDraftMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<button type="button" onClick="{{draftDown}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">−10%</button>
+<button type="button" onClick="{{draftUp}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">+10%</button>
+<button type="button" onClick="{{draftSeason}}" style="min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Τιμή σεζόν</button>
+</div>
+<button type="button" onClick="{{applyPrice}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{applyLabel}}</button>
+<sc-if value="{{selHasOver}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{resetPrice}}" style="height: 44px; border-radius: 22px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Επαναφορά στην τιμή σεζόν</button>
+</sc-if>
+<button type="button" onClick="{{clearSel}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ακύρωση επιλογής</button>
+<div style="font-size: 12px; color: #4A5B5E">{{priceChannelNote}} Οι κρατήσεις που έχουν ήδη γίνει δεν αλλάζουν.</div>
+</div>
+</sc-if>
+</aside>
+</div>
+
+<h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 21px; font-weight: 600">Βασικές τιμές σεζόν <span style="font-size: 14px; font-weight: 400; color: #4A5B5E">· ισχύουν όπου δεν υπάρχει ειδική τιμή</span></h2>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
 <div style="min-width: 760px">
 <div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
@@ -589,10 +657,12 @@ class Component extends DCLogic {
       toggles: { push: true, pre: true, review: true },
       extra: 15,
       seasons: [
-        { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', room: 85, apt: 150, min: 2 },
-        { id: 'high', name: 'Υψηλή σεζόν', range: 'Ιούλιος – Αύγουστος', room: 120, apt: 190, min: 3 },
-        { id: 'peak', name: 'Δεκαπενταύγουστος', range: '10 – 20 Αυγούστου', room: 145, apt: 230, min: 4 }
+        { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', ranges: [['05-01', '06-30'], ['09-01', '09-30']], room: 85, apt: 150, min: 2 },
+        { id: 'high', name: 'Υψηλή σεζόν', range: 'Ιούλιος – Αύγουστος', ranges: [['07-01', '08-31']], room: 120, apt: 190, min: 3 },
+        { id: 'peak', name: 'Δεκαπενταύγουστος', range: '10 – 20 Αυγούστου', ranges: [['08-10', '08-20']], room: 145, apt: 230, min: 4 }
       ],
+      priceMonth: '2026-07', sel: null, draft: { room: '', apt: '', min: '' },
+      overrides: { '2026-07-24': { room: 135, apt: 210, min: 2 }, '2026-07-25': { room: 135, apt: 210, min: 2 } },
       bookings: [
         { id: 'b1', name: 'Νίκος Παπαδόπουλος', type: 'room', unit: 'r1', start: '2026-07-12', nights: 4, guests: 2, total: 480, source: 'site', status: 'confirmed', email: 'nikos@example.com', phone: '+30 69xx xxx xxx' },
         { id: 'b2', name: 'Anna Schmidt', type: 'room', unit: 'r2', start: '2026-07-14', nights: 3, guests: 2, total: 360, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+49 1xx xxx xxxx' },
@@ -678,7 +748,7 @@ class Component extends DCLogic {
     const key = this.isAuto() ? 'bookingsAuto' : 'bookings';
     this.setState({ [key]: this.state[key].map(b => b.id === id ? Object.assign({}, b, ch) : b) });
   }
-  go(tab) { this.setState({ tab: tab, detail: null, req: null, customer: null }); }
+  go(tab) { this.setState({ tab: tab, detail: null, req: null, customer: null, sel: null }); }
   open(id) { this.setState({ detail: id, customer: null }); }
   openGuest(name) { this.setState({ customer: name, detail: null }); }
   openReq(id) { this.setState({ tab: 'today', req: id, detail: null }); }
@@ -688,6 +758,37 @@ class Component extends DCLogic {
     let d = date;
     while (nb[unit + '|' + d]) { delete nb[unit + '|' + d]; d = this.add(d, 1); }
     this.setState({ blocks: nb });
+  }
+  seasonFor(date) {
+    const md = date.slice(5);
+    for (const id of ['peak', 'high', 'low']) {
+      const se = this.state.seasons.find(x => x.id === id);
+      if (se && se.ranges.some(r => r[0] <= md && md <= r[1])) return se;
+    }
+    return null;
+  }
+  priceFor(date) {
+    const se = this.seasonFor(date);
+    const o = this.state.overrides[date];
+    return { room: o ? o.room : (se ? se.room : null), apt: o ? o.apt : (se ? se.apt : null), min: o ? o.min : (se ? se.min : null), over: !!o, season: se };
+  }
+  selDays() {
+    const sel = this.state.sel;
+    if (!sel) return [];
+    const out = [];
+    let d = sel.a;
+    const z = sel.b || sel.a;
+    while (d <= z) { out.push(d); d = this.add(d, 1); }
+    return out;
+  }
+  pickPriceDay(x) {
+    const sel = this.state.sel;
+    let n;
+    if (!sel || sel.b) n = { a: x, b: null };
+    else if (x < sel.a) n = { a: x, b: sel.a };
+    else n = { a: sel.a, b: x };
+    const pr = this.priceFor(n.a);
+    this.setState({ sel: n, draft: { room: pr.room != null ? String(pr.room) : '', apt: pr.apt != null ? String(pr.apt) : '', min: pr.min != null ? String(pr.min) : '2' } });
   }
   bumpSeason(id, key, delta, floor) {
     this.setState({ seasons: this.state.seasons.map(se => se.id === id ? Object.assign({}, se, { [key]: Math.max(floor, se[key] + delta) }) : se) });
@@ -1148,6 +1249,87 @@ class Component extends DCLogic {
       };
     }
 
+    /* Price calendar */
+    const pm = s.priceMonth.split('-').map(Number);
+    const pDays = new Date(Date.UTC(pm[0], pm[1], 0)).getUTCDate();
+    const firstDow = (new Date(Date.UTC(pm[0], pm[1] - 1, 1)).getUTCDay() + 6) % 7;
+    const priceCells = [];
+    for (let i = 0; i < firstDow; i++) priceCells.push({ blank: true, real: false, pick: () => {} });
+    const selSet = this.selDays();
+    let overInMonth = 0;
+    for (let i = 1; i <= pDays; i++) {
+      const x = s.priceMonth + '-' + (i < 10 ? '0' + i : String(i));
+      const pr = this.priceFor(x);
+      if (pr.over) overInMonth++;
+      let booked = 0;
+      this.UNITS.forEach(u => { const o = this.occ(u.id, x); if (o && o !== 'block') booked++; });
+      const past = x < T;
+      const on = selSet.indexOf(x) !== -1;
+      const dow = this.dt(x).getUTCDay();
+      const look = on ? 'background: #DCEBEA; border: 1px solid #0F5257;'
+        : (pr.over ? 'background: #FFFFFF; border: 2px solid #0F5257;'
+        : (pr.season ? 'background: #FFFFFF; border: 1px solid #E6ECED;' : 'background: #F4F2EE; border: 1px solid #F4F2EE;'));
+      priceCells.push({
+        blank: false, real: true,
+        num: String(i), numStyle: 'font-size: 12px; font-weight: 600; color: ' + (dow === 0 || dow === 6 ? '#18282B' : '#4A5B5E'),
+        isOver: pr.over,
+        room: pr.room != null ? this.money(pr.room) : '—',
+        sub: pr.room != null ? 'Δ ' + this.money(pr.apt) + ' · ' + booked + '/12' : 'εκτός σεζόν',
+        disabled: past, pressed: on ? 'true' : 'false',
+        aria: this.fmt(x) + (pr.room != null ? ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt) : ', εκτός σεζόν') + (pr.over ? ', ειδική τιμή' : ''),
+        style: 'width: 100%; min-height: 76px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
+        pick: () => { if (!past) this.pickPriceDay(x); }
+      });
+    }
+    const hasSel = selSet.length > 0;
+    const selHasOver = selSet.some(d => !!s.overrides[d]);
+    const roundTo5 = v => Math.max(5, Math.round(v / 5) * 5);
+    const scaleDraft = f => {
+      const d = s.draft;
+      const r = parseInt(d.room, 10), a = parseInt(d.apt, 10);
+      this.setState({ draft: Object.assign({}, d, { room: r > 0 ? String(roundTo5(r * f)) : d.room, apt: a > 0 ? String(roundTo5(a * f)) : d.apt }) });
+    };
+    const priceVals = {
+      priceLabel: ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'][pm[1] - 1] + ' ' + pm[0],
+      pricePrev: () => { const d = new Date(Date.UTC(pm[0], pm[1] - 2, 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
+      priceNext: () => { const d = new Date(Date.UTC(pm[0], pm[1], 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
+      priceDow: ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
+      priceCells: priceCells,
+      priceNote: 'Σε κάθε μέρα: πάνω η τιμή δωματίου ανά νύχτα, κάτω του διαμερίσματος (Δ) και πόσοι χώροι είναι ήδη κλεισμένοι.' + (overInMonth ? ' Αυτόν τον μήνα ' + overInMonth + (overInMonth === 1 ? ' μέρα έχει' : ' μέρες έχουν') + ' ειδική τιμή.' : ''),
+      hasSel: hasSel, noSel: !hasSel, selHasOver: selHasOver,
+      selLabel: !hasSel ? '' : (selSet.length === 1 ? this.DAY[this.dt(selSet[0]).getUTCDay()] + ' ' + this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1])),
+      selSub: !hasSel ? '' : (selSet.length === 1 ? (s.sel.b ? '1 νύχτα' : '1 νύχτα · πάτα κι άλλη μέρα για διάστημα') : selSet.length + ' νύχτες'),
+      draft: s.draft,
+      setDraftRoom: e => this.setState({ draft: Object.assign({}, s.draft, { room: e && e.target ? e.target.value : '' }) }),
+      setDraftApt: e => this.setState({ draft: Object.assign({}, s.draft, { apt: e && e.target ? e.target.value : '' }) }),
+      setDraftMin: e => this.setState({ draft: Object.assign({}, s.draft, { min: e && e.target ? e.target.value : '' }) }),
+      draftUp: () => scaleDraft(1.1),
+      draftDown: () => scaleDraft(0.9),
+      draftSeason: () => {
+        const se = hasSel ? this.seasonFor(selSet[0]) : null;
+        if (!se) { this.say('Αυτή η μέρα είναι εκτός σεζόν, δεν έχει τιμή σεζόν.'); return; }
+        this.setState({ draft: { room: String(se.room), apt: String(se.apt), min: String(se.min) } });
+      },
+      applyLabel: 'Εφαρμογή σε ' + selSet.length + (selSet.length === 1 ? ' νύχτα' : ' νύχτες'),
+      applyPrice: () => {
+        const r = parseInt(s.draft.room, 10), a = parseInt(s.draft.apt, 10), m = parseInt(s.draft.min, 10);
+        if (!(r > 0) || !(a > 0) || !(m >= 1)) { this.say('Συμπλήρωσε τιμή δωματίου, τιμή διαμερίσματος και ελάχιστες νύχτες.'); return; }
+        const no = Object.assign({}, s.overrides);
+        selSet.forEach(d => { no[d] = { room: r, apt: a, min: m }; });
+        const label = selSet.length === 1 ? this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1]);
+        this.setState({ overrides: no, sel: null });
+        this.say('Ειδική τιμή ' + label + ': δωμάτιο ' + this.money(r) + ', διαμέρισμα ' + this.money(a) + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.') + (auto ? ' Πάει και στο Booking με +' + s.markup + '%.' : ''));
+      },
+      resetPrice: () => {
+        const no = Object.assign({}, s.overrides);
+        selSet.forEach(d => { delete no[d]; });
+        this.setState({ overrides: no, sel: null });
+        this.say('Επανήλθε η τιμή σεζόν.');
+      },
+      clearSel: () => this.setState({ sel: null }),
+      priceChannelNote: auto ? 'Η τιμή πάει αυτόματα και στο Booking, +' + s.markup + '%.' : 'Ισχύει για το σάιτ. Στο Booking άλλαξέ την από το extranet.'
+    };
+
     /* Stats */
     const MONFULL = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
     const smp = s.statMonth.split('-').map(Number);
@@ -1204,7 +1386,7 @@ class Component extends DCLogic {
     const navOff = navBase + 'background: transparent; color: #2E4448; font-weight: 500';
     const badgeN = auto ? feed.length : pending.length;
 
-    return {
+    return Object.assign(priceVals, {
       nav: { today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, stats: s.tab === 'stats' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
       show: { today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', stats: s.tab === 'stats', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       goStats: () => this.go('stats'),
@@ -1253,7 +1435,7 @@ class Component extends DCLogic {
       set2Sub: auto ? 'Χρέωση [προκαταβολή %] με την κράτηση, το υπόλοιπο [πότε]' : 'Δέσμευση στην κάρτα · απάντηση σε 24 ώρες',
       exportCsv: () => this.say('Το αρχείο πληρωμών Ιουλίου είναι έτοιμο για τον λογιστή.'),
       detail: detail, hasDetail: hasDetail
-    };
+    });
   }
 }
 
