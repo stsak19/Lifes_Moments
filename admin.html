@@ -213,7 +213,7 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #0F5257"></span>Σάιτ</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #CFE0F3"></span>Booking.com</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Απευθείας</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px dashed #B7791F; background: #FBEFD9"></span>Αίτημα</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #E4E1DB"></span>Κλειστό</span>
@@ -491,7 +491,7 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px">
 <div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #0F5257"></span>Σάιτ</span><span style="font-weight: 600">{{srcSiteText}}</span></div>
 <div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #8DB3E2"></span>Booking.com</span><span style="font-weight: 600">{{srcBookingText}}</span></div>
-<sc-if value="{{hasDirectRev}}" hint-placeholder-val="{{false}}"><div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6FA36A"></span>Απευθείας</span><span style="font-weight: 600">{{srcDirectText}}</span></div></sc-if>
+<sc-if value="{{hasDirectRev}}" hint-placeholder-val="{{false}}"><div style="display: flex; justify-content: space-between; gap: 10px"><span style="display: flex; align-items: center; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #6FA36A"></span>Από εμάς</span><span style="font-weight: 600">{{srcDirectText}}</span></div></sc-if>
 <sc-if value="{{hasFreeStays}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; color: #4A5B5E">{{freeStaysText}}</div></sc-if>
 </div>
 <div style="font-size: 12px; color: #4A5B5E; margin-top: 10px">Τα ποσά του Booking είναι πριν την προμήθεια. Κάθε κράτηση από το σάιτ αντί για Booking γλιτώνει την προμήθεια.</div>
@@ -644,7 +644,7 @@ button:disabled{cursor:default}
 <sc-if value="{{hasNew}}" hint-placeholder-val="{{false}}">
 <aside aria-label="Νέα κράτηση" style="flex: 1 1 360px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
-<div><h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">Νέα κράτηση</h2><div style="font-size: 13px; color: #4A5B5E">Τηλέφωνο, απευθείας, ή φίλοι</div></div>
+<div><h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">Νέα κράτηση</h2><div style="font-size: 13px; color: #4A5B5E">Τηλέφωνο, από κοντά ή φίλοι</div></div>
 <button type="button" onClick="{{nb.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
 </div>
 <div role="group" aria-label="Είδος" style="display: flex; flex-direction: column; gap: 6px">
@@ -1051,7 +1051,7 @@ class Component extends DCLogic {
     const base = 'display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
     if (b.status === 'confirmed' && b.kind === 'free') return { badge: 'Χωρίς χρέωση', badgeStyle: base + 'background: #EFE9F6; color: #4B2F6B' };
     if (b.status === 'confirmed' && b.kind === 'test') return { badge: 'Δοκιμή', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
-    if (b.status === 'confirmed' && b.source === 'direct') return { badge: 'Απευθείας', badgeStyle: base + 'background: #D9EAD3; color: #24502A' };
+    if (b.status === 'confirmed' && b.source === 'direct') return { badge: 'Από εμάς', badgeStyle: base + 'background: #D9EAD3; color: #24502A' };
     if (b.status === 'pending') return { badge: 'Αίτημα', badgeStyle: base + 'background: #FBEFD9; color: #7A4708' };
     if (b.status === 'cancelled') return { badge: 'Ακυρώθηκε', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
     if (b.status === 'rejected') return { badge: 'Απορρίφθηκε', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
@@ -1430,7 +1430,7 @@ class Component extends DCLogic {
       auto ? { id: 'new', label: 'Νέες', fn: b => b.status === 'confirmed' && b.ago != null && b.ago < 24 } : { id: 'pending', label: 'Αιτήματα', fn: b => b.status === 'pending' },
       { id: 'site', label: 'Σάιτ', fn: b => b.source === 'site' },
       { id: 'booking', label: 'Booking', fn: b => b.source === 'booking' },
-      { id: 'direct', label: 'Απευθείας', fn: b => b.source === 'direct' }
+      { id: 'direct', label: 'Από εμάς', fn: b => b.source === 'direct' }
     ];
     const filters = filtDefs.map(f => ({ label: f.label + ' · ' + B.filter(f.fn).length, style: f.id === s.filter ? chipOn : chipOff, pick: () => this.setState({ filter: f.id }) }));
     const curFilter = (filtDefs.find(f => f.id === s.filter) || filtDefs[0]).fn;
@@ -1441,7 +1441,7 @@ class Component extends DCLogic {
     const listB = B.filter(curFilter).filter(inDates).filter(b => !q || b.name.toLowerCase().indexOf(q) !== -1).slice().sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
     const liveB = listB.filter(b => b.status === 'confirmed');
     const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(liveB.reduce((a, b) => a + b.total, 0)) + ' επιβεβαιωμένα · προμήθεια Booking περίπου ' + this.money(liveB.reduce((a, b) => a + commOf(b), 0));
-    const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Απευθείας' })[b.source]);
+    const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
     const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: 'Απορρίφθηκε' })[b.status] || b.status;
     const downloadCsv = () => {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
@@ -1558,7 +1558,7 @@ class Component extends DCLogic {
       g.stays.push({ key: b.start, when: this.range(b.start, end) + ' 2026', what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
     });
     const MONY = s2 => { const d = this.dt(s2); return this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
-    const srcLabel = g => ['site', 'booking', 'direct'].filter(k => g.sources[k]).map(k => ({ site: 'Σάιτ', booking: 'Booking', direct: 'Απευθείας' })[k]).join(' και ');
+    const srcLabel = g => ['site', 'booking', 'direct'].filter(k => g.sources[k]).map(k => ({ site: 'Σάιτ', booking: 'Booking', direct: 'Από εμάς' })[k]).join(' και ');
     const rank = g => g.current ? 0 : (g.next ? 1 : (g.pending ? 2 : 3));
     const gq = (s.gQuery || '').trim().toLowerCase();
     const gDefs = [
@@ -1776,7 +1776,7 @@ class Component extends DCLogic {
       { label: 'Έσοδα', value: this.money(revTotal), sub: 'Από νύχτες μέσα στον μήνα' },
       { label: 'Μέση τιμή ανά νύχτα', value: (bookedNights - freeNights) ? this.money(revTotal / (bookedNights - freeNights)) : '–', sub: freeNights ? 'Χωρίς τις ' + freeNights + ' δωρεάν νύχτες' : 'Όλα τα δωμάτια μαζί' },
       { label: 'Μέση διαμονή', value: avgStay ? avgStay.toFixed(1).replace('.', ',') + ' νύχτες' : '–', sub: startsIn.length + ' κρατήσεις με άφιξη στον μήνα' },
-      { label: 'Κρατήσεις από το σάιτ', value: startsIn.length ? Math.round(siteCount / startsIn.length * 100) + '%' : '–', sub: siteCount + ' από ' + startsIn.length + ' · οι υπόλοιπες από Booking ή απευθείας' },
+      { label: 'Κρατήσεις από το σάιτ', value: startsIn.length ? Math.round(siteCount / startsIn.length * 100) + '%' : '–', sub: siteCount + ' από ' + startsIn.length + ' · οι υπόλοιπες από Booking ή από εμάς' },
       { label: 'Σήμερα', value: arrivals + ' · ' + departures, sub: 'Αφίξεις · αναχωρήσεις' }
     ];
     const unitBars = this.UNITS.map(u => {
@@ -2025,7 +2025,7 @@ class Component extends DCLogic {
         const paid = B.filter(b => b.status === 'confirmed' && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === '2026-07').sort((a, b) => a.start < b.start ? -1 : 1);
         const left = B.filter(b => b.status === 'confirmed' && (b.kind === 'free' || b.kind === 'test') && b.start.slice(0, 7) === '2026-07').length;
         const rows = [['Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Πελάτης', 'Χώρος', 'Πηγή', 'Πληρωμή', 'Ποσό', 'Προμήθεια Booking (περίπου)']]
-          .concat(paid.map(b => [b.start, this.endOf(b), b.nights, b.name, b.unit ? this.unitName(b.unit) : '', ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Απευθείας' })[b.source],
+          .concat(paid.map(b => [b.start, this.endOf(b), b.nights, b.name, b.unit ? this.unitName(b.unit) : '', ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source],
             b.source === 'booking' ? 'Μέσω Booking.com' : (b.source === 'site' ? 'Κάρτα (σάιτ)' : PAYW[b.pay]), b.total, b.source === 'booking' ? (b.total * this.COMMISSION).toFixed(2).replace('.', ',') : '0']));
         this.csv(rows, 'logistis-iouliou-2026.csv');
         this.say('Κατέβηκε το αρχείο του Ιουλίου με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
