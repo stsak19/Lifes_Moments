@@ -423,39 +423,6 @@ button:disabled{cursor:default}
 </div>
 </sc-if>
 
-<sc-if value="{{show.reviews}}" hint-placeholder-val="{{false}}">
-<div style="display: flex; flex-direction: column; gap: 16px">
-<section style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
-<div style="flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px; background: #E9B949; color: #3A2604; display: flex; align-items: center; justify-content: center; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{revGoAvg}}</div>
-<div style="flex: 1 1 240px"><div style="font-weight: 600; font-size: 16px">Google · από 5</div><div style="font-size: 13px; color: #4A5B5E">{{revGoCount}} · αυτές φαίνονται και στο σάιτ</div></div>
-<div style="flex: 1 1 260px; font-size: 12px; color: #4A5B5E">Οι κριτικές του Booking.com απαντιούνται από το Booking.</div>
-</section>
-<div style="display: flex; flex-wrap: wrap; gap: 6px">
-<sc-for list="{{revFilters}}" as="f" hint-placeholder-count="4"><button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button></sc-for>
-</div>
-<div style="display: flex; flex-direction: column; gap: 12px">
-<sc-for list="{{reviews}}" as="r" hint-placeholder-count="4">
-<article style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 12px 24px">
-<div style="flex: 0 1 170px"><div style="font-weight: 600">{{r.name}}</div><div style="font-size: 13px; color: #4A5B5E">{{r.meta}}</div><div style="font-size: 12px; color: #4A5B5E">{{r.when}}</div></div>
-<div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
-<div style="display: flex; align-items: center; gap: 10px"><span style="{{r.scoreStyle}}">{{r.score}}</span><span style="font-size: 12px; font-weight: 600; color: #4A5B5E">{{r.src}}</span></div>
-<sc-if value="{{r.hasPos}}" hint-placeholder-val="{{true}}"><div><span style="color: #2F6B4F; font-weight: 700; margin-right: 6px">+</span>{{r.pos}}</div></sc-if>
-<sc-if value="{{r.hasNeg}}" hint-placeholder-val="{{false}}"><div><span style="color: #8A3412; font-weight: 700; margin-right: 6px">–</span>{{r.neg}}</div></sc-if>
-<sc-if value="{{r.hasReply}}" hint-placeholder-val="{{false}}"><div style="border-left: 3px solid #0F5257; padding: 6px 12px; background: #F4F7F7; border-radius: 0 10px 10px 0; font-size: 13px"><span style="display: block; font-weight: 600">Η απάντησή σου</span>{{r.reply}}</div></sc-if>
-<sc-if value="{{r.canReply}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{r.openReply}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Απάντηση</button></div></sc-if>
-<sc-if value="{{r.editing}}" hint-placeholder-val="{{false}}"><div style="display: flex; flex-direction: column; gap: 8px">
-<label for="{{r.inputId}}" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Απάντηση στην κριτική</label>
-<textarea id="{{r.inputId}}" value="{{replyDraft}}" onChange="{{setReplyDraft}}" placeholder="Μια σύντομη, ευγενική απάντηση…" style="width: 100%; box-sizing: border-box; min-height: 80px; padding: 10px 12px; border-radius: 12px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.45; resize: vertical"></textarea>
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><button type="button" onClick="{{r.publish}}" style="height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Δημοσίευση</button><button type="button" onClick="{{closeReply}}" style="height: 40px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Άκυρο</button><span style="font-size: 12px; color: #4A5B5E">{{r.replyNote}}</span></div>
-</div></sc-if>
-</div>
-</article>
-</sc-for>
-<sc-if value="{{noReviews}}" hint-placeholder-val="{{false}}"><div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Καμία κριτική σε αυτό το φίλτρο.</div></sc-if>
-</div>
-</div>
-</sc-if>
-
 <sc-if value="{{show.stats}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
@@ -837,7 +804,6 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
 <button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #C2502A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
 <button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
-<button type="button" onClick="{{goReviews}}" style="{{nav.reviews}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"></path></svg><span style="flex: 1">Κριτικές</span></button>
 <button type="button" onClick="{{goStats}}" style="{{nav.stats}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg><span style="flex: 1">Στατιστικά</span></button>
 <button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path d="M5 10h8M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
@@ -880,7 +846,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, statMonth: '2026-07', gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '', replyOpen: null, replyDraft: '', revFilter: 'all',
+      tab: 'today', detail: null, req: null, customer: null, statMonth: '2026-07', gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
@@ -888,13 +854,6 @@ class Component extends DCLogic {
         { id: 't3', bid: 'b13', unread: false, msgs: [{ from: 'guest', t: '12 Ιουλ 18:05', text: 'Γεια σας! Υπάρχει πάρκινγκ κοντά; Ερχόμαστε με αυτοκίνητο.' }, { from: 'host', t: '12 Ιουλ 19:20', text: 'Γεια σας! Ναι, υπάρχει δωρεάν πάρκινγκ ακριβώς μπροστά στο κτίριο. Σας περιμένουμε στις 20!' }] },
         { id: 't4', bid: 'b4', unread: false, msgs: [{ from: 'host', t: '10 Ιουλ 12:00', text: 'Καλώς ήρθατε ξανά! Το διαμέρισμα είναι έτοιμο από τις 14:00.' }, { from: 'guest', t: '11 Ιουλ 16:32', text: 'Φτάσαμε, όλα τέλεια όπως κάθε χρόνο. Ευχαριστούμε!' }] },
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
-      ],
-      reviews: [
-        { id: 'v1', src: 'google', name: 'Κατερίνα Π.', cc: '', date: '2026-07-12', score: 5, unit: '', pos: 'Πολύ ήσυχα, δίπλα στη θάλασσα. Καθαρό και ευρύχωρο.', neg: '', reply: '' },
-        { id: 'v2', src: 'google', name: 'Pieter V.', cc: '', date: '2026-07-09', score: 5, unit: '', pos: 'Spotless room, a lovely terrace at sunset and great tips for beaches.', neg: '', reply: '' },
-        { id: 'v3', src: 'google', name: 'Marta K.', cc: '', date: '2026-07-02', score: 4, unit: '', pos: 'Lovely hosts and a very comfortable bed.', neg: 'Shower pressure could be better.', reply: 'Thank you Marta! We fixed the shower the same week.' },
-        { id: 'v4', src: 'google', name: 'Γιάννης Μ.', cc: '', date: '2026-06-19', score: 5, unit: '', pos: 'Υπέροχη βεράντα, δύο λεπτά από τη θάλασσα.', neg: '', reply: 'Σας ευχαριστούμε πολύ, σας περιμένουμε ξανά!' },
-        { id: 'v5', src: 'google', name: 'Oliver B.', cc: '', date: '2026-06-11', score: 5, unit: '', pos: 'Felt like staying with friends. Walking distance to tavernas.', neg: '', reply: '' }
       ],
       blocks: blocks,
       toggles: { push: true, pre: true, review: true },
@@ -1011,7 +970,7 @@ class Component extends DCLogic {
     const cur = site.find(t => t.id === this.state.thread) || site[0];
     return cur ? cur.bid : null;
   }
-  go(tab) { this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, replyOpen: null, newOpen: false }); }
+  go(tab) { this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, newOpen: false }); }
   openNew(pre) {
     const base = { kind: 'paid', type: 'room', name: '', phone: '', email: '', start: this.TODAY, end: this.add(this.TODAY, 2), guests: '2', unit: '', amount: '', pay: 'cash', note: '', error: '' };
     this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, req: null, calSel: null, calEdit: false });
@@ -1947,47 +1906,16 @@ class Component extends DCLogic {
     };
     const unreadN = siteThreads.filter(t => t.unread).length;
 
-    /* Reviews */
-    const goRev = s.reviews.filter(r => r.src === 'google');
-    const avgOf = L => L.length ? L.reduce((a, r) => a + r.score, 0) / L.length : 0;
-    const dec = v => v.toFixed(1).replace('.', ',');
-    const rfDefs = [
-      { id: 'all', label: 'Όλες', fn: () => true },
-      { id: 'open', label: 'Χωρίς απάντηση', fn: r => !r.reply },
-      { id: 'done', label: 'Με απάντηση', fn: r => !!r.reply }
-    ];
-    const rfn = (rfDefs.find(f => f.id === s.revFilter) || rfDefs[0]).fn;
-    const reviews = s.reviews.filter(rfn).map(r => {
-      const editing = s.replyOpen === r.id;
-      const good = r.src === 'booking' ? r.score >= 9 : r.score >= 5;
-      return {
-        name: r.name, meta: [r.cc, r.unit].filter(Boolean).join(' · ') || 'Google', when: 'Γράφτηκε ' + this.fmt(r.date),
-        src: r.src === 'booking' ? 'Booking.com' : 'Google',
-        score: r.src === 'booking' ? dec(r.score).replace(',0', '') : '★ ' + r.score,
-        scoreStyle: 'display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 30px; padding: 0 8px; box-sizing: border-box; border-radius: 9px; font-weight: 700; font-size: 14px;' + (r.src === 'booking' ? (good ? 'background: #0F5257; color: #FFFFFF' : 'background: #DCEBEA; color: #0F5257') : 'background: #FBEFD9; color: #5C3606'),
-        pos: r.pos, neg: r.neg, hasPos: !!r.pos, hasNeg: !!r.neg,
-        reply: r.reply, hasReply: !!r.reply, canReply: !r.reply && !editing, editing: editing,
-        inputId: 'rv-' + r.id,
-        replyNote: r.src === 'booking' ? 'Δημοσιεύεται κάτω από την κριτική στο Booking.com' : 'Δημοσιεύεται κάτω από την κριτική στο Google',
-        openReply: () => this.setState({ replyOpen: r.id, replyDraft: '' }),
-        publish: () => {
-          const v = (this.state.replyDraft || '').trim();
-          if (!v) { this.say('Γράψε πρώτα την απάντηση.'); return; }
-          this.setState({ reviews: this.state.reviews.map(x => x.id === r.id ? Object.assign({}, x, { reply: v }) : x), replyOpen: null, replyDraft: '' });
-          this.say('Η απάντηση δημοσιεύτηκε.');
-        }
-      };
-    });
 
     return Object.assign(priceVals, calSelVals, {
-      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, reviews: s.tab === 'reviews' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, stats: s.tab === 'stats' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { msgs: s.tab === 'msgs', reviews: s.tab === 'reviews', today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', stats: s.tab === 'stats', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, stats: s.tab === 'stats' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
+      show: { msgs: s.tab === 'msgs', today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', stats: s.tab === 'stats', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       goStats: () => this.go('stats'),
       hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
       owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
       nb: nb, hasNew: !!s.newOpen && !!s.nb, openNew: () => this.openNew(),
-      goMsgs: () => this.go('msgs'), goReviews: () => this.go('reviews'),
+      goMsgs: () => this.go('msgs'),
       msgBadge: String(unreadN), hasMsgBadge: unreadN > 0,
       threads: threads, conv: conv, msgDraft: s.msgDraft,
       quick: s.quick.map(q => ({
@@ -2054,11 +1982,6 @@ class Component extends DCLogic {
         this.setState({ msgDraft: '', threads: this.state.threads.map(x => x.id === curT.id ? Object.assign({}, x, { unread: false, msgs: x.msgs.concat([{ from: 'host', t: '14 Ιουλ ' + nowHM(), text: v }]) }) : x) });
         this.say('Στάλθηκε στον/στην ' + (cb ? cb.name : 'πελάτη') + '.');
       },
-      reviews: reviews, noReviews: reviews.length === 0, replyDraft: s.replyDraft,
-      setReplyDraft: (e) => this.setState({ replyDraft: e && e.target ? e.target.value : '' }),
-      closeReply: () => this.setState({ replyOpen: null, replyDraft: '' }),
-      revFilters: rfDefs.map(f => ({ label: f.label + ' · ' + s.reviews.filter(f.fn).length, style: f.id === s.revFilter ? chipOn : chipOff, pick: () => this.setState({ revFilter: f.id }) })),
-      revGoAvg: dec(avgOf(goRev)), revGoCount: goRev.length + ' πρόσφατες κριτικές',
       savedText: this.money(savedAmt),
       savedSub: 'Η προμήθεια Booking (' + Math.round(this.COMMISSION * 100) + '%) που δεν πληρώθηκε για τα ' + this.money(revSite) + ' από το σάιτ, μείον περίπου ' + this.money(cardFees) + ' χρεώσεις κάρτας. Για τα ' + this.money(revBooking) + ' από το Booking πληρώνεις περίπου ' + this.money(revBooking * this.COMMISSION) + ' προμήθεια.',
       dateByOpts: [['arr', 'Άφιξης'], ['dep', 'Αναχώρησης'], ['on', 'Κράτησης']].map(o => ({ v: o[0], t: o[1], sel: s.dateBy === o[0] })),
