@@ -43,7 +43,7 @@ button:disabled{cursor:default}
 #inbox{min-height:520px}
 #conv-msgs{min-height:220px;max-height:420px}
 /* Messages fill the screen */
-@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 113px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
+@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 300px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
@@ -106,7 +106,7 @@ button:disabled{cursor:default}
 
 <section style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 30px; font-weight: 500">Το κατάλυμα σήμερα <span style="font-size: 16px; color: #4A5B5E">· {{occupiedText}}</span></h1>
+<div style="font-size: 15px; font-weight: 600; color: #2E4448">{{occupiedText}}</div>
 <div role="group" aria-label="Φίλτρο δωματίων" style="display: flex; flex-wrap: wrap; gap: 8px">
 <sc-for list="{{statusChips}}" as="c" hint-placeholder-count="6">
 <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.pressed}}" style="{{c.style}}">{{c.label}}<span style="{{c.countStyle}}">{{c.count}}</span></button>
@@ -281,7 +281,6 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; flex: 1 1 520px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Κρατήσεις</h1>
 <div style="flex: 0 1 300px; min-width: 200px">
 <label for="search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση ονόματος</label>
 <input id="search" type="search" value="{{query}}" onChange="{{setQuery}}" placeholder="Αναζήτηση ονόματος" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
@@ -332,7 +331,6 @@ button:disabled{cursor:default}
 <sc-if value="{{show.guests}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Πελάτες <span style="font-size: 16px; color: #4A5B5E">· {{guestTotal}}</span></h1>
 <div style="flex: 0 1 300px">
 <label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
 <input id="gsearch" type="search" value="{{gQuery}}" onChange="{{setGQuery}}" placeholder="Όνομα, email ή τηλέφωνο" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
@@ -367,7 +365,6 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.msgs}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Μηνύματα</h1>
 <div id="inbox" style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border-radius: 18px; overflow: hidden">
 <div role="list" aria-label="Συζητήσεις" class="inbox-list" style="flex: 1 1 260px; min-width: 0; border-right: 1px solid #EEF2F2; display: flex; flex-direction: column">
 <sc-for list="{{threads}}" as="th" hint-placeholder-count="5">
@@ -400,7 +397,6 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.reviews}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Κριτικές</h1>
 <section style="background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
 <div style="flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px; background: #E9B949; color: #3A2604; display: flex; align-items: center; justify-content: center; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{revGoAvg}}</div>
 <div style="flex: 1 1 240px"><div style="font-weight: 600; font-size: 16px">Google · από 5</div><div style="font-size: 13px; color: #4A5B5E">{{revGoCount}} · αυτές φαίνονται και στο σάιτ</div></div>
@@ -435,7 +431,6 @@ button:disabled{cursor:default}
 <sc-if value="{{show.stats}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Στατιστικά</h1>
 <div style="display: flex; align-items: center; gap: 8px">
 <button type="button" onClick="{{statPrev}}" aria-label="Προηγούμενος μήνας" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg></button>
 <div style="min-width: 150px; text-align: center; font-family: Piazzolla, Georgia, serif; font-size: 20px; font-weight: 600">{{statLabel}}</div>
@@ -511,7 +506,6 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.prices}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Τιμές</h1>
 
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
 <section aria-label="Τιμές ανά μέρα" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
@@ -595,7 +589,6 @@ button:disabled{cursor:default}
 
 <sc-if value="{{show.settings}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">Ρυθμίσεις</h1>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
