@@ -20,7 +20,11 @@ Open `index.html` in a browser, or turn on GitHub Pages (Settings → Pages → 
 
 ## Backend (Supabase project "Life's Moments")
 
-The approval flow now runs for real; the other admin screens still show fake data.
+The site and the admin now run on real data only. The fake guests, bookings, messages and past stays are gone from the live admin (they stay only in `admin.html?demo=1`).
+
+- **Real dates.** The site calendar and the admin use today's date in Greece. Past days are locked, and at midnight the calendar moves on by itself, even if the page stays open.
+- **Availability on the site.** `redesign.html` and `mobile-test.html` read `site_availability` (only how many rooms are taken per night, never names) and refresh every 5 minutes and whenever the page comes back into view. A night counts as taken by: pending or confirmed site requests, stays the owners entered, and nights an owner closed.
+- **Stays entered by the owners** (`owner_stays`): "Νέα κράτηση" saves paid, free and test stays, plus **"Από Booking.com"** to copy a Booking reservation by hand until the calendar sync exists. Cancelling, moving a guest to another room and closing or opening nights are all saved and show up for the other owner live.
 
 - **Site → request.** `redesign.html` and `mobile-test.html` send the request form to the `submit-request` function. It checks the input, refuses nights that are already held (pending or confirmed requests; Booking.com joins this check once its calendar is synced in), saves the request in `booking_requests` and sends a push to every owner device. No card is held yet: Stripe comes later.
 - **Admin sign-in.** Owners sign in with email and password (Supabase Auth). Only emails in the `owners` table can make an account ("Πρώτη φορά εδώ; Φτιάξε κωδικό"), and Row Level Security lets only them read or answer requests. To add an owner: `insert into public.owners (email, name) values ('...', '...');`. `admin.html?demo=1` still opens the old preview accounts with fake data.
@@ -28,4 +32,4 @@ The approval flow now runs for real; the other admin screens still show fake dat
 - **Push.** Each owner turns notifications on per device in Settings; the device is saved in `push_subscriptions`. The server signs and encrypts the messages itself (`supabase/functions/_shared/webpush.ts`); the key pair is made on first use and kept in Vault. "Στείλε δοκιμή" asks the server to push to your own devices.
 - **Every 10 minutes** (pg_cron → `request-reminders`): a reminder 4 hours before a request expires, and requests nobody answered within 24 hours are closed as expired.
 - Code: `supabase/migrations/` (tables, rules, schedule) and `supabase/functions/` (`submit-request`, `push`, `request-reminders`).
-- Still to come: emails to guests (needs an email provider), card holds with Stripe, Booking.com calendar sync, and moving the rest of the admin (bookings, blocks, prices) into the database.
+- Still to come: emails to guests (needs an email provider), card holds with Stripe, automatic Booking.com calendar sync, saving prices/seasons and messages in the database.

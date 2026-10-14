@@ -562,7 +562,7 @@ button:disabled{cursor:default}
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span><span style="display: block; font-weight: 500">Κείμενα και φωτογραφίες σάιτ</span><span style="display: block; font-size: 12px; color: #4A5B5E">Αρχική, δωμάτια, οδηγός Θάσου</span></span><span style="color: #4A5B5E">›</span></div>
 </div>
 </section>
-<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών Ιουλίου για λογιστή</button>
+<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
 </div>
@@ -605,7 +605,7 @@ button:disabled{cursor:default}
 <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px"><span style="color: #4A5B5E">Κανονική τιμή</span><span style="font-weight: 600">{{nb.normalText}}</span></div>
 <div><label for="nb-amount" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ποσό που πληρώνει (€)</label><input id="nb-amount" type="number" inputmode="numeric" min="0" value="{{nb.amount}}" onChange="{{nb.setAmount}}" placeholder="{{nb.amountPh}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px; font-weight: 600"></div>
 <sc-if value="{{nb.hasDiscount}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #1F5039; font-weight: 600">{{nb.discountText}}</div></sc-if>
-<div><span style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πληρωμή</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{nb.pays}}" as="py" hint-placeholder-count="3"><button type="button" onClick="{{py.pick}}" aria-pressed="{{py.pressed}}" style="{{py.style}}">{{py.label}}</button></sc-for></div></div>
+<sc-if value="{{nb.showPays}}" hint-placeholder-val="{{true}}"><div><span style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πληρωμή</span><div style="display: flex; flex-wrap: wrap; gap: 6px"><sc-for list="{{nb.pays}}" as="py" hint-placeholder-count="3"><button type="button" onClick="{{py.pick}}" aria-pressed="{{py.pressed}}" style="{{py.style}}">{{py.label}}</button></sc-for></div></div></sc-if>
 </div>
 </sc-if>
 <div style="font-size: 12px; color: #4A5B5E">{{nb.taxNote}}</div>
@@ -731,7 +731,7 @@ button:disabled{cursor:default}
 <aside aria-label="Ενότητες" style="flex: 1 1 248px; box-sizing: border-box; padding: 28px 18px 24px; background: #FFFFFF; border-left: 1px solid #D5E0E1; display: flex; flex-direction: column; gap: 26px">
 <div style="padding: 0 8px">
 <div style="font-family: 'GFS Didot', Georgia, serif; font-size: 27px; line-height: 1.1; color: #0F5257">Life's Moments</div>
-<div style="font-size: 13px; color: #4A5B5E; margin-top: 4px">Τρίτη 14 Ιουλίου</div>
+<div style="font-size: 13px; color: #4A5B5E; margin-top: 4px">{{todayLabel}}</div>
 </div>
 <sc-if value="{{hasUser}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #F4F7F7">
@@ -751,7 +751,7 @@ button:disabled{cursor:default}
 <div style="margin-top: auto; padding: 14px; border-radius: 14px; background: #EEF3F4; display: flex; flex-direction: column; gap: 10px">
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; flex-direction: column; gap: 10px">
-<div><div style="display: flex; align-items: center; gap: 6px; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 4px; background: #C99A3B"></span>Booking.com</div><div style="font-size: 12px; color: #4A5B5E">Τελευταίος έλεγχος {{syncAgo}}</div></div>
+<div><div style="display: flex; align-items: center; gap: 6px; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 4px; background: #C99A3B"></span>Booking.com</div><div style="font-size: 12px; color: #4A5B5E">{{syncLine}}</div></div>
 <button type="button" onClick="{{syncNow}}" style="height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 500; cursor: pointer">Έλεγχος τώρα</button>
 </div>
 </sc-if>
@@ -826,6 +826,9 @@ const PUSH = {
 };
 if (PUSH.perm() === 'granted') PUSH.ready().catch(() => {});
 
+function athensISO() { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Athens' }).format(new Date()); }
+function athensISOof(ts) { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Athens' }).format(new Date(ts)); }
+
 class DCLogic {
   constructor(props) { this.props = props || {}; this.state = {}; }
   setState(p) {
@@ -839,7 +842,10 @@ class DCLogic {
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.TODAY = '2026-07-14';
+    // Live admin: everything comes from the database and "today" is the real day in Greece.
+    // admin.html?demo=1 keeps the old preview with fake data on 14 July 2026.
+    this.REAL = !new URLSearchParams(location.search).has('demo') && !!window.supabase;
+    this.TODAY = this.REAL ? athensISO() : '2026-07-14';
     this.DAY = ['Κυ', 'Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα'];
     this.MON = ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαΐ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'];
     this.MONG = ['Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
@@ -890,11 +896,18 @@ class Component extends DCLogic {
         { id: 'p3', name: 'Γιώργος Αλεξίου', type: 'apt', unit: null, start: '2026-07-19', nights: 6, guests: 4, total: 1140, source: 'site', status: 'pending', ago: 2, email: 'giorgos@example.com', phone: '+30 69xx xxx xxx' }
       ]
     };
+    if (this.REAL) {
+      Object.assign(this.state, {
+        notes: {}, threads: [], thread: null, blocks: {}, overrides: {}, bookings: [],
+        calStart: this.add(this.TODAY, -4), priceMonth: this.TODAY.slice(0, 7), syncAgo: 'δεν έχει συνδεθεί ακόμα'
+      });
+    }
     this.state.bookings = this.expire(this.state.bookings);
-    this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
+    this.state.bookingsAuto = this.autoAssign(this.state.bookings, this.state.blocks);
     this.state.live = null; this.state.checking = null; this.state.pushBusy = false; this.state.pushPerm = PUSH.perm(); this.state.testIn = 0;
     this.state.toggles.push = PUSH.on();
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
+    if (this.REAL) this.ON = {};
     this.COMMISSION = 0.15;
     this.QKEY = 'lm-admin-quick-replies';
     this.QUICK = [
@@ -916,6 +929,56 @@ class Component extends DCLogic {
       { name: 'Ελισάβετ Ραφαηλίδου', date: '2025-09-02', when: '2–6 Σεπ 2025', unit: 'Δωμάτιο 4', nights: 4, total: 340, source: 'site', email: 'elisavet@example.com', phone: '+30 69xx xxx xxx' },
       { name: 'Martin Dvořák', date: '2025-08-10', when: '10–15 Αυγ 2025', unit: 'Δωμάτιο 9', nights: 5, total: 675, source: 'booking', email: 'μέσω Booking', phone: '+420 6xx xxx xxx' }
     ];
+    if (this.REAL) {
+      this.PAST = [];
+      // The day changes at midnight in Greece even if the admin stays open (or wakes up the next morning).
+      const roll = () => { const d = athensISO(); if (d !== this.TODAY) { const shift = this.state.calStart === this.add(this.TODAY, -4); this.TODAY = d; if (shift) this.state.calStart = this.add(d, -4); this.forceUpdate(); if (this.reload) this.reload(); } };
+      setInterval(roll, 60000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) roll(); });
+    }
+  }
+
+  /* Closed nights are saved in the database: whatever changed in state.blocks is written there. */
+  setState(p) {
+    const before = this.state.blocks;
+    super.setState(p);
+    if (this.REAL && !this._fromServer && before && this.state.blocks !== before && PUSH.client) this.syncBlocks(before, this.state.blocks);
+  }
+  syncBlocks(a, b) {
+    const sb = PUSH.client, who = this.state.user ? this.state.user.name : '';
+    const add = Object.keys(b).filter(k => b[k] && !a[k]).map(k => { const p = k.split('|'); return { unit: p[0], night: p[1], created_by: who }; });
+    const del = Object.keys(a).filter(k => a[k] && !b[k]).map(k => k.split('|'));
+    const jobs = [];
+    if (add.length) jobs.push(sb.from('unit_blocks').upsert(add, { onConflict: 'unit,night', ignoreDuplicates: true }));
+    const byUnit = {};
+    del.forEach(p => { (byUnit[p[0]] = byUnit[p[0]] || []).push(p[1]); });
+    Object.keys(byUnit).forEach(u => jobs.push(sb.from('unit_blocks').delete().eq('unit', u).in('night', byUnit[u])));
+    Promise.all(jobs).then(rs => {
+      const bad = rs.find(r => r.error);
+      if (bad) { this.say('Δεν αποθηκεύτηκε το κλείσιμο: ' + bad.error.message); if (this.reload) this.reload(); }
+    });
+  }
+  /* A stay the owners typed in (phone, direct, Booking.com copy, friends, test) */
+  fromStay(r) {
+    const nights = Math.round((Date.parse(r.check_out) - Date.parse(r.check_in)) / 864e5);
+    const id = 'st-' + r.id;
+    this.ON[id] = athensISOof(r.created_at);
+    return {
+      id: id, stayId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
+      total: Number(r.total) || 0, source: r.source, kind: r.source === 'booking' ? undefined : r.kind, pay: r.pay, status: r.status,
+      email: r.email || (r.source === 'booking' ? 'μέσω Booking' : ''), phone: r.phone || '', note: r.note || '',
+      by: r.decided_by || (r.created_by ? 'Καταχώριση · ' + r.created_by + ' · ' + this.fmt(athensISOof(r.created_at)) : '')
+    };
+  }
+  /* Save a change to a real booking in the database, then show it */
+  saveReal(b, row, ok) {
+    const sb = PUSH.client;
+    const q = b.stayId ? sb.from('owner_stays').update(row).eq('id', b.stayId) : sb.from('booking_requests').update(row).eq('id', b.dbId);
+    return q.select('id').then(res => {
+      if (res.error || !res.data || !res.data.length) { this.say('Δεν αποθηκεύτηκε' + (res.error ? ': ' + res.error.message : '') + '. Δοκίμασε ξανά.'); if (this.reload) this.reload(); return; }
+      ok();
+      if (this.reload) this.reload();
+    });
   }
 
   dt(s) { const p = s.split('-').map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
@@ -1008,7 +1071,7 @@ class Component extends DCLogic {
         const names = ['Ελένη Σταύρου', 'Sarah Klein', 'Νίκος Γεωργίου', 'Marta Rossi'];
         const k = this.state.bookings.filter(b => /^n\d/.test(b.id)).length;
         const id = 'n' + (k + 1);
-        const b = { id: id, name: names[k % names.length], type: 'room', unit: null, start: '2026-07-21', nights: 3, guests: 2, total: 360, source: 'site', status: 'pending', ago: 0, email: 'test@example.com', phone: '+30 69xx xxx xxx', note: 'Δοκιμαστικό αίτημα' };
+        const b = { id: id, name: names[k % names.length], type: 'room', unit: null, start: this.add(this.TODAY, 7), nights: 3, guests: 2, total: 360, source: 'site', status: 'pending', ago: 0, email: 'test@example.com', phone: '+30 69xx xxx xxx', note: 'Δοκιμαστικό αίτημα' };
         this.setState({ testIn: 0, bookings: this.state.bookings.concat([b]), bookingsAuto: this.state.bookingsAuto.concat([b]) });
         const body = b.name + ' · ' + this.range(b.start, this.endOf(b)) + ' · ' + b.guests + ' άτομα · ' + this.money(b.total) + '\nΑπάντησε μέσα σε 24 ώρες.';
         if (PUSH.on()) PUSH.show('Νέο αίτημα κράτησης', body, 'admin.html?req=' + id, 'req-' + id).catch(() => this.say('Νέο αίτημα από ' + b.name + '.'));
@@ -1024,18 +1087,23 @@ class Component extends DCLogic {
     const ago = Math.max(0, Math.floor((Date.now() - Date.parse(r.created_at)) / 3600000));
     const left = Math.max(0, Math.ceil((Date.parse(r.expires_at) - Date.now()) / 3600000));
     const late = r.status === 'pending' && Date.parse(r.expires_at) <= Date.now();
-    const status = r.status === 'expired' || late ? 'rejected' : r.status;
+    const status = r.status === 'expired' || late ? 'rejected' : r.status; // 'cancelled' passes through
     return {
-      id: 'db-' + r.id, dbId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
+      id: (this.ON['db-' + r.id] = athensISOof(r.created_at), 'db-' + r.id), dbId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
       total: price || 0, priceless: price == null, source: 'site', status: status, expired: r.status === 'expired' || late,
       ago: status === 'pending' ? Math.min(23, 24 - left, ago) : ago,
       email: r.email, phone: r.phone, note: r.note || '', by: r.decided_by || ''
     };
   }
-  applyRows(rows) {
-    const demo = this.state.bookings.filter(b => !b.real && b.status !== 'pending' && b.id !== 'p0');
-    const real = rows.map(r => this.fromRow(r));
-    this.setState({ bookings: demo.concat(real), live: true });
+  applyRows(rows, stays, blocks) {
+    const demo = this.REAL ? [] : this.state.bookings.filter(b => !b.real && b.status !== 'pending' && b.id !== 'p0');
+    const real = rows.map(r => this.fromRow(r)).concat((stays || []).map(r => this.fromStay(r)));
+    const patch = { bookings: demo.concat(real), live: true };
+    if (blocks) { const nb = {}; blocks.forEach(x => { nb[x.unit + '|' + x.night] = true; }); patch.blocks = nb; }
+    patch.bookingsAuto = this.autoAssign(patch.bookings, patch.blocks || this.state.blocks);
+    this._fromServer = true;
+    this.setState(patch);
+    this._fromServer = false;
     if (this._openWhenLoaded) { const id = this._openWhenLoaded; this._openWhenLoaded = null; this.openReqById(id); }
   }
   saveDecision(rb, change, done) {
@@ -1293,11 +1361,11 @@ class Component extends DCLogic {
 
     let busy = 0;
     for (let i = 0; i < 7; i++) {
-      const x = this.add('2026-07-13', i);
+      const x = this.add(T, i);
       this.UNITS.forEach(u => { const o = this.occ(u.id, x); if (o && o !== 'block') busy++; });
     }
     const occupancy = Math.round(busy / (this.UNITS.length * 7) * 100) + '%';
-    const siteRevenue = this.money(confirmed.filter(b => b.source === 'site' && b.start.slice(5, 7) === '07').reduce((a, b) => a + b.total, 0));
+    const siteRevenue = this.money(confirmed.filter(b => b.source === 'site' && b.start.slice(0, 7) === T.slice(0, 7)).reduce((a, b) => a + b.total, 0));
 
     /* Where each pending request sits on the calendar: most urgent first, the owner's pick if it fits, else the first room that fits */
     const tentative = {};
@@ -1359,7 +1427,7 @@ class Component extends DCLogic {
           dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: rb.priceless ? 'χωρίς τιμή' : this.money(rb.total),
           pickTitle: rb.type === 'apt' ? 'Διαμέρισμα' : 'Σε ποιο δωμάτιο;',
           rooms: rooms, noFree: !suggested, canAccept: !!picked,
-          acceptLabel: s.checking === rb.id ? 'Έλεγχος στο Booking.com…' : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
+          acceptLabel: s.checking === rb.id ? (this.REAL ? 'Αποθήκευση…' : 'Έλεγχος στο Booking.com…') : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
           contact: rb.email + ' · ' + rb.phone,
           note: rb.note || '', hasNote: !!rb.note,
           back: () => this.setState({ req: null }),
@@ -1371,12 +1439,12 @@ class Component extends DCLogic {
               this.setState({ checking: null });
               const clash = this.firstClash(picked, rb.start, rb.nights);
               if (clash) { this.say('Προσοχή: το ' + this.unitName(picked) + ' πιάστηκε στο μεταξύ' + (clash === 'block' ? '' : ' (' + clash.name + ')') + '. Διάλεξε άλλο δωμάτιο.'); return; }
-              const ok = 'Το Booking.com ελέγχθηκε τώρα, χωρίς σύγκρουση. Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '.';
+              const ok = (this.REAL ? 'Επιβεβαιώθηκε · ' : 'Το Booking.com ελέγχθηκε τώρα, χωρίς σύγκρουση. Επιβεβαιώθηκε · ') + rb.name + ' στο ' + this.unitName(picked) + '.';
               if (rb.real) { this.saveDecision(rb, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') }, () => this.say(ok + ' Η χρέωση κάρτας και το email στον πελάτη μπαίνουν αργότερα.')); return; }
               this.patch(rb.id, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') });
               this.setState({ req: null });
               this.say(ok + ' Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
-            }, 1100);
+            }, this.REAL ? 0 : 1100);
           },
           reject: () => {
             if (rb.real) { this.saveDecision(rb, { status: 'rejected', by: this.who('Απόρριψη') }, () => this.say('Απορρίφθηκε · ' + rb.name + '. Το email στον πελάτη μπαίνει αργότερα.')); return; }
@@ -1634,10 +1702,12 @@ class Component extends DCLogic {
         let pay = 'Μέσω Booking.com';
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
         if (b.source === 'direct') pay = b.kind === 'free' ? 'Χωρίς χρέωση · δεν πάει στον λογιστή' : (b.kind === 'test' ? 'Δοκιμή · δεν μετράει πουθενά' : PAYW[b.pay] + ' · πάει στον λογιστή');
-        if (b.source === 'site') {
+        if (b.source === 'site' && this.REAL) {
+          pay = { pending: 'Δεν έχει χρεωθεί τίποτα', confirmed: 'Η πληρωμή κανονίζεται απευθείας με τον πελάτη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε χωρίς απάντηση' : 'Απορρίφθηκε' }[b.status];
+        } else if (b.source === 'site') {
           pay = { pending: 'Δεσμευμένα, όχι χρεωμένα', confirmed: auto ? 'Πληρώθηκε με κάρτα στην κράτηση' : 'Χρεώθηκαν μέσω Stripe', cancelled: 'Επιστράφηκαν στην κάρτα', rejected: b.expired ? 'Η δέσμευση λύθηκε αυτόματα, χωρίς χρέωση' : 'Η δέσμευση λύθηκε' }[b.status];
         }
-        const canMove = b.status === 'confirmed' && b.type === 'room' && !!b.unit && (auto || b.source === 'site' || b.source === 'direct');
+        const canMove = b.status === 'confirmed' && b.type === 'room' && !!b.unit && (auto || b.source === 'site' || b.source === 'direct' || !!b.stayId);
         const moveIds = canMove ? this.candidates(b).filter(u => u.id !== b.unit && this.isFree(u.id, b.start, b.nights, b.id)).map(u => u.id) : [];
         detail = Object.assign({
           name: b.name,
@@ -1647,14 +1717,15 @@ class Component extends DCLogic {
           unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο, όχι ακόμα'),
           total: this.money(b.total), pay: pay, email: b.email || '–', phone: b.phone || '–',
           hasBy: !!b.by, by: b.by || '',
-          canCancel: (b.source === 'site' || b.source === 'direct') && b.status === 'confirmed',
-          cancelLabel: b.source === 'direct' ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
+          canCancel: (b.source === 'site' || b.source === 'direct' || !!b.stayId) && b.status === 'confirmed',
+          cancelLabel: b.source === 'direct' || this.REAL ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
           canMessage: b.source === 'site' && s.tab !== 'msgs',
           canClose: s.tab !== 'msgs',
           isPending: b.status === 'pending',
           canMove: canMove, noMoves: canMove && moveIds.length === 0,
           moves: moveIds.map(id => ({ label: this.unitName(id), style: chipOff, pick: () => {
+            if (b.real) { this.saveReal(b, { unit: id }, () => this.say(b.name + ' μεταφέρθηκε στο ' + this.unitName(id) + '.')); return; }
             this.patch(b.id, { unit: id });
             this.say(b.name + ' μεταφέρθηκε στο ' + this.unitName(id) + '.' + (auto ? ' Ενημερώθηκε και το Beds24.' : ''));
           } })),
@@ -1664,6 +1735,11 @@ class Component extends DCLogic {
           close: () => this.setState({ detail: null }),
           message: () => this.openThread(b.id),
           cancel: () => {
+            if (b.real) {
+              if (!confirm('Ακύρωση της κράτησης του/της ' + b.name + ' (' + this.range(b.start, this.endOf(b)) + ');')) return;
+              this.saveReal(b, { status: 'cancelled', decided_by: this.who('Ακύρωση') }, () => this.say('Ακυρώθηκε η κράτηση του/της ' + b.name + '. Οι μέρες άνοιξαν ξανά στο σάιτ.'));
+              return;
+            }
             this.patch(b.id, { status: 'cancelled', by: this.who('Ακύρωση') });
             if (b.source === 'direct') { this.say('Ακυρώθηκε η κράτηση του/της ' + b.name + '. Το δωμάτιο ελευθερώθηκε και στο Booking.'); return; }
             this.say('Ακυρώθηκε · επιστροφή ' + this.money(b.total) + ' στην κάρτα. Το δωμάτιο ελευθερώθηκε και στο Booking.');
@@ -1696,7 +1772,7 @@ class Component extends DCLogic {
       else if (end <= T) { status = 'Ολοκληρώθηκε'; if (!g.last || end > g.last) g.last = end; }
       else { status = 'Έρχεται'; if (!g.next || b.start < g.next.start) g.next = b; }
       if (b.status === 'confirmed') { g.spent += b.total; g.count++; }
-      g.stays.push({ key: b.start, when: this.range(b.start, end) + ' 2026', what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
+      g.stays.push({ key: b.start, when: this.range(b.start, end) + ' ' + b.start.slice(0, 4), what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
     });
     const MONY = s2 => { const d = this.dt(s2); return this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
     const srcLabel = g => ['site', 'booking', 'direct'].filter(k => g.sources[k]).map(k => ({ site: 'Σάιτ', booking: 'Booking', direct: 'Από εμάς' })[k]).join(' και ');
@@ -1897,6 +1973,7 @@ class Component extends DCLogic {
       const radio = on => 'flex-shrink: 0; width: 18px; height: 18px; border-radius: 9px; box-sizing: border-box;' + (on ? 'border: 6px solid #0F5257' : 'border: 2px solid #A7B4B6');
       const KINDS = [
         { id: 'paid', label: 'Με πληρωμή', sub: 'Οποιοδήποτε ποσό, και με έκπτωση. Πάει στον λογιστή.' },
+        { id: 'booking', label: 'Από Booking.com', sub: 'Κράτηση που ήρθε από το Booking. Κλείνει το δωμάτιο εδώ και στο σάιτ.' },
         { id: 'free', label: 'Χωρίς χρέωση', sub: 'Φίλοι, συγγενείς ή δική σου χρήση. Πιάνει το δωμάτιο, δεν έχει έσοδο.' },
         { id: 'test', label: 'Δοκιμή', sub: 'Για να δοκιμάσεις το σύστημα. Δεν μετράει πουθενά.' }
       ];
@@ -1918,12 +1995,12 @@ class Component extends DCLogic {
         setAmount: e => upd({ amount: val(e) }),
         units: free.length ? free.map(u => ({ id: u.id, sel: u.id === unit, label: u.name + ' · ως ' + u.cap + ' άτομα' })) : [{ id: '', sel: true, label: '—' }],
         noUnit: !!blockReason, noUnitText: blockReason,
-        isPaid: f.kind === 'paid',
+        isPaid: f.kind === 'paid' || f.kind === 'booking', showPays: f.kind === 'paid',
         normalText: nights <= 0 ? '–' : (normal == null ? 'εκτός σεζόν, βάλε ποσό' : this.money(normal) + ' για ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες')),
         amountPh: normal != null ? String(normal) : 'ποσό',
         hasDiscount: disc > 0, discountText: 'Έκπτωση ' + disc + '% · στον λογιστή πάει το ' + (amt != null ? this.money(amt) : ''),
         pays: [['cash', 'Μετρητά'], ['card', 'Κάρτα (POS)'], ['bank', 'Τράπεζα']].map(py => ({ label: py[1], pressed: f.pay === py[0] ? 'true' : 'false', style: f.pay === py[0] ? chipOn : chipOff, pick: () => upd({ pay: py[0] }) })),
-        taxNote: f.kind === 'paid' ? 'Μετράει στα έσοδα και μπαίνει στο αρχείο του λογιστή με το ποσό που πληρώθηκε πραγματικά.' : (f.kind === 'free' ? 'Δεν υπάρχουν χρήματα, οπότε δεν μπαίνει στο αρχείο του λογιστή. Στα στατιστικά φαίνεται μόνο στην πληρότητα.' : 'Φαίνεται στο ημερολόγιο, αλλά δεν μετράει σε έσοδα, πληρότητα ή πελάτες.'),
+        taxNote: f.kind === 'booking' ? 'Το ποσό είναι προαιρετικό. Η προμήθεια του Booking υπολογίζεται στο αρχείο του λογιστή.' : f.kind === 'paid' ? 'Μετράει στα έσοδα και μπαίνει στο αρχείο του λογιστή με το ποσό που πληρώθηκε πραγματικά.' : (f.kind === 'free' ? 'Δεν υπάρχουν χρήματα, οπότε δεν μπαίνει στο αρχείο του λογιστή. Στα στατιστικά φαίνεται μόνο στην πληρότητα.' : 'Φαίνεται στο ημερολόγιο, αλλά δεν μετράει σε έσοδα, πληρότητα ή πελάτες.'),
         error: f.error, hasError: !!f.error,
         saveLabel: 'Καταχώριση' + (nights > 0 ? ' · ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες') : ''),
         syncNote: auto ? 'Το δωμάτιο κλείνει αμέσως και στο Booking.com.' : 'Το δωμάτιο κλείνει και στο Booking.com στον επόμενο συγχρονισμό (1–4 ώρες).',
@@ -1932,6 +2009,23 @@ class Component extends DCLogic {
           if (!name) { upd({ error: 'Γράψε όνομα.' }); return; }
           if (blockReason) { upd({ error: blockReason }); return; }
           if (f.kind === 'paid' && !(amt >= 0)) { upd({ error: 'Βάλε το ποσό που πληρώνει.' }); return; }
+          if (this.REAL && PUSH.client) {
+            if (this._savingStay) return;
+            const bk = f.kind === 'booking';
+            const total = bk ? (f.amount === '' ? 0 : Math.max(0, parseInt(f.amount, 10) || 0)) : (f.kind === 'paid' ? amt : 0);
+            const row = { kind: bk ? 'paid' : f.kind, source: bk ? 'booking' : 'direct', unit_type: f.type, unit: unit, check_in: f.start, check_out: f.end, guests: g,
+              name: name, email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim(), total: total, pay: f.kind === 'paid' ? f.pay : null,
+              created_by: this.state.user ? this.state.user.name : '' };
+            this._savingStay = true;
+            PUSH.client.from('owner_stays').insert(row).select('id').single().then(res => {
+              this._savingStay = false;
+              if (res.error) { upd({ error: 'Δεν αποθηκεύτηκε: ' + res.error.message }); return; }
+              this.setState({ newOpen: false, nb: null, detail: 'st-' + res.data.id });
+              this.say(name + ' · ' + this.unitName(unit) + ' · ' + this.range(f.start, f.end) + ' · αποθηκεύτηκε. Οι μέρες κλείνουν και στο σάιτ.');
+              if (this.reload) this.reload();
+            });
+            return;
+          }
           if (f.kind === 'paid' && amt === 0) { upd({ error: 'Αν δεν πληρώνει τίποτα, διάλεξε «Χωρίς χρέωση».' }); return; }
           const id = 'm' + Date.now();
           const rec = { by: this.who('Καταχώριση'), id: id, name: name, type: f.type, unit: unit, start: f.start, nights: nights, guests: g, total: f.kind === 'paid' ? amt : 0, source: 'direct', kind: f.kind, pay: f.pay, status: 'confirmed', email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim() };
@@ -2045,7 +2139,7 @@ class Component extends DCLogic {
       sendMsg: () => {
         const v = (this.state.msgDraft || '').trim();
         if (!v || !curT) { this.say('Γράψε πρώτα το μήνυμα.'); return; }
-        this.setState({ msgDraft: '', threads: this.state.threads.map(x => x.id === curT.id ? Object.assign({}, x, { unread: false, msgs: x.msgs.concat([{ from: 'host', t: '14 Ιουλ ' + nowHM(), text: v }]) }) : x) });
+        this.setState({ msgDraft: '', threads: this.state.threads.map(x => x.id === curT.id ? Object.assign({}, x, { unread: false, msgs: x.msgs.concat([{ from: 'host', t: this.fmt(T) + ' ' + nowHM(), text: v }]) }) : x) });
         this.say('Στάλθηκε στον/στην ' + (cb ? cb.name : 'πελάτη') + '.');
       },
       dateByOpts: [['arr', 'Άφιξης'], ['dep', 'Αναχώρησης'], ['on', 'Κράτησης']].map(o => ({ v: o[0], t: o[1], sel: s.dateBy === o[0] })),
@@ -2065,7 +2159,10 @@ class Component extends DCLogic {
       navBadge: String(badgeN), hasNavBadge: badgeN > 0,
       isAuto: auto, isManual: !auto,
       syncAgo: s.syncAgo,
-      syncNow: () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
+      syncLine: this.REAL ? 'Δεν έχει συνδεθεί ακόμα · πέρασε τις κρατήσεις του με το χέρι' : 'Τελευταίος έλεγχος ' + s.syncAgo,
+      todayLabel: ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'][this.dt(T).getUTCDay()] + ' ' + this.dt(T).getUTCDate() + ' ' + this.MONG[this.dt(T).getUTCMonth()],
+      exportMonth: this.MONG[this.dt(T).getUTCMonth()],
+      syncNow: this.REAL ? () => this.say('Ο αυτόματος συγχρονισμός με το Booking.com δεν έχει μπει ακόμα. Πέρασε τις κρατήσεις του Booking από «Νέα κράτηση → Από Booking.com».') : () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
       toast: s.toast, hasToast: !!s.toast,
       stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, hasStripBtn: hasStripBtn, stripBtn: stripBtn,
       tiles: shownTiles, noTiles: shownTiles.length === 0, statusChips: statusChips, occupiedText: occupied + ' από 12 με πελάτες',
@@ -2108,17 +2205,17 @@ class Component extends DCLogic {
         run: () => this.testRequest()
       },
       set1Title: auto ? 'Σύνδεση Beds24' : 'Ημερολόγια Booking.com',
-      set1Sub: auto ? 'Booking.com και σάιτ · διαθεσιμότητα, τιμές, κρατήσεις' : '12 συνδεδεμένα · iCal μέσα και έξω · κλείνουν εκεί και τα αιτήματα σε αναμονή',
+      set1Sub: auto ? 'Booking.com και σάιτ · διαθεσιμότητα, τιμές, κρατήσεις' : this.REAL ? 'Δεν έχουν συνδεθεί ακόμα · οι κρατήσεις του Booking περνιούνται με το χέρι' : '12 συνδεδεμένα · iCal μέσα και έξω · κλείνουν εκεί και τα αιτήματα σε αναμονή',
       set2Sub: auto ? 'Χρέωση [προκαταβολή %] με την κράτηση, το υπόλοιπο [πότε]' : 'Δέσμευση στην κάρτα · απάντηση σε 24 ώρες',
       exportCsv: () => {
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
-        const paid = B.filter(b => b.status === 'confirmed' && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === '2026-07').sort((a, b) => a.start < b.start ? -1 : 1);
-        const left = B.filter(b => b.status === 'confirmed' && (b.kind === 'free' || b.kind === 'test') && b.start.slice(0, 7) === '2026-07').length;
+        const paid = B.filter(b => b.status === 'confirmed' && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === T.slice(0, 7)).sort((a, b) => a.start < b.start ? -1 : 1);
+        const left = B.filter(b => b.status === 'confirmed' && (b.kind === 'free' || b.kind === 'test') && b.start.slice(0, 7) === T.slice(0, 7)).length;
         const rows = [['Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Πελάτης', 'Χώρος', 'Πηγή', 'Πληρωμή', 'Ποσό', 'Προμήθεια Booking (περίπου)']]
           .concat(paid.map(b => [b.start, this.endOf(b), b.nights, b.name, b.unit ? this.unitName(b.unit) : '', ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source],
             b.source === 'booking' ? 'Μέσω Booking.com' : (b.source === 'site' ? 'Κάρτα (σάιτ)' : PAYW[b.pay]), b.total, b.source === 'booking' ? (b.total * this.COMMISSION).toFixed(2).replace('.', ',') : '0']));
-        this.csv(rows, 'logistis-iouliou-2026.csv');
-        this.say('Κατέβηκε το αρχείο του Ιουλίου με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
+        this.csv(rows, 'logistis-' + T.slice(0, 7) + '.csv');
+        this.say('Κατέβηκε το αρχείο του ' + this.MONG[+T.slice(5, 7) - 1] + ' ' + T.slice(0, 4) + ' με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
       },
       detail: detail, hasDetail: hasDetail
     });
@@ -2419,9 +2516,15 @@ class Component extends DCLogic {
   }
   let channel = null;
   function loadRequests() {
-    return SB.from('booking_requests').select('*').eq('is_test', false).order('created_at', { ascending: false }).limit(300).then(function (res) {
-      if (res.error) { comp.say('Δεν φορτώθηκαν τα αιτήματα: ' + res.error.message); comp.setState({ live: false }); return; }
-      comp.applyRows(res.data || []);
+    const from = comp.add(athensISO(), -400);
+    return Promise.all([
+      SB.from('booking_requests').select('*').eq('is_test', false).gte('check_out', from).order('created_at', { ascending: false }).limit(1000),
+      SB.from('owner_stays').select('*').gte('check_out', from).order('check_in').limit(2000),
+      SB.from('unit_blocks').select('unit, night').gte('night', comp.add(athensISO(), -60)).limit(5000)
+    ]).then(function (rs) {
+      const bad = rs.find(function (r) { return r.error; });
+      if (bad) { comp.say('Δεν φορτώθηκαν οι κρατήσεις: ' + bad.error.message); comp.setState({ live: false }); return; }
+      comp.applyRows(rs[0].data || [], rs[1].data || [], rs[2].data || []);
     });
   }
   function startLive() {
@@ -2433,7 +2536,8 @@ class Component extends DCLogic {
     channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
       if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
       loadRequests();
-    }).subscribe();
+    }).on('postgres_changes', { event: '*', schema: 'public', table: 'owner_stays' }, function () { loadRequests(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
     // a request can expire while the page is open
     clearInterval(startLive.t); startLive.t = setInterval(loadRequests, 5 * 60000);

@@ -1431,7 +1431,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Test mode: your request reached the owners, but no card was held. Card payment comes later.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
@@ -1488,7 +1488,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Δοκιμαστική λειτουργία: το αίτημα έφτασε στους ιδιοκτήτες, αλλά δεν δεσμεύτηκε κάρτα. Η πληρωμή με κάρτα μπαίνει αργότερα.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
@@ -1666,13 +1666,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
 
   /* ================= calendar ================= */
-  const today = athensNow();
+  let today = athensNow();
   const key = (y, m, d) => y * 10000 + (m + 1) * 100 + d;
   const kY = (k) => Math.floor(k / 10000), kM = (k) => Math.floor(k / 100) % 100 - 1, kD = (k) => k % 100;
   const kDate = (k) => new Date(Date.UTC(kY(k), kM(k), kD(k)));
   const kNext = (k) => { const d = kDate(k); d.setUTCDate(d.getUTCDate() + 1); return key(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); };
   const dayNum = (k) => Math.round(kDate(k).getTime() / 864e5);
-  const todayKey = key(today.y, today.m, today.d);
+  let todayKey = key(today.y, today.m, today.d);
   let fmtShort, fmtLong, fmtMonth, fmtDay;
   function makeFormats() {
     const loc = LOCALE[lang] || 'en-GB';
@@ -1683,34 +1683,54 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   makeFormats();
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  const bookedCache = {};
-  // Demo bookings, one calendar per physical room (4 rooms + the apartment). Later each reads its own Booking.com calendar.
-  function bookedSet(y, m, sub) {
-    const id = (y * 12 + m) * 16 + sub;
-    if (bookedCache[id]) return bookedCache[id];
-    const r = rng(id * 7919 + 13), n = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(), s = new Set();
-    const runs = (m === 6 || m === 7 ? 4 : m >= 4 && m <= 8 ? 3 : 1) + (sub === 11 ? 1 : 0);
-    for (let i = 0; i < runs; i++) {
-      const st = 1 + Math.floor(r() * (n - 4)), len = 2 + Math.floor(r() * 5);
-      for (let d = st; d < Math.min(n + 1, st + len); d++) s.add(key(y, m, d));
-    }
-    return (bookedCache[id] = s);
+  // Real availability from the booking system: how many rooms (or the apartment) are taken each night.
+  // Only counts come to the browser, never names. The server checks again when a request is sent.
+  const CAP = { room: 11, apt: 1 };
+  const taken = { room: {}, apt: {} };
+  const typeOf = (u) => (UNITS[u].id === 'apt' ? 'apt' : 'room');
+  const takenOn = (k, u) => taken[typeOf(u)][k] || 0;
+  const isoKey = (s) => +String(s).replace(/-/g, '');
+  const isoOf = (y, m, d) => y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  let availTimer = null;
+  function loadAvailability() {
+    const end = new Date(Date.UTC(today.y, today.m, today.d + 560));
+    return fetch(LM_API + '/rest/v1/rpc/site_availability', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY },
+      body: JSON.stringify({ p_from: isoOf(today.y, today.m, today.d), p_to: isoOf(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate()) })
+    }).then((r) => (r.ok ? r.json() : Promise.reject(new Error('availability'))))
+      .then((rows) => {
+        const next = { room: {}, apt: {} };
+        rows.forEach((r) => { if (next[r.unit_type]) next[r.unit_type][isoKey(r.night)] = r.taken; });
+        taken.room = next.room; taken.apt = next.apt;
+        // dates the guest picked a moment ago may have been taken in the meantime
+        if (cal.ci && cal.co && !rangeFree(cal.unit, cal.ci, cal.co)) { cal.ci = null; cal.co = null; }
+        renderCal();
+      }).catch(() => {});
   }
-  // Requests waiting for the owner's answer hold one room for their nights, so a second guest
-  // can't ask for the same room. A hold drops on its own after 24 hours (here: kept in this browser).
-  const HOLD_MS = 24 * 3600 * 1000;
-  let holds = [];
-  try { holds = JSON.parse(localStorage.getItem('lm-holds') || '[]').filter((h) => h.exp > Date.now()); } catch (e) { holds = []; }
-  const saveHolds = () => { try { localStorage.setItem('lm-holds', JSON.stringify(holds)); } catch (e) {} };
-  const heldBy = (k, sub) => holds.some((h) => h.sub === sub && k >= h.ci && k < h.co && h.exp > Date.now());
-  const subBooked = (k, sub) => bookedSet(kY(k), kM(k), sub).has(k) || heldBy(k, sub);
-  const dayFull = (k, u) => UNITS[u].subs.every((sub) => subBooked(k, sub));
+  const dayFull = (k, u) => takenOn(k, u) >= CAP[typeOf(u)];
   function freeSubs(u, a, b) {
-    return UNITS[u].subs.filter((sub) => { for (let x = a; x < b; x = kNext(x)) if (subBooked(x, sub)) return false; return true; });
+    let worst = 0;
+    for (let x = a; x < b; x = kNext(x)) worst = Math.max(worst, takenOn(x, u));
+    return Array.from({ length: Math.max(0, CAP[typeOf(u)] - worst) }, (_, i) => i);
   }
   const cal = { y: today.y, m: today.m, ci: null, co: null, guests: 2, unit: 0, note: '' };
   const isBooked = (k) => dayFull(k, cal.unit);
   const rangeFree = (u, a, b) => freeSubs(u, a, b).length > 0;
+
+  /* The calendar follows the real day: when the page wakes up or midnight passes in Athens,
+     today moves, past days lock, and anything picked in the past is cleared. */
+  function syncToday() {
+    const n = athensNow(), k = key(n.y, n.m, n.d);
+    if (k === todayKey) return;
+    today = n; todayKey = k;
+    if (cal.ci && cal.ci < k) { cal.ci = null; cal.co = null; }
+    if (cal.y < n.y || (cal.y === n.y && cal.m < n.m)) { cal.y = n.y; cal.m = n.m; }
+    loadAvailability();
+    renderCal();
+  }
+  setTimeout(() => { loadAvailability(); }, 0);
+  setInterval(() => { syncToday(); loadAvailability(); }, 5 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { syncToday(); loadAvailability(); } });
 
   // The room/apartment toggle in the booking bar, plus the availability line under it.
   function renderUnits() {
@@ -1938,8 +1958,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       }
       go.disabled = false; go.textContent = label;
       $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: payload.email });
-      const sub = freeSubs(cal.unit, cal.ci, cal.co)[0];
-      if (sub !== undefined) { holds.push({ sub, ci: cal.ci, co: cal.co, exp: Date.now() + HOLD_MS }); saveHolds(); }
+      loadAvailability();
       sentOk = true;
       $('#reqForm').hidden = true; $('#reqDone').hidden = false;
       $('#dClose').focus();
