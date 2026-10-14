@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html data-mood="noon"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Life's Moments Redesign</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +34,7 @@
 }
 * { box-sizing: border-box; }
 html, body { background: var(--bg); color: var(--ink); }
-body { font: 400 16px/1.6 var(--font-body); transition: background-color .9s ease, color .9s ease; }
+body { font: 400 16px/1.6 var(--font-body); }
 button { font-family: inherit; color: inherit; cursor: pointer; }
 button:disabled { cursor: not-allowed; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
@@ -773,6 +773,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 /* ---------- sections as stacked sheets: each one its own tone, rising over the one before ---------- */
 :root { --sec-a: #EAEEF0; --sec-b: #FBF5F0; --sheet-r: 40px; }
+/* The one fixed look: Cycladic white & blue. Written here (not in JS) so the first paint is already right. */
+:root[data-mood="noon"] {
+  --bg: #FFFFFF; --surface: #FFFFFF; --deep: #F0F2F4; --ink: #0B2545; --muted: #596B81;
+  --line: #DDE0E5; --range: #E0EAF5; --nav: rgba(255, 255, 255, 0.92); --shadow: rgba(11, 37, 69, 0.13);
+  --accent: #0D5EAF; --accent-2: #0D5EAF; --accent-ink: #FFFFFF;
+  --sec-a: #EAF1F8; --sec-b: #F3F7FB; color-scheme: light;
+}
 .moments { background: var(--bg); }
 .rooms, .place, .guide, .reviews, .foot-wrap {
   position: relative; margin-top: calc(var(--sheet-r) * -1); border-radius: var(--sheet-r) var(--sheet-r) 0 0;
@@ -1592,42 +1599,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   menuBtn.addEventListener('click', openSheet);
   $('#sheetClose').addEventListener('click', closeSheet);
   sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
-
-  /* ================= mood (lighting) ================= */
-  // One fixed look. Colours come from PALETTE (Cycladic white & blue).
-  const mood = 'noon';
-  document.documentElement.dataset.mood = mood;
-
-  /* ================= colour palette: Cycladic white & blue =================
-     background, text, buttons, and a second tone for italics and icons.
-     The other shades (cards, lines, grey text) are worked out from these four. */
-  const PALETTE = { bg: '#FFFFFF', ink: '#0B2545', accent: '#0D5EAF', accent2: '#0D5EAF' };
-  const hx = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const toHex = (r) => '#' + r.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, '0')).join('').toUpperCase();
-  const mixH = (a, b, k) => { const A = hx(a), B = hx(b); return toHex(A.map((v, i) => v + (B[i] - v) * k)); };
-  const lumH = (h) => { const c = hx(h).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
-  const contrastH = (a, b) => { const x = lumH(a), y = lumH(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
-  const rgba = (h, a) => 'rgba(' + hx(h).join(', ') + ', ' + a + ')';
-  function applyPalette() {
-    const p = PALETTE;
-    const dark = lumH(p.bg) < 0.2, st = document.documentElement.style;
-    const v = dark ? {
-      '--bg': p.bg, '--surface': mixH(p.bg, p.ink, .07), '--deep': mixH(p.bg, '#000000', .3), '--ink': p.ink, '--muted': mixH(p.ink, p.bg, .35),
-      '--line': mixH(p.bg, p.ink, .16), '--range': mixH(p.bg, p.accent2, .2), '--nav': rgba(p.bg, .9), '--shadow': 'rgba(0, 0, 0, .5)'
-    } : {
-      '--bg': p.bg, '--surface': mixH(p.bg, '#FFFFFF', .65), '--deep': mixH(p.bg, p.ink, .06), '--ink': p.ink, '--muted': mixH(p.ink, p.bg, .32),
-      '--line': mixH(p.bg, p.ink, .14), '--range': mixH(p.bg, p.accent2, .13), '--nav': rgba(p.bg, .92), '--shadow': rgba(p.ink, .13)
-    };
-    v['--accent'] = p.accent; v['--accent-2'] = p.accent2;
-    // two extra section tones, so neighbouring sections never share a background
-    v['--sec-a'] = dark ? mixH(p.bg, p.ink, .05) : mixH(p.bg, p.accent2, .085);
-    v['--sec-b'] = dark ? mixH(p.bg, p.accent2, .09) : mixH(mixH(p.bg, '#FFFFFF', .5), p.accent, .05);
-    v['--accent-ink'] = contrastH('#FFFFFF', p.accent) >= 4.5 ? '#FFFFFF' : (dark ? p.bg : '#111111');
-    Object.keys(v).forEach((k) => st.setProperty(k, v[k]));
-    st.setProperty('color-scheme', dark ? 'dark' : 'light');
-  }
-  applyPalette();
-
 
   /* ================= header: clear over the hero, glass after ================= */
   const topBar = $('#top');
