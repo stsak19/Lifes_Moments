@@ -916,7 +916,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-10', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
+      tab: 'today', detail: null, req: null, customer: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
@@ -961,7 +961,7 @@ class Component extends DCLogic {
     if (this.REAL) {
       Object.assign(this.state, {
         notes: {}, threads: [], thread: null, blocks: {}, overrides: {}, bookings: [],
-        calStart: this.add(this.TODAY, -4), priceMonth: this.TODAY.slice(0, 7), syncAgo: 'δεν έχει συνδεθεί ακόμα'
+        calStart: this.TODAY, priceMonth: this.TODAY.slice(0, 7), syncAgo: 'δεν έχει συνδεθεί ακόμα'
       });
     }
     this.state.bookings = this.expire(this.state.bookings);
@@ -994,7 +994,7 @@ class Component extends DCLogic {
     if (this.REAL) {
       this.PAST = [];
       // The day changes at midnight in Greece even if the admin stays open (or wakes up the next morning).
-      const roll = () => { const d = athensISO(); if (d !== this.TODAY) { const shift = this.state.calStart === this.add(this.TODAY, -4); this.TODAY = d; if (shift) this.state.calStart = this.add(d, -4); this.forceUpdate(); if (this.reload) this.reload(); } };
+      const roll = () => { const d = athensISO(); if (d !== this.TODAY) { const shift = this.state.calStart <= d; this.TODAY = d; if (shift) this.state.calStart = d; this.forceUpdate(); if (this.reload) this.reload(); } };
       setInterval(roll, 60000);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) roll(); });
     }
@@ -1319,12 +1319,39 @@ class Component extends DCLogic {
   open(id) { this.setState({ detail: id, customer: null, newOpen: false }); }
   openGuest(name) { this.setState({ customer: name, detail: null, newOpen: false }); }
   openReq(id) { this.setState({ tab: 'today', req: id, detail: null, newOpen: false }); }
-  block(unit, date) { this.setState({ blocks: Object.assign({}, this.state.blocks, { [unit + '|' + date]: true }) }); }
-  unblockFrom(unit, date) {
-    const nb = Object.assign({}, this.state.blocks);
-    let d = date;
-    while (nb[unit + '|' + d]) { delete nb[unit + '|' + d]; d = this.add(d, 1); }
+  /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
+     the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
+     calendar is read again from the database, so it never shows something that was not saved. */
+  setBlocks(add, remove) {
+    const cur = this.state.blocks;
+    add = add.filter(k => k.split('|')[1] >= this.TODAY && !cur[k]);
+    remove = remove.filter(k => cur[k]);
+    if (!add.length && !remove.length) return;
+    const nb = Object.assign({}, cur);
+    add.forEach(k => { nb[k] = true; });
+    remove.forEach(k => { delete nb[k]; });
     this.setState({ blocks: nb });
+    const sb = PUSH.client;
+    if (!this.REAL || !sb) return;
+    const by = this.state.user ? this.state.user.name : '';
+    const jobs = [];
+    if (add.length) jobs.push(sb.from('unit_blocks').upsert(add.map(k => { const p = k.split('|'); return { unit: p[0], night: p[1], created_by: by }; }), { onConflict: 'unit,night', ignoreDuplicates: true }));
+    const byUnit = {};
+    remove.forEach(k => { const p = k.split('|'); (byUnit[p[0]] = byUnit[p[0]] || []).push(p[1]); });
+    Object.keys(byUnit).forEach(u => jobs.push(sb.from('unit_blocks').delete().eq('unit', u).in('night', byUnit[u])));
+    Promise.all(jobs).then(rs => {
+      const bad = rs.find(r => r.error);
+      if (!bad) return;
+      this.say('Δεν αποθηκεύτηκε: ' + bad.error.message + '. Δοκίμασε ξανά.');
+      if (this.reload) this.reload();
+    }, () => { this.say('Δεν αποθηκεύτηκε, έλεγξε τη σύνδεση και δοκίμασε ξανά.'); if (this.reload) this.reload(); });
+  }
+  block(unit, date) { this.setBlocks([unit + '|' + date], []); }
+  unblockFrom(unit, date) {
+    const keys = [];
+    let d = date;
+    while (this.state.blocks[unit + '|' + d]) { keys.push(unit + '|' + d); d = this.add(d, 1); }
+    this.setBlocks([], keys);
   }
   seasonFor(date) {
     const md = date.slice(5);
@@ -1641,7 +1668,7 @@ class Component extends DCLogic {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', cell: u.id + '|' + x, down: calDown(u.id, x),
             sel: inCalSel(u.id, x) ? '1' : '',
             style: segBase + 'text-align: center; padding: 0; background: #C94A3F; color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0'),
-            tap: guard(() => { const nb = Object.assign({}, this.state.blocks); delete nb[u.id + '|' + x]; this.setState({ blocks: nb }); this.say(u.name + ' · ' + this.fmt(x) + ' άνοιξε ξανά.'); }) });
+            tap: guard(() => { this.setBlocks([], [u.id + '|' + x]); this.say(u.name + ' · ' + this.fmt(x) + ' άνοιξε ξανά.'); }) });
           i++;
         } else if (pendAt(u.id, x)) {
           const p = pendAt(u.id, x);
@@ -1652,7 +1679,7 @@ class Component extends DCLogic {
             style: segBase + 'grid-column: span ' + span + '; border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606; font-weight: 600' });
           i = j + 1;
         } else {
-          segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
+          segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
           i++;
         }
       }
@@ -1704,23 +1731,22 @@ class Component extends DCLogic {
       calSelVals.hasCalSel = true;
       calSelVals.calSelTitle = where + ' · ' + when;
       calSelVals.calSelSub = bits.join(' · ');
-      calSelVals.canCloseSel = free.length > 0;
+      const freeFut = free.filter(k => k.split('|')[1] >= T);
+      calSelVals.canCloseSel = freeFut.length > 0;
       calSelVals.canOpenSel = shut.length > 0;
-      calSelVals.calCloseLabel = 'Κλείσιμο ' + free.length + (free.length === 1 ? ' νύχτας' : ' νυχτών');
+      calSelVals.calCloseLabel = 'Κλείσιμο ' + freeFut.length + (freeFut.length === 1 ? ' νύχτας' : ' νυχτών');
       calSelVals.calOpenLabel = 'Άνοιγμα ' + shut.length + (shut.length === 1 ? ' νύχτας' : ' νυχτών');
       const allFuture = ds[0] >= T;
       calSelVals.canBookSel = units.length === 1 && booked === 0 && shut.length === 0 && allFuture;
       calSelVals.calBookSel = () => this.openNew({ type: units[0].id === 'apt' ? 'apt' : 'room', unit: units[0].id, start: ds[0], end: this.add(ds[ds.length - 1], 1), guests: String(Math.min(2, units[0].cap)) });
       calSelVals.calCloseSel = () => {
-        const nb = Object.assign({}, this.state.blocks);
-        free.forEach(k => { nb[k] = true; });
-        this.setState({ blocks: nb, calSel: null, calEdit: false });
-        this.say(where + ' · ' + when + ': έκλεισαν ' + free.length + (free.length === 1 ? ' νύχτα' : ' νύχτες') + (auto ? ', και στο Booking αμέσως.' : '. Κλείνουν και στο Booking στον επόμενο συγχρονισμό.'));
+        this.setBlocks(freeFut, []);
+        this.setState({ calSel: null, calEdit: false });
+        this.say(where + ' · ' + when + ': έκλεισαν ' + freeFut.length + (freeFut.length === 1 ? ' νύχτα' : ' νύχτες') + (auto ? ', και στο Booking αμέσως.' : '. Κλείνουν και στο Booking στον επόμενο συγχρονισμό.'));
       };
       calSelVals.calOpenSel = () => {
-        const nb = Object.assign({}, this.state.blocks);
-        shut.forEach(k => { delete nb[k]; });
-        this.setState({ blocks: nb, calSel: null, calEdit: false });
+        this.setBlocks([], shut);
+        this.setState({ calSel: null, calEdit: false });
         this.say(where + ' · ' + when + ': άνοιξαν ' + shut.length + (shut.length === 1 ? ' νύχτα.' : ' νύχτες.'));
       };
       /* Price and minimum nights for the selected days */
@@ -2359,7 +2385,7 @@ class Component extends DCLogic {
       setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
       guest: guest, hasGuest: hasGuest,
       showSlot: (s.tab === 'list' || s.tab === 'guests') && !hasDetail && !hasGuest && !(s.newOpen && s.nb),
-      goToday: () => this.go('today'), goCal: () => this.go('cal'), goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
+      goToday: () => this.go('today'), goCal: () => { this.setState({ calStart: T }); this.go('cal'); }, goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
       navBadge: String(badgeN), hasNavBadge: badgeN > 0,
       isAuto: auto, isManual: !auto,
       syncAgo: s.syncAgo,
@@ -2391,9 +2417,9 @@ class Component extends DCLogic {
         if (cur && cur.u1 === n.u1 && cur.u2 === n.u2 && cur.a === n.a && cur.b === n.b) return;
         this.setState({ calSel: n, calEdit: false });
       },
-      calPrev: () => this.setState({ calStart: this.add(s.calStart, -7) }),
+      calPrev: () => { const p = this.add(s.calStart, -7); this.setState({ calStart: p < T ? T : p }); },
       calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
-      calToday: () => this.setState({ calStart: this.add(T, -4) }),
+      calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Σύρε πάνω από κενές μέρες, και σε περισσότερα δωμάτια, για να κλείσεις πολλές μαζί. Κλικ σε κενή μέρα για να την κλείσεις, κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
         : 'Σύρε πάνω από κενές μέρες, και σε περισσότερα δωμάτια, για να κλείσεις πολλές μαζί. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες, σε κενή μέρα για να την κλείσεις.',
