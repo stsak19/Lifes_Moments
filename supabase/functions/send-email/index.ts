@@ -58,8 +58,9 @@ function vars(g: Guest, s: Settings): Record<string, string> {
     address: s.address ?? '',
     maps_url: s.maps_url ?? '',
     phone: s.phone ?? '',
-    arrival: (lang === 'en' ? s.arrival_en : s.arrival_el) ?? '',
-    extra: (lang === 'en' ? s.extra_en : s.extra_el) ?? '',
+    // English guests get the Greek text when no English one was written, so nobody is left without directions.
+    arrival: (lang === 'en' ? (s.arrival_en || s.arrival_el) : s.arrival_el) ?? '',
+    extra: (lang === 'en' ? (s.extra_en || s.extra_el) : s.extra_el) ?? '',
     site_url: s.site_url ?? ''
   };
 }

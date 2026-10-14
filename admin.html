@@ -577,13 +577,35 @@ button:disabled{cursor:default}
 
 <div style="padding: 18px; border-bottom: 1px solid #EEF2F2">
 <div style="font-weight: 600; margin-bottom: 2px">Στοιχεία που μπαίνουν στα emails</div>
-<div style="font-size: 12px; color: #4A5B5E; margin-bottom: 14px">Γράφονται μία φορά εδώ και μπαίνουν μόνα τους στα κείμενα. Ό,τι αφήσεις κενό, η γραμμή του δεν εμφανίζεται στο email.</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-bottom: 14px">Τα emails φεύγουν μόνα τους: «λάβαμε το αίτημά σου» όταν στέλνει αίτημα ο πελάτης, και επιβεβαίωση με αυτά τα στοιχεία όταν δέχεσαι. Στα ελληνικά αν είναι Έλληνας, αλλιώς στα αγγλικά. Γράψε τα στοιχεία μία φορά. Ό,τι αφήσεις κενό, δεν εμφανίζεται στο email.</div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px">
 <sc-for list="{{emx.fields}}" as="f" hint-placeholder-count="4">
 <div>
 <label for="{{f.id}}" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">{{f.label}}</label>
 <sc-if value="{{f.isLine}}" hint-placeholder-val="{{true}}"><input id="{{f.id}}" type="{{f.type}}" autocomplete="off" value="{{f.value}}" onChange="{{f.set}}" style="{{f.lineStyle}}"></sc-if>
 <sc-if value="{{f.isArea}}" hint-placeholder-val="{{false}}"><textarea id="{{f.id}}" value="{{f.value}}" onChange="{{f.set}}" style="{{f.areaStyle}}"></textarea></sc-if>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 3px">{{f.hint}}</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px">
+<button type="button" onClick="{{emx.testEl}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">Στείλε δοκιμή επιβεβαίωσης στο email μου (ελληνικά)</button>
+<button type="button" onClick="{{emx.testEn}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">Δοκιμή (αγγλικά)</button>
+</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 6px">Πρώτα πάτα «Αποθήκευση αλλαγών», για να μπουν τα στοιχεία που έγραψες.</div>
+</div>
+
+<div style="padding: 12px 18px; border-bottom: 1px solid #EEF2F2"><button type="button" onClick="{{emx.toggleAdv}}" style="padding: 0; border: 0; background: none; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">{{emx.advLabel}}</button></div>
+
+<sc-if value="{{emx.adv}}" hint-placeholder-val="{{false}}">
+<div style="padding: 18px; border-bottom: 1px solid #EEF2F2">
+<div style="font-weight: 600; margin-bottom: 2px">Αποστολέας</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-bottom: 14px">Τεχνικές ρυθμίσεις. Αλλάζουν μόνο όταν επαληθευτεί δικό σας domain στο Resend.</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px">
+<sc-for list="{{emx.advFields}}" as="f" hint-placeholder-count="4">
+<div>
+<label for="{{f.id}}" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">{{f.label}}</label>
+<sc-if value="{{f.isLine}}" hint-placeholder-val="{{true}}"><input id="{{f.id}}" type="{{f.type}}" autocomplete="off" value="{{f.value}}" onChange="{{f.set}}" style="{{f.lineStyle}}"></sc-if>
 <div style="font-size: 12px; color: #4A5B5E; margin-top: 3px">{{f.hint}}</div>
 </div>
 </sc-for>
@@ -622,6 +644,8 @@ button:disabled{cursor:default}
 </div>
 </sc-if>
 </div>
+
+</sc-if>
 
 <div style="padding: 18px; display: flex; flex-direction: column; gap: 10px">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><div style="font-weight: 600">Τελευταία emails</div><button type="button" onClick="{{emx.refreshLog}}" style="padding: 0; border: 0; background: none; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ανανέωση</button></div>
@@ -1281,12 +1305,13 @@ class Component extends DCLogic {
       this.say('Αποθηκεύτηκαν τα emails προς τους πελάτες.');
     }, () => { this.emPatch({ busy: '' }); this.say('Δεν αποθηκεύτηκε. Έλεγξε το ίντερνετ.'); });
   }
-  emCall(action) {
+  emCall(action, kind, lang) {
     const sb = PUSH.client, em = this.state.em;
     if (!sb || !em || em.busy) return;
-    const t = em.tpl[em.kind + '|' + em.lang] || { subject: '', body: '' };
+    const k = kind || em.kind, l = lang || em.lang;
+    const t = em.tpl[k + '|' + l] || { subject: '', body: '' };
     this.emPatch({ busy: action });
-    sb.functions.invoke('send-email', { body: { action: action, kind: em.kind, lang: em.lang, subject: t.subject, body: t.body } }).then(res => {
+    sb.functions.invoke('send-email', { body: { action: action, kind: k, lang: l, subject: t.subject, body: t.body } }).then(res => {
       this.emPatch({ busy: '' });
       const d = res.data;
       if (res.error || !d) { this.say('Δεν απάντησε ο server. Δοκίμασε ξανά.'); return; }
@@ -1870,19 +1895,21 @@ class Component extends DCLogic {
       const KINDS = [['received', 'Λήψη αιτήματος'], ['confirmed', 'Αποδοχή'], ['rejected', 'Απόρριψη'], ['expired', 'Έληξε']];
       const KIND_SUB = { received: 'Φεύγει αμέσως όταν ο πελάτης στείλει αίτημα', confirmed: 'Φεύγει όταν πατήσεις αποδοχή · εδώ μπαίνουν οι οδηγίες άφιξης', rejected: 'Φεύγει όταν πατήσεις απόρριψη', expired: 'Φεύγει όταν περάσουν 24 ώρες χωρίς απάντηση' };
       const FIELDS = [
-        ['from_name', 'Όνομα αποστολέα', 'text', 'Το όνομα που βλέπει ο πελάτης στο email'],
-        ['from_email', 'Email αποστολέα', 'email', 'Πρέπει να είναι από domain που έχεις επαληθεύσει στο Resend'],
-        ['reply_to', 'Οι απαντήσεις πηγαίνουν στο', 'email', 'Το email σου, ώστε το «Απάντηση» του πελάτη να σε βρίσκει'],
-        ['owner_copy_email', 'Κρυφό αντίγραφο σε εσένα', 'email', 'Προαιρετικό · παίρνεις αντίγραφο κάθε email'],
         ['checkin_time', 'Ώρα check-in', 'text', 'π.χ. 15:00'],
         ['checkout_time', 'Ώρα check-out', 'text', 'π.χ. 11:00'],
         ['phone', 'Τηλέφωνο επικοινωνίας', 'text', ''],
         ['maps_url', 'Σύνδεσμος Google Maps', 'text', 'Ξεκινά με https://'],
         ['address', 'Διεύθυνση', 'area', 'Όπως θα τη δει ο πελάτης'],
         ['arrival_el', 'Πώς θα φτάσει (ελληνικά)', 'area', 'π.χ. από το λιμάνι, πού παρκάρει, πού βρίσκει τα κλειδιά'],
-        ['arrival_en', 'Πώς θα φτάσει (αγγλικά)', 'area', ''],
+        ['arrival_en', 'Πώς θα φτάσει (αγγλικά)', 'area', 'Για ξένους πελάτες. Αν μείνει κενό, μπαίνει το ελληνικό κείμενο'],
         ['extra_el', 'Άλλες πληροφορίες (ελληνικά)', 'area', 'π.χ. wifi, κανόνες του χώρου, πρωινό'],
-        ['extra_en', 'Άλλες πληροφορίες (αγγλικά)', 'area', '']
+        ['extra_en', 'Άλλες πληροφορίες (αγγλικά)', 'area', 'Για ξένους πελάτες. Αν μείνει κενό, μπαίνει το ελληνικό κείμενο']
+      ];
+      const ADV_FIELDS = [
+        ['from_name', 'Όνομα αποστολέα', 'text', 'Το όνομα που βλέπει ο πελάτης στο email'],
+        ['from_email', 'Email αποστολέα', 'email', 'Πρέπει να είναι από domain που έχεις επαληθεύσει στο Resend'],
+        ['reply_to', 'Οι απαντήσεις πηγαίνουν στο', 'email', 'Το email σου, ώστε το «Απάντηση» του πελάτη να σε βρίσκει'],
+        ['owner_copy_email', 'Κρυφό αντίγραφο σε εσένα', 'email', 'Προαιρετικό · παίρνεις αντίγραφο κάθε email']
       ];
       const VARS = [['name', 'όνομα'], ['check_in', 'άφιξη'], ['check_out', 'αναχώρηση'], ['nights', 'νύχτες'], ['guests', 'άτομα'], ['unit', 'δωμάτιο'], ['unit_type', 'είδος'], ['checkin_time', 'ώρα check-in'], ['checkout_time', 'ώρα check-out'], ['address', 'διεύθυνση'], ['maps_url', 'χάρτης'], ['arrival', 'πώς θα φτάσει'], ['extra', 'άλλες πληροφορίες'], ['phone', 'τηλέφωνο'], ['site_url', 'σάιτ']];
       const box = 'width: 100%; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 15px;';
@@ -1890,6 +1917,12 @@ class Component extends DCLogic {
       const ST = { sent: ['Στάλθηκε', '#1F5039'], failed: ['Απέτυχε', '#8A3412'], skipped: ['Παραλείφθηκε', '#4A5B5E'] };
       const KL = { received: 'Λήψη', confirmed: 'Αποδοχή', rejected: 'Απόρριψη', expired: 'Έληξε' };
       const on = !!em.set.enabled;
+      const mkField = f => ({
+        id: 'emf-' + f[0], label: f[1], hint: f[3], value: em.set[f[0]] == null ? '' : em.set[f[0]],
+        isLine: f[2] !== 'area', isArea: f[2] === 'area', type: f[2] === 'email' ? 'email' : 'text',
+        lineStyle: box + 'height: 44px;', areaStyle: box + 'min-height: 78px; padding: 10px 12px; line-height: 1.45; resize: vertical;',
+        set: e => { const v = e && e.target ? e.target.value : ''; this.emEdit(n => { n.set[f[0]] = v; }); }
+      });
       return {
         show: true, ready: true,
         enabledAria: on ? 'true' : 'false',
@@ -1897,12 +1930,11 @@ class Component extends DCLogic {
         enabledKnob: 'width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF',
         enabledSub: on ? 'Ο πελάτης παίρνει email όταν στέλνει αίτημα και όταν απαντάς' : 'Κλειστά · δεν φεύγει κανένα email προς τους πελάτες',
         flipEnabled: () => this.emEdit(n => { n.set.enabled = !n.set.enabled; }),
-        fields: FIELDS.map(f => ({
-          id: 'emf-' + f[0], label: f[1], hint: f[3], value: em.set[f[0]] == null ? '' : em.set[f[0]],
-          isLine: f[2] !== 'area', isArea: f[2] === 'area', type: f[2] === 'email' ? 'email' : 'text',
-          lineStyle: box + 'height: 44px;', areaStyle: box + 'min-height: 78px; padding: 10px 12px; line-height: 1.45; resize: vertical;',
-          set: e => { const v = e && e.target ? e.target.value : ''; this.emEdit(n => { n.set[f[0]] = v; }); }
-        })),
+        fields: FIELDS.map(mkField), advFields: ADV_FIELDS.map(mkField),
+        adv: !!em.adv, advLabel: em.adv ? 'Κρύψε τις προχωρημένες ρυθμίσεις' : 'Προχωρημένα: αποστολέας και κείμενα των emails',
+        toggleAdv: () => this.emPatch({ adv: !em.adv }),
+        testEl: () => this.emCall('test', 'confirmed', 'el'), testEn: () => this.emCall('test', 'confirmed', 'en'),
+        testBusy: em.busy === 'test',
         kinds: KINDS.map(k => ({ label: k[1], style: k[0] === em.kind ? chipOn : chipOff, pressed: k[0] === em.kind ? 'true' : 'false', pick: () => this.emPatch({ kind: k[0], prev: null }) })),
         langs: [['el', 'Ελληνικά'], ['en', 'Αγγλικά']].map(l => ({ label: l[1], style: l[0] === em.lang ? chipOn : chipOff, pressed: l[0] === em.lang ? 'true' : 'false', pick: () => this.emPatch({ lang: l[0], prev: null }) })),
         kindSub: KIND_SUB[em.kind],
