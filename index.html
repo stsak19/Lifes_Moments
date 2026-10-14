@@ -167,8 +167,10 @@ h1, h2, h3 { text-wrap: balance; }
 .hero-still, .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hero-still { background: #0A1220 url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzYwLjMxLjEwMgD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAAbADADASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAABAUDAQL/xAAlEAACAQMEAgEFAAAAAAAAAAABAgMABBESITFBBRMiI1FSYXH/xAAYAQADAQEAAAAAAAAAAAAAAAAAAQIDBP/EABsRAAIDAQEBAAAAAAAAAAAAAAABAhExEiFh/9oADAMBAAIRAxEAPwCeXeFXVhn7fulQyhV1scA1r5eJSnthX6TDK1O8XOszekjBXo1yc2xfCqQ7sNyQRwKmeQsZg4nUbZwdquwSrarlyMEfEDmh3N5ZvbyN7nMn4kd1dJFVFAIJFePDHC9kb1zySW1yqtGTr72wBUtLkw3BGMo3VLc7alz/ACpVxwjREcjyQGD2fGMYAPQqc7GKYMp3GzCuWLFrogkkHmlSxoHU6Rk1tzcUw0Q1yiQgA6nO9eXgQ2zyFgS9AjGq4AO4zWkpIn0g4GOKUklEHgW4QiPA5B5ra1nbRhuRXpt+aG5IuyBxUR9VBE//2Q==) center / cover no-repeat; } /* a tiny blurred copy of the poster paints with the page, so the hero never flashes dark before the photo arrives */
 /* The video stays invisible until it is really playing, so a refresh never shows a black or empty frame. */
-.hero-video { opacity: 0; transition: opacity .6s ease; }
+.hero-video { opacity: 0; transition: opacity .8s ease; }
 .hero-video.ready { opacity: 1; }
+/* Phones get the photo only: no video download, no play button. */
+@media (max-width: 760px) { .hero-video, .play-btn { display: none !important; } }
 .fade { position: absolute; inset: 0; z-index: 1; background: #05080F; opacity: 0; pointer-events: none; }
 .hero-switch { position: absolute; z-index: 3; bottom: 76px; right: 24px; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(6, 10, 18, .42); border: 1px solid rgba(248, 244, 236, .3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .hero-switch button { border: 0; background: transparent; color: #F8F4EC; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
@@ -2152,14 +2154,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   /* ================= hero: drone video or 3D house ================= */
   const hv = $('#heroVideo'), playBtn = $('#playBtn'), introEl = $('#intro');
   hv.muted = true;
-  const loadVideo = () => { if (!hv.getAttribute('src')) hv.src = mqMobile.matches ? 'hero-960.mp4' : 'hero-1600.mp4'; }; // only fetched if someone picks the video
+  const loadVideo = () => { if (!mqMobile.matches && !hv.getAttribute('src')) hv.src = 'hero-1600.mp4'; }; // desktop only: phones keep the photo
   let heroMode = 'video'; // the hero is always the 360 video of the building
   let wantPlay = !reduce, introOnScreen = true;
+  // The video sits paused on its first frame (the same picture as the photo under it), fades in while still,
+  // and only then starts moving. A moving video fading over a still photo shows a double image, which reads as flicker.
+  let revealed = false;
   const hero3d = { playing: false, onMode: null }; // filled in by the 3D part
-  const isPlaying = () => (heroMode === 'video' ? !hv.paused : hero3d.playing);
+  const isPlaying = () => (heroMode === 'video' ? (revealed ? !hv.paused : wantPlay) : hero3d.playing);
   const setPlayLabel = () => { const p = isPlaying(); playBtn.setAttribute('aria-label', t(p ? 'hero.pause' : 'hero.play')); playBtn.dataset.state = p ? 'playing' : 'paused'; };
   langHooks.push(setPlayLabel);
-  function tryPlay() { const p = hv.play(); if (p && p.catch) p.catch(setPlayLabel); }
+  function tryPlay() { if (!revealed) return; const p = hv.play(); if (p && p.catch) p.catch(() => { wantPlay = false; setPlayLabel(); }); }
   function syncPlayback() {
     if (heroMode === 'photo') { hv.pause(); hero3d.playing = false; }
     else if (heroMode === 'video') { hero3d.playing = false; if (wantPlay && introOnScreen) tryPlay(); else hv.pause(); }
@@ -2167,10 +2172,16 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     setPlayLabel();
   }
   hv.addEventListener('play', setPlayLabel);
-  // Show the video only once a real frame is on screen (the still underneath covers the wait).
-  const showVideo = () => hv.classList.add('ready');
-  hv.addEventListener('playing', () => { if (hv.classList.contains('ready')) return; if (hv.requestVideoFrameCallback) hv.requestVideoFrameCallback(showVideo); else setTimeout(showVideo, 80); });
   hv.addEventListener('pause', setPlayLabel);
+  function revealVideo() {
+    if (hv.classList.contains('ready')) return;
+    hv.classList.add('ready');
+    setTimeout(() => { revealed = true; syncPlayback(); }, 850); // after the .8s fade
+  }
+  // Wait until the first frame is decoded and painted (two animation frames), then fade it in.
+  const onFirstFrame = () => requestAnimationFrame(() => requestAnimationFrame(revealVideo));
+  hv.addEventListener('loadeddata', onFirstFrame, { once: true });
+  mqMobile.addEventListener('change', () => { if (heroMode === 'video') { loadVideo(); syncPlayback(); } });
   playBtn.addEventListener('click', () => { wantPlay = !isPlaying(); syncPlayback(); });
   new IntersectionObserver((en) => { introOnScreen = en[0].isIntersecting; syncPlayback(); }).observe(introEl);
   function setHeroMode(m) {
