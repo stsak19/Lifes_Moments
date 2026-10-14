@@ -2238,7 +2238,7 @@ class Component extends DCLogic {
           const name = (f.name || '').trim();
           if (!name) { upd({ error: 'Γράψε όνομα.' }); return; }
           if (blockReason) { upd({ error: blockReason }); return; }
-          if (f.kind === 'paid' && !(amt >= 0)) { upd({ error: 'Βάλε το ποσό που πληρώνει.' }); return; }
+          if (f.kind === 'paid' && (amt == null || !Number.isFinite(amt) || amt < 0)) { upd({ error: normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.' }); return; }
           if (this.REAL && PUSH.client) {
             if (this._savingStay) return;
             const bk = f.kind === 'booking';
