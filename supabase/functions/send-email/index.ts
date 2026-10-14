@@ -142,9 +142,21 @@ async function scan() {
 }
 
 // ---------- every 10 minutes: scheduled offers ----------
-async function offerMail(o: Offer, to: { name: string; lang: string; email: string }, s: Settings, secret: string) {
+/** Each guest gets their own code for an offer, e.g. THASOS-K7M3QPX: the offer's code (or LM) plus 7 letters
+ *  signed from the offer and the guest's email, so a resend gives the same code. It works only with that email. */
+const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+async function personalCode(offerId: string, prefix: string | null | undefined, email: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode('promo|' + offerId + '|' + email.toLowerCase())));
+  let tail = '';
+  for (let i = 0; i < 7; i++) tail += CODE_ABC[mac[i] % CODE_ABC.length];
+  const head = String(prefix ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16) || 'LM';
+  return head + '-' + tail;
+}
+async function offerMail(o: Offer & { id?: string }, to: { name: string; lang: string; email: string }, s: Settings, secret: string) {
   const link = await unsubUrl(URL_ + '/functions/v1', secret, to.email);
-  return { mail: buildOfferMail(o, to, s, link), link };
+  const code = await personalCode(o.id ?? 'preview', o.code, to.email, secret);
+  return { mail: buildOfferMail({ ...o, code }, to, s, link), link, code };
 }
 
 async function runOffers() {
@@ -171,13 +183,13 @@ async function runOffers() {
 
     let sent = 0, failed = 0;
     for (const a of (todo as { email: string; name: string; lang: string }[]).slice(0, OFFER_BATCH)) {
-      const { mail, link } = await offerMail(o as Offer, a, s, secret);
+      const { mail, link, code } = await offerMail(o as Offer & { id: string }, a, s, secret);
       const attempts = (state.get(a.email)?.attempts ?? 0) + 1;
       const res = await sendMail(s, a.email, mail, {
         idem: 'offer-' + o.id + '-' + a.email + '-' + attempts, bcc: false,
         headers: { 'List-Unsubscribe': '<' + link + '>', 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }
       });
-      await admin.from('promo_sends').upsert({ offer_id: o.id, email: a.email, status: res.ok ? 'sent' : 'failed', attempts, error: res.ok ? null : res.error, provider_id: res.id ?? null, updated_at: new Date().toISOString() }, { onConflict: 'offer_id,email' });
+      await admin.from('promo_sends').upsert({ offer_id: o.id, email: a.email, code, status: res.ok ? 'sent' : 'failed', attempts, error: res.ok ? null : res.error, provider_id: res.id ?? null, updated_at: new Date().toISOString() }, { onConflict: 'offer_id,email' });
       if (res.ok) sent++; else { failed++; log('offer_email_failed', { offer: o.id, error: res.error }); }
       await sleep(PAUSE_MS);
     }

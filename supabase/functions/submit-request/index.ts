@@ -46,11 +46,11 @@ Deno.serve(async (req) => {
   if (phone.replace(/\D/g, '').length < 8 || phone.length > 40) bad.push('phone');
   if (bad.length) return json({ error: 'invalid', fields: bad }, 400, h);
 
-  // A code is checked again here: only a code that is valid for these nights is sent on with its discount.
+  // A code is checked again here: it must be this guest's own code (sent to this email) and valid for these nights.
   let discount_pct: number | null = null;
   if (promoRaw && !promo) return json({ error: 'promo', promo: 'invalid' }, 400, h);
   if (promo) {
-    const { data: pc, error: pcErr } = await admin.rpc('promo_check', { p_code: promo, p_in: check_in, p_out: check_out });
+    const { data: pc, error: pcErr } = await admin.rpc('promo_check', { p_code: promo, p_email: email, p_in: check_in, p_out: check_out });
     if (pcErr) { log('promo_check_error', { message: pcErr.message }); return json({ error: 'server' }, 500, h); }
     if (!pc || pc.status !== 'ok') return json({ error: 'promo', promo: pc?.status ?? 'invalid' }, 400, h);
     discount_pct = Number(pc.pct);
