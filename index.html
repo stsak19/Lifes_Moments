@@ -2,7 +2,10 @@
 <title>Life's Moments · Θάσος</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preload" as="image" href="hero-poster.jpg" fetchpriority="high">
+<!-- The map styles are only needed far down the page, so they load without holding back the first paint. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Commissioner:wght@300;400;500;600&family=Piazzolla:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap">
 <style>
 /* Layout: fixed glass header; hero video; booking bar with the Google rating; a day at the house; rooms (switch + every unit sliding); the place; Thasos guide; reviews; footer.
@@ -162,7 +165,7 @@ h1, h2, h3 { text-wrap: balance; }
 /* ---------- intro ---------- */
 .intro { position: relative; height: 86vh; height: 86svh; min-height: 540px; max-height: 940px; overflow: hidden; background: #0A1220; }
 .hero-still, .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.hero-still { background: #0A1220; }
+.hero-still { background: #0A1220 url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzYwLjMxLjEwMgD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAAbADADASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAABAUDAQL/xAAlEAACAQMEAgEFAAAAAAAAAAABAgMABBESITFBBRMiI1FSYXH/xAAYAQADAQEAAAAAAAAAAAAAAAAAAQIDBP/EABsRAAIDAQEBAAAAAAAAAAAAAAABAhExEiFh/9oADAMBAAIRAxEAPwCeXeFXVhn7fulQyhV1scA1r5eJSnthX6TDK1O8XOszekjBXo1yc2xfCqQ7sNyQRwKmeQsZg4nUbZwdquwSrarlyMEfEDmh3N5ZvbyN7nMn4kd1dJFVFAIJFePDHC9kb1zySW1yqtGTr72wBUtLkw3BGMo3VLc7alz/ACpVxwjREcjyQGD2fGMYAPQqc7GKYMp3GzCuWLFrogkkHmlSxoHU6Rk1tzcUw0Q1yiQgA6nO9eXgQ2zyFgS9AjGq4AO4zWkpIn0g4GOKUklEHgW4QiPA5B5ra1nbRhuRXpt+aG5IuyBxUR9VBE//2Q==) center / cover no-repeat; } /* a tiny blurred copy of the poster paints with the page, so the hero never flashes dark before the photo arrives */
 /* The video stays invisible until it is really playing, so a refresh never shows a black or empty frame. */
 .hero-video { opacity: 0; transition: opacity .6s ease; }
 .hero-video.ready { opacity: 1; }
@@ -1054,7 +1057,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 <main>
   <section class="intro" id="intro" aria-label="Life's Moments">
     <!-- Hero: the 360 video around the building. Swap hero-1600.mp4 / hero-960.mp4 (and hero-poster.jpg) for the real footage. -->
-    <img class="hero-still" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+    <img class="hero-still" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
     <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" aria-label="360° video around the building"></video>
     <div class="grade"></div>
     <div class="shade"></div>
