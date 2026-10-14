@@ -435,6 +435,10 @@ a.score:hover { border-color: var(--muted); }
 .form .chk input { min-height: 0; width: 18px; height: 18px; padding: 0; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
 .form input { min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); }
 .form label:has(input[required]) > span::after { content: " *"; color: var(--accent); }
+.form textarea { min-height: 92px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); line-height: 1.45; resize: vertical; }
+.form #fCode { text-transform: uppercase; letter-spacing: .06em; }
+#fPromo.ok { color: #2F6B3A; font-weight: 500; }
+#fPromo.bad { color: #B23A2B; }
 .form input[aria-invalid="true"] { border-color: #D65A4A; box-shadow: 0 0 0 1px #D65A4A; }
 #fErr { color: #D65A4A; }
 .card-ph { display: flex; justify-content: space-between; align-items: center; min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px dashed var(--line); color: var(--muted); font-size: 14px; }
@@ -1339,8 +1343,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
         <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
+        <label for="fNote"><span data-i18n="m.note">Message to the hosts (optional)</span><textarea id="fNote" name="note" rows="3" maxlength="1000" data-i18n-ph="m.noteph" placeholder="Arrival time, questions, anything we should know"></textarea></label>
+        <label for="fCode"><span data-i18n="m.code">Discount code (optional)</span><input id="fCode" name="promo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" aria-describedby="fPromo"></label>
+        <p class="fine" id="fPromo" role="status" hidden></p>
         <label class="chk" for="fMkt"><input id="fMkt" name="marketing" type="checkbox"><span data-i18n="m.mkt">I would like to receive offers for future stays (optional). I can unsubscribe at any time.</span></label>
-        <p class="fine" id="fPromo" hidden></p>
         <input id="fWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
         <p class="fine" id="fErr" data-i18n="m.err" role="alert" hidden>Fill in your name, a valid email and your phone to continue.</p>
@@ -1440,7 +1446,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.note': 'Message to the hosts (optional)', 'm.noteph': 'Arrival time, questions, anything we should know', 'm.code': 'Discount code (optional)', 'm.codeok': 'Code {c}: −{p}% off your stay.', 'm.codedates': 'Code {c} does not apply to these dates.', 'm.codebad': 'This code is not valid. Check it or leave the field empty.', 'm.codecheck': 'Checking the code…', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.closedT': 'Not taking bookings right now', 'm.closed': "We're not taking booking requests through the site at the moment. Please check back soon.", 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
@@ -1497,7 +1503,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.note': 'Μήνυμα προς εμάς (προαιρετικό)', 'm.noteph': 'Ώρα άφιξης, ερωτήσεις, ό,τι θέλετε να ξέρουμε', 'm.code': 'Κωδικός έκπτωσης (προαιρετικό)', 'm.codeok': 'Κωδικός {c}: −{p}% στη διαμονή σας.', 'm.codedates': 'Ο κωδικός {c} δεν ισχύει για αυτές τις ημερομηνίες.', 'm.codebad': 'Ο κωδικός δεν είναι σωστός. Ελέγξτε τον ή αφήστε το πεδίο κενό.', 'm.codecheck': 'Έλεγχος κωδικού…', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.closedT': 'Δεν δεχόμαστε κρατήσεις αυτή την περίοδο', 'm.closed': 'Αυτή την περίοδο δεν δεχόμαστε αιτήματα κράτησης από το σάιτ. Ελάτε ξανά σύντομα.', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
@@ -1532,6 +1538,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     $$('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     $$('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+    $$('[data-i18n-ph]').forEach((el) => { el.setAttribute('placeholder', t(el.dataset.i18nPh)); });
     $('#langCur').textContent = lang === 'el' ? 'ΕΛ' : lang.toUpperCase();
     $$('[data-lang]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.lang === lang)));
     langHooks.forEach((f) => f());
@@ -1930,14 +1937,49 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#mSum').textContent = staySummary();
     $('#reqForm').hidden = !siteOpen; $('#reqClosed').hidden = siteOpen; $('#reqDone').hidden = true; $('#fErr').hidden = true;
     $('#fMkt').checked = false;
-    $('#fPromo').hidden = !promo; $('#fPromo').textContent = promo ? t('m.promo', { c: promo }) : '';
+    if (promo && !$('#fCode').value) $('#fCode').value = promo;
+    codeState = { code: '', status: '', pct: 0 }; checkCode();
     ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).removeAttribute('aria-invalid'));
     modal.hidden = false; lenis && lenis.stop();
     setTimeout(() => (siteOpen ? $('#fName') : $('#cClose')).focus(), 30);
   }
+  /* Discount code: checked against the offers as the guest types, for the dates picked. The server checks it again. */
+  const isoK = (k) => kY(k) + '-' + String(kM(k) + 1).padStart(2, '0') + '-' + String(kD(k)).padStart(2, '0');
+  let codeState = { code: '', status: '', pct: 0 }, codeSeq = 0, codeTimer = null;
+  function showCode(kind, vars) {
+    const el = $('#fPromo'), inp = $('#fCode');
+    const key = { ok: 'm.codeok', dates: 'm.codedates', invalid: 'm.codebad', check: 'm.codecheck' }[kind];
+    el.hidden = !key; el.textContent = key ? t(key, vars || {}) : '';
+    el.className = 'fine' + (kind === 'ok' ? ' ok' : kind === 'dates' || kind === 'invalid' ? ' bad' : '');
+    if (kind === 'dates' || kind === 'invalid') inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid');
+  }
+  function checkCode() {
+    const c = $('#fCode').value.trim().toUpperCase();
+    const seq = ++codeSeq;
+    clearTimeout(codeTimer);
+    if (!c) { codeState = { code: '', status: '', pct: 0 }; showCode(''); return Promise.resolve(codeState); }
+    if (!/^[A-Z0-9_-]{3,24}$/.test(c) || !cal.ci || !cal.co) { codeState = { code: c, status: 'invalid', pct: 0 }; showCode('invalid', { c: c }); return Promise.resolve(codeState); }
+    if (codeState.code === c && codeState.at === cal.ci + '-' + cal.co && codeState.status) { showCode(codeState.status, { c: c, p: codeState.pct }); return Promise.resolve(codeState); }
+    showCode('check');
+    return fetch(LM_API + '/rest/v1/rpc/promo_check', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY },
+      body: JSON.stringify({ p_code: c, p_in: isoK(cal.ci), p_out: isoK(cal.co) })
+    }).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((j) => {
+      if (seq !== codeSeq) return codeState;
+      codeState = { code: c, status: j && j.status === 'ok' ? 'ok' : j && j.status === 'dates' ? 'dates' : 'invalid', pct: (j && j.pct) || 0, at: cal.ci + '-' + cal.co };
+      showCode(codeState.status, { c: c, p: codeState.pct });
+      return codeState;
+    }, () => {
+      // No answer (offline): say nothing here; the server checks the code when the request is sent.
+      if (seq === codeSeq) { codeState = { code: c, status: 'unknown', pct: 0 }; showCode(''); }
+      return codeState;
+    });
+  }
+  $('#fCode').addEventListener('input', () => { clearTimeout(codeTimer); codeTimer = setTimeout(checkCode, 450); });
+  $('#fCode').addEventListener('change', () => { checkCode(); });
   let sentOk = false;
   function closeModal() {
-    if (sentOk) { sentOk = false; cal.ci = null; cal.co = null; cal.note = ''; renderCal(); } modal.hidden = true; lenis && lenis.start(); lastFocus && lastFocus.focus && lastFocus.focus(); }
+    if (sentOk) { sentOk = false; cal.ci = null; cal.co = null; cal.note = ''; $('#fNote').value = ''; $('#fCode').value = ''; promo = ''; try { sessionStorage.removeItem('lm-promo'); } catch (e) {} renderCal(); } modal.hidden = true; lenis && lenis.start(); lastFocus && lastFocus.focus && lastFocus.focus(); }
   $('#reqBtn').addEventListener('click', () => {
     if (cal.ci && cal.co && cal.guests <= UNITS[cal.unit].guests) openModal(); else openCal();
   });
@@ -1966,12 +2008,22 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const go = $('#reqForm button[type=submit]');
     if (go.disabled) return;
     if (!cal.ci || !cal.co) { closeModal(); openCal(); return; } // the nights were taken: pick new dates first
+    // A typed code must be valid for these dates. If it could not be checked (offline), the server checks it.
+    if ($('#fCode').value.trim() && codeState.status !== 'ok' && codeState.status !== 'unknown') {
+      go.disabled = true;
+      checkCode().then((cs) => {
+        go.disabled = false;
+        if (cs.status === 'ok' || cs.status === 'unknown') $('#reqForm').requestSubmit();
+        else $('#fCode').focus({ preventScroll: true });
+      });
+      return;
+    }
     const iso = (k) => kY(k) + '-' + String(kM(k) + 1).padStart(2, '0') + '-' + String(kD(k)).padStart(2, '0');
     const payload = {
       unit_type: UNITS[cal.unit].id === 'apt' ? 'apt' : 'room', check_in: iso(cal.ci), check_out: iso(cal.co), guests: cal.guests,
       name: $('#fName').value.trim(), email: $('#fEmail').value.trim(), phone: $('#fPhone').value.trim(),
       lang: lang === 'el' ? 'el' : 'en', website: $('#fWeb') ? $('#fWeb').value : '',
-      marketing: $('#fMkt').checked, promo: promo
+      marketing: $('#fMkt').checked, promo: $('#fCode').value.trim().toUpperCase(), note: $('#fNote').value.trim()
     };
     const label = go.textContent;
     go.disabled = true; go.textContent = t('m.sending');
@@ -1980,12 +2032,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY }, body: JSON.stringify(payload)
     }).then((r) => r.json().then((j) => ({ r, j }), () => ({ r, j: {} }))).then(({ r, j }) => {
       if (!r.ok) {
+        if (j.error === 'promo') { go.disabled = false; go.textContent = label; codeState = { code: payload.promo, status: j.promo === 'dates' ? 'dates' : 'invalid', pct: 0, at: cal.ci + '-' + cal.co }; showCode(codeState.status, { c: payload.promo }); $('#fCode').focus({ preventScroll: true }); return; }
         if (j.error === 'closed') { siteOpen = false; go.disabled = false; go.textContent = label; $('#reqForm').hidden = true; $('#reqClosed').hidden = false; $('#cClose').focus(); return; }
         if (j.error === 'full') { cal.ci = null; cal.co = null; renderCal(); return fail('m.full'); }
         return fail(j.error === 'too_many' ? 'm.many' : j.error === 'invalid' ? 'm.err' : 'm.fail');
       }
       go.disabled = false; go.textContent = label;
-      $('#dSum').textContent = staySummary() + (j.ref ? ' · LM-' + j.ref : '') + '. ' + t('m.emailed', { e: payload.email });
+      $('#dSum').textContent = staySummary() + (j.discount_pct ? ' · −' + j.discount_pct + '%' : '') + (j.ref ? ' · LM-' + j.ref : '') + '. ' + t('m.emailed', { e: payload.email });
       loadAvailability();
       sentOk = true;
       $('#reqForm').hidden = true; $('#reqDone').hidden = false;

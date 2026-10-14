@@ -24,9 +24,10 @@ Deno.serve(async (req) => {
   const name = String(b.name ?? '').trim().replace(/\s+/g, ' ');
   const email = String(b.email ?? '').trim().toLowerCase();
   const phone = String(b.phone ?? '').trim();
-  const promo = /^[A-Za-z0-9_-]{3,24}$/.test(String(b.promo ?? '')) ? String(b.promo).toUpperCase() : null;
-  // A code from an offer email goes into the note, so the owners see it when they answer.
-  const note = ((promo ? 'Κωδικός προσφοράς: ' + promo + '\n' : '') + String(b.note ?? '').trim()).trim().slice(0, 1000) || null;
+  // The guest's message to the owners (optional) and a discount code (optional, typed or from an offer email).
+  const note = String(b.note ?? '').replace(/\r\n?/g, '\n').trim().slice(0, 1000) || null;
+  const promoRaw = String(b.promo ?? '').trim();
+  const promo = /^[A-Za-z0-9_-]{3,24}$/.test(promoRaw) ? promoRaw.toUpperCase() : null;
   const marketing = b.marketing === true; // the optional tick for offers; never assumed
   const lang = b.lang === 'en' ? 'en' : 'el';
 
@@ -44,6 +45,16 @@ Deno.serve(async (req) => {
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) bad.push('email');
   if (phone.replace(/\D/g, '').length < 8 || phone.length > 40) bad.push('phone');
   if (bad.length) return json({ error: 'invalid', fields: bad }, 400, h);
+
+  // A code is checked again here: only a code that is valid for these nights is sent on with its discount.
+  let discount_pct: number | null = null;
+  if (promoRaw && !promo) return json({ error: 'promo', promo: 'invalid' }, 400, h);
+  if (promo) {
+    const { data: pc, error: pcErr } = await admin.rpc('promo_check', { p_code: promo, p_in: check_in, p_out: check_out });
+    if (pcErr) { log('promo_check_error', { message: pcErr.message }); return json({ error: 'server' }, 500, h); }
+    if (!pc || pc.status !== 'ok') return json({ error: 'promo', promo: pc?.status ?? 'invalid' }, 400, h);
+    discount_pct = Number(pc.pct);
+  }
 
   // Same request sent twice (double tap, retry): answer with the first one.
   const { data: same } = await admin.from('booking_requests').select('id, ref_no')
@@ -64,16 +75,16 @@ Deno.serve(async (req) => {
   if (!fits) return json({ error: 'full' }, 409, h);
 
   const { data: row, error } = await admin.from('booking_requests')
-    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang, marketing_consent: marketing })
+    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang, marketing_consent: marketing, promo_code: discount_pct ? promo : null, discount_pct })
     .select('id, name, unit_type, check_in, check_out, guests, ref_no').single();
   if (error) { log('insert_error', { message: error.message }); return json({ error: 'server' }, 500, h); }
   log('request_saved', { id: row.id, unit_type, nights: (Date.parse(check_out as string) - Date.parse(check_in as string)) / DAY });
 
   try {
-    const r = await notify({ title: 'Νέο αίτημα κράτησης', body: what(row) + '\nΑπάντησε μέσα σε 24 ώρες.', url: 'admin.html?req=' + row.id, tag: 'req-' + row.id });
+    const r = await notify({ title: 'Νέο αίτημα κράτησης', body: what(row) + (discount_pct ? '\nΚωδικός ' + promo + ' · −' + discount_pct + '%' : '') + '\nΑπάντησε μέσα σε 24 ώρες.', url: 'admin.html?req=' + row.id, tag: 'req-' + row.id });
     log('request_notified', { id: row.id, ...r });
   } catch (e) {
     log('notify_error', { id: row.id, message: String(e) }); // the request is saved either way
   }
-  return json({ ok: true, id: row.id, ref: row.ref_no }, 200, h);
+  return json({ ok: true, id: row.id, ref: row.ref_no, discount_pct }, 200, h);
 });

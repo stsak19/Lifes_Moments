@@ -236,7 +236,10 @@ button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{backgr
 <h2 style="margin: 0 0 8px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Πελάτης</h2>
 <div style="font-size: 14px; color: #2E4448">{{req.contact}}</div>
 <sc-if value="{{req.hasNote}}" hint-placeholder-val="{{false}}">
-<div style="margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: #F4F7F7; font-size: 14px">«{{req.note}}»</div>
+<div style="margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: #F4F7F7; font-size: 14px"><div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Μήνυμα πελάτη</div><div style="white-space: pre-line">«{{req.note}}»</div></div>
+</sc-if>
+<sc-if value="{{req.hasPromo}}" hint-placeholder-val="{{false}}">
+<div style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: #FBEFD9; color: #5C3606; font-size: 14px; font-weight: 600"><span aria-hidden="true">%</span>{{req.promoText}}</div>
 </sc-if>
 </div>
 
@@ -949,7 +952,7 @@ class Component extends DCLogic {
         { id: 'b15', name: 'Οικογένεια Νικολάου', type: 'apt', unit: 'apt', start: '2026-07-26', nights: 7, guests: 4, total: 1330, source: 'site', status: 'confirmed', email: 'nikolaou@example.com', phone: '+30 69xx xxx xxx' },
         { id: 'b16', name: 'Paul Becker', type: 'room', unit: 'r8', start: '2026-07-24', nights: 4, guests: 3, total: 540, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+49 1xx xxx xxxx', ago: 15 },
         { id: 'p0', name: 'Olivia Brown', type: 'room', unit: null, start: '2026-07-16', nights: 2, guests: 2, total: 240, source: 'site', status: 'pending', ago: 26, email: 'olivia@example.com', phone: '+44 7xxx xxxxxx' },
-        { id: 'p1', name: 'Μαρία Κωνσταντίνου', type: 'room', unit: null, start: '2026-07-15', nights: 4, guests: 2, total: 480, source: 'site', status: 'pending', ago: 6, email: 'maria@example.com', phone: '+30 69xx xxx xxx', note: 'Γιορτάζουμε την επέτειό μας. Αν γίνεται, ένα ήσυχο δωμάτιο.' },
+        { id: 'p1', name: 'Μαρία Κωνσταντίνου', type: 'room', unit: null, start: '2026-07-15', nights: 4, guests: 2, total: 408, fullTotal: 480, promo: 'THASOS15', discountPct: 15, source: 'site', status: 'pending', ago: 6, email: 'maria@example.com', phone: '+30 69xx xxx xxx', note: 'Γιορτάζουμε την επέτειό μας. Αν γίνεται, ένα ήσυχο δωμάτιο.' },
         { id: 'p2', name: 'Thomas Müller', type: 'room', unit: null, start: '2026-07-17', nights: 3, guests: 3, total: 405, source: 'site', status: 'pending', ago: 21, email: 'thomas@example.com', phone: '+49 1xx xxx xxxx', note: 'Θα φτάσουμε αργά, γύρω στις 22:00. Γίνεται;' },
         { id: 'p3', name: 'Γιώργος Αλεξίου', type: 'apt', unit: null, start: '2026-07-19', nights: 6, guests: 4, total: 1140, source: 'site', status: 'pending', ago: 2, email: 'giorgos@example.com', phone: '+30 69xx xxx xxx' }
       ]
@@ -1218,7 +1221,8 @@ class Component extends DCLogic {
     const status = r.status === 'expired' || late ? 'rejected' : r.status; // 'cancelled' passes through
     return {
       id: (this.ON['db-' + r.id] = athensISOof(r.created_at), 'db-' + r.id), dbId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
-      total: price || 0, priceless: price == null, source: 'site', status: status, expired: r.status === 'expired' || late,
+      total: price ? Math.round(price * (1 - (r.discount_pct || 0) / 100)) : 0, fullTotal: price || 0, promo: r.promo_code || '', discountPct: r.discount_pct || 0,
+      priceless: price == null, source: 'site', status: status, expired: r.status === 'expired' || late,
       ago: status === 'pending' ? Math.min(23, 24 - left, ago) : ago,
       email: r.email, phone: r.phone, note: r.note || '', by: r.decided_by || ''
     };
@@ -1588,6 +1592,8 @@ class Component extends DCLogic {
           acceptLabel: s.checking === rb.id ? (this.REAL ? 'Αποθήκευση…' : 'Έλεγχος στο Booking.com…') : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
           contact: rb.email + ' · ' + rb.phone,
           note: rb.note || '', hasNote: !!rb.note,
+          hasPromo: !!rb.promo && rb.discountPct > 0,
+          promoText: 'Κωδικός ' + (rb.promo || '') + ' · −' + (rb.discountPct || 0) + '%' + (rb.fullTotal && !rb.priceless ? ' · από ' + this.money(rb.fullTotal) + ' σε ' + this.money(rb.total) : ' · αφαίρεσέ το από την τιμή'),
           back: () => this.setState({ req: null }),
           accept: () => {
             if (!picked || this.state.checking) return;
