@@ -1646,9 +1646,15 @@ class Component extends DCLogic {
       if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
       this.drag = { kind: 'cal', unit: unit, anchor: x, moved: false };
     };
+    const pick1 = (unit, x) => () => {
+      if (this.justDragged) { this.justDragged = false; return; }
+      const i = uIdx(unit), c = this.state.calSel;
+      const same = c && c.u1 === i && c.u2 === i && c.a === x && c.b === x;
+      this.setState({ calSel: same ? null : { u1: i, u2: i, a: x, b: x }, calEdit: false });
+    };
     const guard = fn => () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calSel: null, calEdit: false }); fn(); };
     const segBase = 'touch-action: none; user-select: none; -webkit-user-select: none; height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
-    const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: guard(tap), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
+    const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: pick1(unit, x), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
       style: segBase + 'padding: 0;' + (inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
     const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const rows = this.UNITS.map(u => {
@@ -1668,7 +1674,7 @@ class Component extends DCLogic {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', cell: u.id + '|' + x, down: calDown(u.id, x),
             sel: inCalSel(u.id, x) ? '1' : '',
             style: segBase + 'text-align: center; padding: 0; background: #C94A3F; color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0'),
-            tap: guard(() => { this.setBlocks([], [u.id + '|' + x]); this.say(u.name + ' · ' + this.fmt(x) + ' άνοιξε ξανά.'); }) });
+            tap: pick1(u.id, x) });
           i++;
         } else if (pendAt(u.id, x)) {
           const p = pendAt(u.id, x);
@@ -1724,10 +1730,10 @@ class Component extends DCLogic {
       const when = ds.length === 1 ? this.fmt(ds[0]) : this.range(ds[0], ds[ds.length - 1]);
       const bits = [];
       if (free.length) bits.push(free.length + (free.length === 1 ? ' ελεύθερη νύχτα' : ' ελεύθερες νύχτες'));
-      if (shut.length) bits.push(shut.length + ' ήδη κλειστές');
+      if (shut.length) bits.push(shut.length + (shut.length === 1 ? ' ήδη κλειστή' : ' ήδη κλειστές'));
       if (booked) bits.push(booked + ' με κράτηση, δεν αλλάζουν');
       if (units.length > 1) bits.push('για νέα κράτηση διάλεξε ένα δωμάτιο');
-      else if (booked || shut.length) bits.push('για νέα κράτηση διάλεξε μέρες ελεύθερες');
+      else if ((booked || shut.length) && free.length) bits.push('για νέα κράτηση διάλεξε μόνο ελεύθερες μέρες');
       calSelVals.hasCalSel = true;
       calSelVals.calSelTitle = where + ' · ' + when;
       calSelVals.calSelSub = bits.join(' · ');
@@ -2432,8 +2438,8 @@ class Component extends DCLogic {
       calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
-        ? 'Σύρε πάνω από κενές μέρες, και σε περισσότερα δωμάτια, για να κλείσεις πολλές μαζί. Κλικ σε κενή μέρα για να την κλείσεις, κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Σύρε πάνω από κενές μέρες, και σε περισσότερα δωμάτια, για να κλείσεις πολλές μαζί. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες, σε κενή μέρα για να την κλείσεις.',
+        ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες.',
       filters: filters, items: items, noItems: items.length === 0, query: s.query,
       setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '' }),
       seasons: seasons, extraText: this.money(s.extra),
