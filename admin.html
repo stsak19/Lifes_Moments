@@ -508,10 +508,6 @@ button:disabled{cursor:default}
 <span><span style="display: block; font-weight: 600">Επιπλέον άτομο</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ανά νύχτα, πάνω από τα 2 άτομα</span></span>
 <span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{extraDown}}" aria-label="Μείωση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 52px; text-align: center; font-weight: 600">{{extraText}}</span><button type="button" onClick="{{extraUp}}" aria-label="Αύξηση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
 </div>
-<div style="flex: 1 1 300px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFFFFF; border-radius: 16px; padding: 12px 18px; min-height: 66px; box-sizing: border-box">
-<span><span style="display: block; font-weight: 600">Τέλος διαμονής</span><span style="display: block; font-size: 12px; color: #4A5B5E">Πληρώνεται στην άφιξη</span></span>
-<span style="font-size: 13px; color: #4A5B5E">[ποσό / νύχτα από λογιστή]</span>
-</div>
 </div>
 <div style="font-size: 13px; color: #4A5B5E">Αυτές οι τιμές ισχύουν μόνο για το σάιτ. Οι τιμές στο Booking.com αλλάζουν χωριστά, από το extranet του Booking.</div>
 </div>
@@ -544,24 +540,10 @@ button:disabled{cursor:default}
 <sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #0F5257">{{ow.you}}</span></div>
 </sc-for>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span><span style="display: block; font-weight: 500">Καθαρισμός</span><span style="display: block; font-size: 12px; color: #4A5B5E">Βλέπει μόνο τον πίνακα δωματίων, χωρίς ποσά και στοιχεία πελατών</span></span><span style="color: #4A5B5E">›</span></div>
 </div>
 </section>
 </div>
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
-<section>
-<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Κατάλυμα</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">Δωμάτια και διαμέρισμα</span><span style="display: block; font-size: 12px; color: #4A5B5E">11 δωμάτια + διαμέρισμα · άτομα, κρεβάτια, φωτογραφίες</span></span><span style="color: #4A5B5E">›</span></div>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">Πολιτική ακύρωσης</span><span style="display: block; font-size: 12px; color: #4A5B5E">[π.χ. δωρεάν ως 14 μέρες πριν]</span></span><span style="color: #4A5B5E">›</span></div>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">{{set1Title}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{set1Sub}}</span></span><span style="color: #4A5B5E">›</span></div>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">Πληρωμές</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{set2Sub}}</span></span><span style="color: #4A5B5E">›</span></div>
-<sc-if value="{{isAuto}}" hint-placeholder-val="{{false}}">
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span><span style="display: block; font-weight: 500">Αυτόματη ανάθεση δωματίου</span><span style="display: block; font-size: 12px; color: #4A5B5E">Πρώτα το μικρότερο δωμάτιο που χωράει τα άτομα</span></span><span style="color: #4A5B5E">›</span></div>
-</sc-if>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span><span style="display: block; font-weight: 500">Κείμενα και φωτογραφίες σάιτ</span><span style="display: block; font-size: 12px; color: #4A5B5E">Αρχική, δωμάτια, οδηγός Θάσου</span></span><span style="color: #4A5B5E">›</span></div>
-</div>
-</section>
 <button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
@@ -2206,9 +2188,6 @@ class Component extends DCLogic {
         label: s.testIn ? (PUSH.client ? 'Στέλνεται…' : 'Σε ' + s.testIn + '″…') : 'Στείλε δοκιμή',
         run: () => this.testRequest()
       },
-      set1Title: auto ? 'Σύνδεση Beds24' : 'Ημερολόγια Booking.com',
-      set1Sub: auto ? 'Booking.com και σάιτ · διαθεσιμότητα, τιμές, κρατήσεις' : this.REAL ? 'Δεν έχουν συνδεθεί ακόμα · οι κρατήσεις του Booking περνιούνται με το χέρι' : '12 συνδεδεμένα · iCal μέσα και έξω · κλείνουν εκεί και τα αιτήματα σε αναμονή',
-      set2Sub: auto ? 'Χρέωση [προκαταβολή %] με την κράτηση, το υπόλοιπο [πότε]' : 'Δέσμευση στην κάρτα · απάντηση σε 24 ώρες',
       exportCsv: () => {
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
         const paid = B.filter(b => b.status === 'confirmed' && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === T.slice(0, 7)).sort((a, b) => a.start < b.start ? -1 : 1);
