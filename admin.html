@@ -64,6 +64,34 @@ button:disabled{cursor:default}
 #app .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;box-sizing:border-box;width:max-content;max-width:min(640px,calc(100% - 32px));box-shadow:0 8px 28px rgba(10,58,62,.28)}
 @media (min-width:900px){#app .toast{left:calc(50% + 124px)}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
+
+/* Animated menu icons: play on hover and each time a menu item is pressed (class lm-play is added by the script at the end). */
+nav[aria-label="Μενού"] button svg *{transform-box:fill-box;transform-origin:center}
+nav[aria-label="Μενού"] button svg .ic-day{transform-origin:center}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-roof{animation:ic-lift .5s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-ring{animation:ic-lift .45s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-ring2{animation-delay:.06s}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-day{animation:ic-pop .5s .12s cubic-bezier(.34,1.56,.64,1) backwards}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-line{animation:ic-draw .45s ease backwards;transform-origin:left center}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-l2{animation-delay:.07s}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-l3{animation-delay:.14s}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-bubble{animation:ic-wiggle .55s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-person{animation:ic-hop .5s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-arc{animation:ic-spin .6s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-bar{animation:ic-draw .45s ease backwards;transform-origin:left center}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-b2{animation-delay:.08s}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k1{animation:ic-slide-l .55s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k2{animation:ic-slide-r .55s ease}
+nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k3{animation:ic-slide-l .55s .06s ease}
+@keyframes ic-lift{0%{transform:translateY(0)}40%{transform:translateY(-2.5px)}100%{transform:translateY(0)}}
+@keyframes ic-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes ic-draw{0%{transform:scaleX(0);opacity:0}100%{transform:scaleX(1);opacity:1}}
+@keyframes ic-wiggle{0%{transform:rotate(0) scale(1)}30%{transform:rotate(-8deg) scale(1.08)}60%{transform:rotate(6deg) scale(1.08)}100%{transform:rotate(0) scale(1)}}
+@keyframes ic-hop{0%{transform:translateY(0)}35%{transform:translateY(-3px)}65%{transform:translateY(0.5px)}100%{transform:translateY(0)}}
+@keyframes ic-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes ic-slide-l{0%{transform:translateX(0)}50%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+@keyframes ic-slide-r{0%{transform:translateX(0)}50%{transform:translateX(4px)}100%{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){nav[aria-label="Μενού"] button svg *{animation:none !important}}
 </style>
 </head>
 <body>
@@ -767,13 +795,13 @@ button:disabled{cursor:default}
 </div>
 </sc-if>
 <nav aria-label="Μενού" style="display: flex; flex-wrap: wrap; gap: 4px">
-<button type="button" onClick="{{goToday}}" style="{{nav.today}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="flex: 1">Αρχική</span><sc-if value="{{hasNavBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{navBadge}}</span></sc-if></button>
-<button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg><span style="flex: 1">Ημερολόγιο</span></button>
-<button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
-<button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #C2502A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
-<button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
-<button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path d="M5 10h8M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
-<button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
+<button type="button" onClick="{{goToday}}" style="{{nav.today}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-roof" d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="flex: 1">Αρχική</span><sc-if value="{{hasNavBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{navBadge}}</span></sc-if></button>
+<button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path class="ic-ring" d="M9 3v4"></path><path class="ic-ring ic-ring2" d="M15 3v4"></path><circle class="ic-day" cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"></circle></svg><span style="flex: 1">Ημερολόγιο</span></button>
+<button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-line ic-l1" d="M9 6h11"></path><path class="ic-line ic-l2" d="M9 12h11"></path><path class="ic-line ic-l3" d="M9 18h11"></path><path d="M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
+<button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-bubble" d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #C2502A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
+<button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><g class="ic-person"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path></g><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
+<button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-arc" d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path class="ic-bar ic-b1" d="M5 10h8"></path><path class="ic-bar ic-b2" d="M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
+<button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle class="ic-knob ic-k1" cx="16" cy="6" r="2"></circle><circle class="ic-knob ic-k2" cx="10" cy="12" r="2"></circle><circle class="ic-knob ic-k3" cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
 </nav>
 <div style="margin-top: auto; padding: 14px; border-radius: 14px; background: #EEF3F4; display: flex; flex-direction: column; gap: 10px">
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}">
@@ -2719,6 +2747,27 @@ class Component extends DCLogic {
   Promise.resolve(AUTH.current()).then(function (who) { if (who) enter(who); else showLogin(); }, showLogin);
 })();
 
+</script>
+<script>
+/* Menu icons: replay the icon animation each time a menu item is pressed. The page re-renders on click, so the item is looked up again by position after the render. */
+(function () {
+  var timer = null;
+  document.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('nav[aria-label="Μενού"] button') : null;
+    if (!btn) return;
+    var i = Array.prototype.indexOf.call(btn.parentNode.children, btn);
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      var nav = document.querySelector('nav[aria-label="Μενού"]');
+      var b = nav && nav.children[i];
+      if (!b) return;
+      b.classList.remove('lm-play');
+      void b.offsetWidth;
+      b.classList.add('lm-play');
+      clearTimeout(timer);
+      timer = setTimeout(function () { b.classList.remove('lm-play'); }, 900);
+    }); });
+  }, true);
+})();
 </script>
 </body>
 </html>
