@@ -2432,7 +2432,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     renderCal();
     const again = $('#calMonths button[data-k="' + k + '"]');
     if (again) again.focus();
-    if (cal.ci && cal.co) setTimeout(() => closeCal(false), 450);
   });
   $('#calPrev').addEventListener('click', () => { cal.m--; if (cal.m < 0) { cal.m = 11; cal.y--; } renderCal(); });
   $('#calNext').addEventListener('click', () => { cal.m++; if (cal.m > 11) { cal.m = 0; cal.y++; } renderCal(); });
