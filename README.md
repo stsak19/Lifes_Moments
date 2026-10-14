@@ -17,3 +17,15 @@ The drone video is a placeholder until real footage of the property is ready.
 ## Run it
 
 Open `index.html` in a browser, or turn on GitHub Pages (Settings → Pages → branch `main`, folder `/`).
+
+## Backend (Supabase project "Life's Moments")
+
+The approval flow now runs for real; the other admin screens still show fake data.
+
+- **Site → request.** `redesign.html` and `mobile-test.html` send the request form to the `submit-request` function. It checks the input, refuses nights that are already held (pending or confirmed requests; Booking.com joins this check once its calendar is synced in), saves the request in `booking_requests` and sends a push to every owner device. No card is held yet: Stripe comes later.
+- **Admin sign-in.** Owners sign in with email and password (Supabase Auth). Only emails in the `owners` table can make an account ("Πρώτη φορά εδώ; Φτιάξε κωδικό"), and Row Level Security lets only them read or answer requests. To add an owner: `insert into public.owners (email, name) values ('...', '...');`. `admin.html?demo=1` still opens the old preview accounts with fake data.
+- **Requests in the admin.** Real requests replace the demo ones on Today and in Bookings, update live, and accepting or declining saves to the database (if the other owner answered first, you are told).
+- **Push.** Each owner turns notifications on per device in Settings; the device is saved in `push_subscriptions`. The server signs and encrypts the messages itself (`supabase/functions/_shared/webpush.ts`); the key pair is made on first use and kept in Vault. "Στείλε δοκιμή" asks the server to push to your own devices.
+- **Every 10 minutes** (pg_cron → `request-reminders`): a reminder 4 hours before a request expires, and requests nobody answered within 24 hours are closed as expired.
+- Code: `supabase/migrations/` (tables, rules, schedule) and `supabase/functions/` (`submit-request`, `push`, `request-reminders`).
+- Still to come: emails to guests (needs an email provider), card holds with Stripe, Booking.com calendar sync, and moving the rest of the admin (bookings, blocks, prices) into the database.

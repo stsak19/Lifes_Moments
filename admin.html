@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600&amp;family=GFS+Didot&amp;family=Piazzolla:wght@500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 html{overflow-y:scroll;scrollbar-gutter:stable}
 body{margin:0;background:#EEF3F4}
@@ -43,6 +44,9 @@ button:disabled{cursor:default}
 #login .go:disabled{opacity:.6;cursor:default}
 #login .err{font-size:13px;font-weight:600;color:#8A3412;min-height:0}
 #login .err:empty{display:none}
+#login .info{font-size:13px;color:#0F5257;background:#E7F1F1;border-radius:12px;padding:10px 12px}
+#login .info:empty{display:none}
+#login .first{text-align:center;font-size:13px;color:#4A5B5E}
 #login .demo{border-top:1px solid #EEF2F2;padding-top:14px;font-size:12px;color:#4A5B5E;display:flex;flex-direction:column;gap:8px}
 #login .demo div{display:flex;gap:6px;flex-wrap:wrap}
 #login .demo button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
@@ -71,7 +75,9 @@ button:disabled{cursor:default}
 <label class="f">Κωδικός<span class="pw"><input id="login-pass" type="password" autocomplete="current-password" required><button type="button" id="login-show" aria-pressed="false">Εμφάνιση</button></span></label>
 <div class="row"><label><input id="login-remember" type="checkbox" checked> Να με θυμάσαι</label><button type="button" class="link" id="login-forgot">Ξέχασες τον κωδικό;</button></div>
 <div class="err" id="login-err" role="alert"></div>
+<div class="info" id="login-info" role="status"></div>
 <button type="submit" class="go" id="login-go">Σύνδεση</button>
+<div class="first"><span id="login-first-q">Πρώτη φορά εδώ;</span> <button type="button" class="link" id="login-first">Φτιάξε κωδικό</button></div>
 <div class="demo" id="login-demo"><span>Προεπισκόπηση · δοκιμαστικοί λογαριασμοί μέχρι να φτιαχτούν τα προφίλ (κωδικός <b>demo1234</b>):</span><div id="login-demo-list"></div></div>
 </form>
 </div>
@@ -165,7 +171,7 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-direction: column; gap: 8px">
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 14px"><span style="font-weight: 600">{{req.timerText}}</span><span style="color: #4A5B5E">{{req.usedText}}</span></div>
 <div style="height: 8px; border-radius: 4px; background: #F1E9DD; overflow: hidden"><div style="{{req.barFill}}"></div></div>
-<div style="font-size: 13px; color: #4A5B5E">Αν δεν απαντήσεις, η δέσμευση των {{req.total}} λύνεται αυτόματα και ο πελάτης παίρνει email.</div>
+<div style="font-size: 13px; color: #4A5B5E">{{req.expireNote}}</div>
 </div>
 
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: #E6ECED; border: 1px solid #E6ECED; border-radius: 12px; overflow: hidden">
@@ -767,9 +773,37 @@ button:disabled{cursor:default}
  * then sends a Web Push when a guest sends a request and 4 hours before it expires.
  * iPhone: push works only once the admin is added to the Home Screen and opened from there (iOS 16.4+).
  */
+const LM_API = 'https://cwucmglctgklokxwbwqz.supabase.co', LM_KEY = 'sb_publishable_u-1Q2OU_vtTz70FAKJ71vA_3BiP0LaT';
+function lmB64(s) { const p = s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4); const b = atob(p); const o = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) o[i] = b.charCodeAt(i); return o; }
 const PUSH = {
   OFF_KEY: 'lm-admin-push-off',
   reg: null,
+  client: null, // the Supabase client once an owner is signed in; null in the demo
+  /* Subscribe this browser with the server's key and save it, so the server can wake this phone. */
+  syncServer() {
+    const sb = this.client;
+    if (!sb || this.perm() !== 'granted' || this.wantsOff()) return Promise.resolve(false);
+    return this.ready().then(reg => sb.functions.invoke('push', { body: { action: 'key' } }).then(res => {
+      if (res.error || !res.data || !res.data.publicKey) throw new Error('key');
+      const key = lmB64(res.data.publicKey);
+      return reg.pushManager.getSubscription().then(old => {
+        const k = old && old.options && old.options.applicationServerKey ? new Uint8Array(old.options.applicationServerKey) : null;
+        if (old && (!k || k.length !== key.length || k.some((x, i) => x !== key[i]))) return old.unsubscribe().then(() => null);
+        return old;
+      }).then(old => old || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key }));
+    })).then(sub => {
+      const j = sub.toJSON();
+      return sb.rpc('save_push_subscription', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_user_agent: navigator.userAgent });
+    }).then(r => { if (r.error) throw r.error; return true; });
+  },
+  stopServer() {
+    if (!this.supported()) return Promise.resolve();
+    return this.ready().then(reg => reg.pushManager.getSubscription()).then(sub => {
+      if (!sub) return;
+      const p = this.client ? this.client.rpc('delete_push_subscription', { p_endpoint: sub.endpoint }) : Promise.resolve();
+      return Promise.resolve(p).then(() => sub.unsubscribe());
+    }).catch(() => {});
+  },
   ios: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
   standalone: (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true,
   supported() { return 'serviceWorker' in navigator && 'Notification' in window; },
@@ -858,7 +892,7 @@ class Component extends DCLogic {
     };
     this.state.bookings = this.expire(this.state.bookings);
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
-    this.state.checking = null; this.state.pushBusy = false; this.state.pushPerm = PUSH.perm(); this.state.testIn = 0;
+    this.state.live = null; this.state.checking = null; this.state.pushBusy = false; this.state.pushPerm = PUSH.perm(); this.state.testIn = 0;
     this.state.toggles.push = PUSH.on();
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
     this.COMMISSION = 0.15;
@@ -935,7 +969,11 @@ class Component extends DCLogic {
     if (this.state.pushBusy) return Promise.resolve(PUSH.perm());
     this.setState({ pushBusy: true });
     return PUSH.enable().then(p => {
-      this.setState({ pushBusy: false, pushPerm: p, toggles: Object.assign({}, this.state.toggles, { push: p === 'granted' }) });
+      if (p !== 'granted' || !PUSH.client) return p;
+      return PUSH.syncServer().then(() => p, () => 'server');
+    }).then(p => {
+      this.setState({ pushBusy: false, pushPerm: p === 'server' ? 'granted' : p, toggles: Object.assign({}, this.state.toggles, { push: p === 'granted' }) });
+      if (p === 'server') { PUSH.setOff(true); this.say('Ο browser επέτρεψε τις ειδοποιήσεις, αλλά δεν αποθηκεύτηκε η συσκευή στον server. Δοκίμασε ξανά.'); return p; }
       if (p === 'granted') this.say('Οι ειδοποιήσεις άνοιξαν σε αυτή τη συσκευή.');
       else if (p === 'denied') this.say('Ο browser μπλόκαρε τις ειδοποιήσεις. Άνοιξέ τες από τις ρυθμίσεις του για αυτή τη σελίδα.');
       else if (p === 'unsupported') this.say(PUSH.ios ? 'Στο iPhone: Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας», και άνοιξε τη Διαχείριση από το εικονίδιο.' : 'Αυτός ο browser δεν υποστηρίζει ειδοποιήσεις.');
@@ -945,6 +983,20 @@ class Component extends DCLogic {
   /* Demo: a guest sends a request in 5 seconds and the phone gets the notification. */
   testRequest() {
     if (this.state.testIn) return;
+    if (PUSH.client) {
+      const send = () => {
+        this.setState({ testIn: 1 });
+        PUSH.client.functions.invoke('push', { body: { action: 'test' } }).then(res => {
+          this.setState({ testIn: 0 });
+          const d = res.data || {};
+          if (res.error) this.say('Η δοκιμή δεν έφυγε από τον server. Δοκίμασε ξανά σε λίγο.');
+          else if (!d.devices) this.say('Δεν βρέθηκε συσκευή σου για ειδοποιήσεις. Κλείσε και άνοιξε ξανά τον διακόπτη.');
+          else this.say('Στάλθηκε από τον server σε ' + d.sent + (d.sent === 1 ? ' συσκευή' : ' συσκευές') + (d.failed ? ', ' + d.failed + ' απέτυχαν' : '') + '. Αν δεν χτύπησε, κοίτα τις ρυθμίσεις ειδοποιήσεων του κινητού.');
+        });
+      };
+      if (PUSH.on()) send(); else this.enablePush().then(p => { if (p === 'granted') send(); });
+      return;
+    }
     const go = () => {
       let n = 5;
       this.setState({ testIn: n });
@@ -965,8 +1017,44 @@ class Component extends DCLogic {
     };
     if (PUSH.on()) go(); else this.enablePush().then(p => { if (p === 'granted') go(); });
   }
+  /* Requests from the database replace the demo ones; the rest of the screens keep demo data for now. */
+  fromRow(r) {
+    const nights = Math.round((Date.parse(r.check_out) - Date.parse(r.check_in)) / 864e5);
+    const price = this.normalPrice(r.unit_type, r.check_in, nights, r.guests);
+    const ago = Math.max(0, Math.floor((Date.now() - Date.parse(r.created_at)) / 3600000));
+    const left = Math.max(0, Math.ceil((Date.parse(r.expires_at) - Date.now()) / 3600000));
+    const late = r.status === 'pending' && Date.parse(r.expires_at) <= Date.now();
+    const status = r.status === 'expired' || late ? 'rejected' : r.status;
+    return {
+      id: 'db-' + r.id, dbId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
+      total: price || 0, priceless: price == null, source: 'site', status: status, expired: r.status === 'expired' || late,
+      ago: status === 'pending' ? Math.min(23, 24 - left, ago) : ago,
+      email: r.email, phone: r.phone, note: r.note || '', by: r.decided_by || ''
+    };
+  }
+  applyRows(rows) {
+    const demo = this.state.bookings.filter(b => !b.real && b.status !== 'pending' && b.id !== 'p0');
+    const real = rows.map(r => this.fromRow(r));
+    this.setState({ bookings: demo.concat(real), live: true });
+    if (this._openWhenLoaded) { const id = this._openWhenLoaded; this._openWhenLoaded = null; this.openReqById(id); }
+  }
+  saveDecision(rb, change, done) {
+    const sb = PUSH.client;
+    const row = { status: change.status, decided_at: new Date().toISOString(), decided_by: change.by };
+    if (change.unit) row.unit = change.unit;
+    return sb.from('booking_requests').update(row).eq('id', rb.dbId).eq('status', 'pending').select('id').then(res => {
+      if (res.error) { this.say('Δεν αποθηκεύτηκε: ' + res.error.message + '. Δοκίμασε ξανά.'); return false; }
+      if (!res.data || !res.data.length) { this.say('Αυτό το αίτημα το απάντησε ήδη ο άλλος ιδιοκτήτης ή έληξε.'); if (this.reload) this.reload(); this.setState({ req: null }); return false; }
+      this.patch(rb.id, Object.assign({}, change, { by: change.by }));
+      this.setState({ req: null });
+      done();
+      return true;
+    });
+  }
   openReqById(id) {
-    const b = this.list().find(x => x.id === id && x.status === 'pending');
+    if (PUSH.client && this.state.live !== true) { this._openWhenLoaded = id; return; }
+    const b = this.list().find(x => (x.id === id || x.dbId === id) && x.status === 'pending');
+    if (b) id = b.id;
     this.setState({ tab: 'today', detail: null, customer: null, newOpen: false, req: b ? id : null });
   }
   say(msg) {
@@ -1000,7 +1088,7 @@ class Component extends DCLogic {
     }
     return sum;
   }
-  who(what) { const u = this.state.user; return u ? what + ' · ' + u.name + ' · ' + this.fmt(this.TODAY) : ''; }
+  who(what) { const u = this.state.user; if (!u) return ''; const d = PUSH.client ? new Date().toISOString().slice(0, 10) : this.TODAY; return what + ' · ' + u.name + ' · ' + this.fmt(d); }
   loadQuick() {
     try { const v = JSON.parse(localStorage.getItem(this.QKEY) || 'null'); if (Array.isArray(v)) return v.filter(q => q && q.label && q.text); } catch (e) {}
     return this.QUICK.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1] }));
@@ -1107,7 +1195,7 @@ class Component extends DCLogic {
       const n = pending.length;
       stripItems = pending.map(b => ({
         name: b.name,
-        meta: this.range(b.start, this.endOf(b)) + ' · ' + b.guests + ' άτομα · ' + this.money(b.total),
+        meta: this.range(b.start, this.endOf(b)) + ' · ' + b.guests + ' άτομα' + (b.priceless ? '' : ' · ' + this.money(b.total)),
         timer: (24 - b.ago) + ' ώρες',
         timerStyle: tPill(24 - b.ago <= 6 ? '#8A3412' : '#7A4708'),
         open: () => this.openReq(b.id)
@@ -1265,12 +1353,13 @@ class Component extends DCLogic {
           name: rb.name,
           label: 'Αίτημα κράτησης · από το σάιτ · πριν ' + rb.ago + (rb.ago === 1 ? ' ώρα' : ' ώρες'),
           timerText: 'Λήγει σε ' + left + (left === 1 ? ' ώρα' : ' ώρες'),
+          expireNote: rb.priceless ? 'Αν δεν απαντήσεις, το αίτημα λήγει αυτόματα και οι μέρες ανοίγουν ξανά.' : 'Αν δεν απαντήσεις, η δέσμευση των ' + this.money(rb.total) + ' λύνεται αυτόματα και ο πελάτης παίρνει email.',
           usedText: rb.ago + ' από 24 ώρες',
           barFill: 'height: 8px; width: ' + Math.round(rb.ago / 24 * 100) + '%; background: ' + (left <= 6 ? '#C2502A' : '#C99A3B'),
-          dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: this.money(rb.total),
+          dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: rb.priceless ? 'χωρίς τιμή' : this.money(rb.total),
           pickTitle: rb.type === 'apt' ? 'Διαμέρισμα' : 'Σε ποιο δωμάτιο;',
           rooms: rooms, noFree: !suggested, canAccept: !!picked,
-          acceptLabel: s.checking === rb.id ? 'Έλεγχος στο Booking.com…' : picked ? 'Αποδοχή στο ' + this.unitName(picked) + ' · χρέωση ' + this.money(rb.total) : '',
+          acceptLabel: s.checking === rb.id ? 'Έλεγχος στο Booking.com…' : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
           contact: rb.email + ' · ' + rb.phone,
           note: rb.note || '', hasNote: !!rb.note,
           back: () => this.setState({ req: null }),
@@ -1282,12 +1371,15 @@ class Component extends DCLogic {
               this.setState({ checking: null });
               const clash = this.firstClash(picked, rb.start, rb.nights);
               if (clash) { this.say('Προσοχή: το ' + this.unitName(picked) + ' πιάστηκε στο μεταξύ' + (clash === 'block' ? '' : ' (' + clash.name + ')') + '. Διάλεξε άλλο δωμάτιο.'); return; }
+              const ok = 'Το Booking.com ελέγχθηκε τώρα, χωρίς σύγκρουση. Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '.';
+              if (rb.real) { this.saveDecision(rb, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') }, () => this.say(ok + ' Η χρέωση κάρτας και το email στον πελάτη μπαίνουν αργότερα.')); return; }
               this.patch(rb.id, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') });
               this.setState({ req: null });
-              this.say('Το Booking.com ελέγχθηκε τώρα, χωρίς σύγκρουση. Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '. Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
+              this.say(ok + ' Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
             }, 1100);
           },
           reject: () => {
+            if (rb.real) { this.saveDecision(rb, { status: 'rejected', by: this.who('Απόρριψη') }, () => this.say('Απορρίφθηκε · ' + rb.name + '. Το email στον πελάτη μπαίνει αργότερα.')); return; }
             this.patch(rb.id, { status: 'rejected', by: this.who('Απόρριψη') });
             this.setState({ req: null });
             this.say('Απορρίφθηκε · η δέσμευση των ' + this.money(rb.total) + ' λύθηκε και ο πελάτης ενημερώθηκε.');
@@ -1525,8 +1617,8 @@ class Component extends DCLogic {
         knob: 'width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF',
         flip: () => {
           if (t.id !== 'push') { this.setState({ toggles: Object.assign({}, s.toggles, { [t.id]: !on }) }); return; }
-          if (on) { PUSH.setOff(true); this.setState({ toggles: Object.assign({}, s.toggles, { push: false }) }); this.say('Οι ειδοποιήσεις έκλεισαν σε αυτή τη συσκευή.'); }
-          else if (PUSH.perm() === 'granted') { PUSH.setOff(false); this.setState({ toggles: Object.assign({}, s.toggles, { push: true }) }); this.say('Οι ειδοποιήσεις άνοιξαν σε αυτή τη συσκευή.'); }
+          if (on) { PUSH.setOff(true); PUSH.stopServer(); this.setState({ toggles: Object.assign({}, s.toggles, { push: false }) }); this.say('Οι ειδοποιήσεις έκλεισαν σε αυτή τη συσκευή.'); }
+          else if (PUSH.perm() === 'granted' && !PUSH.client) { PUSH.setOff(false); this.setState({ toggles: Object.assign({}, s.toggles, { push: true }) }); this.say('Οι ειδοποιήσεις άνοιξαν σε αυτή τη συσκευή.'); }
           else this.enablePush();
         }
       };
@@ -2011,8 +2103,8 @@ class Component extends DCLogic {
       toggles: toggles,
       pushTest: {
         show: !auto,
-        sub: s.toggles.push ? 'Έρχεται ένα ψεύτικο αίτημα και το κινητό χτυπάει όπως θα χτυπάει στα αληθινά' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά στέλνει ένα ψεύτικο αίτημα',
-        label: s.testIn ? 'Σε ' + s.testIn + '″…' : 'Στείλε δοκιμή',
+        sub: PUSH.client ? (s.toggles.push ? 'Ο server στέλνει μια ειδοποίηση στις συσκευές σου, όπως για κάθε νέο αίτημα' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά ο server στέλνει μία δοκιμή') : (s.toggles.push ? 'Έρχεται ένα ψεύτικο αίτημα και το κινητό χτυπάει όπως θα χτυπάει στα αληθινά' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά στέλνει ένα ψεύτικο αίτημα'),
+        label: s.testIn ? (PUSH.client ? 'Στέλνεται…' : 'Σε ' + s.testIn + '″…') : 'Στείλε δοκιμή',
         run: () => this.testRequest()
       },
       set1Title: auto ? 'Σύνδεση Beds24' : 'Ημερολόγια Booking.com',
@@ -2047,7 +2139,67 @@ class Component extends DCLogic {
    * getSession, resetPasswordForEmail) and lock the data with Row Level Security,
    * so only these two owner accounts can read or change bookings.
    */
-  const AUTH = (function () {
+  /*
+   * Auth. Owners sign in with Supabase (email + password); only emails in the owners table can
+   * make an account, and Row Level Security lets only them read or answer requests.
+   * admin.html?demo=1 opens the old preview accounts with fake data only.
+   */
+  const DEMO = params.has('demo') || !window.supabase;
+  const NOLIB = !params.has('demo') && !window.supabase;
+  let SB = null;
+  if (!DEMO) {
+    const remember = () => { try { return localStorage.getItem('lm-admin-remember') !== '0'; } catch (e) { return true; } };
+    const store = {
+      getItem: k => { try { return sessionStorage.getItem(k) || localStorage.getItem(k); } catch (e) { return null; } },
+      setItem: (k, v) => { try { (remember() ? localStorage : sessionStorage).setItem(k, v); } catch (e) {} },
+      removeItem: k => { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {} }
+    };
+    SB = window.supabase.createClient(LM_API, LM_KEY, { auth: { storage: store, storageKey: 'lm-admin-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  }
+  const greek = m => {
+    m = String(m || '');
+    if (/invalid login/i.test(m)) return 'Λάθος email ή κωδικός.';
+    if (/not confirmed/i.test(m)) return 'Δεν έχεις επιβεβαιώσει ακόμα το email σου. Πάτα τον σύνδεσμο που σου στάλθηκε.';
+    if (/database error saving new user|not an owner/i.test(m)) return 'Αυτό το email δεν είναι στους ιδιοκτήτες του Life\'s Moments.';
+    if (/already registered/i.test(m)) return 'Υπάρχει ήδη λογαριασμός με αυτό το email. Συνδέσου, ή πάτα «Ξέχασες τον κωδικό;».';
+    if (/password should be at least|weak/i.test(m)) return 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.';
+    if (/rate limit|too many/i.test(m)) return 'Πολλές προσπάθειες. Δοκίμασε ξανά σε λίγα λεπτά.';
+    if (/fetch|network/i.test(m)) return 'Δεν υπάρχει σύνδεση με τον server. Έλεγξε το ίντερνετ.';
+    return m;
+  };
+  const REAL_AUTH = SB && {
+    owners: [],
+    users: function () { return this.owners; },
+    profile: function (user) {
+      return SB.from('owners').select('email, name').order('name').then(res => {
+        if (res.error) throw new Error(greek(res.error.message));
+        const me = (res.data || []).find(o => o.email === String(user.email).toLowerCase());
+        if (!me) return SB.auth.signOut().then(() => { throw new Error('Αυτός ο λογαριασμός δεν είναι ιδιοκτήτης.'); });
+        this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email }));
+        return { id: me.email, uid: user.id, name: me.name, email: me.email };
+      });
+    },
+    current: function () { return SB.auth.getSession().then(r => r.data && r.data.session ? this.profile(r.data.session.user).catch(() => null) : null); },
+    signIn: function (email, password, remember) {
+      try { localStorage.setItem('lm-admin-remember', remember ? '1' : '0'); } catch (e) {}
+      return SB.auth.signInWithPassword({ email: String(email).trim().toLowerCase(), password: password }).then(r => {
+        if (r.error) throw new Error(greek(r.error.message));
+        return this.profile(r.data.user);
+      });
+    },
+    signUp: function (email, password) {
+      return SB.auth.signUp({ email: String(email).trim().toLowerCase(), password: password, options: { emailRedirectTo: location.origin + location.pathname } }).then(r => {
+        if (r.error) throw new Error(greek(r.error.message));
+        if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) throw new Error(greek('already registered'));
+        return r.data && r.data.session ? this.profile(r.data.user) : null; // null: confirm by email first
+      });
+    },
+    signOut: function () { return PUSH.stopServer().then(() => SB.auth.signOut()); },
+    resetPassword: function (email) {
+      return SB.auth.resetPasswordForEmail(String(email).trim().toLowerCase(), { redirectTo: location.origin + location.pathname }).then(r => { if (r.error) throw new Error(greek(r.error.message)); });
+    }
+  };
+  const PREVIEW_AUTH = (function () {
     const PREVIEW_USERS = [
       { id: 'owner-1', name: 'Ιδιοκτήτης Α', email: 'idioktitis.a@example.com', password: 'demo1234' },
       { id: 'owner-2', name: 'Ιδιοκτήτης Β', email: 'idioktitis.b@example.com', password: 'demo1234' }
@@ -2084,8 +2236,9 @@ class Component extends DCLogic {
       resetPassword: function () { return Promise.resolve(); }
     };
   })();
+  const AUTH = REAL_AUTH || PREVIEW_AUTH;
 
-  const comp = new Component({ mode: mode, owners: AUTH.users(), onLogout: function () { AUTH.signOut().then(showLogin); } });
+  const comp = new Component({ mode: mode, owners: AUTH.users(), onLogout: function () { Promise.resolve(AUTH.signOut()).then(showLogin, showLogin); } });
   let queued = false;
 
   window.scheduleRender = function () {
@@ -2203,7 +2356,22 @@ class Component extends DCLogic {
   const fGo = document.getElementById('login-go');
   const fShow = document.getElementById('login-show');
   const demoList = document.getElementById('login-demo-list');
-  AUTH.users().forEach(function (u) {
+  const fInfo = document.getElementById('login-info');
+  const fFirst = document.getElementById('login-first'), fFirstQ = document.getElementById('login-first-q');
+  let firstTime = false;
+  function setFirst(on) {
+    firstTime = on;
+    fGo.textContent = on ? 'Δημιουργία κωδικού' : 'Σύνδεση';
+    fFirstQ.textContent = on ? 'Έχεις ήδη κωδικό;' : 'Πρώτη φορά εδώ;';
+    fFirst.textContent = on ? 'Σύνδεση' : 'Φτιάξε κωδικό';
+    fPass.setAttribute('autocomplete', on ? 'new-password' : 'current-password');
+    document.querySelector('#login .sub').textContent = on ? 'Πρώτη φορά · γράψε το email σου και διάλεξε κωδικό' : 'Διαχείριση · σύνδεση ιδιοκτήτη';
+    fErr.textContent = ''; fInfo.textContent = '';
+  }
+  fFirst.addEventListener('click', function () { setFirst(!firstTime); fEmail.focus(); });
+  if (!REAL_AUTH) { fFirst.parentNode.hidden = true; } else { document.getElementById('login-demo').hidden = true; }
+  if (NOLIB) { document.getElementById('login-demo').hidden = true; fErr.textContent = 'Δεν φορτώθηκε η σύνδεση με τον server. Έλεγξε το ίντερνετ και ανανέωσε τη σελίδα.'; fGo.disabled = true; }
+  PREVIEW_AUTH.users().forEach(function (u) {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = u.name;
     b.addEventListener('click', function () { fEmail.value = u.email; fPass.value = 'demo1234'; fErr.textContent = ''; fGo.focus(); });
@@ -2221,25 +2389,64 @@ class Component extends DCLogic {
     if (!fEmail.value.trim()) { fEmail.focus(); return; }
     AUTH.resetPassword(fEmail.value.trim()).then(function () {
       fErr.textContent = '';
-      alert('Όταν συνδεθεί η βάση, θα έρχεται email στο ' + fEmail.value.trim() + ' με σύνδεσμο για νέο κωδικό.');
-    });
+      if (REAL_AUTH) fInfo.textContent = 'Αν το ' + fEmail.value.trim() + ' είναι λογαριασμός ιδιοκτήτη, σου στείλαμε email με σύνδεσμο για νέο κωδικό.';
+      else alert('Στην προεπισκόπηση δεν στέλνεται email.');
+    }, function (err) { fErr.textContent = err.message; });
   });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!fEmail.value.trim() || !fPass.value) { fErr.textContent = 'Συμπλήρωσε email και κωδικό.'; (fEmail.value.trim() ? fPass : fEmail).focus(); return; }
-    fGo.disabled = true; fGo.textContent = 'Σύνδεση…'; fErr.textContent = '';
-    AUTH.signIn(fEmail.value, fPass.value, fRemember.checked).then(enter, function (err) {
-      fErr.textContent = err.message; fPass.value = ''; fPass.focus();
-    }).then(function () { fGo.disabled = false; fGo.textContent = 'Σύνδεση'; });
+    if (firstTime && fPass.value.length < 8) { fErr.textContent = 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.'; fPass.focus(); return; }
+    const label = fGo.textContent;
+    fGo.disabled = true; fGo.textContent = firstTime ? 'Δημιουργία…' : 'Σύνδεση…'; fErr.textContent = ''; fInfo.textContent = '';
+    const act = firstTime ? AUTH.signUp(fEmail.value, fPass.value) : AUTH.signIn(fEmail.value, fPass.value, fRemember.checked);
+    act.then(function (user) {
+      if (user) { setFirst(false); enter(user); return; }
+      setFirst(false);
+      fInfo.textContent = 'Σου στείλαμε email στο ' + fEmail.value.trim() + '. Πάτα τον σύνδεσμο για επιβεβαίωση και μετά συνδέσου εδώ με τον κωδικό σου.';
+      fPass.value = '';
+    }, function (err) {
+      fErr.textContent = err.message; if (!firstTime) fPass.value = ''; fPass.focus();
+    }).then(function () { fGo.disabled = false; if (fGo.textContent.endsWith('…')) fGo.textContent = label; });
   });
   function showLogin() {
+    if (channel && SB) { SB.removeChannel(channel); channel = null; }
+    clearInterval(startLive.t); PUSH.client = null;
     comp.setState({ user: null, tab: 'today', detail: null, req: null, customer: null, newOpen: false, nb: null, calSel: null, calEdit: false });
     root.hidden = true; bar.hidden = true; login.hidden = false;
     fPass.value = ''; fPass.type = 'password'; fShow.textContent = 'Εμφάνιση';
     setTimeout(function () { (fEmail.value ? fPass : fEmail).focus(); }, 0);
   }
+  let channel = null;
+  function loadRequests() {
+    return SB.from('booking_requests').select('*').eq('is_test', false).order('created_at', { ascending: false }).limit(300).then(function (res) {
+      if (res.error) { comp.say('Δεν φορτώθηκαν τα αιτήματα: ' + res.error.message); comp.setState({ live: false }); return; }
+      comp.applyRows(res.data || []);
+    });
+  }
+  function startLive() {
+    PUSH.client = SB;
+    comp.reload = loadRequests;
+    comp.props = Object.assign({}, comp.props, { owners: AUTH.users() });
+    loadRequests();
+    if (channel) SB.removeChannel(channel);
+    channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
+      if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
+      loadRequests();
+    }).subscribe();
+    if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
+    // a request can expire while the page is open
+    clearInterval(startLive.t); startLive.t = setInterval(loadRequests, 5 * 60000);
+  }
+  if (SB) SB.auth.onAuthStateChange(function (ev) {
+    if (ev === 'PASSWORD_RECOVERY') {
+      const pw = prompt('Γράψε νέο κωδικό (τουλάχιστον 8 χαρακτήρες):');
+      if (pw && pw.length >= 8) SB.auth.updateUser({ password: pw }).then(function (r) { alert(r.error ? greek(r.error.message) : 'Ο κωδικός άλλαξε.'); });
+    }
+  });
   function enter(user) {
     comp.setState({ user: user });
+    if (SB) startLive();
     login.hidden = true; root.hidden = false; bar.hidden = !params.has('mode');
     if (params.get('req')) comp.openReqById(params.get('req'));
     comp.say('Καλώς ήρθες, ' + user.name + '.');
@@ -2251,8 +2458,7 @@ class Component extends DCLogic {
   });
 
   render();
-  const who = AUTH.current();
-  if (who) enter(who); else showLogin();
+  Promise.resolve(AUTH.current()).then(function (who) { if (who) enter(who); else showLogin(); }, showLogin);
 })();
 
 </script>

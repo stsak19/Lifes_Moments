@@ -1415,6 +1415,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
         <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
+        <input id="fWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
         <p class="fine" id="fErr" data-i18n="m.err" role="alert" hidden>Fill in your name, a valid email and your phone to continue.</p>
         <button type="submit" class="btn wide" data-i18n="m.submit">Hold card and send request</button>
@@ -1508,8 +1509,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. No card was held and nothing was sent; the nights stay held in this browser for 24 hours.',
-      'guest': 'guest', 'guests': 'guests', 'm.emailed': 'We emailed {e} a copy.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Test mode: your request reached the owners, but no card was held. Card payment comes later.',
+      'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
       'mom.1t': 'Coffee on the terrace', 'mom.1d': 'The sea below, pine trees all around, and the day just starting.',
@@ -1565,8 +1566,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε κάρτα ούτε στάλθηκε τίποτα· οι νύχτες μένουν κρατημένες σε αυτόν τον browser για 24 ώρες.',
-      'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Στείλαμε αντίγραφο στο {e}.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Δοκιμαστική λειτουργία: το αίτημα έφτασε στους ιδιοκτήτες, αλλά δεν δεσμεύτηκε κάρτα. Η πληρωμή με κάρτα μπαίνει αργότερα.',
+      'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
       'mom.1t': 'Καφές στη βεράντα', 'mom.1d': 'Η θάλασσα από κάτω, πεύκα γύρω γύρω και η μέρα μόλις ξεκινάει.',
@@ -1582,6 +1583,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     }
   };
   const LOCALE = { en: 'en-GB', el: 'el-GR' };
+  const LM_API = 'https://cwucmglctgklokxwbwqz.supabase.co', LM_KEY = 'sb_publishable_u-1Q2OU_vtTz70FAKJ71vA_3BiP0LaT';
   let lang = 'en';
   try { lang = localStorage.getItem('lm-lang') || ''; } catch (e) { lang = ''; }
   if (!I18N[lang]) lang = /^el\b/i.test(navigator.language || '') ? 'el' : 'en';
@@ -2091,14 +2093,37 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     ];
     const bad = checks.filter(([id, test]) => !test($(id).value.trim())).map(([id]) => id);
     checks.forEach(([id]) => bad.includes(id) ? $(id).setAttribute('aria-invalid', 'true') : $(id).removeAttribute('aria-invalid'));
+    $('#fErr').textContent = t('m.err');
     $('#fErr').hidden = !bad.length;
     if (bad.length) { $(bad[0]).focus({ preventScroll: true }); return; }
-    $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: $('#fEmail').value.trim() });
-    const sub = freeSubs(cal.unit, cal.ci, cal.co)[0];
-    if (sub !== undefined) { holds.push({ sub, ci: cal.ci, co: cal.co, exp: Date.now() + HOLD_MS }); saveHolds(); }
-    sentOk = true;
-    $('#reqForm').hidden = true; $('#reqDone').hidden = false;
-    $('#dClose').focus();
+    // Send the request to the owners. The server checks it again and alerts them on their phones.
+    const go = $('#reqForm button[type=submit]');
+    if (go.disabled) return;
+    if (!cal.ci || !cal.co) { closeModal(); openCal(); return; } // the nights were taken: pick new dates first
+    const iso = (k) => kY(k) + '-' + String(kM(k) + 1).padStart(2, '0') + '-' + String(kD(k)).padStart(2, '0');
+    const payload = {
+      unit_type: UNITS[cal.unit].id === 'apt' ? 'apt' : 'room', check_in: iso(cal.ci), check_out: iso(cal.co), guests: cal.guests,
+      name: $('#fName').value.trim(), email: $('#fEmail').value.trim(), phone: $('#fPhone').value.trim(),
+      lang: lang === 'el' ? 'el' : 'en', website: $('#fWeb') ? $('#fWeb').value : ''
+    };
+    const label = go.textContent;
+    go.disabled = true; go.textContent = t('m.sending');
+    const fail = (msg) => { $('#fErr').textContent = t(msg); $('#fErr').hidden = false; go.disabled = false; go.textContent = label; };
+    fetch(LM_API + '/functions/v1/submit-request', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY }, body: JSON.stringify(payload)
+    }).then((r) => r.json().then((j) => ({ r, j }), () => ({ r, j: {} }))).then(({ r, j }) => {
+      if (!r.ok) {
+        if (j.error === 'full') { cal.ci = null; cal.co = null; renderCal(); return fail('m.full'); }
+        return fail(j.error === 'too_many' ? 'm.many' : j.error === 'invalid' ? 'm.err' : 'm.fail');
+      }
+      go.disabled = false; go.textContent = label;
+      $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: payload.email });
+      const sub = freeSubs(cal.unit, cal.ci, cal.co)[0];
+      if (sub !== undefined) { holds.push({ sub, ci: cal.ci, co: cal.co, exp: Date.now() + HOLD_MS }); saveHolds(); }
+      sentOk = true;
+      $('#reqForm').hidden = true; $('#reqDone').hidden = false;
+      $('#dClose').focus();
+    }, () => fail('m.fail'));
   });
 
   /* ================= rooms (tabs + gallery) ================= */
