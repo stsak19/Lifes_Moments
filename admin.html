@@ -257,7 +257,6 @@ button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{backgr
 <button type="button" onClick="{{calNext}}" aria-label="Μια εβδομάδα μπροστά" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
 <h1 style="margin: 0 4px; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">{{calTitle}}</h1>
 <button type="button" onClick="{{calToday}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 500; cursor: pointer">Σήμερα</button>
-<button type="button" onClick="{{openNew}}" style="height: 44px; padding: 0 18px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; height: 40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>Νέα κράτηση</button>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #0F5257"></span>Σάιτ</span>
@@ -505,8 +504,8 @@ button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{backgr
 <div style="font-size: 12px; color: #4A5B5E; margin-top: 12px">{{priceNote}}</div>
 </section>
 
-<aside aria-label="Ειδική τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Ειδική τιμή</h2>
+<aside aria-label="Τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Τιμή</h2>
 <sc-if value="{{noSel}}" hint-placeholder-val="{{true}}">
 <div style="font-size: 14px; color: #4A5B5E">Πάτα μια μέρα στο ημερολόγιο. Για διάστημα, σύρε πάνω από τις μέρες με πατημένο το κλικ, ή πάτα την πρώτη και μετά την τελευταία.</div>
 </sc-if>
@@ -534,16 +533,13 @@ button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{backgr
 <div style="font-size: 12px; color: #4A5B5E">{{priceChannelNote}} Οι κρατήσεις που έχουν ήδη γίνει δεν αλλάζουν.</div>
 </div>
 </sc-if>
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; padding-top: 14px; border-top: 1px solid #E6ECED">
+<span style="flex: 1 1 150px"><span style="display: block; font-weight: 600; white-space: nowrap">Επιπλέον άτομο</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ανά νύχτα, πάνω από τα 2 άτομα</span></span>
+<span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{extraDown}}" aria-label="Μείωση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 52px; text-align: center; font-weight: 600">{{extraText}}</span><button type="button" onClick="{{extraUp}}" aria-label="Αύξηση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
+</div>
 </aside>
 </div>
 
-<div style="display: flex; flex-wrap: wrap; gap: 14px">
-<div style="flex: 1 1 300px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #FFFFFF; border-radius: 16px; padding: 12px 18px">
-<span><span style="display: block; font-weight: 600">Επιπλέον άτομο</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ανά νύχτα, πάνω από τα 2 άτομα</span></span>
-<span style="display: flex; align-items: center; gap: 8px"><button type="button" onClick="{{extraDown}}" aria-label="Μείωση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">−</button><span style="min-width: 52px; text-align: center; font-weight: 600">{{extraText}}</span><button type="button" onClick="{{extraUp}}" aria-label="Αύξηση" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 18px; cursor: pointer">+</button></span>
-</div>
-</div>
-<div style="font-size: 13px; color: #4A5B5E">Αυτές οι τιμές ισχύουν μόνο για το σάιτ. Οι τιμές στο Booking.com αλλάζουν χωριστά, από το extranet του Booking.</div>
 </div>
 </sc-if>
 
