@@ -522,7 +522,7 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
-<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Ειδοποιήσεις και emails</h2>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Ειδοποιήσεις</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
@@ -864,7 +864,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: false, pre: true, review: true },
+      toggles: { push: false },
       extra: 15,
       seasons: [
         { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', ranges: [['05-01', '06-30'], ['09-01', '09-30']], room: 85, apt: 150, min: 2 },
@@ -1676,9 +1676,7 @@ class Component extends DCLogic {
           : s.toggles.push ? 'Ενεργές σε αυτή τη συσκευή · ' + what.charAt(0).toLowerCase() + what.slice(1)
           : what + ' · άνοιξέ το σε κάθε κινητό που θέλεις να ειδοποιείται';
         return { id: 'push', label: auto ? 'Ειδοποίηση για νέα κράτηση' : 'Ειδοποίηση για νέο αίτημα', sub: sub };
-      })(),
-      { id: 'pre', label: 'Οδηγίες άφιξης', sub: 'Email στον πελάτη 2 μέρες πριν' },
-      { id: 'review', label: 'Αίτημα για κριτική', sub: 'Email την επόμενη μέρα μετά την αναχώρηση' }
+      })()
     ];
     const toggles = togDefs.map(t => {
       const on = !!s.toggles[t.id];
