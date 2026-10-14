@@ -1,7 +1,7 @@
 // Sends the guest emails (request received / confirmed / rejected / expired) through Resend.
 // Called by database triggers (header x-cron-secret) and by the admin page (owner login) for preview / test.
 // The wording comes from public.email_templates and public.email_settings, which owners edit in the admin page.
-// Needs the Edge Function secret RESEND_API_KEY.
+// Needs the Resend key: Edge Function secret RESEND_API_KEY, or the Vault secret "resend_api_key".
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const URL_ = Deno.env.get('SUPABASE_URL')!;
@@ -91,7 +91,9 @@ function render(tpl: { subject: string; body: string }, g: Guest, s: Settings) {
 
 // ---------- sending ----------
 async function sendMail(s: Settings, to: string, m: { subject: string; text: string; html: string }, idem?: string) {
-  const key = Deno.env.get('RESEND_API_KEY');
+  // The Resend key: the Edge Function secret RESEND_API_KEY if set, otherwise the Vault secret "resend_api_key".
+  let key = Deno.env.get('RESEND_API_KEY');
+  if (!key) { const { data } = await admin.rpc('server_secret', { p_name: 'resend_api_key' }); key = (data as string | null) ?? undefined; }
   if (!key) return { ok: false, error: 'RESEND_API_KEY is not set' };
   const fromName = String(s.from_name ?? '').replace(/[<>",\r\n]/g, '').trim() || 'Life\'s Moments';
   const payload: Record<string, unknown> = { from: fromName + ' <' + s.from_email + '>', to: [to], subject: m.subject, html: m.html, text: m.text };
