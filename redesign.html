@@ -431,6 +431,8 @@ a.score:hover { border-color: var(--muted); }
 .modal-card .x { position: absolute; top: 12px; right: 12px; border: 0; }
 .form { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 .form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.form label.chk { flex-direction: row; align-items: flex-start; gap: 10px; line-height: 1.45; }
+.form .chk input { min-height: 0; width: 18px; height: 18px; padding: 0; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
 .form input { min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); }
 .form label:has(input[required]) > span::after { content: " *"; color: var(--accent); }
 .form input[aria-invalid="true"] { border-color: #D65A4A; box-shadow: 0 0 0 1px #D65A4A; }
@@ -1337,6 +1339,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
         <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
+        <label class="chk" for="fMkt"><input id="fMkt" name="marketing" type="checkbox"><span data-i18n="m.mkt">I would like to receive offers for future stays (optional). I can unsubscribe at any time.</span></label>
+        <p class="fine" id="fPromo" hidden></p>
         <input id="fWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
         <p class="fine" id="fErr" data-i18n="m.err" role="alert" hidden>Fill in your name, a valid email and your phone to continue.</p>
@@ -1431,7 +1435,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
@@ -1488,7 +1492,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
@@ -1902,10 +1906,19 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const n = dayNum(cal.co) - dayNum(cal.ci);
     return UNITS[cal.unit].name + ' · ' + fmtShort.format(kDate(cal.ci)) + ' → ' + fmtShort.format(kDate(cal.co)) + ' · ' + plural(n, 'night', 'nights') + ' · ' + plural(cal.guests, 'guest', 'guests');
   }
+  // An offer email links here with ?promo=CODE; the code travels with the request so the owners see it.
+  let promo = '';
+  try {
+    const q = new URLSearchParams(location.search).get('promo');
+    if (q && /^[A-Za-z0-9_-]{3,24}$/.test(q)) { promo = q.toUpperCase(); sessionStorage.setItem('lm-promo', promo); }
+    else promo = sessionStorage.getItem('lm-promo') || '';
+  } catch (e) {}
   function openModal() {
     lastFocus = document.activeElement;
     $('#mSum').textContent = staySummary();
     $('#reqForm').hidden = false; $('#reqDone').hidden = true; $('#fErr').hidden = true;
+    $('#fMkt').checked = false;
+    $('#fPromo').hidden = !promo; $('#fPromo').textContent = promo ? t('m.promo', { c: promo }) : '';
     ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).removeAttribute('aria-invalid'));
     modal.hidden = false; lenis && lenis.stop();
     setTimeout(() => $('#fName').focus(), 30);
@@ -1944,7 +1957,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const payload = {
       unit_type: UNITS[cal.unit].id === 'apt' ? 'apt' : 'room', check_in: iso(cal.ci), check_out: iso(cal.co), guests: cal.guests,
       name: $('#fName').value.trim(), email: $('#fEmail').value.trim(), phone: $('#fPhone').value.trim(),
-      lang: lang === 'el' ? 'el' : 'en', website: $('#fWeb') ? $('#fWeb').value : ''
+      lang: lang === 'el' ? 'el' : 'en', website: $('#fWeb') ? $('#fWeb').value : '',
+      marketing: $('#fMkt').checked, promo: promo
     };
     const label = go.textContent;
     go.disabled = true; go.textContent = t('m.sending');
@@ -1957,7 +1971,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         return fail(j.error === 'too_many' ? 'm.many' : j.error === 'invalid' ? 'm.err' : 'm.fail');
       }
       go.disabled = false; go.textContent = label;
-      $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: payload.email });
+      $('#dSum').textContent = staySummary() + (j.ref ? ' · LM-' + j.ref : '') + '. ' + t('m.emailed', { e: payload.email });
       loadAvailability();
       sentOk = true;
       $('#reqForm').hidden = true; $('#reqDone').hidden = false;

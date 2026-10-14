@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Life’s Moments</title>
+<link href="https://fonts.googleapis.com/css2?family=Piazzolla:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: #eaf1f8; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; color: #2b3a4a; }
+  main { width: 100%; max-width: 460px; background: #fff; border-radius: 16px; padding: 36px 32px; text-align: center; }
+  .brand { font-family: 'Piazzolla', Georgia, serif; font-size: 28px; font-weight: 600; color: #1f5fa8; }
+  h1 { font-family: 'Piazzolla', Georgia, serif; font-weight: 500; font-size: 26px; line-height: 1.25; color: #163f73; margin: 22px 0 10px; }
+  p { margin: 0 0 18px; line-height: 1.55; color: #4b5d70; font-size: 15px; }
+  .addr { font-weight: 600; color: #2b3a4a; overflow-wrap: anywhere; }
+  button { min-height: 46px; padding: 0 28px; border: 0; border-radius: 999px; background: #1f5fa8; color: #fff; font: 600 15px 'Segoe UI', Helvetica, Arial, sans-serif; cursor: pointer; }
+  button[disabled] { opacity: .6; cursor: default; }
+  a { color: #1f5fa8; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">Life’s Moments</div>
+  <h1 id="title"></h1>
+  <p id="text"></p>
+  <p class="addr" id="addr" hidden></p>
+  <button type="button" id="go" hidden></button>
+  <p id="back" hidden style="margin:18px 0 0"></p>
+</main>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var email = (q.get('e') || '').trim().toLowerCase(), token = q.get('t') || '';
+  var lang = (q.get('lang') || (navigator.language || 'el')).slice(0, 2) === 'en' ? 'en' : 'el';
+  var API = 'https://cwucmglctgklokxwbwqz.supabase.co/functions/v1/unsubscribe';
+  var T = {
+    el: { ask: 'Να σταματήσουν οι προσφορές;', askText: 'Δεν θα σου ξαναστείλουμε προσφορές για διαμονές στη διεύθυνση:', btn: 'Διαγραφή από τη λίστα', working: 'Μία στιγμή…', done: 'Διαγράφηκες από τη λίστα', doneText: 'Δεν θα λάβεις άλλες προσφορές. Θα εξακολουθείς να παίρνεις emails για τις κρατήσεις σου, αν έχεις κάποια.', bad: 'Ο σύνδεσμος δεν είναι σωστός', badText: 'Άνοιξε ξανά τον σύνδεσμο από το email που έλαβες. Αν το πρόβλημα συνεχίζεται, απάντησε σε εκείνο το email και θα σε διαγράψουμε εμείς.', fail: 'Δεν έγινε η διαγραφή', failText: 'Δοκίμασε ξανά σε λίγο.', back: 'Επιστροφή στο site' },
+    en: { ask: 'Stop the offers?', askText: 'We will not send you offers for stays again at:', btn: 'Unsubscribe', working: 'One moment…', done: 'You are unsubscribed', doneText: 'You will get no more offers. You will still receive emails about your bookings, if you have any.', bad: 'This link is not valid', badText: 'Please open the link from the email again. If the problem continues, reply to that email and we will remove you.', fail: 'Could not unsubscribe', failText: 'Please try again in a little while.', back: 'Back to the site' }
+  }[lang];
+  document.documentElement.lang = lang;
+  var $ = function (id) { return document.getElementById(id); };
+  function show(title, text, opts) {
+    $('title').textContent = title; $('text').textContent = text;
+    $('go').hidden = !(opts && opts.button); $('addr').hidden = !(opts && opts.addr);
+    $('back').hidden = !(opts && opts.back);
+  }
+  $('back').innerHTML = '<a href="./">' + T.back + '</a>';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !token) { show(T.bad, T.badText, { back: true }); return; }
+  $('addr').textContent = email; $('go').textContent = T.btn;
+  show(T.ask, T.askText, { button: true, addr: true });
+  $('go').addEventListener('click', function () {
+    var b = $('go'); b.disabled = true; b.textContent = T.working;
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ e: email, t: token }) })
+      .then(function (r) { return r.json().then(function (j) { return { r: r, j: j }; }, function () { return { r: r, j: {} }; }); })
+      .then(function (x) {
+        if (x.r.ok && x.j.ok) { show(T.done, T.doneText, { back: true }); return; }
+        if (x.r.status === 400 || x.r.status === 403) { show(T.bad, T.badText, { back: true }); return; }
+        b.disabled = false; b.textContent = T.btn; show(T.fail, T.failText, { button: true, addr: true });
+      }, function () { b.disabled = false; b.textContent = T.btn; show(T.fail, T.failText, { button: true, addr: true }); });
+  });
+})();
+</script>
+</body>
+</html>

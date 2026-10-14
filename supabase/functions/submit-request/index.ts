@@ -20,7 +20,10 @@ Deno.serve(async (req) => {
   const name = String(b.name ?? '').trim().replace(/\s+/g, ' ');
   const email = String(b.email ?? '').trim().toLowerCase();
   const phone = String(b.phone ?? '').trim();
-  const note = String(b.note ?? '').trim().slice(0, 1000) || null;
+  const promo = /^[A-Za-z0-9_-]{3,24}$/.test(String(b.promo ?? '')) ? String(b.promo).toUpperCase() : null;
+  // A code from an offer email goes into the note, so the owners see it when they answer.
+  const note = ((promo ? 'Κωδικός προσφοράς: ' + promo + '\n' : '') + String(b.note ?? '').trim()).trim().slice(0, 1000) || null;
+  const marketing = b.marketing === true; // the optional tick for offers; never assumed
   const lang = b.lang === 'en' ? 'en' : 'el';
 
   const bad: string[] = [];
@@ -39,10 +42,10 @@ Deno.serve(async (req) => {
   if (bad.length) return json({ error: 'invalid', fields: bad }, 400, h);
 
   // Same request sent twice (double tap, retry): answer with the first one.
-  const { data: same } = await admin.from('booking_requests').select('id')
+  const { data: same } = await admin.from('booking_requests').select('id, ref_no')
     .eq('email', email).eq('unit_type', unit_type).eq('check_in', check_in).eq('check_out', check_out)
     .eq('status', 'pending').limit(1);
-  if (same?.length) return json({ ok: true, id: same[0].id, repeat: true }, 200, h);
+  if (same?.length) return json({ ok: true, id: same[0].id, ref: same[0].ref_no, repeat: true }, 200, h);
 
   // Simple limits against floods.
   const hourAgo = new Date(Date.now() - 3600000).toISOString();
@@ -57,8 +60,8 @@ Deno.serve(async (req) => {
   if (!fits) return json({ error: 'full' }, 409, h);
 
   const { data: row, error } = await admin.from('booking_requests')
-    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang })
-    .select('id, name, unit_type, check_in, check_out, guests').single();
+    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang, marketing_consent: marketing })
+    .select('id, name, unit_type, check_in, check_out, guests, ref_no').single();
   if (error) { log('insert_error', { message: error.message }); return json({ error: 'server' }, 500, h); }
   log('request_saved', { id: row.id, unit_type, nights: (Date.parse(check_out as string) - Date.parse(check_in as string)) / DAY });
 
@@ -68,5 +71,5 @@ Deno.serve(async (req) => {
   } catch (e) {
     log('notify_error', { id: row.id, message: String(e) }); // the request is saved either way
   }
-  return json({ ok: true, id: row.id }, 200, h);
+  return json({ ok: true, id: row.id, ref: row.ref_no }, 200, h);
 });
