@@ -565,6 +565,87 @@ button:disabled{cursor:default}
 <button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
+<sc-if value="{{emx.show}}" hint-placeholder-val="{{false}}">
+<section aria-label="Emails προς τους πελάτες">
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Emails προς τους πελάτες</h2>
+<sc-if value="{{emx.ready}}" hint-placeholder-val="{{true}}">
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #EEF2F2">
+<span><span style="display: block; font-weight: 500">Αυτόματα emails στους πελάτες</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{emx.enabledSub}}</span></span>
+<button type="button" role="switch" aria-checked="{{emx.enabledAria}}" aria-label="Αυτόματα emails στους πελάτες" onClick="{{emx.flipEnabled}}" style="{{emx.enabledTrack}}"><span style="{{emx.enabledKnob}}"></span></button>
+</div>
+
+<div style="padding: 18px; border-bottom: 1px solid #EEF2F2">
+<div style="font-weight: 600; margin-bottom: 2px">Στοιχεία που μπαίνουν στα emails</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-bottom: 14px">Γράφονται μία φορά εδώ και μπαίνουν μόνα τους στα κείμενα. Ό,τι αφήσεις κενό, η γραμμή του δεν εμφανίζεται στο email.</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px">
+<sc-for list="{{emx.fields}}" as="f" hint-placeholder-count="4">
+<div>
+<label for="{{f.id}}" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">{{f.label}}</label>
+<sc-if value="{{f.isLine}}" hint-placeholder-val="{{true}}"><input id="{{f.id}}" type="{{f.type}}" autocomplete="off" value="{{f.value}}" onChange="{{f.set}}" style="{{f.lineStyle}}"></sc-if>
+<sc-if value="{{f.isArea}}" hint-placeholder-val="{{false}}"><textarea id="{{f.id}}" value="{{f.value}}" onChange="{{f.set}}" style="{{f.areaStyle}}"></textarea></sc-if>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 3px">{{f.hint}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="padding: 18px; border-bottom: 1px solid #EEF2F2; display: flex; flex-direction: column; gap: 12px">
+<div>
+<div style="font-weight: 600">Κείμενο κάθε email</div>
+<div style="font-size: 12px; color: #4A5B5E">Διάλεξε ποιο email και σε ποια γλώσσα. Στον πελάτη φεύγει στη γλώσσα που διάλεξε στη φόρμα.</div>
+</div>
+<div role="group" aria-label="Email" style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{emx.kinds}}" as="k" hint-placeholder-count="4"><button type="button" onClick="{{k.pick}}" aria-pressed="{{k.pressed}}" style="{{k.style}}">{{k.label}}</button></sc-for>
+</div>
+<div role="group" aria-label="Γλώσσα" style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{emx.langs}}" as="l" hint-placeholder-count="2"><button type="button" onClick="{{l.pick}}" aria-pressed="{{l.pressed}}" style="{{l.style}}">{{l.label}}</button></sc-for>
+</div>
+<div style="font-size: 13px; color: #2E4448">{{emx.kindSub}}</div>
+<div><label for="em-subject" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Θέμα</label><input id="em-subject" type="text" autocomplete="off" value="{{emx.subject}}" onChange="{{emx.setSubject}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 15px"></div>
+<div><label for="em-body" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Κείμενο</label><textarea id="em-body" value="{{emx.body}}" onChange="{{emx.setBody}}" style="width: 100%; box-sizing: border-box; min-height: 300px; padding: 10px 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 14px; line-height: 1.5; resize: vertical"></textarea></div>
+<div>
+<div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Πάτα για να μπει στο κείμενο, εκεί που είναι ο δρομέας</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{emx.vars}}" as="v" hint-placeholder-count="6"><button type="button" title="{{v.title}}" onClick="{{v.insert}}" style="height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #F4F7F7; color: #18282B; font-size: 13px; cursor: pointer">{{v.label}}</button></sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" onClick="{{emx.preview}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">{{emx.previewLabel}}</button>
+<button type="button" onClick="{{emx.test}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">{{emx.testLabel}}</button>
+</div>
+<sc-if value="{{emx.hasPrev}}" hint-placeholder-val="{{false}}">
+<div style="border: 1px solid #D5E0E1; border-radius: 14px; background: #F7FAFA; padding: 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px"><div style="font-size: 12px; color: #4A5B5E">Έτσι θα το δει ο πελάτης (με ψεύτικα στοιχεία κράτησης)</div><button type="button" onClick="{{emx.closePrev}}" style="padding: 0; border: 0; background: none; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Κλείσιμο</button></div>
+<div style="font-weight: 600">{{emx.prevSubject}}</div>
+<div style="font-size: 14px; line-height: 1.55; white-space: pre-wrap">{{emx.prevText}}</div>
+</div>
+</sc-if>
+</div>
+
+<div style="padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><div style="font-weight: 600">Τελευταία emails</div><button type="button" onClick="{{emx.refreshLog}}" style="padding: 0; border: 0; background: none; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ανανέωση</button></div>
+<sc-if value="{{emx.hasLog}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; flex-direction: column">
+<sc-for list="{{emx.log}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #EEF2F2">
+<span style="min-width: 0"><span style="display: block; font-size: 14px; overflow-wrap: anywhere">{{r.what}}</span><sc-if value="{{r.hasError}}" hint-placeholder-val="{{false}}"><span style="display: block; font-size: 12px; color: #8A3412; overflow-wrap: anywhere">{{r.error}}</span></sc-if></span>
+<span style="flex-shrink: 0; text-align: right"><span style="{{r.color}}; display: block">{{r.status}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{r.when}}</span></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<div style="font-size: 12px; color: #4A5B5E">Emails για δοκιμαστικές κρατήσεις δεν στέλνονται. Αν κάτι απέτυχε, ο λόγος φαίνεται εδώ.</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 18px; background: #F7FAFA; border-top: 1px solid #EEF2F2">
+<button type="button" onClick="{{emx.save}}" style="{{emx.saveStyle}}">{{emx.saveLabel}}</button>
+<span style="font-size: 12px; color: #4A5B5E; flex: 1 1 240px">{{emx.saveNote}}</span>
+</div>
+</div>
+</sc-if>
+</section>
+</sc-if>
 </div>
 </sc-if>
 
@@ -1140,7 +1221,94 @@ class Component extends DCLogic {
     const cur = site.find(t => t.id === this.state.thread) || site[0];
     return cur ? cur.bid : null;
   }
-  go(tab) { this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, newOpen: false }); }
+  go(tab) {
+    this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, newOpen: false });
+    if (tab === 'settings') this.loadEmail();
+  }
+
+  /* Emails to guests: the wording and the details live in the database (email_settings, email_templates);
+     the server (send-email function) fills them in and sends. Everything here edits those rows. */
+  emPatch(p) { this.setState({ em: Object.assign({}, this.state.em, p) }); }
+  loadEmail() {
+    const sb = PUSH.client;
+    if (!this.REAL || !sb || this._emLoading) return;
+    this._emLoading = true;
+    Promise.all([
+      sb.from('email_settings').select('*').eq('id', 1).single(),
+      sb.from('email_templates').select('kind, lang, subject, body'),
+      sb.from('email_log').select('created_at, kind, to_email, status, error').order('created_at', { ascending: false }).limit(8)
+    ]).then(rs => {
+      this._emLoading = false;
+      const bad = rs.find(r => r.error);
+      if (bad) { this.say('Δεν φορτώθηκαν οι ρυθμίσεις των email: ' + bad.error.message); return; }
+      const tpl = {};
+      (rs[1].data || []).forEach(t => { tpl[t.kind + '|' + t.lang] = { subject: t.subject, body: t.body }; });
+      const old = this.state.em;
+      if (old && old.dirty) { this.emPatch({ log: rs[2].data || [] }); return; } // never overwrite what is being typed
+      this.setState({ em: { set: rs[0].data, tpl: tpl, orig: JSON.stringify({ set: rs[0].data, tpl: tpl }), log: rs[2].data || [], kind: old ? old.kind : 'received', lang: old ? old.lang : 'el', busy: '', prev: null, dirty: false } });
+    }, () => { this._emLoading = false; this.say('Δεν φορτώθηκαν οι ρυθμίσεις των email. Έλεγξε το ίντερνετ.'); });
+  }
+  emEdit(fn) {
+    const em = this.state.em; if (!em) return;
+    const next = { set: Object.assign({}, em.set), tpl: Object.assign({}, em.tpl) };
+    fn(next);
+    this.emPatch({ set: next.set, tpl: next.tpl, prev: null, dirty: JSON.stringify({ set: next.set, tpl: next.tpl }) !== em.orig });
+  }
+  emSave() {
+    const sb = PUSH.client, em = this.state.em;
+    if (!sb || !em || em.busy || !em.dirty) return;
+    const orig = JSON.parse(em.orig);
+    const S = em.set;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(S.from_email || ''))) { this.say('Το email αποστολέα δεν είναι σωστό.'); return; }
+    if (S.maps_url && !/^https:\/\//.test(S.maps_url)) { this.say('Ο σύνδεσμος του χάρτη πρέπει να ξεκινά με https://'); return; }
+    this.emPatch({ busy: 'save' });
+    const jobs = [];
+    if (JSON.stringify(S) !== JSON.stringify(orig.set)) {
+      const keys = ['enabled', 'from_name', 'from_email', 'reply_to', 'owner_copy_email', 'checkin_time', 'checkout_time', 'address', 'maps_url', 'phone', 'arrival_el', 'arrival_en', 'extra_el', 'extra_en'];
+      const row = {}; keys.forEach(k => { row[k] = S[k]; });
+      jobs.push(sb.from('email_settings').update(row).eq('id', 1).select());
+    }
+    Object.keys(em.tpl).forEach(k => {
+      if (JSON.stringify(em.tpl[k]) === JSON.stringify(orig.tpl[k])) return;
+      const p = k.split('|');
+      jobs.push(sb.from('email_templates').update({ subject: em.tpl[k].subject, body: em.tpl[k].body }).eq('kind', p[0]).eq('lang', p[1]).select());
+    });
+    Promise.all(jobs).then(rs => {
+      const bad = rs.find(r => r.error || !r.data || !r.data.length);
+      if (bad) { this.emPatch({ busy: '' }); this.say('Δεν αποθηκεύτηκε' + (bad.error ? ': ' + bad.error.message : '. Δοκίμασε ξανά.')); return; }
+      const cur = this.state.em;
+      this.emPatch({ busy: '', dirty: false, orig: JSON.stringify({ set: cur.set, tpl: cur.tpl }) });
+      this.say('Αποθηκεύτηκαν τα emails προς τους πελάτες.');
+    }, () => { this.emPatch({ busy: '' }); this.say('Δεν αποθηκεύτηκε. Έλεγξε το ίντερνετ.'); });
+  }
+  emCall(action) {
+    const sb = PUSH.client, em = this.state.em;
+    if (!sb || !em || em.busy) return;
+    const t = em.tpl[em.kind + '|' + em.lang] || { subject: '', body: '' };
+    this.emPatch({ busy: action });
+    sb.functions.invoke('send-email', { body: { action: action, kind: em.kind, lang: em.lang, subject: t.subject, body: t.body } }).then(res => {
+      this.emPatch({ busy: '' });
+      const d = res.data;
+      if (res.error || !d) { this.say('Δεν απάντησε ο server. Δοκίμασε ξανά.'); return; }
+      if (action === 'preview') { this.emPatch({ prev: d }); return; }
+      if (d.ok) this.say('Στάλθηκε δοκιμαστικό email στο ' + d.to + '.');
+      else if (/RESEND_API_KEY/.test(d.error || '')) this.say('Δεν έχει μπει ακόμα το κλειδί του Resend στο Supabase (RESEND_API_KEY).');
+      else if (/own email|verify a domain|domain/i.test(d.error || '')) this.say('Το Resend δέχεται μόνο το δικό σου email μέχρι να επαληθεύσεις domain. ' + d.error);
+      else this.say('Δεν στάλθηκε: ' + (d.error || 'άγνωστο σφάλμα'));
+      this.state.em && sb.from('email_log').select('created_at, kind, to_email, status, error').order('created_at', { ascending: false }).limit(8).then(r => { if (!r.error) this.emPatch({ log: r.data || [] }); });
+    }, () => { this.emPatch({ busy: '' }); this.say('Δεν έγινε σύνδεση με τον server.'); });
+  }
+  emInsert(name) {
+    const em = this.state.em; if (!em) return;
+    const key = em.kind + '|' + em.lang;
+    const el = document.getElementById('em-body');
+    const cur = (em.tpl[key] || {}).body || '';
+    const at = el && typeof el.selectionStart === 'number' ? el.selectionStart : cur.length;
+    const end = el && typeof el.selectionEnd === 'number' ? el.selectionEnd : at;
+    const add = '{{' + name + '}}';
+    this.emEdit(n => { n.tpl[key] = Object.assign({}, n.tpl[key], { body: cur.slice(0, at) + add + cur.slice(end) }); });
+    setTimeout(() => { const t = document.getElementById('em-body'); if (t) { t.focus(); try { t.setSelectionRange(at + add.length, at + add.length); } catch (e) {} } }, 0);
+  }
   openNew(pre) {
     const base = { kind: 'paid', type: 'room', name: '', phone: '', email: '', start: this.TODAY, end: this.add(this.TODAY, 2), guests: '2', unit: '', amount: '', pay: 'cash', note: '', error: '' };
     this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, req: null, calSel: null, calEdit: false });
@@ -1692,6 +1860,73 @@ class Component extends DCLogic {
       };
     });
 
+    /* Emails to guests (settings) */
+    const emx = (() => {
+      if (!this.REAL) return { show: false };
+      const em = s.em;
+      if (!em) return { show: true, ready: false };
+      const key = em.kind + '|' + em.lang;
+      const tpl = em.tpl[key] || { subject: '', body: '' };
+      const KINDS = [['received', 'Λήψη αιτήματος'], ['confirmed', 'Αποδοχή'], ['rejected', 'Απόρριψη'], ['expired', 'Έληξε']];
+      const KIND_SUB = { received: 'Φεύγει αμέσως όταν ο πελάτης στείλει αίτημα', confirmed: 'Φεύγει όταν πατήσεις αποδοχή · εδώ μπαίνουν οι οδηγίες άφιξης', rejected: 'Φεύγει όταν πατήσεις απόρριψη', expired: 'Φεύγει όταν περάσουν 24 ώρες χωρίς απάντηση' };
+      const FIELDS = [
+        ['from_name', 'Όνομα αποστολέα', 'text', 'Το όνομα που βλέπει ο πελάτης στο email'],
+        ['from_email', 'Email αποστολέα', 'email', 'Πρέπει να είναι από domain που έχεις επαληθεύσει στο Resend'],
+        ['reply_to', 'Οι απαντήσεις πηγαίνουν στο', 'email', 'Το email σου, ώστε το «Απάντηση» του πελάτη να σε βρίσκει'],
+        ['owner_copy_email', 'Κρυφό αντίγραφο σε εσένα', 'email', 'Προαιρετικό · παίρνεις αντίγραφο κάθε email'],
+        ['checkin_time', 'Ώρα check-in', 'text', 'π.χ. 15:00'],
+        ['checkout_time', 'Ώρα check-out', 'text', 'π.χ. 11:00'],
+        ['phone', 'Τηλέφωνο επικοινωνίας', 'text', ''],
+        ['maps_url', 'Σύνδεσμος Google Maps', 'text', 'Ξεκινά με https://'],
+        ['address', 'Διεύθυνση', 'area', 'Όπως θα τη δει ο πελάτης'],
+        ['arrival_el', 'Πώς θα φτάσει (ελληνικά)', 'area', 'π.χ. από το λιμάνι, πού παρκάρει, πού βρίσκει τα κλειδιά'],
+        ['arrival_en', 'Πώς θα φτάσει (αγγλικά)', 'area', ''],
+        ['extra_el', 'Άλλες πληροφορίες (ελληνικά)', 'area', 'π.χ. wifi, κανόνες του χώρου, πρωινό'],
+        ['extra_en', 'Άλλες πληροφορίες (αγγλικά)', 'area', '']
+      ];
+      const VARS = [['name', 'όνομα'], ['check_in', 'άφιξη'], ['check_out', 'αναχώρηση'], ['nights', 'νύχτες'], ['guests', 'άτομα'], ['unit', 'δωμάτιο'], ['unit_type', 'είδος'], ['checkin_time', 'ώρα check-in'], ['checkout_time', 'ώρα check-out'], ['address', 'διεύθυνση'], ['maps_url', 'χάρτης'], ['arrival', 'πώς θα φτάσει'], ['extra', 'άλλες πληροφορίες'], ['phone', 'τηλέφωνο'], ['site_url', 'σάιτ']];
+      const box = 'width: 100%; box-sizing: border-box; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: inherit; font-size: 15px;';
+      const when = iso => new Date(iso).toLocaleString('el-GR', { timeZone: 'Europe/Athens', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      const ST = { sent: ['Στάλθηκε', '#1F5039'], failed: ['Απέτυχε', '#8A3412'], skipped: ['Παραλείφθηκε', '#4A5B5E'] };
+      const KL = { received: 'Λήψη', confirmed: 'Αποδοχή', rejected: 'Απόρριψη', expired: 'Έληξε' };
+      const on = !!em.set.enabled;
+      return {
+        show: true, ready: true,
+        enabledAria: on ? 'true' : 'false',
+        enabledTrack: 'flex-shrink: 0; width: 50px; height: 30px; padding: 3px; border-radius: 15px; border: 0; cursor: pointer; display: flex;' + (on ? 'justify-content: flex-end; background: #0F5257' : 'justify-content: flex-start; background: #8E9A9C'),
+        enabledKnob: 'width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF',
+        enabledSub: on ? 'Ο πελάτης παίρνει email όταν στέλνει αίτημα και όταν απαντάς' : 'Κλειστά · δεν φεύγει κανένα email προς τους πελάτες',
+        flipEnabled: () => this.emEdit(n => { n.set.enabled = !n.set.enabled; }),
+        fields: FIELDS.map(f => ({
+          id: 'emf-' + f[0], label: f[1], hint: f[3], value: em.set[f[0]] == null ? '' : em.set[f[0]],
+          isLine: f[2] !== 'area', isArea: f[2] === 'area', type: f[2] === 'email' ? 'email' : 'text',
+          lineStyle: box + 'height: 44px;', areaStyle: box + 'min-height: 78px; padding: 10px 12px; line-height: 1.45; resize: vertical;',
+          set: e => { const v = e && e.target ? e.target.value : ''; this.emEdit(n => { n.set[f[0]] = v; }); }
+        })),
+        kinds: KINDS.map(k => ({ label: k[1], style: k[0] === em.kind ? chipOn : chipOff, pressed: k[0] === em.kind ? 'true' : 'false', pick: () => this.emPatch({ kind: k[0], prev: null }) })),
+        langs: [['el', 'Ελληνικά'], ['en', 'Αγγλικά']].map(l => ({ label: l[1], style: l[0] === em.lang ? chipOn : chipOff, pressed: l[0] === em.lang ? 'true' : 'false', pick: () => this.emPatch({ lang: l[0], prev: null }) })),
+        kindSub: KIND_SUB[em.kind],
+        subject: tpl.subject, body: tpl.body,
+        setSubject: e => { const v = e && e.target ? e.target.value : ''; this.emEdit(n => { n.tpl[key] = Object.assign({}, n.tpl[key], { subject: v }); }); },
+        setBody: e => { const v = e && e.target ? e.target.value : ''; this.emEdit(n => { n.tpl[key] = Object.assign({}, n.tpl[key], { body: v }); }); },
+        vars: VARS.map(v => ({ label: v[1], title: '{{' + v[0] + '}}', insert: () => this.emInsert(v[0]) })),
+        hasPrev: !!em.prev, prevSubject: em.prev ? em.prev.subject : '', prevText: em.prev ? em.prev.text : '',
+        closePrev: () => this.emPatch({ prev: null }),
+        previewLabel: em.busy === 'preview' ? 'Φορτώνει…' : 'Προεπισκόπηση',
+        preview: () => this.emCall('preview'),
+        testLabel: em.busy === 'test' ? 'Στέλνεται…' : 'Στείλε δοκιμή στο email μου',
+        test: () => this.emCall('test'),
+        dirty: em.dirty,
+        saveLabel: em.busy === 'save' ? 'Αποθηκεύεται…' : (em.dirty ? 'Αποθήκευση αλλαγών' : 'Όλα αποθηκευμένα'),
+        saveStyle: 'height: 46px; border-radius: 23px; border: 0; font-size: 15px; font-weight: 600; padding: 0 24px; ' + (em.dirty ? 'background: #0F5257; color: #FFFFFF; cursor: pointer' : 'background: #E3EAEB; color: #4A5B5E; cursor: default'),
+        save: () => this.emSave(),
+        saveNote: em.dirty ? 'Η προεπισκόπηση και η δοκιμή χρησιμοποιούν τα στοιχεία που έχεις ήδη αποθηκεύσει (διεύθυνση, ώρες κ.λπ.).' : '',
+        log: (em.log || []).map(l => ({ when: when(l.created_at), what: (KL[l.kind] || l.kind) + ' · ' + l.to_email, status: (ST[l.status] || [l.status, '#4A5B5E'])[0], color: 'font-size: 12px; font-weight: 600; color: ' + (ST[l.status] || [0, '#4A5B5E'])[1], error: l.error || '', hasError: !!l.error })),
+        hasLog: (em.log || []).length > 0,
+        refreshLog: () => { this._emLoading = false; this.emPatch({ dirty: em.dirty }); const sb = PUSH.client; sb && sb.from('email_log').select('created_at, kind, to_email, status, error').order('created_at', { ascending: false }).limit(8).then(r => { if (!r.error) this.emPatch({ log: r.data || [] }); }); }
+      };
+    })();
+
     /* Detail */
     let detail = { close: () => {}, message: () => {}, cancel: () => {}, answer: () => {}, moves: [] };
     let hasDetail = false;
@@ -2198,6 +2433,7 @@ class Component extends DCLogic {
       seasons: seasons, extraText: this.money(s.extra),
       extraUp: () => this.setState({ extra: s.extra + 5 }), extraDown: () => this.setState({ extra: Math.max(0, s.extra - 5) }),
       toggles: toggles,
+      emx: emx,
       pushTest: {
         show: !auto,
         sub: PUSH.client ? (s.toggles.push ? 'Ο server στέλνει μια ειδοποίηση στις συσκευές σου, όπως για κάθε νέο αίτημα' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά ο server στέλνει μία δοκιμή') : (s.toggles.push ? 'Έρχεται ένα ψεύτικο αίτημα και το κινητό χτυπάει όπως θα χτυπάει στα αληθινά' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά στέλνει ένα ψεύτικο αίτημα'),
