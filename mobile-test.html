@@ -1638,6 +1638,11 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <p class="fine" data-i18n="m.charged">You are charged only if the host accepts within 24 hours.</p>
       </div>
     </form>
+    <div id="reqClosed" hidden>
+      <h3 data-i18n="m.closedT">Not taking bookings right now</h3>
+      <p class="fine" style="margin-bottom: 16px" data-i18n="m.closed">We're not taking booking requests through the site at the moment. Please check back soon.</p>
+      <button type="button" class="btn wide" id="cClose" data-i18n="cal.done">Done</button>
+    </div>
     <div id="reqDone" hidden>
       <h3 data-i18n="m.sent">Request sent</h3>
       <p class="fine" id="dSum"></p>
@@ -1726,7 +1731,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
       'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
-      'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
+      'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.closedT': 'Not taking bookings right now', 'm.closed': "We're not taking booking requests through the site at the moment. Please check back soon.", 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
       'mom.1t': 'Coffee on the terrace', 'mom.1d': 'The sea below, pine trees all around, and the day just starting.',
@@ -1783,7 +1788,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
       'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
-      'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
+      'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.closedT': 'Δεν δεχόμαστε κρατήσεις αυτή την περίοδο', 'm.closed': 'Αυτή την περίοδο δεν δεχόμαστε αιτήματα κράτησης από το σάιτ. Ελάτε ξανά σύντομα.', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
       'mom.1t': 'Καφές στη βεράντα', 'mom.1d': 'Η θάλασσα από κάτω, πεύκα γύρω γύρω και η μέρα μόλις ξεκινάει.',
@@ -2007,7 +2012,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   const isoKey = (s) => +String(s).replace(/-/g, '');
   const isoOf = (y, m, d) => y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
   let availTimer = null;
+  // The owners can stop new requests from the admin; the form then shows a short note instead.
+  let siteOpen = true;
+  function loadOpen() {
+    return fetch(LM_API + '/rest/v1/rpc/site_open', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY }, body: '{}' })
+      .then((r) => (r.ok ? r.json() : null)).then((v) => { if (typeof v === 'boolean') siteOpen = v; }).catch(() => {});
+  }
   function loadAvailability() {
+    loadOpen();
     const end = new Date(Date.UTC(today.y, today.m, today.d + 560));
     return fetch(LM_API + '/rest/v1/rpc/site_availability', {
       method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY },
@@ -2296,13 +2308,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   function openModal() {
     lastFocus = document.activeElement;
     $('#mSum').textContent = staySummary();
-    $('#reqForm').hidden = false; $('#reqDone').hidden = true; $('#fErr').hidden = true;
+    $('#reqForm').hidden = !siteOpen; $('#reqClosed').hidden = siteOpen; $('#reqDone').hidden = true; $('#fErr').hidden = true;
     $('#fMkt').checked = false;
     $('#fPromo').hidden = !promo; $('#fPromo').textContent = promo ? t('m.promo', { c: promo }) : '';
     ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).removeAttribute('aria-invalid'));
     modal.hidden = false; lenis && lenis.stop();
     document.documentElement.classList.add('scroll-lock'); // the page behind stays still while the request window is open
-    setTimeout(() => $('#fName').focus({ preventScroll: true }), 30);
+    setTimeout(() => (siteOpen ? $('#fName') : $('#cClose')).focus({ preventScroll: true }), 30);
   }
   let sentOk = false;
   function closeModal() {
@@ -2317,6 +2329,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   });
   $('#mClose').addEventListener('click', closeModal);
   $('#dClose').addEventListener('click', closeModal);
+  $('#cClose').addEventListener('click', closeModal);
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   // a field marked as missing clears its mark as soon as the guest types in it
   ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).addEventListener('input', () => {
@@ -2353,6 +2366,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       method: 'POST', headers: { 'Content-Type': 'application/json', apikey: LM_KEY }, body: JSON.stringify(payload)
     }).then((r) => r.json().then((j) => ({ r, j }), () => ({ r, j: {} }))).then(({ r, j }) => {
       if (!r.ok) {
+        if (j.error === 'closed') { siteOpen = false; go.disabled = false; go.textContent = label; $('#reqForm').hidden = true; $('#reqClosed').hidden = false; $('#cClose').focus(); return; }
         if (j.error === 'full') { cal.ci = null; cal.co = null; renderCal(); return fail('m.full'); }
         return fail(j.error === 'too_many' ? 'm.many' : j.error === 'invalid' ? 'm.err' : 'm.fail');
       }

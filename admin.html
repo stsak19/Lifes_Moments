@@ -518,6 +518,15 @@ button:disabled{cursor:default}
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Σάιτ</h2>
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
+<span><span style="display: block; font-weight: 500">Δεχόμαστε αιτήματα</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{site.sub}}</span></span>
+<button type="button" role="switch" aria-checked="{{site.aria}}" aria-label="Δεχόμαστε αιτήματα" onClick="{{site.flip}}" style="{{site.track}}"><span style="{{site.knob}}"></span></button>
+</div>
+</div>
+</section>
+<section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Ειδοποιήσεις</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
@@ -544,6 +553,42 @@ button:disabled{cursor:default}
 </section>
 </div>
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<section>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Booking.com</h2>
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
+<button type="button" onClick="{{bk.toggle}}" aria-expanded="{{bk.aria}}" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: transparent; color: #18282B; font: inherit; text-align: left; cursor: pointer">
+<span style="min-width: 0"><span style="display: block; font-weight: 500">Συγχρονισμός ημερολογίων</span><span style="{{bk.sumStyle}}">{{bk.summary}}</span></span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{bk.chev}}"><path d="M6 9l6 6 6-6"></path></svg>
+</button>
+<sc-if value="{{bk.canSync}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{bk.syncAll}}" style="flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{bk.syncLabel}}</button>
+</sc-if>
+</div>
+<sc-if value="{{bk.open}}" hint-placeholder-val="{{false}}">
+<div style="padding: 0 18px 12px; font-size: 12px; color: #4A5B5E; border-bottom: 1px solid #EEF2F2">Κάθε δωμάτιο συνδέεται χωριστά, με δύο συνδέσμους: έναν από το Booking προς το σάιτ και έναν από το σάιτ προς το Booking. Τους βρίσκεις στο extranet, στο Τιμές και διαθεσιμότητα → Συγχρονισμός ημερολογίων.</div>
+<sc-for list="{{bk.rows}}" as="f" hint-placeholder-count="12">
+<div style="border-bottom: 1px solid #EEF2F2">
+<button type="button" onClick="{{f.toggle}}" aria-expanded="{{f.aria}}" style="{{f.rowStyle}}">
+<span style="min-width: 0"><span style="display: block; font-weight: 500">{{f.name}}</span><span style="{{f.statusStyle}}">{{f.status}}</span></span>
+<span style="flex-shrink: 0; font-size: 13px; font-weight: 600; color: #0F5257">{{f.action}}</span>
+</button>
+<sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 4px 18px 16px; background: #F7FAFA">
+<div><label for="bk-in" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">1 · Από το Booking στο σάιτ: κόλλησε εδώ τον σύνδεσμο «Εξαγωγή» του Booking</label>
+<div style="display: flex; gap: 8px"><input id="bk-in" type="url" inputmode="url" autocomplete="off" spellcheck="false" value="{{f.draft}}" onChange="{{f.setDraft}}" placeholder="https://admin.booking.com/…" style="flex: 1; min-width: 0; box-sizing: border-box; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"><button type="button" onClick="{{f.save}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{f.saveLabel}}</button></div></div>
+<div><label for="bk-out" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">2 · Από το σάιτ στο Booking: βάλε αυτόν τον σύνδεσμο στην «Εισαγωγή» του Booking</label>
+<div style="display: flex; gap: 8px"><input id="bk-out" type="text" readonly value="{{f.exportUrl}}" onClick="{{f.selectOut}}" style="flex: 1; min-width: 0; box-sizing: border-box; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; color: #4A5B5E"><button type="button" onClick="{{f.copy}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Αντιγραφή</button></div></div>
+<sc-if value="{{f.canRemove}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{f.remove}}" style="align-self: flex-start; height: 32px; padding: 0; border: 0; background: transparent; color: #8A3412; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Αποσύνδεση αυτού του δωματίου</button>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</sc-if>
+</div>
+</section>
 <button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
@@ -846,7 +891,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: false },
+      toggles: { push: false }, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
       extra: 15,
       seasons: [
         { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', ranges: [['05-01', '06-30'], ['09-01', '09-30']], room: 85, apt: 150, min: 2 },
@@ -949,7 +994,8 @@ class Component extends DCLogic {
       id: id, stayId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
       total: Number(r.total) || 0, source: r.source, kind: r.source === 'booking' ? undefined : r.kind, pay: r.pay, status: r.status,
       email: r.email || (r.source === 'booking' ? 'μέσω Booking' : ''), phone: r.phone || '', note: r.note || '',
-      by: r.decided_by || (r.created_by ? 'Καταχώριση · ' + r.created_by + ' · ' + this.fmt(athensISOof(r.created_at)) : '')
+      synced: !!r.ical_uid && r.created_by === 'Booking.com',
+      by: r.ical_uid && r.created_by === 'Booking.com' ? 'Ήρθε αυτόματα από το ημερολόγιο του Booking.com · ' + this.fmt(athensISOof(r.created_at)) : (r.decided_by || (r.created_by ? 'Καταχώριση · ' + r.created_by + ' · ' + this.fmt(athensISOof(r.created_at)) : ''))
     };
   }
   /* Save a change to a real booking in the database, then show it */
@@ -975,6 +1021,75 @@ class Component extends DCLogic {
   }
   money(n) { return '€' + Math.round(n).toLocaleString('el-GR'); }
   unitName(id) { const u = this.UNITS.find(x => x.id === id); return u ? u.name : ''; }
+  /* Booking.com calendar link for one room: save, then read it at once. Empty link = disconnect. */
+  saveFeed(unit, raw) {
+    const url = String(raw || '').trim();
+    const name = this.unitName(unit);
+    if (url && !/^https:\/\/([a-z0-9-]+\.)*booking\.com\//i.test(url)) { this.say('Αυτός δεν είναι σύνδεσμος του Booking.com. Αντέγραψε τον σύνδεσμο «Εξαγωγή» του δωματίου από το extranet.'); return; }
+    const feeds = this.state.feeds || [];
+    const twin = url && feeds.find(f => f.unit !== unit && f.import_url === url);
+    if (twin) { this.say('Αυτός ο σύνδεσμος είναι ήδη στο ' + this.unitName(twin.unit) + '. Κάθε δωμάτιο έχει τον δικό του.'); return; }
+    if (!this.REAL) {
+      const base = this.state.feeds || this.UNITS.map(u => ({ unit: u.id, import_url: null, export_token: 'preview-' + u.id }));
+      this.setState({ feeds: base.map(f => f.unit === unit ? Object.assign({}, f, { import_url: url || null, last_ok_at: url ? new Date().toISOString() : null, last_count: url ? 2 : null, last_error: null }) : f), bkUnit: null });
+      this.say(url ? name + ': συνδέθηκε (προεπισκόπηση).' : name + ': αποσυνδέθηκε.');
+      return;
+    }
+    const sb = PUSH.client;
+    if (!url && !confirm('Να αποσυνδεθεί το ' + name + ' από το Booking.com; Οι κρατήσεις του Booking για αυτό το δωμάτιο θα φύγουν από εδώ και από το σάιτ.')) return;
+    this.setState({ bkBusy: unit });
+    const by = (this.state.user && this.state.user.name) || '';
+    sb.from('ical_feeds').update({ import_url: url || null, updated_at: new Date().toISOString(), updated_by: by }).eq('unit', unit).select('unit').then(res => {
+      if (res.error || !res.data || !res.data.length) { this.setState({ bkBusy: null }); this.say('Δεν αποθηκεύτηκε' + (res.error ? ': ' + res.error.message : '') + '. Δοκίμασε ξανά.'); return; }
+      return sb.functions.invoke('ical-sync', { body: { unit: unit } }).then(r => {
+        const one = r && r.data && r.data.results && r.data.results[0];
+        this.setState({ bkBusy: null, bkUnit: one && !one.ok ? unit : null });
+        if (!url) this.say(name + ': αποσυνδέθηκε από το Booking.com.');
+        else if (one && one.ok) this.say(name + ': συνδέθηκε. ' + (one.count ? 'Βρέθηκαν ' + one.count + (one.count === 1 ? ' κράτηση' : ' κρατήσεις') + ' από το Booking.' : 'Δεν υπάρχουν κρατήσεις από το Booking αυτή τη στιγμή.') + ' Μην ξεχάσεις το βήμα 2.');
+        else this.say(name + ': ' + ((one && one.error) || 'αποθηκεύτηκε, ο έλεγχος θα γίνει μόνος του σε λίγα λεπτά.'));
+        this.loadFeeds(); if (this.reload) this.reload();
+      });
+    });
+  }
+  /* Read Booking.com's calendars now (all rooms, or one). */
+  syncFeeds(unit) {
+    if (!this.REAL) { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Το Booking.com ελέγχθηκε τώρα (προεπισκόπηση).'); return; }
+    if (this.state.bkBusy) return;
+    this.setState({ bkBusy: unit || 'all' });
+    PUSH.client.functions.invoke('ical-sync', { body: unit ? { unit: unit } : {} }).then(r => {
+      this.setState({ bkBusy: null });
+      const rs = (r && r.data && r.data.results) || [];
+      const linked = rs.filter(x => (this.state.feeds || []).some(f => f.unit === x.unit && f.import_url));
+      const bad = linked.filter(x => !x.ok).length;
+      const added = rs.reduce((a, x) => a + (x.added || 0), 0), gone = rs.reduce((a, x) => a + (x.cancelled || 0), 0);
+      if (r && r.error) this.say('Ο έλεγχος δεν έγινε. Δοκίμασε ξανά σε λίγο.');
+      else this.say('Το Booking.com ελέγχθηκε τώρα' + (added ? ' · ' + added + (added === 1 ? ' νέα κράτηση' : ' νέες κρατήσεις') : '') + (gone ? ' · ' + gone + (gone === 1 ? ' ακύρωση' : ' ακυρώσεις') : '') + (!added && !gone ? ' · καμία αλλαγή' : '') + (bad ? ' · ' + bad + (bad === 1 ? ' δωμάτιο θέλει' : ' δωμάτια θέλουν') + ' προσοχή' : '') + '.');
+      this.loadFeeds(); if (this.reload) this.reload();
+    });
+  }
+  loadFeeds() {
+    if (!this.REAL || !PUSH.client) return Promise.resolve();
+    return Promise.all([
+      PUSH.client.from('ical_feeds').select('unit, import_url, export_token, last_ok_at, last_error, last_count').order('unit'),
+      PUSH.client.from('site_settings').select('accepting').limit(1)
+    ]).then(rs => {
+      const patch = {};
+      if (!rs[0].error) patch.feeds = rs[0].data || [];
+      if (!rs[1].error && rs[1].data && rs[1].data.length) patch.accepting = rs[1].data[0].accepting !== false;
+      this.setState(patch);
+    });
+  }
+  setAccepting(on) {
+    if (this.state.siteBusy) return;
+    if (!this.REAL) { this.setState({ accepting: on }); this.say(on ? 'Το σάιτ δέχεται ξανά αιτήματα (προεπισκόπηση).' : 'Το σάιτ σταμάτησε να δέχεται αιτήματα (προεπισκόπηση).'); return; }
+    this.setState({ accepting: on, siteBusy: true });
+    const by = (this.state.user && this.state.user.name) || '';
+    PUSH.client.from('site_settings').update({ accepting: on, updated_at: new Date().toISOString(), updated_by: by }).eq('id', true).select('accepting').then(res => {
+      if (res.error || !res.data || !res.data.length) { this.setState({ accepting: !on, siteBusy: false }); this.say('Δεν αποθηκεύτηκε' + (res.error ? ': ' + res.error.message : '') + '. Δοκίμασε ξανά.'); return; }
+      this.setState({ siteBusy: false });
+      this.say(on ? 'Το σάιτ δέχεται ξανά αιτήματα.' : 'Το σάιτ σταμάτησε να δέχεται αιτήματα. Όσα περιμένουν απάντηση μένουν όπως είναι.');
+    });
+  }
   isAuto() { return (this.props.mode || 'manual') === 'auto'; }
   list() { return this.isAuto() ? this.state.bookingsAuto : this.state.bookings; }
   occ(unit, date, ignore) {
@@ -1675,6 +1790,62 @@ class Component extends DCLogic {
       };
     });
 
+    /* Booking.com calendars, one per room (REAL: from ical_feeds; preview: local only) */
+    const feeds = s.feeds || this.UNITS.map(u => ({ unit: u.id, import_url: null, export_token: 'preview-' + u.id }));
+    const hhmm = t => { try { return new Intl.DateTimeFormat('el-GR', { timeZone: 'Europe/Athens', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(t)); } catch (e) { return ''; } };
+    const bkLinked = feeds.filter(f => f.import_url).length;
+    const bkBad = feeds.filter(f => f.import_url && f.last_error).length;
+    const lastOk = feeds.map(f => f.last_ok_at).filter(Boolean).sort().pop();
+    const bkSummary = !bkLinked ? 'Δεν έχει συνδεθεί κανένα δωμάτιο ακόμα'
+      : bkLinked + ' από 12 συνδεδεμένα' + (bkBad ? ' · ' + bkBad + (bkBad === 1 ? ' θέλει' : ' θέλουν') + ' προσοχή' : '') + (lastOk ? ' · έλεγχος ' + hhmm(lastOk) : '');
+    const bkLine = !bkLinked ? 'Δεν έχει συνδεθεί ακόμα · σύνδεσέ το από τις Ρυθμίσεις'
+      : bkBad ? bkBad + (bkBad === 1 ? ' δωμάτιο θέλει' : ' δωμάτια θέλουν') + ' προσοχή · δες τις Ρυθμίσεις'
+      : (lastOk ? 'Τελευταίος έλεγχος ' + hhmm(lastOk) : 'Περιμένει τον πρώτο έλεγχο') + ' · ' + bkLinked + ' από 12 δωμάτια';
+    const statusBase = 'display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis;';
+    const bk = {
+      open: !!s.bkOpen, aria: s.bkOpen ? 'true' : 'false',
+      chev: 'flex-shrink: 0; color: #4A5B5E; stroke-width: 2; transition: transform .2s;' + (s.bkOpen ? 'transform: rotate(180deg)' : ''),
+      summary: bkSummary, sumStyle: statusBase + (bkBad ? 'color: #8A3412' : 'color: #4A5B5E'),
+      toggle: () => this.setState({ bkOpen: !s.bkOpen, bkUnit: null }),
+      canSync: bkLinked > 0, syncLabel: s.bkBusy === 'all' ? 'Έλεγχος…' : 'Έλεγχος τώρα',
+      syncAll: () => this.syncFeeds(null),
+      rows: this.UNITS.map(u => {
+        const f = feeds.find(x => x.unit === u.id) || { unit: u.id };
+        const open = s.bkUnit === u.id;
+        let status = 'Δεν έχει συνδεθεί', color = '#4A5B5E', action = 'Σύνδεση';
+        if (f.import_url && f.last_error) { status = f.last_error; color = '#8A3412'; action = 'Διόρθωση'; }
+        else if (f.import_url && f.last_ok_at) { status = 'Συνδεδεμένο · ' + (f.last_count === 1 ? '1 κράτηση' : (f.last_count || 0) + ' κρατήσεις') + ' από Booking'; color = '#0F5257'; action = 'Αλλαγή'; }
+        else if (f.import_url) { status = 'Συνδέθηκε · διαβάζεται…'; color = '#0F5257'; action = 'Αλλαγή'; }
+        const exportUrl = LM_API + '/functions/v1/ical/' + f.export_token + '.ics';
+        return {
+          name: u.name, status: status, statusStyle: statusBase + (f.import_url && f.last_error ? '' : 'white-space: nowrap;') + ' color: ' + color, action: open ? 'Κλείσιμο' : action,
+          open: open, aria: open ? 'true' : 'false',
+          rowStyle: 'width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 18px; min-height: 52px; box-sizing: border-box; border: 0; color: #18282B; font: inherit; text-align: left; cursor: pointer; background: ' + (open ? '#F7FAFA' : '#FFFFFF'),
+          toggle: () => this.setState({ bkUnit: open ? null : u.id, bkDraft: f.import_url || '' }),
+          draft: open ? s.bkDraft : '', setDraft: (e) => this.setState({ bkDraft: e && e.target ? e.target.value : '' }),
+          saveLabel: s.bkBusy === u.id ? 'Έλεγχος…' : 'Αποθήκευση',
+          save: () => this.saveFeed(u.id, s.bkDraft),
+          exportUrl: exportUrl,
+          selectOut: (e) => { if (e && e.target && e.target.select) e.target.select(); },
+          copy: () => {
+            const done = () => this.say('Αντιγράφηκε ο σύνδεσμος για το ' + u.name + '. Κόλλησέ τον στην «Εισαγωγή» του Booking.');
+            const el = document.getElementById('bk-out');
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(exportUrl).then(done, () => { if (el) el.select(); this.say('Πάτα Ctrl+C (ή Cmd+C) για αντιγραφή.'); });
+            else { if (el) el.select(); this.say('Πάτα Ctrl+C (ή Cmd+C) για αντιγραφή.'); }
+          },
+          canRemove: !!f.import_url,
+          remove: () => this.saveFeed(u.id, '')
+        };
+      })
+    };
+    const site = {
+      aria: s.accepting ? 'true' : 'false',
+      sub: s.accepting ? 'Οι επισκέπτες στέλνουν αιτήματα κράτησης από το σάιτ' : 'Κλειστό · το σάιτ γράφει ότι αυτή την περίοδο δεν δεχόμαστε κρατήσεις',
+      track: 'flex-shrink: 0; width: 50px; height: 30px; padding: 3px; border-radius: 15px; border: 0; cursor: pointer; display: flex;' + (s.accepting ? 'justify-content: flex-end; background: #0F5257' : 'justify-content: flex-start; background: #8E9A9C') + (s.siteBusy ? '; opacity: .6' : ''),
+      knob: 'width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF',
+      flip: () => this.setAccepting(!s.accepting)
+    };
+
     /* Detail */
     let detail = { close: () => {}, message: () => {}, cancel: () => {}, answer: () => {}, moves: [] };
     let hasDetail = false;
@@ -1690,17 +1861,17 @@ class Component extends DCLogic {
         } else if (b.source === 'site') {
           pay = { pending: 'Δεσμευμένα, όχι χρεωμένα', confirmed: auto ? 'Πληρώθηκε με κάρτα στην κράτηση' : 'Χρεώθηκαν μέσω Stripe', cancelled: 'Επιστράφηκαν στην κάρτα', rejected: b.expired ? 'Η δέσμευση λύθηκε αυτόματα, χωρίς χρέωση' : 'Η δέσμευση λύθηκε' }[b.status];
         }
-        const canMove = b.status === 'confirmed' && b.type === 'room' && !!b.unit && (auto || b.source === 'site' || b.source === 'direct' || !!b.stayId);
+        const canMove = !b.synced && b.status === 'confirmed' && b.type === 'room' && !!b.unit && (auto || b.source === 'site' || b.source === 'direct' || !!b.stayId);
         const moveIds = canMove ? this.candidates(b).filter(u => u.id !== b.unit && this.isFree(u.id, b.start, b.nights, b.id)).map(u => u.id) : [];
         detail = Object.assign({
           name: b.name,
           sourceText: b.source === 'site' ? 'Κράτηση από το σάιτ' : (b.source === 'direct' ? 'Την πέρασες εσύ' + (b.note ? ' · ' + b.note : '') : 'Κράτηση από Booking.com'),
           dates: this.range(b.start, this.endOf(b)),
-          nightsGuests: b.nights + ' νύχτες · ' + b.guests + ' άτομα',
+          nightsGuests: b.synced ? b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · τα άτομα φαίνονται στο Booking' : b.nights + ' νύχτες · ' + b.guests + ' άτομα',
           unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο, όχι ακόμα'),
           total: this.money(b.total), pay: pay, email: b.email || '–', phone: b.phone || '–',
           hasBy: !!b.by, by: b.by || '',
-          canCancel: (b.source === 'site' || b.source === 'direct' || !!b.stayId) && b.status === 'confirmed',
+          canCancel: !b.synced && (b.source === 'site' || b.source === 'direct' || !!b.stayId) && b.status === 'confirmed',
           cancelLabel: b.source === 'direct' || this.REAL ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
           canMessage: b.source === 'site' && s.tab !== 'msgs',
@@ -1713,7 +1884,7 @@ class Component extends DCLogic {
             this.say(b.name + ' μεταφέρθηκε στο ' + this.unitName(id) + '.' + (auto ? ' Ενημερώθηκε και το Beds24.' : ''));
           } })),
           answer: () => this.openReq(b.id),
-          hasGuest: true,
+          hasGuest: !b.synced,
           openGuest: () => this.openGuest(b.name),
           close: () => this.setState({ detail: null }),
           message: () => this.openThread(b.id),
@@ -1744,7 +1915,7 @@ class Component extends DCLogic {
       if (!g.last || p.date > g.last) g.last = p.date;
     });
     B.forEach(b => {
-      if (b.status === 'rejected' || b.kind === 'test') return;
+      if (b.status === 'rejected' || b.kind === 'test' || b.synced) return;
       const g = addG(b.name);
       g.email = b.email; g.phone = b.phone;
       g.sources[b.source] = 1;
@@ -2143,10 +2314,10 @@ class Component extends DCLogic {
       navBadge: String(badgeN), hasNavBadge: badgeN > 0,
       isAuto: auto, isManual: !auto,
       syncAgo: s.syncAgo,
-      syncLine: this.REAL ? 'Δεν έχει συνδεθεί ακόμα · πέρασε τις κρατήσεις του με το χέρι' : 'Τελευταίος έλεγχος ' + s.syncAgo,
+      syncLine: this.REAL ? bkLine : 'Τελευταίος έλεγχος ' + s.syncAgo,
       todayLabel: ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'][this.dt(T).getUTCDay()] + ' ' + this.dt(T).getUTCDate() + ' ' + this.MONG[this.dt(T).getUTCMonth()],
       exportMonth: this.MONG[this.dt(T).getUTCMonth()],
-      syncNow: this.REAL ? () => this.say('Ο αυτόματος συγχρονισμός με το Booking.com δεν έχει μπει ακόμα. Πέρασε τις κρατήσεις του Booking από «Νέα κράτηση → Από Booking.com».') : () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
+      syncNow: this.REAL ? () => (bkLinked ? this.syncFeeds(null) : (this.go('settings'), this.setState({ bkOpen: true }))) : () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
       toast: s.toast, hasToast: !!s.toast,
       stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, hasStripBtn: hasStripBtn, stripBtn: stripBtn,
       tiles: shownTiles, noTiles: shownTiles.length === 0, statusChips: statusChips, occupiedText: occupied + ' από 12 με πελάτες',
@@ -2181,7 +2352,7 @@ class Component extends DCLogic {
       setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '' }),
       seasons: seasons, extraText: this.money(s.extra),
       extraUp: () => this.setState({ extra: s.extra + 5 }), extraDown: () => this.setState({ extra: Math.max(0, s.extra - 5) }),
-      toggles: toggles,
+      toggles: toggles, bk: bk, site: site,
       pushTest: {
         show: !auto,
         sub: PUSH.client ? (s.toggles.push ? 'Ο server στέλνει μια ειδοποίηση στις συσκευές σου, όπως για κάθε νέο αίτημα' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά ο server στέλνει μία δοκιμή') : (s.toggles.push ? 'Έρχεται ένα ψεύτικο αίτημα και το κινητό χτυπάει όπως θα χτυπάει στα αληθινά' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά στέλνει ένα ψεύτικο αίτημα'),
@@ -2190,7 +2361,7 @@ class Component extends DCLogic {
       },
       exportCsv: () => {
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
-        const paid = B.filter(b => b.status === 'confirmed' && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === T.slice(0, 7)).sort((a, b) => a.start < b.start ? -1 : 1);
+        const paid = B.filter(b => b.status === 'confirmed' && !b.synced && b.kind !== 'free' && b.kind !== 'test' && b.start.slice(0, 7) === T.slice(0, 7)).sort((a, b) => a.start < b.start ? -1 : 1);
         const left = B.filter(b => b.status === 'confirmed' && (b.kind === 'free' || b.kind === 'test') && b.start.slice(0, 7) === T.slice(0, 7)).length;
         const rows = [['Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Πελάτης', 'Χώρος', 'Πηγή', 'Πληρωμή', 'Ποσό', 'Προμήθεια Booking (περίπου)']]
           .concat(paid.map(b => [b.start, this.endOf(b), b.nights, b.name, b.unit ? this.unitName(b.unit) : '', ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source],
@@ -2512,13 +2683,15 @@ class Component extends DCLogic {
     PUSH.client = SB;
     comp.reload = loadRequests;
     comp.props = Object.assign({}, comp.props, { owners: AUTH.users() });
-    loadRequests();
+    loadRequests(); comp.loadFeeds();
     if (channel) SB.removeChannel(channel);
     channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
       if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
       loadRequests();
     }).on('postgres_changes', { event: '*', schema: 'public', table: 'owner_stays' }, function () { loadRequests(); })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); }).subscribe();
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ical_feeds' }, function () { comp.loadFeeds(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
     // a request can expire while the page is open
     clearInterval(startLive.t); startLive.t = setInterval(loadRequests, 5 * 60000);

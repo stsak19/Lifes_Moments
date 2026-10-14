@@ -14,6 +14,10 @@ Deno.serve(async (req) => {
   try { b = await req.json(); } catch { return json({ error: 'bad_json' }, 400, h); }
   if (b.website) return json({ ok: true, id: null }, 200, h); // hidden field only bots fill in
 
+  // The owners can stop new requests from the admin (Settings → Αιτήματα από το σάιτ).
+  const { data: open } = await admin.rpc('site_open');
+  if (open === false) return json({ error: 'closed' }, 403, h);
+
   const unit_type = b.unit_type === 'apt' ? 'apt' : b.unit_type === 'room' ? 'room' : null;
   const check_in = b.check_in, check_out = b.check_out;
   const guests = Number(b.guests);
