@@ -1603,7 +1603,18 @@ class Component extends DCLogic {
     });
     const uIdx = id => this.UNITS.findIndex(u => u.id === id);
     const cs = s.calSel;
-    const inCalSel = (unit, x) => !!cs && x >= cs.a && x <= cs.b && uIdx(unit) >= cs.u1 && uIdx(unit) <= cs.u2;
+    /* While the "Νέα κράτηση" form is open, its room and nights stay lit on the calendar and follow the form (same room choice as the form makes). */
+    const nbSel = (() => {
+      const f = s.newOpen && s.nb;
+      if (!f || !f.start || !f.end || f.end <= f.start) return null;
+      const n = Math.round((this.dt(f.end) - this.dt(f.start)) / 864e5);
+      const g = Math.max(1, parseInt(f.guests, 10) || 1);
+      const fits = this.UNITS.filter(u => (f.type === 'apt' ? u.id === 'apt' : u.id !== 'apt') && u.cap >= g).sort((a, c) => a.cap - c.cap || a.n - c.n);
+      const free = fits.filter(u => this.isFree(u.id, f.start, n));
+      const unit = free.some(u => u.id === f.unit) ? f.unit : (free[0] ? free[0].id : '');
+      return unit ? { unit: unit, start: f.start, end: f.end } : null;
+    })();
+    const inCalSel = (unit, x) => (!!cs && x >= cs.a && x <= cs.b && uIdx(unit) >= cs.u1 && uIdx(unit) <= cs.u2) || (!!nbSel && unit === nbSel.unit && x >= nbSel.start && x < nbSel.end);
     const calDown = (unit, x) => (e) => {
       if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
       this.drag = { kind: 'cal', unit: unit, anchor: x, moved: false };
