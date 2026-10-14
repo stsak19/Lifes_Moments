@@ -1088,7 +1088,7 @@ class Component extends DCLogic {
     }
     return sum;
   }
-  who(what) { const u = this.state.user; if (!u) return ''; const d = PUSH.client ? new Date().toISOString().slice(0, 10) : this.TODAY; return what + ' · ' + u.name + ' · ' + this.fmt(d); }
+  who(what) { const u = this.state.user; if (!u) return ''; const d = PUSH.client ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Athens' }).format(new Date()) : this.TODAY; return what + ' · ' + u.name + ' · ' + this.fmt(d); }
   loadQuick() {
     try { const v = JSON.parse(localStorage.getItem(this.QKEY) || 'null'); if (Array.isArray(v)) return v.filter(q => q && q.label && q.text); } catch (e) {}
     return this.QUICK.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1] }));
