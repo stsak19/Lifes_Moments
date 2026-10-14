@@ -92,6 +92,13 @@ nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k3{animati
 @keyframes ic-slide-l{0%{transform:translateX(0)}50%{transform:translateX(-4px)}100%{transform:translateX(0)}}
 @keyframes ic-slide-r{0%{transform:translateX(0)}50%{transform:translateX(4px)}100%{transform:translateX(0)}}
 @media (prefers-reduced-motion:reduce){nav[aria-label="Μενού"] button svg *{animation:none !important}}
+
+/* Room calendar: a cell takes a colour while the mouse is over it (not on touch screens, not on selected cells). */
+button[data-cell]{transition:background-color .12s ease}
+@media (hover:hover){
+button[data-cell]:not([data-sel="1"]):hover{background:#CFE4E2 !important}
+button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{background:#A93B31 !important}
+}
 </style>
 </head>
 <body>
@@ -258,7 +265,7 @@ nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k3{animati
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px dashed #B7791F; background: #FBEFD9"></span>Αίτημα</span></sc-if>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #E4E1DB"></span>Κλειστό</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="font-weight: 700; color: #9A6B12">€</span>Τιμή δωματίου · χρυσή αν είναι ειδική</span>
 </div>
 </div>
@@ -289,17 +296,17 @@ nav[aria-label="Μενού"] :is(button:hover,button.lm-play) svg .ic-k3{animati
 <div style="{{calRowStyle}}">
 <span style="font-size: 13px; font-weight: 500; display: flex; align-items: center; white-space: nowrap">{{row.label}}</span>
 <sc-for list="{{row.segs}}" as="sg" hint-placeholder-count="10">
-<button type="button" data-cell="{{sg.cell}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button>
+<button type="button" data-cell="{{sg.cell}}" data-sel="{{sg.sel}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button>
 </sc-for>
 </div>
 </sc-for>
 </div>
 </section>
 <sc-if value="{{hasCalSel}}" hint-placeholder-val="{{false}}">
-<div role="status" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; background: #0A3A3E; color: #FFFFFF; border-radius: 16px; padding: 12px 16px">
+<div role="status" style="position: sticky; bottom: 16px; z-index: 6; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.3); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; background: #0A3A3E; color: #FFFFFF; border-radius: 16px; padding: 12px 16px">
 <div style="flex: 1 1 260px"><div style="font-weight: 600">{{calSelTitle}}</div><div style="font-size: 13px; color: #CFE4E2">{{calSelSub}}</div></div>
+<sc-if value="{{canBookSel}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calBookSel}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #E9B949; color: #3A2604; font-size: 14px; font-weight: 600; cursor: pointer">Νέα κράτηση</button></sc-if>
 <sc-if value="{{canCloseSel}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{calCloseSel}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #FFFFFF; color: #0A3A3E; font-size: 14px; font-weight: 600; cursor: pointer">{{calCloseLabel}}</button></sc-if>
-<sc-if value="{{canBookSel}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calBookSel}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #E9B949; color: #3A2604; font-size: 14px; font-weight: 600; cursor: pointer">Κράτηση εδώ</button></sc-if>
 <sc-if value="{{canPriceSel}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{calPriceToggle}}" aria-expanded="{{calEditAria}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #CFE4E2; background: transparent; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{calPriceLabel}}</button></sc-if>
 <sc-if value="{{canOpenSel}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calOpenSel}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 1px solid #CFE4E2; background: transparent; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{calOpenLabel}}</button></sc-if>
 <button type="button" onClick="{{calSelClear}}" style="height: 42px; padding: 0 8px; border: 0; background: transparent; color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ακύρωση</button>
@@ -1603,7 +1610,7 @@ class Component extends DCLogic {
     };
     const guard = fn => () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calSel: null, calEdit: false }); fn(); };
     const segBase = 'touch-action: none; user-select: none; -webkit-user-select: none; height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
-    const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: guard(tap), cell: unit + '|' + x, down: calDown(unit, x),
+    const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: guard(tap), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
       style: segBase + 'padding: 0;' + (inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
     const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const rows = this.UNITS.map(u => {
@@ -1616,12 +1623,13 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && this.occ(u.id, days[j + 1]) === o) j++;
           const span = j - i + 1;
-          segs.push({ label: span > 1 ? o.name : o.name.charAt(0), aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)), tap: () => this.open(o.id),
+          segs.push({ label: span > 1 ? o.name : o.name.charAt(0), sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)), tap: () => this.open(o.id),
             style: segBase + 'grid-column: span ' + span + ';' + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #D9EAD3; color: #24502A' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #CFE0F3; color: #1E3A5F'))) });
           i = j + 1;
         } else if (o === 'block') {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', cell: u.id + '|' + x, down: calDown(u.id, x),
-            style: segBase + 'text-align: center; padding: 0; background: #E4E1DB; color: #4A4F5C;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0'),
+            sel: inCalSel(u.id, x) ? '1' : '',
+            style: segBase + 'text-align: center; padding: 0; background: #C94A3F; color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0'),
             tap: guard(() => { const nb = Object.assign({}, this.state.blocks); delete nb[u.id + '|' + x]; this.setState({ blocks: nb }); this.say(u.name + ' · ' + this.fmt(x) + ' άνοιξε ξανά.'); }) });
           i++;
         } else if (pendAt(u.id, x)) {
@@ -1629,7 +1637,7 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
-          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', aria: 'Αίτημα ' + p.name + ', προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)), tap: () => this.openReq(p.id),
+          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ', προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)), tap: () => this.openReq(p.id),
             style: segBase + 'grid-column: span ' + span + '; border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606; font-weight: 600' });
           i = j + 1;
         } else {
@@ -1680,6 +1688,8 @@ class Component extends DCLogic {
       if (free.length) bits.push(free.length + (free.length === 1 ? ' ελεύθερη νύχτα' : ' ελεύθερες νύχτες'));
       if (shut.length) bits.push(shut.length + ' ήδη κλειστές');
       if (booked) bits.push(booked + ' με κράτηση, δεν αλλάζουν');
+      if (units.length > 1) bits.push('για νέα κράτηση διάλεξε ένα δωμάτιο');
+      else if (booked || shut.length) bits.push('για νέα κράτηση διάλεξε μέρες ελεύθερες');
       calSelVals.hasCalSel = true;
       calSelVals.calSelTitle = where + ' · ' + when;
       calSelVals.calSelSub = bits.join(' · ');
