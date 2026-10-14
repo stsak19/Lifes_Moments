@@ -1,0 +1,15 @@
+{
+  "name": "Life's Moments · Διαχείριση",
+  "short_name": "LM Διαχείριση",
+  "lang": "el",
+  "start_url": "admin.html",
+  "scope": "./admin",
+  "display": "standalone",
+  "background_color": "#EEF3F4",
+  "theme_color": "#0F5257",
+  "icons": [
+    { "src": "icons/admin-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/admin-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/admin-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

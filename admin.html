@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<link rel="manifest" href="admin.webmanifest">
+<meta name="theme-color" content="#0F5257">
+<link rel="apple-touch-icon" href="icons/admin-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LM Διαχείριση">
 <title>Life's Moments · Διαχείριση (προεπισκόπηση)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -518,6 +524,12 @@ button:disabled{cursor:default}
 <button type="button" role="switch" aria-checked="{{t.aria}}" aria-label="{{t.label}}" onClick="{{t.flip}}" style="{{t.track}}"><span style="{{t.knob}}"></span></button>
 </div>
 </sc-for>
+<sc-if value="{{pushTest.show}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2; background: #F7FAFA">
+<span><span style="display: block; font-weight: 500">Δοκιμή ειδοποίησης</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{pushTest.sub}}</span></span>
+<button type="button" onClick="{{pushTest.run}}" style="flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{pushTest.label}}</button>
+</div>
+</sc-if>
 </div>
 </section>
 <section>
@@ -746,6 +758,40 @@ button:disabled{cursor:default}
 </template>
 <script>
 
+/*
+ * Push notifications for the owners, per device.
+ * Today: the page asks permission, registers sw.js and shows test notifications through it.
+ * Later: enable() also subscribes with the server's public VAPID key
+ *   reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC })
+ * and saves the subscription in Supabase (one row per owner and device). An Edge Function
+ * then sends a Web Push when a guest sends a request and 4 hours before it expires.
+ * iPhone: push works only once the admin is added to the Home Screen and opened from there (iOS 16.4+).
+ */
+const PUSH = {
+  OFF_KEY: 'lm-admin-push-off',
+  reg: null,
+  ios: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+  standalone: (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true,
+  supported() { return 'serviceWorker' in navigator && 'Notification' in window; },
+  perm() { return this.supported() ? Notification.permission : 'unsupported'; },
+  wantsOff() { try { return localStorage.getItem(this.OFF_KEY) === '1'; } catch (e) { return false; } },
+  setOff(v) { try { v ? localStorage.setItem(this.OFF_KEY, '1') : localStorage.removeItem(this.OFF_KEY); } catch (e) {} },
+  on() { return this.perm() === 'granted' && !this.wantsOff(); },
+  ready() {
+    if (!this.supported()) return Promise.reject(new Error('unsupported'));
+    if (!this.reg) this.reg = navigator.serviceWorker.register('sw.js', { scope: './admin' }).then(() => navigator.serviceWorker.ready);
+    return this.reg;
+  },
+  enable() {
+    if (!this.supported()) return Promise.resolve('unsupported');
+    return this.ready().then(() => Notification.requestPermission()).then(p => { if (p === 'granted') this.setOff(false); return p; });
+  },
+  show(title, body, url, tag) {
+    return this.ready().then(r => r.showNotification(title, { body: body, icon: 'icons/admin-192.png', badge: 'icons/badge-96.png', tag: tag, renotify: true, requireInteraction: true, data: { url: url } }));
+  }
+};
+if (PUSH.perm() === 'granted') PUSH.ready().catch(() => {});
+
 class DCLogic {
   constructor(props) { this.props = props || {}; this.state = {}; }
   setState(p) {
@@ -778,7 +824,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: true, pre: true, review: true },
+      toggles: { push: false, pre: true, review: true },
       extra: 15,
       seasons: [
         { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', ranges: [['05-01', '06-30'], ['09-01', '09-30']], room: 85, apt: 150, min: 2 },
@@ -804,12 +850,16 @@ class Component extends DCLogic {
         { id: 'b14', name: 'Emma Johansson', type: 'room', unit: 'r2', start: '2026-07-22', nights: 5, guests: 2, total: 600, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+46 7xx xxx xxx', ago: 9 },
         { id: 'b15', name: 'Οικογένεια Νικολάου', type: 'apt', unit: 'apt', start: '2026-07-26', nights: 7, guests: 4, total: 1330, source: 'site', status: 'confirmed', email: 'nikolaou@example.com', phone: '+30 69xx xxx xxx' },
         { id: 'b16', name: 'Paul Becker', type: 'room', unit: 'r8', start: '2026-07-24', nights: 4, guests: 3, total: 540, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+49 1xx xxx xxxx', ago: 15 },
+        { id: 'p0', name: 'Olivia Brown', type: 'room', unit: null, start: '2026-07-16', nights: 2, guests: 2, total: 240, source: 'site', status: 'pending', ago: 26, email: 'olivia@example.com', phone: '+44 7xxx xxxxxx' },
         { id: 'p1', name: 'Μαρία Κωνσταντίνου', type: 'room', unit: null, start: '2026-07-15', nights: 4, guests: 2, total: 480, source: 'site', status: 'pending', ago: 6, email: 'maria@example.com', phone: '+30 69xx xxx xxx', note: 'Γιορτάζουμε την επέτειό μας. Αν γίνεται, ένα ήσυχο δωμάτιο.' },
         { id: 'p2', name: 'Thomas Müller', type: 'room', unit: null, start: '2026-07-17', nights: 3, guests: 3, total: 405, source: 'site', status: 'pending', ago: 21, email: 'thomas@example.com', phone: '+49 1xx xxx xxxx', note: 'Θα φτάσουμε αργά, γύρω στις 22:00. Γίνεται;' },
         { id: 'p3', name: 'Γιώργος Αλεξίου', type: 'apt', unit: null, start: '2026-07-19', nights: 6, guests: 4, total: 1140, source: 'site', status: 'pending', ago: 2, email: 'giorgos@example.com', phone: '+30 69xx xxx xxx' }
       ]
     };
+    this.state.bookings = this.expire(this.state.bookings);
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, blocks);
+    this.state.checking = null; this.state.pushBusy = false; this.state.pushPerm = PUSH.perm(); this.state.testIn = 0;
+    this.state.toggles.push = PUSH.on();
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
     this.COMMISSION = 0.15;
     this.QKEY = 'lm-admin-quick-replies';
@@ -876,6 +926,48 @@ class Component extends DCLogic {
       delete b.note;
     });
     return out;
+  }
+  /* A request nobody answered in 24 hours drops on its own: the card hold is released and the guest gets an email. */
+  expire(list) {
+    return list.map(b => b.status === 'pending' && b.ago >= 24 ? Object.assign({}, b, { status: 'rejected', expired: true, by: 'Έληξε αυτόματα στις 24 ώρες · ' + this.fmt(this.TODAY) }) : b);
+  }
+  enablePush() {
+    if (this.state.pushBusy) return Promise.resolve(PUSH.perm());
+    this.setState({ pushBusy: true });
+    return PUSH.enable().then(p => {
+      this.setState({ pushBusy: false, pushPerm: p, toggles: Object.assign({}, this.state.toggles, { push: p === 'granted' }) });
+      if (p === 'granted') this.say('Οι ειδοποιήσεις άνοιξαν σε αυτή τη συσκευή.');
+      else if (p === 'denied') this.say('Ο browser μπλόκαρε τις ειδοποιήσεις. Άνοιξέ τες από τις ρυθμίσεις του για αυτή τη σελίδα.');
+      else if (p === 'unsupported') this.say(PUSH.ios ? 'Στο iPhone: Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας», και άνοιξε τη Διαχείριση από το εικονίδιο.' : 'Αυτός ο browser δεν υποστηρίζει ειδοποιήσεις.');
+      return p;
+    }, () => { this.setState({ pushBusy: false }); this.say('Δεν άνοιξαν οι ειδοποιήσεις. Δοκίμασε ξανά.'); return 'error'; });
+  }
+  /* Demo: a guest sends a request in 5 seconds and the phone gets the notification. */
+  testRequest() {
+    if (this.state.testIn) return;
+    const go = () => {
+      let n = 5;
+      this.setState({ testIn: n });
+      this.say('Το δοκιμαστικό αίτημα έρχεται σε 5 δευτερόλεπτα. Κλείδωσε το κινητό αν θες να το δεις όπως θα έρχεται.');
+      const iv = setInterval(() => {
+        n -= 1;
+        if (n > 0) { this.setState({ testIn: n }); return; }
+        clearInterval(iv);
+        const names = ['Ελένη Σταύρου', 'Sarah Klein', 'Νίκος Γεωργίου', 'Marta Rossi'];
+        const k = this.state.bookings.filter(b => /^n\d/.test(b.id)).length;
+        const id = 'n' + (k + 1);
+        const b = { id: id, name: names[k % names.length], type: 'room', unit: null, start: '2026-07-21', nights: 3, guests: 2, total: 360, source: 'site', status: 'pending', ago: 0, email: 'test@example.com', phone: '+30 69xx xxx xxx', note: 'Δοκιμαστικό αίτημα' };
+        this.setState({ testIn: 0, bookings: this.state.bookings.concat([b]), bookingsAuto: this.state.bookingsAuto.concat([b]) });
+        const body = b.name + ' · ' + this.range(b.start, this.endOf(b)) + ' · ' + b.guests + ' άτομα · ' + this.money(b.total) + '\nΑπάντησε μέσα σε 24 ώρες.';
+        if (PUSH.on()) PUSH.show('Νέο αίτημα κράτησης', body, 'admin.html?req=' + id, 'req-' + id).catch(() => this.say('Νέο αίτημα από ' + b.name + '.'));
+        else this.say('Νέο αίτημα από ' + b.name + '. (Οι ειδοποιήσεις είναι κλειστές σε αυτή τη συσκευή.)');
+      }, 1000);
+    };
+    if (PUSH.on()) go(); else this.enablePush().then(p => { if (p === 'granted') go(); });
+  }
+  openReqById(id) {
+    const b = this.list().find(x => x.id === id && x.status === 'pending');
+    this.setState({ tab: 'today', detail: null, customer: null, newOpen: false, req: b ? id : null });
   }
   say(msg) {
     clearTimeout(this._t);
@@ -989,7 +1081,7 @@ class Component extends DCLogic {
     if (b.status === 'confirmed' && b.source === 'direct') return { badge: 'Από εμάς', badgeStyle: base + 'background: #D9EAD3; color: #24502A' };
     if (b.status === 'pending') return { badge: 'Αίτημα', badgeStyle: base + 'background: #FBEFD9; color: #7A4708' };
     if (b.status === 'cancelled') return { badge: 'Ακυρώθηκε', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
-    if (b.status === 'rejected') return { badge: 'Απορρίφθηκε', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
+    if (b.status === 'rejected') return { badge: b.expired ? 'Έληξε' : 'Απορρίφθηκε', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
     if (b.source === 'booking') return { badge: 'Booking', badgeStyle: base + 'background: #DCE5F3; color: #1E3A5F' };
     return { badge: 'Σάιτ', badgeStyle: base + 'background: #0F5257; color: #FFFFFF' };
   }
@@ -1178,15 +1270,22 @@ class Component extends DCLogic {
           dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: this.money(rb.total),
           pickTitle: rb.type === 'apt' ? 'Διαμέρισμα' : 'Σε ποιο δωμάτιο;',
           rooms: rooms, noFree: !suggested, canAccept: !!picked,
-          acceptLabel: picked ? 'Αποδοχή στο ' + this.unitName(picked) + ' · χρέωση ' + this.money(rb.total) : '',
+          acceptLabel: s.checking === rb.id ? 'Έλεγχος στο Booking.com…' : picked ? 'Αποδοχή στο ' + this.unitName(picked) + ' · χρέωση ' + this.money(rb.total) : '',
           contact: rb.email + ' · ' + rb.phone,
           note: rb.note || '', hasNote: !!rb.note,
           back: () => this.setState({ req: null }),
           accept: () => {
-            if (!picked) return;
-            this.patch(rb.id, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') });
-            this.setState({ req: null });
-            this.say('Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '. Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
+            if (!picked || this.state.checking) return;
+            // Booking.com's calendar is read again right now, so a booking made there in the last hours is caught before charging.
+            this.setState({ checking: rb.id, syncAgo: 'μόλις τώρα' });
+            setTimeout(() => {
+              this.setState({ checking: null });
+              const clash = this.firstClash(picked, rb.start, rb.nights);
+              if (clash) { this.say('Προσοχή: το ' + this.unitName(picked) + ' πιάστηκε στο μεταξύ' + (clash === 'block' ? '' : ' (' + clash.name + ')') + '. Διάλεξε άλλο δωμάτιο.'); return; }
+              this.patch(rb.id, { status: 'confirmed', unit: picked, by: this.who('Αποδοχή') });
+              this.setState({ req: null });
+              this.say('Το Booking.com ελέγχθηκε τώρα, χωρίς σύγκρουση. Επιβεβαιώθηκε · ' + rb.name + ' στο ' + this.unitName(picked) + '. Χρεώθηκαν ' + this.money(rb.total) + ' και ο πελάτης πήρε email.');
+            }, 1100);
           },
           reject: () => {
             this.patch(rb.id, { status: 'rejected', by: this.who('Απόρριψη') });
@@ -1377,7 +1476,7 @@ class Component extends DCLogic {
     const liveB = listB.filter(b => b.status === 'confirmed');
     const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(liveB.reduce((a, b) => a + b.total, 0)) + ' επιβεβαιωμένα · προμήθεια Booking περίπου ' + this.money(liveB.reduce((a, b) => a + commOf(b), 0));
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
-    const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: 'Απορρίφθηκε' })[b.status] || b.status;
+    const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε' : 'Απορρίφθηκε' })[b.status] || b.status;
     const downloadCsv = () => {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
       const rows = [['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Προμήθεια Booking (περίπου)', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο']]
@@ -1405,7 +1504,16 @@ class Component extends DCLogic {
       minUp: () => this.bumpSeason(se.id, 'min', 1, 1), minDown: () => this.bumpSeason(se.id, 'min', -1, 1)
     }));
     const togDefs = [
-      auto ? { id: 'push', label: 'Ειδοποίηση για νέα κράτηση', sub: 'Στο κινητό, μόλις κλειστεί από σάιτ ή Booking' } : { id: 'push', label: 'Ειδοποίηση για νέο αίτημα', sub: 'Στο κινητό, και υπενθύμιση 4 ώρες πριν λήξει' },
+      (() => {
+        const p = s.pushPerm;
+        const what = auto ? 'Μόλις κλειστεί κράτηση από σάιτ ή Booking' : 'Νέο αίτημα, και υπενθύμιση 4 ώρες πριν λήξει';
+        const sub = s.pushBusy ? 'Περιμένει την απάντησή σου στο παράθυρο του browser…'
+          : p === 'unsupported' ? (PUSH.ios && !PUSH.standalone ? 'Στο iPhone: Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας», και άνοιξε τη Διαχείριση από το εικονίδιο' : 'Αυτός ο browser δεν υποστηρίζει ειδοποιήσεις')
+          : p === 'denied' ? 'Μπλοκαρισμένες από τον browser · άνοιξέ τες από τις ρυθμίσεις του για αυτή τη σελίδα'
+          : s.toggles.push ? 'Ενεργές σε αυτή τη συσκευή · ' + what.charAt(0).toLowerCase() + what.slice(1)
+          : what + ' · άνοιξέ το σε κάθε κινητό που θέλεις να ειδοποιείται';
+        return { id: 'push', label: auto ? 'Ειδοποίηση για νέα κράτηση' : 'Ειδοποίηση για νέο αίτημα', sub: sub };
+      })(),
       { id: 'pre', label: 'Οδηγίες άφιξης', sub: 'Email στον πελάτη 2 μέρες πριν' },
       { id: 'review', label: 'Αίτημα για κριτική', sub: 'Email την επόμενη μέρα μετά την αναχώρηση' }
     ];
@@ -1415,7 +1523,12 @@ class Component extends DCLogic {
         label: t.label, sub: t.sub, aria: on ? 'true' : 'false',
         track: 'flex-shrink: 0; width: 50px; height: 30px; padding: 3px; border-radius: 15px; border: 0; cursor: pointer; display: flex;' + (on ? 'justify-content: flex-end; background: #0F5257' : 'justify-content: flex-start; background: #8E9A9C'),
         knob: 'width: 24px; height: 24px; border-radius: 12px; background: #FFFFFF',
-        flip: () => this.setState({ toggles: Object.assign({}, s.toggles, { [t.id]: !on }) })
+        flip: () => {
+          if (t.id !== 'push') { this.setState({ toggles: Object.assign({}, s.toggles, { [t.id]: !on }) }); return; }
+          if (on) { PUSH.setOff(true); this.setState({ toggles: Object.assign({}, s.toggles, { push: false }) }); this.say('Οι ειδοποιήσεις έκλεισαν σε αυτή τη συσκευή.'); }
+          else if (PUSH.perm() === 'granted') { PUSH.setOff(false); this.setState({ toggles: Object.assign({}, s.toggles, { push: true }) }); this.say('Οι ειδοποιήσεις άνοιξαν σε αυτή τη συσκευή.'); }
+          else this.enablePush();
+        }
       };
     });
 
@@ -1430,7 +1543,7 @@ class Component extends DCLogic {
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
         if (b.source === 'direct') pay = b.kind === 'free' ? 'Χωρίς χρέωση · δεν πάει στον λογιστή' : (b.kind === 'test' ? 'Δοκιμή · δεν μετράει πουθενά' : PAYW[b.pay] + ' · πάει στον λογιστή');
         if (b.source === 'site') {
-          pay = { pending: 'Δεσμευμένα, όχι χρεωμένα', confirmed: auto ? 'Πληρώθηκε με κάρτα στην κράτηση' : 'Χρεώθηκαν μέσω Stripe', cancelled: 'Επιστράφηκαν στην κάρτα', rejected: 'Η δέσμευση λύθηκε' }[b.status];
+          pay = { pending: 'Δεσμευμένα, όχι χρεωμένα', confirmed: auto ? 'Πληρώθηκε με κάρτα στην κράτηση' : 'Χρεώθηκαν μέσω Stripe', cancelled: 'Επιστράφηκαν στην κάρτα', rejected: b.expired ? 'Η δέσμευση λύθηκε αυτόματα, χωρίς χρέωση' : 'Η δέσμευση λύθηκε' }[b.status];
         }
         const canMove = b.status === 'confirmed' && b.type === 'room' && !!b.unit && (auto || b.source === 'site' || b.source === 'direct');
         const moveIds = canMove ? this.candidates(b).filter(u => u.id !== b.unit && this.isFree(u.id, b.start, b.nights, b.id)).map(u => u.id) : [];
@@ -1896,8 +2009,14 @@ class Component extends DCLogic {
       seasons: seasons, extraText: this.money(s.extra),
       extraUp: () => this.setState({ extra: s.extra + 5 }), extraDown: () => this.setState({ extra: Math.max(0, s.extra - 5) }),
       toggles: toggles,
+      pushTest: {
+        show: !auto,
+        sub: s.toggles.push ? 'Έρχεται ένα ψεύτικο αίτημα και το κινητό χτυπάει όπως θα χτυπάει στα αληθινά' : 'Ανοίγει πρώτα τις ειδοποιήσεις, μετά στέλνει ένα ψεύτικο αίτημα',
+        label: s.testIn ? 'Σε ' + s.testIn + '″…' : 'Στείλε δοκιμή',
+        run: () => this.testRequest()
+      },
       set1Title: auto ? 'Σύνδεση Beds24' : 'Ημερολόγια Booking.com',
-      set1Sub: auto ? 'Booking.com και σάιτ · διαθεσιμότητα, τιμές, κρατήσεις' : '12 συνδεδεμένα · iCal μέσα και έξω',
+      set1Sub: auto ? 'Booking.com και σάιτ · διαθεσιμότητα, τιμές, κρατήσεις' : '12 συνδεδεμένα · iCal μέσα και έξω · κλείνουν εκεί και τα αιτήματα σε αναμονή',
       set2Sub: auto ? 'Χρέωση [προκαταβολή %] με την κράτηση, το υπόλοιπο [πότε]' : 'Δέσμευση στην κάρτα · απάντηση σε 24 ώρες',
       exportCsv: () => {
         const PAYW = { cash: 'Μετρητά', card: 'Κάρτα (POS)', bank: 'Τράπεζα' };
@@ -2121,9 +2240,15 @@ class Component extends DCLogic {
   }
   function enter(user) {
     comp.setState({ user: user });
-    login.hidden = true; root.hidden = false; bar.hidden = false;
+    login.hidden = true; root.hidden = false; bar.hidden = !params.has('mode');
+    if (params.get('req')) comp.openReqById(params.get('req'));
     comp.say('Καλώς ήρθες, ' + user.name + '.');
   }
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', function (e) {
+    if (!e.data || !e.data.open || !comp.state.user) return;
+    try { const id = new URL(e.data.open).searchParams.get('req'); if (id) comp.openReqById(id); } catch (err) {}
+  });
 
   render();
   const who = AUTH.current();

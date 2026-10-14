@@ -1802,9 +1802,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'foot.stayP': 'Check-in <span class="todo">[time]</span><br>Check-out <span class="todo">[time]</span><br>Also on Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[number]</span><br>Short-term rental registry, Greece',
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
-      'm.submit': 'Hold card and send request', 'm.charged': 'You are charged only if the host accepts within 24 hours.', 'm.sent': 'Request sent',
+      'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. Nothing was held or sent.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.demo': 'Demo only. No card was held and nothing was sent; the nights stay held in this browser for 24 hours.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': 'We emailed {e} a copy.',
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
@@ -1859,9 +1859,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'foot.stayP': 'Άφιξη <span class="todo">[ώρα]</span><br>Αναχώρηση <span class="todo">[ώρα]</span><br>Και στο Booking.com',
       'foot.regP': 'ΑΜΑ <span class="todo">[αριθμός]</span><br>Μητρώο Ακινήτων Βραχυχρόνιας Διαμονής',
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
-      'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Χρεώνεστε μόνο αν ο οικοδεσπότης δεχτεί μέσα σε 24 ώρες.', 'm.sent': 'Το αίτημα στάλθηκε',
+      'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε ούτε στάλθηκε τίποτα.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.demo': 'Μόνο για επίδειξη. Δεν δεσμεύτηκε κάρτα ούτε στάλθηκε τίποτα· οι νύχτες μένουν κρατημένες σε αυτόν τον browser για 24 ώρες.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Στείλαμε αντίγραφο στο {e}.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
@@ -2190,7 +2190,14 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     }
     return (bookedCache[id] = s);
   }
-  const subBooked = (k, sub) => bookedSet(kY(k), kM(k), sub).has(k);
+  // Requests waiting for the owner's answer hold one room for their nights, so a second guest
+  // can't ask for the same room. A hold drops on its own after 24 hours (here: kept in this browser).
+  const HOLD_MS = 24 * 3600 * 1000;
+  let holds = [];
+  try { holds = JSON.parse(localStorage.getItem('lm-holds') || '[]').filter((h) => h.exp > Date.now()); } catch (e) { holds = []; }
+  const saveHolds = () => { try { localStorage.setItem('lm-holds', JSON.stringify(holds)); } catch (e) {} };
+  const heldBy = (k, sub) => holds.some((h) => h.sub === sub && k >= h.ci && k < h.co && h.exp > Date.now());
+  const subBooked = (k, sub) => bookedSet(kY(k), kM(k), sub).has(k) || heldBy(k, sub);
   const dayFull = (k, u) => UNITS[u].subs.every((sub) => subBooked(k, sub));
   function freeSubs(u, a, b) {
     return UNITS[u].subs.filter((sub) => { for (let x = a; x < b; x = kNext(x)) if (subBooked(x, sub)) return false; return true; });
@@ -2448,7 +2455,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     document.documentElement.classList.add('scroll-lock'); // the page behind stays still while the request window is open
     setTimeout(() => $('#fName').focus({ preventScroll: true }), 30);
   }
+  let sentOk = false;
   function closeModal() {
+    if (sentOk) { sentOk = false; cal.ci = null; cal.co = null; cal.note = ''; renderCal(); }
     modal.hidden = true; lenis && lenis.start();
     document.documentElement.classList.remove('scroll-lock');
     const back = $('#stay').classList.contains('bk-open') ? null : (mqMobile.matches ? $('#mbar') : lastFocus);
@@ -2477,6 +2486,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#fErr').hidden = !bad.length;
     if (bad.length) { $(bad[0]).focus({ preventScroll: true }); return; }
     $('#dSum').textContent = staySummary() + '. ' + t('m.emailed', { e: $('#fEmail').value.trim() });
+    const sub = freeSubs(cal.unit, cal.ci, cal.co)[0];
+    if (sub !== undefined) { holds.push({ sub, ci: cal.ci, co: cal.co, exp: Date.now() + HOLD_MS }); saveHolds(); }
+    sentOk = true;
     $('#reqForm').hidden = true; $('#reqDone').hidden = false;
     $('#dClose').focus();
   });
