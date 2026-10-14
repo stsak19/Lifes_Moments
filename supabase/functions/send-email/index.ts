@@ -196,9 +196,17 @@ Deno.serve(async (req) => {
     if (b.action === 'test') {
       const to = who.user.email;
       if (!to) return json({ error: 'no_email' }, 400, h);
-      const res = await sendMail(s, to, { ...mail, subject: '[ΔΟΚΙΜΗ] ' + mail.subject });
-      await record(null, kind, to, res.ok ? 'sent' : 'failed', res.ok ? undefined : res.error, res.ok ? res.id : undefined);
-      return json(res.ok ? { ok: true, to } : { ok: false, error: res.error }, 200, h);
+      const testMail = { ...mail, subject: '[ΔΟΚΙΜΗ] ' + mail.subject };
+      let target = to;
+      let res = await sendMail(s, target, testMail);
+      // Without a verified domain Resend only delivers to the address of the Resend account, which may differ
+      // from the owner's login email. Its error names that address, so retry once there.
+      if (!res.ok) {
+        const m = /own email address \(([^)\s]+@[^)\s]+)\)/.exec(res.error ?? '');
+        if (m && m[1].toLowerCase() !== to.toLowerCase()) { target = m[1]; res = await sendMail(s, target, testMail); }
+      }
+      await record(null, kind, target, res.ok ? 'sent' : 'failed', res.ok ? undefined : res.error, res.ok ? res.id : undefined);
+      return json(res.ok ? { ok: true, to: target } : { ok: false, error: res.error }, 200, h);
     }
     return json({ error: 'action' }, 400, h);
   } catch (e) {
