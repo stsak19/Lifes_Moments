@@ -161,7 +161,11 @@ h1, h2, h3 { text-wrap: balance; }
 
 /* ---------- intro ---------- */
 .intro { position: relative; height: 86vh; height: 86svh; min-height: 540px; max-height: 940px; overflow: hidden; background: #0A1220; }
-.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #0A1220; }
+.hero-still, .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-still { background: #0A1220; }
+/* The video stays invisible until it is really playing, so a refresh never shows a black or empty frame. */
+.hero-video { opacity: 0; transition: opacity .6s ease; }
+.hero-video.ready { opacity: 1; }
 .fade { position: absolute; inset: 0; z-index: 1; background: #05080F; opacity: 0; pointer-events: none; }
 .hero-switch { position: absolute; z-index: 3; bottom: 76px; right: 24px; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(6, 10, 18, .42); border: 1px solid rgba(248, 244, 236, .3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .hero-switch button { border: 0; background: transparent; color: #F8F4EC; min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
@@ -531,7 +535,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 @media (max-width: 760px) { .mark { width: 30px; height: 30px; } .brand { gap: 10px; } }
 
 /* ---------- hero: graded video, one title, controls tucked away ---------- */
-.hero-video { filter: saturate(.78) contrast(1.06) brightness(.84); }
+.hero-still, .hero-video { filter: saturate(.78) contrast(1.06) brightness(.84); }
 .grade { position: absolute; inset: 0; z-index: 1; pointer-events: none; transition: background-color 1.2s ease, opacity 1.2s ease; mix-blend-mode: soft-light; background: #1B2D55; opacity: .7; }
 :root[data-mood="morning"] .grade { background: #CFE3F0; opacity: .38; }
 :root[data-mood="noon"] .grade { background: #F6E7C8; opacity: .28; }
@@ -1332,7 +1336,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 <main>
   <section class="intro" id="intro" aria-label="Life's Moments">
     <!-- Hero: the 360 video around the building. Swap hero-1600.mp4 / hero-960.mp4 (and hero-poster.jpg) for the real footage. -->
-    <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" poster="hero-poster.jpg" aria-label="360° video around the building"></video>
+    <img class="hero-still" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+    <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" aria-label="360° video around the building"></video>
     <div class="grade"></div>
     <div class="shade"></div>
     <div class="fade" id="fade"></div>
@@ -2539,6 +2544,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     setPlayLabel();
   }
   hv.addEventListener('play', setPlayLabel);
+  // Show the video only once a real frame is on screen (the still underneath covers the wait).
+  const showVideo = () => hv.classList.add('ready');
+  hv.addEventListener('playing', () => { if (hv.classList.contains('ready')) return; if (hv.requestVideoFrameCallback) hv.requestVideoFrameCallback(showVideo); else setTimeout(showVideo, 80); });
   hv.addEventListener('pause', setPlayLabel);
   playBtn.addEventListener('click', () => { wantPlay = !isPlaying(); syncPlayback(); });
   new IntersectionObserver((en) => { introOnScreen = en[0].isIntersecting; syncPlayback(); }).observe(introEl);
