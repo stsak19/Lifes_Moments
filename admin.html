@@ -643,7 +643,7 @@ button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{backgr
 <button type="button" onClick="{{k.pick}}" aria-pressed="{{k.pressed}}" style="{{k.style}}"><span style="{{k.radio}}"></span><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600">{{k.label}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{k.sub}}</span></span></button>
 </sc-for>
 </div>
-<div><label for="nb-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Όνομα <span style="color: #C2502A">*</span></label><input id="nb-name" type="text" autocomplete="off" required aria-required="true" aria-invalid="{{nb.nameBad}}" value="{{nb.name}}" onChange="{{nb.setName}}" onInput="{{nb.setName}}" placeholder="π.χ. Γιώργος Παπαδάκης" style="{{nb.nameStyle}}"></div>
+<div><label for="nb-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ονοματεπώνυμο <span style="color: #C2502A">*</span></label><input id="nb-name" type="text" autocomplete="off" required aria-required="true" aria-invalid="{{nb.nameBad}}" value="{{nb.name}}" onChange="{{nb.setName}}" onInput="{{nb.setName}}" placeholder="π.χ. Γιώργος Παπαδάκης" style="{{nb.nameStyle}}"></div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
 <div><label for="nb-phone" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Τηλέφωνο</label><input id="nb-phone" type="tel" value="{{nb.phone}}" onChange="{{nb.setPhone}}" placeholder="προαιρετικό" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
 <div><label for="nb-email" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Email</label><input id="nb-email" type="email" value="{{nb.email}}" onChange="{{nb.setEmail}}" placeholder="προαιρετικό" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
@@ -2204,9 +2204,7 @@ class Component extends DCLogic {
       const radio = on => 'flex-shrink: 0; width: 18px; height: 18px; border-radius: 9px; box-sizing: border-box;' + (on ? 'border: 6px solid #0F5257' : 'border: 2px solid #A7B4B6');
       const KINDS = [
         { id: 'paid', label: 'Με πληρωμή', sub: 'Οποιοδήποτε ποσό, και με έκπτωση. Πάει στον λογιστή.' },
-        { id: 'booking', label: 'Από Booking.com', sub: 'Κράτηση που ήρθε από το Booking. Κλείνει το δωμάτιο εδώ και στο σάιτ.' },
-        { id: 'free', label: 'Χωρίς χρέωση', sub: 'Φίλοι, συγγενείς ή δική σου χρήση. Πιάνει το δωμάτιο, δεν έχει έσοδο.' },
-        { id: 'test', label: 'Δοκιμή', sub: 'Για να δοκιμάσεις το σύστημα. Δεν μετράει πουθενά.' }
+        { id: 'free', label: 'Χωρίς χρέωση', sub: 'Φίλοι, συγγενείς ή δική σου χρήση. Πιάνει το δωμάτιο, δεν έχει έσοδο.' }
       ];
       let blockReason = '';
       if (nights <= 0) blockReason = 'Η αναχώρηση πρέπει να είναι μετά την άφιξη.';
@@ -2217,7 +2215,7 @@ class Component extends DCLogic {
       const amountReq = f.kind === 'paid' && normal == null;
       const amountMissing = f.kind === 'paid' && (amt == null || !Number.isFinite(amt) || amt < 0);
       const missing = [];
-      if (nameMissing) missing.push('όνομα');
+      if (nameMissing) missing.push('ονοματεπώνυμο');
       if (amountMissing) missing.push('ποσό');
       const fieldStyle = bad => 'width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; color: #18282B; font-size: 15px; ' + (bad ? 'border: 2px solid #C2502A; background: #FDF1EE' : 'border: 1px solid #C3D1D3; background: #FFFFFF');
       nb = {
@@ -2239,7 +2237,7 @@ class Component extends DCLogic {
         amountPh: normal != null ? String(normal) : 'ποσό',
         hasDiscount: disc > 0, discountText: 'Έκπτωση ' + disc + '% · στον λογιστή πάει το ' + (amt != null ? this.money(amt) : ''),
         pays: [['cash', 'Μετρητά'], ['card', 'Κάρτα (POS)'], ['bank', 'Τράπεζα']].map(py => ({ label: py[1], pressed: f.pay === py[0] ? 'true' : 'false', style: f.pay === py[0] ? chipOn : chipOff, pick: () => upd({ pay: py[0] }) })),
-        taxNote: f.kind === 'booking' ? 'Το ποσό είναι προαιρετικό. Η προμήθεια του Booking υπολογίζεται στο αρχείο του λογιστή.' : f.kind === 'paid' ? 'Μετράει στα έσοδα και μπαίνει στο αρχείο του λογιστή με το ποσό που πληρώθηκε πραγματικά.' : (f.kind === 'free' ? 'Δεν υπάρχουν χρήματα, οπότε δεν μπαίνει στο αρχείο του λογιστή. Στα στατιστικά φαίνεται μόνο στην πληρότητα.' : 'Φαίνεται στο ημερολόγιο, αλλά δεν μετράει σε έσοδα, πληρότητα ή πελάτες.'),
+        taxNote: f.kind === 'booking' ? 'Το ποσό είναι προαιρετικό. Η προμήθεια του Booking υπολογίζεται στο αρχείο του λογιστή.' : f.kind === 'paid' ? 'Μετράει στα έσοδα και μπαίνει στο αρχείο του λογιστή με το ποσό που πληρώθηκε πραγματικά.' : (f.kind === 'free' ? 'Δεν υπάρχουν χρήματα, οπότε δεν μπαίνει στο αρχείο του λογιστή.' : 'Φαίνεται στο ημερολόγιο, αλλά δεν μετράει σε έσοδα, πληρότητα ή πελάτες.'),
         error: f.error, hasError: !!f.error,
         saveLabel: 'Καταχώριση' + (nights > 0 ? ' · ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες') : ''),
         nameStyle: fieldStyle(nameMissing && f.tried), nameBad: nameMissing && f.tried ? 'true' : 'false',
@@ -2250,7 +2248,7 @@ class Component extends DCLogic {
         syncNote: auto ? 'Το δωμάτιο κλείνει αμέσως και στο Booking.com.' : 'Το δωμάτιο κλείνει και στο Booking.com στον επόμενο συγχρονισμό (1–4 ώρες).',
         save: () => {
           const name = (f.name || '').trim();
-          if (missing.length) { upd({ tried: true, error: nameMissing ? 'Γράψε όνομα.' : (normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.') }); return; }
+          if (missing.length) { upd({ tried: true, error: nameMissing ? 'Γράψε ονοματεπώνυμο.' : (normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.') }); return; }
           if (blockReason) { upd({ error: blockReason }); return; }
           if (f.kind === 'paid' && (amt == null || !Number.isFinite(amt) || amt < 0)) { upd({ error: normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.' }); return; }
           if (this.REAL && PUSH.client) {
