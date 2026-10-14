@@ -99,6 +99,12 @@ button[data-cell]{transition:background-color .12s ease}
 button[data-cell]:not([data-sel="1"]):hover{background:#CFE4E2 !important}
 button[data-cell][aria-label$="κλειστό"]:not([data-sel="1"]):hover{background:#A93B31 !important}
 }
+
+/* Sections and cards in the page take a light tint while the mouse is over them (not on touch screens). */
+@media (hover:hover){
+#app main article:hover,
+#app main :is(section, aside, div)[style*="background: #FFFFFF"][style*="border-radius"]:not([style*="max-width: 78%"]):hover{background-image:linear-gradient(rgba(15,82,87,.045),rgba(15,82,87,.045)) !important}
+}
 </style>
 </head>
 <body>
