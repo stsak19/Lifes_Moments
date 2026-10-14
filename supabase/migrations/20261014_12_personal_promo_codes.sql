@@ -1,12 +1,18 @@
--- Discount codes are personal: every offer email carries its own code, and that code works only
--- with the email address it was sent to. There is no shared code any more; promo_offers.code is
--- now only the readable start of each personal code (e.g. THASOS-K7M3QPX), 'LM' when empty.
+-- Discount codes are tied to the people an offer was sent to (see 13 for the final check).
+-- promo_sends.code is room for a personal code per guest; the offer emails do not carry one yet.
 
 alter table public.promo_sends add column if not exists code text
   check (code is null or code ~ '^[A-Z0-9_-]{3,24}$');
 create unique index if not exists promo_sends_code on public.promo_sends (code) where code is not null;
 
-drop function if exists public.promo_check(text, date, date);
+-- The old shared-code check stays only so older pages get an answer: it accepts no code any more.
+create or replace function public.promo_check(p_code text, p_in date, p_out date)
+returns jsonb
+language sql
+stable
+security definer
+set search_path to ''
+as $$ select jsonb_build_object('status', 'invalid'); $$;
 
 -- Does this code give this guest (by email) a discount for these nights?
 -- The code must belong to an offer email that went out to this address, the offer is not cancelled,
