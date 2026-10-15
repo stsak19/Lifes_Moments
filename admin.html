@@ -214,9 +214,9 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{show.reqs}}" hint-placeholder-val="{{false}}">
-<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
-<nav aria-label="Λίστα αιτημάτων" style="flex: 1 1 260px; max-width: 360px; min-width: 0; background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<nav aria-label="Λίστα αιτημάτων" style="max-width: 760px; background: #FFFFFF; border-radius: 18px; overflow: hidden">
 <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 16px 18px 10px"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">Σε αναμονή</h1><span style="font-size: 13px; color: #4A5B5E">{{reqList.pendingCount}}</span></div>
+<div style="padding: 0 18px 12px; font-size: 13px; color: #4A5B5E">Πάτα ένα αίτημα: ανοίγει το ημερολόγιο στις μέρες του, για να το δεις, να το σύρεις αν θες σε άλλο δωμάτιο και να απαντήσεις.</div>
 <sc-for list="{{reqList.pending}}" as="r" hint-placeholder-count="3">
 <button type="button" onClick="{{r.open}}" aria-current="{{r.current}}" style="{{r.style}}">
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.name}}</span><span style="{{r.timerStyle}}">{{r.timer}}</span></span>
@@ -236,69 +236,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{reqList.noDone}}" hint-placeholder-val="{{false}}"><div style="padding: 10px 18px 16px; font-size: 13px; color: #4A5B5E">Δεν έχεις απαντήσει ακόμα σε αίτημα.</div></sc-if>
 </sc-if>
 </nav>
-<div style="flex: 999 1 460px; min-width: 0">
-<sc-if value="{{show.req}}" hint-placeholder-val="{{false}}">
-<section aria-label="Αίτημα κράτησης" style="background: #FFFFFF; border-radius: 20px; padding: 28px 32px 32px; display: flex; flex-direction: column; gap: 24px">
-<div>
-<div style="font-size: 13px; font-weight: 600; color: #7A4708">{{req.label}}</div>
-<h1 style="margin: 4px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 34px; font-weight: 600">{{req.name}}</h1>
-</div>
-
-<div style="display: flex; flex-direction: column; gap: 8px">
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: 14px"><span style="font-weight: 600">{{req.timerText}}</span><span style="color: #4A5B5E">{{req.usedText}}</span></div>
-<div style="height: 8px; border-radius: 4px; background: #F1E9DD; overflow: hidden"><div style="{{req.barFill}}"></div></div>
-<div style="font-size: 13px; color: #4A5B5E">{{req.expireNote}}</div>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: #E6ECED; border: 1px solid #E6ECED; border-radius: 12px; overflow: hidden">
-<div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Ημερομηνίες</div><div style="font-weight: 600">{{req.dates}}</div></div>
-<div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Νύχτες</div><div style="font-weight: 600">{{req.nights}}</div></div>
-<div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Άτομα</div><div style="font-weight: 600">{{req.guests}}</div></div>
-<div style="background: #FFFFFF; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">Σύνολο</div><div style="font-weight: 600">{{req.total}}</div></div>
-</div>
-
-<div>
-<h2 style="margin: 0 0 8px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">{{req.pickTitle}}</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px">
-<sc-for list="{{req.rooms}}" as="rm" hint-placeholder-count="4">
-<button type="button" onClick="{{rm.pick}}" disabled="{{rm.disabled}}" aria-pressed="{{rm.pressed}}" style="{{rm.tileStyle}}">
-<span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px"><span style="font-size: 16px; font-weight: 600; line-height: 1.25">{{rm.name}}</span><span style="{{rm.check}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span>
-<span style="font-size: 13px; color: #4A5B5E">{{rm.cap}}</span>
-<sc-if value="{{rm.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 1.35; color: #4A5B5E">{{rm.note}}</span></sc-if>
-<sc-if value="{{rm.hasTag}}" hint-placeholder-val="{{false}}"><span style="{{rm.tagStyle}}">{{rm.tag}}</span></sc-if>
-</button>
-</sc-for>
-</div>
-<sc-if value="{{req.noFree}}" hint-placeholder-val="{{false}}">
-<div style="margin-top: 8px; font-size: 13px; color: #8A3412">Δεν υπάρχει ελεύθερος χώρος για αυτές τις μέρες. Μπορείς μόνο να το απορρίψεις.</div>
-</sc-if>
-</div>
-
-<div>
-<h2 style="margin: 0 0 8px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Πελάτης</h2>
-<div style="font-size: 14px; color: #2E4448">{{req.contact}}</div>
-<sc-if value="{{req.hasNote}}" hint-placeholder-val="{{false}}">
-<div style="margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: #F4F7F7; font-size: 14px"><div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Μήνυμα πελάτη</div><div style="white-space: pre-line">«{{req.note}}»</div></div>
-</sc-if>
-<sc-if value="{{req.hasPromo}}" hint-placeholder-val="{{false}}">
-<div style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: #FBEFD9; color: #5C3606; font-size: 14px; font-weight: 600"><span aria-hidden="true">%</span>{{req.promoText}}</div>
-</sc-if>
-</div>
-
-<div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 18px; border-top: 1px solid #E6ECED">
-<button type="button" onClick="{{req.message}}" style="height: 46px; padding: 0 18px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px; font-weight: 500; cursor: pointer; margin-right: auto">Μήνυμα στον πελάτη</button>
-<button type="button" onClick="{{req.reject}}" style="height: 46px; padding: 0 22px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px; font-weight: 600; cursor: pointer">Απόρριψη</button>
-<sc-if value="{{req.canAccept}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{req.accept}}" style="height: 46px; padding: 0 26px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{req.acceptLabel}}</button>
-</sc-if>
-</div>
-</section>
-</sc-if>
-<sc-if value="{{reqList.emptyRight}}" hint-placeholder-val="{{false}}">
-<div style="background: #FFFFFF; border-radius: 20px; padding: 28px 32px; color: #4A5B5E"><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: #18282B">Όλα απαντημένα</div><div style="margin-top: 6px; font-size: 14px">Μόλις έρθει νέο αίτημα από το σάιτ, θα εμφανιστεί εδώ και θα πάρεις ειδοποίηση.</div></div>
-</sc-if>
-</div>
-</div>
 </sc-if>
 
 <sc-if value="{{show.cal}}" hint-placeholder-val="{{false}}">
@@ -789,10 +726,10 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{req.accept}}" style="min-height: 46px; padding: 6px 18px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{req.acceptLabel}}</button>
 </sc-if>
 <button type="button" onClick="{{req.reject}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">Απόρριψη</button>
-<div style="font-size: 12px; color: #4A5B5E">Για άλλο δωμάτιο, σύρε το αίτημα πάνω ή κάτω στο ημερολόγιο.</div>
+<sc-if value="{{req.canDrag}}" hint-placeholder-val="{{true}}"><div style="font-size: 12px; color: #4A5B5E">Για άλλο δωμάτιο, σύρε το αίτημα πάνω ή κάτω στο ημερολόγιο.</div></sc-if>
 <div style="display: flex; flex-wrap: wrap; gap: 4px 16px">
 <button type="button" onClick="{{req.message}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Μήνυμα στον πελάτη</button>
-<button type="button" onClick="{{calReqFull}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Άνοιγμα στα Αιτήματα</button>
+<button type="button" onClick="{{calReqFull}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Όλα τα αιτήματα</button>
 </div>
 </aside>
 </sc-if>
@@ -1509,8 +1446,7 @@ class Component extends DCLogic {
   openReqById(id) {
     if (PUSH.client && this.state.live !== true) { this._openWhenLoaded = id; return; }
     const b = this.list().find(x => (x.id === id || x.dbId === id) && x.status === 'pending');
-    if (b) id = b.id;
-    this.setState({ tab: 'reqs', detail: null, customer: null, room: null, newOpen: false, req: b ? id : null });
+    if (b) this.openReq(b.id); else this.go('reqs');
   }
   say(msg) {
     clearTimeout(this._t);
@@ -1633,7 +1569,13 @@ class Component extends DCLogic {
   open(id) { this.setState({ detail: id, customer: null, room: null, calReq: null, newOpen: false }); }
   openGuest(name) { this.setState({ customer: name, detail: null, room: null, newOpen: false }); }
   openRoom(id) { this.setState({ room: this.state.room === id ? null : id, detail: null, customer: null, newOpen: false }); }
-  openReq(id) { this.setState({ tab: 'reqs', req: id, detail: null, customer: null, room: null, newOpen: false }); }
+  /* Requests are answered on the calendar: open it on the request's dates with the request panel. */
+  openReq(id) {
+    const b = this.list().find(x => x.id === id && x.status === 'pending');
+    if (!b) { this.go('reqs'); return; }
+    const from = this.add(b.start, -2);
+    this.setState({ tab: 'cal', calStart: from < this.TODAY ? this.TODAY : from, calReq: b.id, req: null, detail: null, customer: null, room: null, newOpen: false, calSel: null, calEdit: false });
+  }
   /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
      the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
      calendar is read again from the database, so it never shows something that was not saved. */
@@ -1964,8 +1906,7 @@ class Component extends DCLogic {
     let req = { back: () => this.setState({ req: null }), accept: () => {}, reject: () => {}, message: () => {}, rooms: [] };
     let showReq = false;
     const reqPending = auto ? [] : B.filter(b => b.status === 'pending').sort((a, b) => b.ago - a.ago);
-    const reqId = auto ? null : s.tab === 'reqs' ? ((s.req && reqPending.some(b => b.id === s.req)) ? s.req : (reqPending[0] ? reqPending[0].id : null))
-      : s.tab === 'cal' && s.calReq && reqPending.some(b => b.id === s.calReq) ? s.calReq : null;
+    const reqId = !auto && s.tab === 'cal' && s.calReq && reqPending.some(b => b.id === s.calReq) ? s.calReq : null;
     if (reqId) {
       const rb = B.find(b => b.id === reqId && b.status === 'pending');
       if (rb) {
@@ -2011,7 +1952,7 @@ class Component extends DCLogic {
           barFill: 'height: 8px; width: ' + Math.round(rb.ago / 24 * 100) + '%; background: ' + (left <= 6 ? '#C2502A' : '#C99A3B'),
           dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: rb.priceless ? 'χωρίς τιμή' : this.money(rb.total),
           pickTitle: rb.type === 'apt' ? 'Διαμέρισμα' : 'Σε ποιο δωμάτιο;',
-          rooms: rooms, noFree: !suggested, canAccept: !!picked, pickedName: picked ? this.unitName(picked) : '–',
+          rooms: rooms, noFree: !suggested, canAccept: !!picked, pickedName: picked ? this.unitName(picked) : '–', canDrag: rb.type === 'room',
           acceptLabel: s.checking === rb.id ? (this.REAL ? 'Αποθήκευση…' : 'Έλεγχος στο Booking.com…') : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
           contact: rb.email + ' · ' + rb.phone,
           note: rb.note || '', hasNote: !!rb.note,
@@ -2053,14 +1994,14 @@ class Component extends DCLogic {
     const reqList = {
       pendingCount: String(reqPending.length), noPending: reqPending.length === 0,
       pending: reqPending.map(b => {
-        const left = 24 - b.ago, on = b.id === reqId;
+        const left = 24 - b.ago, on = false;
         return {
           name: b.name, current: on ? 'true' : 'false',
           meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο'),
           note: b.note || '', hasNote: !!b.note,
           timer: left + (left === 1 ? ' ώρα' : ' ώρες'), timerStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
           style: rowBase + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
-          open: () => this.setState({ req: b.id, detail: null, customer: null, room: null })
+          open: () => this.openReq(b.id)
         };
       }),
       doneOpen: doneOpen, doneExp: doneOpen ? 'true' : 'false', doneCount: String(answered.length), noDone: answered.length === 0,
@@ -2075,7 +2016,6 @@ class Component extends DCLogic {
           open: () => this.open(b.id)
         };
       }),
-      emptyRight: !showReq
     };
 
     /* Calendar */
@@ -2160,7 +2100,7 @@ class Component extends DCLogic {
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
           segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
-            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
+            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 2px solid #B7791F; background: #FBEFD9;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2860,7 +2800,7 @@ class Component extends DCLogic {
 
     return Object.assign(priceVals, calSelVals, {
       nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, reqs: s.tab === 'reqs' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: s.tab === 'reqs' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: false, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
       owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
@@ -3039,7 +2979,7 @@ class Component extends DCLogic {
         this.say('Κατέβηκε το αρχείο του ' + this.MONG[+T.slice(5, 7) - 1] + ' ' + T.slice(0, 4) + ' με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
       },
       detail: detail, hasDetail: hasDetail,
-      hasCalReq: s.tab === 'cal' && showReq, calReqClose: () => this.setState({ calReq: null }), calReqFull: () => { const id = s.calReq; this.setState({ calReq: null }); this.openReq(id); },
+      hasCalReq: s.tab === 'cal' && showReq, calReqClose: () => this.setState({ calReq: null }), calReqFull: () => this.go('reqs'),
       room: room, hasRoom: hasRoom
     });
   }
