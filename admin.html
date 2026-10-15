@@ -276,14 +276,10 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.plain}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button></sc-if>
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
-<div onPointerDown="{{sg.down}}" style="{{sg.headStyle}}">
-<span style="min-width: 0"><span style="display: block; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{sg.title}}</span><span style="display: block; font-size: 11px; font-weight: 500; color: #7A4708">{{sg.sub}}</span></span>
-<button type="button" onClick="{{sg.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 26px; height: 26px; padding: 0; border-radius: 13px; border: 0; background: transparent; color: #7A4708; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.4; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
-</div>
-<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; font-weight: 400; color: #5C3606; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical">«{{sg.note}}»</div></sc-if>
-<div style="display: flex; gap: 6px">
-<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">{{sg.acceptLabel}}</button></sc-if>
-<button type="button" onClick="{{sg.reject}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">Απόρριψη</button>
+<button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
+<div style="display: flex; gap: 4px">
+<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
+<button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
 </div>
 </div>
 </sc-if>
@@ -300,14 +296,10 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.plain}}" hint-placeholder-val="{{true}}"><button type="button" data-cell="{{sg.cell}}" data-sel="{{sg.sel}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button></sc-if>
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
-<div onPointerDown="{{sg.down}}" style="{{sg.headStyle}}">
-<span style="min-width: 0"><span style="display: block; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{sg.title}}</span><span style="display: block; font-size: 11px; font-weight: 500; color: #7A4708">{{sg.sub}}</span></span>
-<button type="button" onClick="{{sg.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 26px; height: 26px; padding: 0; border-radius: 13px; border: 0; background: transparent; color: #7A4708; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.4; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
-</div>
-<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; font-weight: 400; color: #5C3606; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical">«{{sg.note}}»</div></sc-if>
-<div style="display: flex; gap: 6px">
-<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">{{sg.acceptLabel}}</button></sc-if>
-<button type="button" onClick="{{sg.reject}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">Απόρριψη</button>
+<button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
+<div style="display: flex; gap: 4px">
+<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
+<button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
 </div>
 </div>
 </sc-if>
@@ -2066,15 +2058,21 @@ class Component extends DCLogic {
       this.drag = this.canMoveRoom(o) ? { kind: 'move', id: o.id, from: from || o.unit, target: from || o.unit, moved: false } : null;
     };
     // The request opened on the calendar grows into a card with Accept / Decline under its name.
-    const reqCard = (p, span, dragFrom) => ({
-      expanded: true, plain: false, aria: 'Αίτημα ' + p.name,
-      title: 'Αίτημα · ' + p.name, sub: this.range(p.start, this.endOf(p)) + ' · ' + p.guests + ' άτ. · ' + (p.priceless ? 'χωρίς τιμή' : this.money(p.total)) + ' · λήγει σε ' + (24 - p.ago) + ' ώρ.',
-      note: p.note || '', hasNote: !!p.note,
-      canAccept: !!req.canAccept && !!dragFrom, acceptLabel: 'Αποδοχή', accept: req.accept, reject: req.reject,
-      close: () => this.setState({ calReq: null }),
-      down: dragFrom ? moveDown(p, dragFrom) : () => {}, headStyle: 'display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'default'),
-      style: 'grid-column: span ' + span + '; align-self: start; position: relative; z-index: 4; box-sizing: border-box; width: ' + (span < 4 ? '240px' : '100%') + '; display: flex; flex-direction: column; gap: 8px; padding: 8px 8px 8px 10px; border-radius: 10px; border: 2px solid #B7791F; background: #FBEFD9; color: #5C3606; box-shadow: 0 6px 18px rgba(92, 54, 6, 0.18);' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
-    });
+    const reqCard = (p, span, dragFrom) => {
+      const wide = span >= 3;
+      const btn = 'flex: 1 1 0; min-width: 0; height: 32px; padding: 0 6px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
+      return {
+        expanded: true, plain: false, aria: 'Αίτημα ' + p.name, wide: wide, narrow: !wide,
+        title: span > 1 ? 'Αίτημα · ' + p.name : '!', closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
+        canAccept: !!req.canAccept && !!dragFrom, accept: req.accept, reject: req.reject,
+        close: () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calReq: null }); },
+        down: dragFrom ? moveDown(p, dragFrom) : () => {},
+        headStyle: 'height: 28px; padding: 0 2px; border: 0; background: transparent; color: #7A4708; font: inherit; font-size: 12px; font-weight: 700; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'pointer'),
+        okStyle: btn + 'border: 0; background: #0F5257; color: #FFFFFF',
+        noStyle: btn + 'border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412',
+        style: 'grid-column: span ' + span + '; align-self: start; box-sizing: border-box; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 4px 6px 6px; border-radius: 8px; border: 2px solid #B7791F; background: #FBEFD9;' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
+      };
+    };
     const rows = this.UNITS.map(u => {
       const segs = [];
       let i = 0;
@@ -2958,7 +2956,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους: μεγαλώνουν και βγαίνουν από κάτω τα κουμπιά Αποδοχή και Απόρριψη. Κλικ σε κράτηση για λεπτομέρειες.',
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους: μεγαλώνουν και από κάτω βγαίνουν τα κουμπιά Αποδοχή και Απόρριψη. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
