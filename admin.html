@@ -2064,16 +2064,17 @@ class Component extends DCLogic {
     const q = (s.query || '').trim().toLowerCase();
     const dateKey = b => s.dateBy === 'dep' ? this.endOf(b) : (s.dateBy === 'on' ? this.bookedOn(b) : b.start);
     const inDates = b => (!s.dateFrom || dateKey(b) >= s.dateFrom) && (!s.dateTo || dateKey(b) <= s.dateTo);
-    const commOf = b => b.source === 'booking' && b.status === 'confirmed' ? b.total * this.COMMISSION : 0;
+    /* Money here is only what comes through us (site and direct). Booking.com stays are listed, without amounts. */
+    const ownMoney = list => list.filter(b => b.status === 'confirmed' && b.source !== 'booking').reduce((a, b) => a + b.total, 0);
     const listB = B.filter(curFilter).filter(inDates).filter(b => !q || b.name.toLowerCase().indexOf(q) !== -1).slice().sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
     const liveB = listB.filter(b => b.status === 'confirmed');
-    const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(liveB.reduce((a, b) => a + b.total, 0)) + ' · προμήθεια Booking ≈ ' + this.money(liveB.reduce((a, b) => a + commOf(b), 0));
+    const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(ownMoney(liveB)) + ' από σάιτ και απευθείας';
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
     const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε' : 'Απορρίφθηκε' })[b.status] || b.status;
     const downloadCsv = () => {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
-      const rows = [['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Προμήθεια Booking (περίπου)', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο']]
-        .concat(listB.map(b => [b.name, b.start, this.endOf(b), b.nights, b.guests, b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο'), srcWord(b), statusWord(b), b.total, commOf(b).toFixed(2).replace('.', ','), this.bookedOn(b), b.email, b.phone]));
+      const rows = [['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο']]
+        .concat(listB.map(b => [b.name, b.start, this.endOf(b), b.nights, b.guests, b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο'), srcWord(b), statusWord(b), b.source === 'booking' ? '' : b.total, this.bookedOn(b), b.email, b.phone]));
       this.csv(rows, 'kratiseis.csv');
       this.say('Κατέβηκε αρχείο με ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Ανοίγει και στο Excel.');
     };
@@ -2094,15 +2095,15 @@ class Component extends DCLogic {
     const chev = (open, w) => 'flex-shrink: 0; stroke-width: ' + w + '; stroke-linecap: round; stroke-linejoin: round; color: #4A5B5E; transition: transform 0.15s; transform: rotate(' + (open ? 90 : 0) + 'deg)';
     const countText = list => {
       const n = list.length, p = list.filter(b => b.status === 'pending').length;
-      return { meta: n + (n === 1 ? ' κράτηση' : ' κρατήσεις'), pending: p ? p + (p === 1 ? ' αίτημα' : ' αιτήματα') : '', money: this.money(list.filter(b => b.status === 'confirmed').reduce((a, b) => a + b.total, 0)) };
+      return { meta: n + (n === 1 ? ' κράτηση' : ' κρατήσεις'), pending: p ? p + (p === 1 ? ' αίτημα' : ' αιτήματα') : '', money: this.money(ownMoney(list)) };
     };
     const rowOf = b => Object.assign({
       name: b.name,
       sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : ''),
       dates: this.range(b.start, this.endOf(b)),
       nightsText: b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες'),
-      money: this.money(b.total),
-      comm: commOf(b) ? 'προμήθεια ≈ ' + this.money(commOf(b)) : '',
+      money: b.source === 'booking' ? '–' : this.money(b.total),
+      comm: '',
       rowStyle: 'width: 100%; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; align-items: center; padding: 8px 18px 8px 54px; min-height: 56px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
       open: () => this.open(b.id)
     }, this.badgeFor(b));
