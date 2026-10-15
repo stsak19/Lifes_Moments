@@ -412,7 +412,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; padding: 8px 18px 6px 54px; border-top: 1px solid #EEF2F2; font-size: 12px; font-weight: 600; color: #5A6B6E"><span>Πελάτης · χώρος</span><span>Ημερομηνίες</span><span style="text-align: right">Ποσό</span><span style="text-align: right">Πηγή</span></div>
 <sc-for list="{{m.rows}}" as="it" hint-placeholder-count="4">
 <button type="button" onClick="{{it.open}}" style="{{it.rowStyle}}">
-<span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.sub}}</span></span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 8px; min-width: 0"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.name}}</span><sc-if value="{{it.hasSt}}" hint-placeholder-val="{{false}}"><span style="{{it.stStyle}}">{{it.stLabel}}</span></sc-if></span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.sub}}</span></span>
 <span><span style="display: block">{{it.dates}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{it.nightsText}}</span></span>
 <span style="text-align: right"><span style="display: block; font-weight: 600">{{it.money}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{it.comm}}</span></span>
 <span style="text-align: right"><span style="{{it.badgeStyle}}">{{it.badge}}</span></span>
@@ -433,32 +433,23 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <sc-if value="{{show.guests}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<div class="list-head">
-<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
-<div style="flex: 0 1 300px">
+<div style="max-width: 360px">
 <label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
 <input id="gsearch" type="search" value="{{gQuery}}" onChange="{{setGQuery}}" placeholder="Όνομα, email ή τηλέφωνο" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
 </div>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px">
-<sc-for list="{{gFilters}}" as="f" hint-placeholder-count="5">
-<button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
-</sc-for>
-</div>
-</div>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
-<div style="min-width: 760px">
-<div style="display: grid; grid-template-columns: 2.2fr 0.9fr 0.9fr 1.5fr 1fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
-<span>Πελάτης</span><span>Διαμονές</span><span>Σύνολο</span><span>Πότε</span><span>Από</span>
+<div style="min-width: 700px">
+<div style="display: grid; grid-template-columns: 1.6fr 1.8fr 1.2fr 0.8fr 0.8fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
+<span>Πελάτης</span><span>Email</span><span>Τηλέφωνο</span><span>Διαμονές</span><span style="text-align: right">Σύνολο</span>
 </div>
 <sc-for list="{{guests}}" as="g" hint-placeholder-count="8">
-<button type="button" onClick="{{g.open}}" style="{{g.rowStyle}}">
-<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.name}}</span><sc-if value="{{g.returning}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #F3E3F0; color: #6B2F5F">Επιστρέφει</span></sc-if></span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.contact}}</span></span>
+<div style="display: grid; grid-template-columns: 1.6fr 1.8fr 1.2fr 0.8fr 0.8fr; gap: 12px; align-items: center; padding: 10px 18px; min-height: 52px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2; color: #18282B; font-size: 14px">
+<span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.name}}</span>
+<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.email}}</span>
+<span style="white-space: nowrap">{{g.phone}}</span>
 <span>{{g.staysText}}</span>
-<span style="font-weight: 500">{{g.spentText}}</span>
-<span style="{{g.whenStyle}}">{{g.whenText}}</span>
-<span style="color: #2E4448">{{g.srcText}}</span>
-</button>
+<span style="text-align: right; font-weight: 500">{{g.spentText}}</span>
+</div>
 </sc-for>
 <sc-if value="{{noGuests}}" hint-placeholder-val="{{false}}">
 <div style="padding: 18px; color: #4A5B5E">Κανένας πελάτης δεν ταιριάζει.</div>
@@ -1228,7 +1219,7 @@ class Component extends DCLogic {
     const id = 'st-' + r.id;
     this.ON[id] = athensISOof(r.created_at);
     return {
-      id: id, stayId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
+      id: id, stayId: r.id, real: true, createdAt: r.created_at, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
       total: Number(r.total) || 0, source: r.source, kind: r.source === 'booking' ? undefined : r.kind, pay: r.pay, status: r.status,
       email: r.email || (r.source === 'booking' ? 'μέσω Booking' : ''), phone: r.phone || '', note: r.note || '',
       synced: !!r.ical_uid && r.created_by === 'Booking.com',
@@ -1743,6 +1734,17 @@ class Component extends DCLogic {
     const tPill = c => 'flex-shrink: 0; font-size: 12px; font-weight: 600; color: ' + c;
     let stripItems, stripTitle, stripSub, stripStyle, stripTitleStyle, hasStripBtn = false, stripBtn = () => {};
     const stripBase = 'display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; border-radius: 20px; padding: 18px 22px;';
+    const hoursAgo = b => b.ago != null ? b.ago : (b.createdAt ? Math.max(0, Math.floor((Date.now() - Date.parse(b.createdAt)) / 36e5)) : null);
+    const newBk = confirmed.filter(b => b.source === 'booking' && hoursAgo(b) != null && hoursAgo(b) < 24).sort((a, b) => hoursAgo(a) - hoursAgo(b));
+    const bkItems = newBk.map(b => {
+      const h = hoursAgo(b);
+      return {
+        name: b.name,
+        meta: this.range(b.start, this.endOf(b)) + ' · ' + (b.unit ? this.unitName(b.unit) : 'χωρίς δωμάτιο') + ' · ' + (h === 0 ? 'μόλις τώρα' : 'πριν ' + h + (h === 1 ? ' ώρα' : ' ώρες')),
+        timer: 'Booking', timerStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #DCE5F3; color: #1E3A5F',
+        open: () => this.open(b.id)
+      };
+    });
     if (!auto) {
       const n = pending.length;
       stripItems = pending.map(b => ({
@@ -1752,10 +1754,12 @@ class Component extends DCLogic {
         timerStyle: tPill(24 - b.ago <= 6 ? '#8A3412' : '#7A4708'),
         open: () => this.openReq(b.id)
       }));
-      stripTitle = n === 0 ? 'Κανένα αίτημα σε αναμονή' : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
-      stripSub = n === 0 ? 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.' : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες';
-      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FBEFD9');
-      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#5C3606');
+      stripItems = stripItems.concat(bkItems);
+      const nb = bkItems.length, bkText = nb === 1 ? '1 νέα κράτηση από Booking' : nb + ' νέες κρατήσεις από Booking';
+      stripTitle = n === 0 ? (nb ? bkText : 'Κανένα αίτημα σε αναμονή') : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
+      stripSub = n === 0 ? (nb ? 'Τελευταίες 24 ώρες · δεν θέλουν απάντηση' : 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.') : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες' + (nb ? ' · και ' + bkText.charAt(0).toLowerCase() + bkText.slice(1) : '');
+      stripStyle = stripBase + (n === 0 ? (nb ? 'background: #DCE5F3' : 'background: #FFFFFF') : 'background: #FBEFD9');
+      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? (nb ? '#1E3A5F' : '#18282B') : '#5C3606');
       if (n > 0) { hasStripBtn = true; stripBtn = () => this.openReq(pending[0].id); }
     } else {
       const n = feed.length;
@@ -2377,16 +2381,19 @@ class Component extends DCLogic {
       const n = list.length, p = list.filter(b => b.status === 'pending').length;
       return { meta: n + (n === 1 ? ' κράτηση' : ' κρατήσεις'), pending: p ? p + (p === 1 ? ' αίτημα' : ' αιτήματα') : '', money: this.money(ownMoney(list)) };
     };
-    const rowOf = b => Object.assign({
+    const HOME = { stay: ['Μένουν', '#DCEBEA', '#0F5257', '#0F5257'], arr: ['Άφιξη σήμερα', '#DCE5F3', '#1E3A5F', '#1E3A5F'], dep: ['Αναχώρηση σήμερα', '#FBEFD9', '#7A4708', '#C99A3B'] };
+    const homeSt = b => b.status !== 'confirmed' ? null : (b.start === T ? 'arr' : (this.endOf(b) === T ? 'dep' : (b.start < T && T < this.endOf(b) ? 'stay' : null)));
+    const rowOf = b => { const hs = homeSt(b) ? HOME[homeSt(b)] : null; return Object.assign({
+      hasSt: !!hs, stLabel: hs ? hs[0] : '', stStyle: hs ? 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: ' + hs[1] + '; color: ' + hs[2] : '',
       name: b.name,
       sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + (b.source === 'booking' ? '' : ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : '')),
       dates: this.range(b.start, this.endOf(b)),
       nightsText: b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες'),
       money: b.source === 'booking' ? '' : this.money(b.total),
       comm: b.source === 'booking' ? 'πληρώνει στο Booking' : '',
-      rowStyle: 'width: 100%; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; align-items: center; padding: 8px 18px 8px 54px; min-height: 56px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
+      rowStyle: 'width: 100%; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; align-items: center; padding: 8px 18px 8px 54px; min-height: 56px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (hs ? 'box-shadow: inset 4px 0 0 ' + hs[3] + ';' : '') + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
       open: () => this.open(b.id)
-    }, this.badgeFor(b));
+    }, this.badgeFor(b)); };
     const years = yKeys.map(y => {
       const open = yIsOpen(y);
       const all = [].concat.apply([], Object.keys(gY[y]).map(m => gY[y][m]));
@@ -2609,7 +2616,7 @@ class Component extends DCLogic {
     const allG = Object.keys(gmap).map(k => gmap[k]);
     const gFilters = gDefs.map(f => ({ label: f.label + ' · ' + allG.filter(f.fn).length, style: f.id === s.gFilter ? chipOn : chipOff, pick: () => this.setState({ gFilter: f.id }) }));
     const gfn = (gDefs.find(f => f.id === s.gFilter) || gDefs[0]).fn;
-    const guests = allG.filter(gfn)
+    const guests = allG
       .filter(g => !gq || (g.name + ' ' + g.email + ' ' + g.phone).toLowerCase().indexOf(gq) !== -1)
       .sort((a, c) => rank(a) - rank(c) || (a.next && c.next ? (a.next.start < c.next.start ? -1 : 1) : 0) || (c.last || '').localeCompare(a.last || '') || a.name.localeCompare(c.name, 'el'))
       .map(g => {
@@ -2619,7 +2626,7 @@ class Component extends DCLogic {
         else if (g.pending) { whenText = 'Αίτημα σε αναμονή'; whenColor = '#7A4708'; }
         else if (g.last) whenText = 'Τελευταία ' + MONY(g.last);
         return {
-          name: g.name, contact: [g.email, g.phone].filter(Boolean).join(' · ') || 'Χωρίς στοιχεία επικοινωνίας',
+          name: g.name, email: g.email || '–', phone: g.phone || '–', contact: [g.email, g.phone].filter(Boolean).join(' · ') || 'Χωρίς στοιχεία επικοινωνίας',
           returning: g.count >= 2,
           staysText: g.count + (g.count === 1 ? ' διαμονή' : ' διαμονές'),
           spentText: this.money(g.spent),
@@ -3035,7 +3042,7 @@ class Component extends DCLogic {
           reqs: { title: 'Αιτήματα', sub: pending.length ? n(pending.length, 'αίτημα περιμένει απάντηση', 'αιτήματα περιμένουν απάντηση') : 'Κανένα αίτημα σε αναμονή' },
           list: { title: 'Κρατήσεις', sub: 'Όλες οι κρατήσεις, ανά χρονιά και μήνα', action: () => this.openNew(), actionLabel: 'Νέα κράτηση' },
           msgs: { title: 'Μηνύματα', sub: 'Μόνο πελάτες που έκλεισαν από το σάιτ · οι πελάτες του Booking απαντώνται στο Booking' },
-          guests: { title: 'Πελάτες', sub: 'Όσοι έκλεισαν από το σάιτ ή απευθείας μαζί σας' },
+          guests: { title: 'Πελάτες', sub: '' },
           prices: { title: 'Τιμές', sub: 'Τιμές του σάιτ ανά νύχτα · οι τιμές του Booking αλλάζουν στο extranet' },
           settings: { title: 'Ρυθμίσεις', sub: '' }
         }[s.tab];
