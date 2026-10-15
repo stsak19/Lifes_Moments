@@ -144,6 +144,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{show.today}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; flex-direction: column; gap: 26px">
 
+<sc-if value="{{isAuto}}" hint-placeholder-val="{{false}}">
 <section style="{{stripStyle}}">
 <div style="flex: 0 1 260px">
 <div style="{{stripTitleStyle}}">{{stripTitle}}</div>
@@ -163,6 +164,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{stripBtn}}" style="flex: 0 0 auto; height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Απάντησε</button>
 </sc-if>
 </section>
+</sc-if>
 
 <section style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
@@ -312,7 +314,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #CFE0F3"></span>Booking.com</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
-<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px dashed #B7791F; background: #FBEFD9"></span>Αίτημα</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="font-weight: 700; color: #9A6B12">€</span>Τιμή δωματίου · χρυσή αν είναι ειδική</span>
 </div>
@@ -2037,7 +2038,7 @@ class Component extends DCLogic {
     const segBase = 'touch-action: none; user-select: none; -webkit-user-select: none; height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
     const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: pick1(unit, x), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
       style: segBase + 'padding: 0;' + (inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
-    const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
+    const pendAt = () => null; // requests live only in the Requests section
     const rows = this.UNITS.map(u => {
       const segs = [];
       let i = 0;
@@ -2072,7 +2073,7 @@ class Component extends DCLogic {
       }
       return { label: u.name, segs: segs };
     });
-    const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
+    const reqRows = [].map(b => {
       const segs = [];
       const end = this.endOf(b);
       let i = 0;
@@ -2183,19 +2184,21 @@ class Component extends DCLogic {
     /* Bookings list */
     const filtDefs = [
       { id: 'all', label: 'Όλες', fn: () => true },
-      auto ? { id: 'new', label: 'Νέες', fn: b => b.status === 'confirmed' && b.ago != null && b.ago < 24 } : { id: 'pending', label: 'Αιτήματα', fn: b => b.status === 'pending' },
+      auto ? { id: 'new', label: 'Νέες', fn: b => b.status === 'confirmed' && b.ago != null && b.ago < 24 } : null,
       { id: 'site', label: 'Σάιτ', fn: b => b.source === 'site' },
       { id: 'booking', label: 'Booking', fn: b => b.source === 'booking' },
       { id: 'direct', label: 'Από εμάς', fn: b => b.source === 'direct' }
-    ];
-    const filters = filtDefs.map(f => ({ label: f.label + ' · ' + B.filter(f.fn).length, style: f.id === s.filter ? chipOn : chipOff, pick: () => this.setState({ filter: f.id }) }));
+    ].filter(Boolean);
+    // Requests (waiting, declined or expired) live only in the Requests section; this list holds bookings.
+    const LB = B.filter(b => b.status !== 'pending' && b.status !== 'rejected');
+    const filters = filtDefs.map(f => ({ label: f.label + ' · ' + LB.filter(f.fn).length, style: f.id === s.filter ? chipOn : chipOff, pick: () => this.setState({ filter: f.id }) }));
     const curFilter = (filtDefs.find(f => f.id === s.filter) || filtDefs[0]).fn;
     const q = (s.query || '').trim().toLowerCase();
     const dateKey = b => s.dateBy === 'dep' ? this.endOf(b) : (s.dateBy === 'on' ? this.bookedOn(b) : b.start);
     const inDates = b => (!s.dateFrom || dateKey(b) >= s.dateFrom) && (!s.dateTo || dateKey(b) <= s.dateTo);
     /* Money here is only what comes through us (site and direct). Booking.com stays are listed, without amounts. */
     const ownMoney = list => list.filter(b => b.status === 'confirmed' && b.source !== 'booking').reduce((a, b) => a + b.total, 0);
-    const listB = B.filter(curFilter).filter(inDates).filter(b => !q || b.name.toLowerCase().indexOf(q) !== -1).slice().sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
+    const listB = LB.filter(curFilter).filter(inDates).filter(b => !q || b.name.toLowerCase().indexOf(q) !== -1).slice().sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
     const liveB = listB.filter(b => b.status === 'confirmed');
     const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(ownMoney(liveB)) + ' από σάιτ και απευθείας';
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
@@ -2429,7 +2432,7 @@ class Component extends DCLogic {
       if (!g.last || p.date > g.last) g.last = p.date;
     });
     B.forEach(b => {
-      if (b.status === 'rejected' || b.kind === 'test' || b.synced) return;
+      if (b.status === 'rejected' || b.status === 'pending' || b.kind === 'test' || b.synced) return;
       const g = addG(b.name);
       g.email = b.email; g.phone = b.phone;
       g.sources[b.source] = 1;
@@ -2894,7 +2897,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες.',
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
