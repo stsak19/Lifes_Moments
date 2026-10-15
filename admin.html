@@ -769,6 +769,15 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{detail.hasGuest}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{detail.openGuest}}" style="height: 40px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Καρτέλα πελάτη</button>
 </sc-if>
+<sc-if value="{{detail.canDelete}}" hint-placeholder-val="{{true}}">
+<div style="border-top: 1px solid #EEF2F2; padding-top: 12px">
+<button type="button" onClick="{{detail.remove}}" style="display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #E3B4AE; background: #FFFFFF; color: #8A1C12; font-size: 13px; font-weight: 600; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg>Διαγραφή κράτησης</button>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 6px">Σβήνεται οριστικά από το admin, χωρίς email στον πελάτη.</div>
+</div>
+</sc-if>
+<sc-if value="{{detail.syncedNoDelete}}" hint-placeholder-val="{{false}}">
+<div style="font-size: 12px; color: #4A5B5E">Ήρθε από το ημερολόγιο του Booking.com, γι’ αυτό δεν σβήνεται εδώ: θα ξαναεμφανιζόταν στον επόμενο συγχρονισμό. Φεύγει μόνη της όταν ακυρωθεί στο Booking.</div>
+</sc-if>
 </aside>
 </sc-if>
 
@@ -1187,6 +1196,31 @@ class Component extends DCLogic {
       ok();
       if (this.reload) this.reload();
     });
+  }
+
+  /* Delete a booking for good, after the owner confirms. Real ones are removed from the database (site requests from
+     booking_requests, typed or Booking stays from owner_stays); no email goes out. Booking.com-synced stays are never
+     offered here, because the next calendar sync would bring them back. */
+  deleteBooking(b) {
+    const live = b.status === 'confirmed' && this.endOf(b) > this.TODAY;
+    const warn = 'Διαγραφή της κράτησης του/της ' + b.name + ' (' + this.range(b.start, this.endOf(b)) + ');\n\nΣβήνεται οριστικά και δεν αναιρείται. Ο πελάτης δεν ειδοποιείται.'
+      + (live && b.source === 'site' ? '\n\nΑν θέλεις να μάθει ο πελάτης ότι ακυρώθηκε, πάτα Άκυρο και χρησιμοποίησε την «Ακύρωση κράτησης».' : '')
+      + (live ? '\n\nΟι νύχτες της ανοίγουν ξανά στο σάιτ.' : '');
+    if (!confirm(warn)) return;
+    const gone = () => {
+      const drop = list => (list || []).filter(x => x.id !== b.id);
+      this.setState({ bookings: drop(this.state.bookings), bookingsAuto: drop(this.state.bookingsAuto), detail: null, req: this.state.req === b.id ? null : this.state.req });
+      this.say('Διαγράφηκε η κράτηση του/της ' + b.name + '.');
+    };
+    if (!b.real) { gone(); return; }
+    const sb = PUSH.client;
+    if (!sb) { this.say('Δεν υπάρχει σύνδεση, δοκίμασε ξανά.'); return; }
+    const q = b.stayId ? sb.from('owner_stays').delete().eq('id', b.stayId) : sb.from('booking_requests').delete().eq('id', b.dbId);
+    q.select('id').then(res => {
+      if (res.error || !res.data || !res.data.length) { this.say('Δεν διαγράφηκε' + (res.error ? ': ' + res.error.message : '') + '. Δοκίμασε ξανά.'); if (this.reload) this.reload(); return; }
+      gone();
+      if (this.reload) this.reload();
+    }, () => this.say('Δεν διαγράφηκε, έλεγξε τη σύνδεση και δοκίμασε ξανά.'));
   }
 
   dt(s) { const p = s.split('-').map(Number); return new Date(Date.UTC(p[0], p[1] - 1, p[2])); }
@@ -2255,6 +2289,8 @@ class Component extends DCLogic {
           total: this.money(b.total), pay: pay, email: b.email || '–', phone: b.phone || '–',
           hasBy: !!b.by, by: b.by || '',
           canCancel: !b.synced && (b.source === 'site' || b.source === 'direct' || !!b.stayId) && b.status === 'confirmed',
+          canDelete: !b.synced, syncedNoDelete: !!b.synced,
+          remove: () => this.deleteBooking(b),
           cancelLabel: b.source === 'direct' || this.REAL ? 'Ακύρωση κράτησης' : 'Ακύρωση με επιστροφή χρημάτων',
           isBooking: b.source === 'booking',
           canMessage: b.source === 'site' && s.tab !== 'msgs',
