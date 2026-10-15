@@ -55,6 +55,7 @@ button:disabled{cursor:default}
 /* Messages fill the screen */
 @media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#app main:has(#inbox) aside[aria-label="Λεπτομέρειες κράτησης"]{top:28px;max-height:calc(100vh - 56px)}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 260px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
+@media (max-width:520px){.grp-mmeta{display:none}}
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside[aria-label="Λεπτομέρειες δωματίου"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *,aside[aria-label="Λεπτομέρειες δωματίου"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
 /* Search and filters stay at the top while the list scrolls (desktop) */
@@ -346,54 +347,84 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{show.list}}" hint-placeholder-val="{{false}}">
-<div style="display: flex; flex-direction: column; gap: 16px">
-<div class="list-head">
-<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; flex: 1 1 520px">
-<div style="flex: 0 1 300px; min-width: 200px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div class="list-head" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<div style="flex: 1 1 220px; max-width: 320px">
 <label for="search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση ονόματος</label>
-<input id="search" type="search" value="{{query}}" onChange="{{setQuery}}" placeholder="Αναζήτηση ονόματος" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
+<input id="search" type="search" value="{{query}}" onChange="{{setQuery}}" placeholder="Αναζήτηση ονόματος" style="width: 100%; box-sizing: border-box; height: 42px; padding: 0 16px; border-radius: 21px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
 </div>
-</div>
-<button type="button" onClick="{{openNew}}" style="height: 44px; padding: 0 18px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>Νέα κράτηση</button>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px">
+<div role="group" aria-label="Πηγή κράτησης" style="display: flex; flex-wrap: wrap; gap: 6px">
 <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
 <button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
 </sc-for>
 </div>
-<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px">
-<div><label for="f-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ημερομηνία</label><select id="f-by" onChange="{{setDateBy}}" style="height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px">
+<span style="flex: 1 1 0"></span>
+<button type="button" onClick="{{openNew}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>Νέα κράτηση</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 13px; color: #4A5B5E">
+<span style="flex: 1 1 260px">{{listSummary}}</span>
+<button type="button" onClick="{{toggleDates}}" aria-expanded="{{datesExp}}" style="{{datesBtnStyle}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>{{datesLabel}}</button>
+<button type="button" onClick="{{toggleAll}}" style="height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">{{toggleAllLabel}}</button>
+<button type="button" onClick="{{downloadCsv}}" style="height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">CSV</button>
+</div>
+<sc-if value="{{datesOpen}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; background: #FFFFFF; border-radius: 16px; padding: 12px 14px">
+<div><label for="f-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ημερομηνία</label><select id="f-by" onChange="{{setDateBy}}" style="height: 38px; padding: 0 12px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px">
 <sc-for list="{{dateByOpts}}" as="o" hint-placeholder-count="3"><option value="{{o.v}}" selected="{{o.sel}}">{{o.t}}</option></sc-for>
 </select></div>
-<div><label for="f-from" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Από</label><input id="f-from" type="date" value="{{dateFrom}}" onChange="{{setDateFrom}}" style="height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"></div>
-<div><label for="f-to" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Έως</label><input id="f-to" type="date" value="{{dateTo}}" onChange="{{setDateTo}}" style="height: 40px; padding: 0 12px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"></div>
-<sc-if value="{{hasDateFilter}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{clearDates}}" style="height: 40px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Χωρίς ημερομηνίες</button></sc-if>
-<span style="flex: 1 1 0"></span>
-<button type="button" onClick="{{downloadCsv}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Λήψη σε CSV</button>
+<div><label for="f-from" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Από</label><input id="f-from" type="date" value="{{dateFrom}}" onChange="{{setDateFrom}}" style="height: 38px; padding: 0 12px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"></div>
+<div><label for="f-to" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Έως</label><input id="f-to" type="date" value="{{dateTo}}" onChange="{{setDateTo}}" style="height: 38px; padding: 0 12px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"></div>
+<sc-if value="{{hasDateFilter}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{clearDates}}" style="height: 38px; padding: 0 6px; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Χωρίς ημερομηνίες</button></sc-if>
 </div>
-<div style="font-size: 13px; color: #4A5B5E">{{listSummary}}</div>
-</div>
-<div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
-<div style="min-width: 720px">
-<div style="display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.5fr 0.8fr 1fr 0.9fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
-<span>Πελάτης</span><span>Ημερομηνίες</span><span>Χώρος</span><span>Άτομα</span><span>Ποσό</span><span>Προμήθεια Booking</span><span>Κατάσταση</span>
-</div>
-<sc-for list="{{items}}" as="it" hint-placeholder-count="8">
-<button type="button" onClick="{{it.open}}" style="{{it.rowStyle}}">
-<span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.name}}</span>
-<span>{{it.dates}}</span>
-<span style="color: #2E4448">{{it.unit}}</span>
-<span>{{it.guests}}</span>
-<span style="font-weight: 500">{{it.money}}</span>
-<span style="color: #4A5B5E">{{it.comm}}</span>
-<span><span style="{{it.badgeStyle}}">{{it.badge}}</span></span>
-</button>
-</sc-for>
-<sc-if value="{{noItems}}" hint-placeholder-val="{{false}}">
-<div style="padding: 18px; color: #4A5B5E">Καμία κράτηση δεν ταιριάζει.</div>
 </sc-if>
 </div>
+
+<sc-if value="{{noItems}}" hint-placeholder-val="{{false}}">
+<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Καμία κράτηση δεν ταιριάζει.</div>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{years}}" as="y" hint-placeholder-count="2">
+<section aria-label="{{y.label}}" style="background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<button type="button" onClick="{{y.toggle}}" aria-expanded="{{y.exp}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; border: 0; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{y.chev}}"><path d="M9 6l6 6-6 6"></path></svg>
+<span style="flex-shrink: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{y.label}}</span>
+<span style="flex: 1 1 0; min-width: 0; font-size: 13px; color: #4A5B5E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{y.meta}}</span>
+<span style="flex-shrink: 0; font-weight: 600">{{y.money}}</span>
+</button>
+<sc-if value="{{y.open}}" hint-placeholder-val="{{true}}">
+<div style="border-top: 1px solid #E6ECED">
+<sc-for list="{{y.months}}" as="m" hint-placeholder-count="3">
+<div style="border-bottom: 1px solid #E6ECED">
+<button type="button" onClick="{{m.toggle}}" aria-expanded="{{m.exp}}" style="width: 100%; display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px 0 30px; border: 0; background: #F6F9F9; color: #18282B; text-align: left; cursor: pointer">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{m.chev}}"><path d="M9 6l6 6-6 6"></path></svg>
+<span style="flex-shrink: 0; font-size: 15px; font-weight: 600">{{m.label}}</span>
+<span class="grp-mmeta" style="min-width: 0; font-size: 13px; color: #4A5B5E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.meta}}</span>
+<sc-if value="{{m.hasPending}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; white-space: nowrap; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #FBEFD9; color: #7A4708">{{m.pending}}</span></sc-if>
+<span style="flex: 1 1 0"></span>
+<span style="flex-shrink: 0; font-size: 14px; font-weight: 600">{{m.money}}</span>
+</button>
+<sc-if value="{{m.open}}" hint-placeholder-val="{{true}}">
+<div style="overflow-x: auto">
+<div style="min-width: 560px">
+<sc-for list="{{m.rows}}" as="it" hint-placeholder-count="4">
+<button type="button" onClick="{{it.open}}" style="{{it.rowStyle}}">
+<span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.sub}}</span></span>
+<span><span style="display: block">{{it.dates}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{it.nightsText}}</span></span>
+<span style="text-align: right"><span style="display: block; font-weight: 600">{{it.money}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{it.comm}}</span></span>
+<span style="text-align: right"><span style="{{it.badgeStyle}}">{{it.badge}}</span></span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+</sc-for>
 </div>
 </div>
 </sc-if>
@@ -1030,7 +1061,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
+      tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', yOpen: {}, mOpen: {}, listDates: false, thread: 't1', msgDraft: '',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
@@ -2036,7 +2067,7 @@ class Component extends DCLogic {
     const commOf = b => b.source === 'booking' && b.status === 'confirmed' ? b.total * this.COMMISSION : 0;
     const listB = B.filter(curFilter).filter(inDates).filter(b => !q || b.name.toLowerCase().indexOf(q) !== -1).slice().sort((a, b) => a.start < b.start ? -1 : a.start > b.start ? 1 : 0);
     const liveB = listB.filter(b => b.status === 'confirmed');
-    const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(liveB.reduce((a, b) => a + b.total, 0)) + ' επιβεβαιωμένα · προμήθεια Booking περίπου ' + this.money(liveB.reduce((a, b) => a + commOf(b), 0));
+    const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(liveB.reduce((a, b) => a + b.total, 0)) + ' · προμήθεια Booking ≈ ' + this.money(liveB.reduce((a, b) => a + commOf(b), 0));
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
     const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε' : 'Απορρίφθηκε' })[b.status] || b.status;
     const downloadCsv = () => {
@@ -2046,16 +2077,65 @@ class Component extends DCLogic {
       this.csv(rows, 'kratiseis.csv');
       this.say('Κατέβηκε αρχείο με ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Ανοίγει και στο Excel.');
     };
-    const items = listB.map(b => Object.assign({
-      comm: commOf(b) ? '≈ ' + this.money(commOf(b)) : '–',
+    /* Group by year, then month, of the chosen date (arrival by default). Open by default: the current year and the
+       first month from today on (or the latest one); everything while searching. A click remembers open/closed. */
+    const MONN = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
+    const byKey = listB.slice().sort((a, b) => { const x = dateKey(a), y = dateKey(b); return x < y ? -1 : x > y ? 1 : (a.name < b.name ? -1 : 1); });
+    const gY = {};
+    byKey.forEach(b => { const k = dateKey(b), y = k.slice(0, 4), m = k.slice(0, 7); ((gY[y] = gY[y] || {})[m] = gY[y][m] || []).push(b); });
+    const yKeys = Object.keys(gY).sort();
+    const mKeysAll = [].concat.apply([], yKeys.map(y => Object.keys(gY[y]))).sort();
+    const nowM = T.slice(0, 7);
+    const defM = mKeysAll.find(m => m >= nowM) || mKeysAll[mKeysAll.length - 1];
+    const defY = defM ? defM.slice(0, 4) : '';
+    const searching = !!q;
+    const yIsOpen = y => s.yOpen[y] != null ? s.yOpen[y] : (searching || y === defY || yKeys.length === 1);
+    const mIsOpen = m => s.mOpen[m] != null ? s.mOpen[m] : (searching || m === defM);
+    const chev = (open, w) => 'flex-shrink: 0; stroke-width: ' + w + '; stroke-linecap: round; stroke-linejoin: round; color: #4A5B5E; transition: transform 0.15s; transform: rotate(' + (open ? 90 : 0) + 'deg)';
+    const countText = list => {
+      const n = list.length, p = list.filter(b => b.status === 'pending').length;
+      return { meta: n + (n === 1 ? ' κράτηση' : ' κρατήσεις'), pending: p ? p + (p === 1 ? ' αίτημα' : ' αιτήματα') : '', money: this.money(list.filter(b => b.status === 'confirmed').reduce((a, b) => a + b.total, 0)) };
+    };
+    const rowOf = b => Object.assign({
       name: b.name,
+      sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : ''),
       dates: this.range(b.start, this.endOf(b)),
-      unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο'),
-      guests: String(b.guests),
+      nightsText: b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες'),
       money: this.money(b.total),
-      rowStyle: 'width: 100%; display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 0.5fr 0.8fr 1fr 0.9fr; gap: 12px; align-items: center; padding: 0 18px; min-height: 54px; border: 0; border-bottom: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
+      comm: commOf(b) ? 'προμήθεια ≈ ' + this.money(commOf(b)) : '',
+      rowStyle: 'width: 100%; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; align-items: center; padding: 8px 18px 8px 54px; min-height: 56px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
       open: () => this.open(b.id)
-    }, this.badgeFor(b)));
+    }, this.badgeFor(b));
+    const years = yKeys.map(y => {
+      const open = yIsOpen(y);
+      const all = [].concat.apply([], Object.keys(gY[y]).map(m => gY[y][m]));
+      const ct = countText(all);
+      return Object.assign(ct, {
+        label: y, open: open, exp: open ? 'true' : 'false', chev: chev(open, 2.2),
+        meta: ct.meta + (ct.pending ? ' · ' + ct.pending : ''),
+        toggle: () => this.setState({ yOpen: Object.assign({}, this.state.yOpen, { [y]: !open }) }),
+        months: Object.keys(gY[y]).sort().map(m => {
+          const mo = mIsOpen(m);
+          const c = countText(gY[y][m]);
+          return Object.assign(c, {
+            label: MONN[+m.slice(5, 7) - 1], open: mo, exp: mo ? 'true' : 'false', chev: chev(mo, 2.4), hasPending: !!c.pending,
+            toggle: () => this.setState({ mOpen: Object.assign({}, this.state.mOpen, { [m]: !mo }) }),
+            rows: mo ? gY[y][m].map(rowOf) : []
+          });
+        })
+      });
+    });
+    const allOpen = yKeys.length > 0 && yKeys.every(yIsOpen) && mKeysAll.every(mIsOpen);
+    const setAll = v => { const yo = {}, mo = {}; yKeys.forEach(y => { yo[y] = v; }); mKeysAll.forEach(m => { mo[m] = v; }); this.setState({ yOpen: yo, mOpen: mo }); };
+    const datesOpen = !!s.listDates || !!(s.dateFrom || s.dateTo);
+    const listGroupVals = {
+      years: years, noItems: listB.length === 0,
+      toggleAll: () => setAll(!allOpen), toggleAllLabel: allOpen ? 'Κλείσιμο όλων' : 'Άνοιγμα όλων',
+      datesOpen: datesOpen, datesExp: datesOpen ? 'true' : 'false',
+      datesLabel: (s.dateFrom || s.dateTo) ? 'Ημερομηνίες · ενεργό' : 'Ημερομηνίες',
+      datesBtnStyle: 'height: 34px; padding: 0 12px; border-radius: 17px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;' + (datesOpen ? 'border: 1px solid #0F5257; background: #E3F0EF; color: #0A3A3E' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B'),
+      toggleDates: () => this.setState({ listDates: !datesOpen })
+    };
 
     /* Prices and settings */
     const seasons = s.seasons.map(se => ({
@@ -2661,8 +2741,10 @@ class Component extends DCLogic {
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
         : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε αίτημα για να απαντήσεις, σε κράτηση για λεπτομέρειες.',
-      filters: filters, items: items, noItems: items.length === 0, query: s.query,
-      setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '' }),
+      filters: filters, query: s.query,
+      years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
+      datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
+      setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '', yOpen: {}, mOpen: {} }),
       seasons: seasons, extraText: this.money(s.extra),
       extraUp: () => this.setState({ extra: s.extra + 5 }), extraDown: () => this.setState({ extra: Math.max(0, s.extra - 5) }),
       toggles: toggles, bk: bk, site: site,
