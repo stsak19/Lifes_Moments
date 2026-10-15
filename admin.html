@@ -140,7 +140,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <sc-if value="{{page.show}}" hint-placeholder-val="{{true}}">
 <header class="page-head" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px">
-<div style="min-width: 0"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1.15">{{page.title}}</h1><div style="font-size: 14px; color: #4A5B5E; margin-top: 4px">{{page.sub}}</div></div>
+<div style="min-width: 0"><h1 style="{{page.titleStyle}}">{{page.title}}</h1><sc-if value="{{page.hasSub}}" hint-placeholder-val="{{true}}"><div style="{{page.subStyle}}">{{page.sub}}</div></sc-if></div>
 <sc-if value="{{page.hasAction}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{page.action}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>{{page.actionLabel}}</button></sc-if>
 </header>
 </sc-if>
@@ -3021,7 +3021,17 @@ class Component extends DCLogic {
           prices: { title: 'Τιμές', sub: 'Τιμές του σάιτ ανά νύχτα · οι τιμές του Booking αλλάζουν στο extranet' },
           settings: { title: 'Ρυθμίσεις', sub: '' }
         }[s.tab];
-        return P ? { show: true, title: P.title, sub: P.sub, hasAction: !!P.action, action: P.action || (() => {}), actionLabel: P.actionLabel || '' } : { show: false, title: '', sub: '', hasAction: false, action: () => {}, actionLabel: '' };
+        if (!P) return { show: false, title: '', sub: '', hasSub: false, titleStyle: '', subStyle: '', hasAction: false, action: () => {}, actionLabel: '' };
+        // The section's name is already in the menu, so it is not repeated as a heading (kept for screen readers).
+        // The home page keeps "Σήμερα", which is a summary of the day, not the menu name.
+        const big = s.tab === 'today';
+        const hidden = 'position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0';
+        return {
+          show: big || !!P.sub || !!P.action, title: P.title, sub: P.sub, hasSub: !!P.sub,
+          titleStyle: big ? 'margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1.15' : hidden,
+          subStyle: 'font-size: 14px; color: #4A5B5E;' + (big ? ' margin-top: 4px' : ''),
+          hasAction: !!P.action, action: P.action || (() => {}), actionLabel: P.actionLabel || ''
+        };
       })(),
       tiles: shownTiles, noTiles: shownTiles.length === 0, statusChips: statusChips, occupiedText: occupied + ' από 12 με πελάτες',
       occupancy: occupancy, siteRevenue: siteRevenue, todayMoves: arrivals + ' · ' + departures,
