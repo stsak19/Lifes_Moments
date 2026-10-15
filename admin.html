@@ -53,7 +53,7 @@ button:disabled{cursor:default}
 #inbox{min-height:520px}
 #conv-msgs{min-height:220px;max-height:420px}
 /* Messages fill the screen */
-@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#app main:has(#inbox) aside[aria-label="Λεπτομέρειες κράτησης"]{top:28px;max-height:calc(100vh - 56px)}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 260px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
+@media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 160px);min-height:460px}#app main:has(#inbox) aside[aria-label="Λεπτομέρειες κράτησης"]{top:28px;max-height:calc(100vh - 160px)}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 260px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
 @media (max-width:520px){.grp-mmeta{display:none}}
 @media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside[aria-label="Λεπτομέρειες δωματίου"],aside[aria-label="Αίτημα στο ημερολόγιο"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *,aside[aria-label="Λεπτομέρειες δωματίου"] > *,aside[aria-label="Αίτημα στο ημερολόγιο"] > *{flex-shrink:0}}
@@ -62,7 +62,7 @@ button:disabled{cursor:default}
 .list-head{display:flex;flex-direction:column;gap:16px}
 @media (min-width:900px){.list-head{position:sticky;top:0;z-index:6;background:#EEF3F4;padding:20px 0 14px;margin:-20px 0 -14px}}
 /* Confirmations float over the page so nothing below them moves */
-#app .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;box-sizing:border-box;width:max-content;max-width:min(640px,calc(100% - 32px));box-shadow:0 8px 28px rgba(10,58,62,.28)}
+#app .toast{position:fixed;top:auto;bottom:24px;left:50%;transform:translateX(-50%);z-index:60;box-sizing:border-box;width:max-content;max-width:min(640px,calc(100% - 32px));box-shadow:0 8px 28px rgba(10,58,62,.28)}
 @media (min-width:900px){#app .toast{left:calc(50% + 124px)}}
 #preview-bar button{height:32px;padding:0 12px;border-radius:16px;border:1px solid #C3D1D3;font-size:12px;font-weight:600;cursor:pointer}
 
@@ -138,13 +138,19 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div role="status" class="toast" style="background: #0A3A3E; color: #FFFFFF; border-radius: 14px; padding: 12px 18px; font-size: 14px">{{toast}}</div>
 </sc-if>
 
+<sc-if value="{{page.show}}" hint-placeholder-val="{{true}}">
+<header class="page-head" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px">
+<div style="min-width: 0"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 30px; font-weight: 600; line-height: 1.15">{{page.title}}</h1><div style="font-size: 14px; color: #4A5B5E; margin-top: 4px">{{page.sub}}</div></div>
+<sc-if value="{{page.hasAction}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{page.action}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>{{page.actionLabel}}</button></sc-if>
+</header>
+</sc-if>
+
 <div class="content-row" style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 22px">
 <div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
 
 <sc-if value="{{show.today}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; flex-direction: column; gap: 26px">
 
-<sc-if value="{{isAuto}}" hint-placeholder-val="{{false}}">
 <section style="{{stripStyle}}">
 <div style="flex: 0 1 260px">
 <div style="{{stripTitleStyle}}">{{stripTitle}}</div>
@@ -164,7 +170,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{stripBtn}}" style="flex: 0 0 auto; height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Απάντησε</button>
 </sc-if>
 </section>
-</sc-if>
 
 <section style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
@@ -179,9 +184,9 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px">
 <sc-for list="{{tiles}}" as="t" hint-placeholder-count="12">
-<article style="{{t.card}}">
+<article onClick="{{t.openRoom}}" style="{{t.card}}">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
-<span style="font-family: Piazzolla, Georgia, serif; font-size: 20px; font-weight: 600">{{t.unit}}</span>
+<button type="button" onClick="{{t.openRoom}}" aria-pressed="{{t.roomPressed}}" aria-label="{{t.roomAria}}" style="padding: 0; border: 0; background: transparent; color: #18282B; font-family: Piazzolla, Georgia, serif; font-size: 20px; font-weight: 600; text-align: left; cursor: pointer">{{t.unit}}</button>
 <span style="{{t.pill}}">{{t.status}}</span>
 </div>
 <div style="margin-top: 10px">
@@ -197,13 +202,12 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; gap: 3px">
 <sc-for list="{{t.cells}}" as="c" hint-placeholder-count="14"><span style="{{c.style}}"></span></sc-for>
 </div>
-<div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: #5A6B6E"><span>Σήμερα</span><span>{{t.stripEnd}}</span></div>
+<div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px; color: #5A6B6E"><span>Σήμερα</span><span>{{t.stripEnd}}</span></div>
 </div>
 <div style="margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; gap: 8px">
 <sc-if value="{{t.hasAction}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{t.doAction}}" style="{{t.actionStyle}}">{{t.action}}</button>
 </sc-if>
-<button type="button" onClick="{{t.openRoom}}" aria-pressed="{{t.roomPressed}}" style="{{t.roomBtnStyle}}">Λεπτομέρειες</button>
 </div>
 </article>
 </sc-for>
@@ -248,11 +252,14 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{calNext}}" aria-label="Μια εβδομάδα μπροστά" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
 <h1 style="margin: 0 4px; font-family: Piazzolla, Georgia, serif; font-size: 28px; font-weight: 500">{{calTitle}}</h1>
 <button type="button" onClick="{{calToday}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 500; cursor: pointer">Σήμερα</button>
+<div role="group" aria-label="Πόσες μέρες" style="display: flex; gap: 2px; padding: 2px; border-radius: 20px; background: #FFFFFF">
+<sc-for list="{{calSpans}}" as="sp" hint-placeholder-count="2"><button type="button" onClick="{{sp.pick}}" aria-pressed="{{sp.pressed}}" style="{{sp.style}}">{{sp.label}}</button></sc-for>
+</div>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #0F5257"></span>Σάιτ</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #CFE0F3"></span>Booking.com</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Από εμάς</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #A9C7EA"></span>Booking.com</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #B9DCB0"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1.5px dashed #B7791F"></span>Αίτημα σε αναμονή</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
@@ -265,7 +272,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="{{calRowStyle}}">
 <span></span>
 <sc-for list="{{head}}" as="h" hint-placeholder-count="14">
-<div style="{{h.style}}"><span style="display: block; font-size: 11px">{{h.dow}}</span><span style="display: block; font-size: 14px">{{h.num}}</span><span style="{{h.priceStyle}}">{{h.price}}</span></div>
+<div style="{{h.style}}"><span style="display: block; font-size: 12px">{{h.dow}}</span><span style="display: block; font-size: 14px">{{h.num}}</span><span style="{{h.priceStyle}}">{{h.price}}</span></div>
 </sc-for>
 </div>
 <sc-if value="{{hasReqRows}}" hint-placeholder-val="{{true}}">
@@ -279,6 +286,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
 <button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: -6px"><span style="font-size: 13px; color: #2E4448">{{sg.meta}}</span><span style="{{sg.timerStyle}}">{{sg.timer}}</span></div>
+<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #2E4448; background: #F7F4EC; border-radius: 10px; padding: 8px 10px; white-space: normal">«{{sg.note}}»</div></sc-if>
 <div style="display: flex; gap: 8px">
 <sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
 <button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
@@ -299,6 +308,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
 <button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: -6px"><span style="font-size: 13px; color: #2E4448">{{sg.meta}}</span><span style="{{sg.timerStyle}}">{{sg.timer}}</span></div>
+<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #2E4448; background: #F7F4EC; border-radius: 10px; padding: 8px 10px; white-space: normal">«{{sg.note}}»</div></sc-if>
 <div style="display: flex; gap: 8px">
 <sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
 <button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
@@ -335,7 +346,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="font-size: 12px; color: #4A5B5E">{{priceChannelNote}} Οι κρατήσεις που έχουν ήδη γίνει δεν αλλάζουν.</div>
 </section>
 </sc-if>
-<div style="font-size: 13px; color: #4A5B5E">{{calNote}}</div>
+<details class="cal-help" style="font-size: 13px; color: #4A5B5E"><summary style="cursor: pointer; font-weight: 600; color: #0F5257; width: max-content">Πώς δουλεύει το ημερολόγιο;</summary><p style="margin: 8px 0 0; max-width: 820px">{{calNote}}</p></details>
 </div>
 </sc-if>
 
@@ -352,8 +363,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
 </sc-for>
 </div>
-<span style="flex: 1 1 0"></span>
-<button type="button" onClick="{{openNew}}" style="height: 42px; padding: 0 18px; border-radius: 21px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>Νέα κράτηση</button>
 </div>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 13px; color: #4A5B5E">
 <span style="display: inline-flex; align-items: center; gap: 6px"><label for="l-sort" style="font-size: 13px; font-weight: 600; color: #4A5B5E">Ταξινόμηση κατά</label><select id="l-sort" onChange="{{setListSort}}" style="height: 34px; padding: 0 10px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600">
@@ -397,13 +406,14 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{m.chev}}"><path d="M9 6l6 6-6 6"></path></svg>
 <span style="flex-shrink: 0; font-size: 15px; font-weight: 600">{{m.label}}</span>
 <span class="grp-mmeta" style="min-width: 0; font-size: 13px; color: #4A5B5E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{m.meta}}</span>
-<sc-if value="{{m.hasPending}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; white-space: nowrap; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #FBEFD9; color: #7A4708">{{m.pending}}</span></sc-if>
+<sc-if value="{{m.hasPending}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; white-space: nowrap; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #FBEFD9; color: #7A4708">{{m.pending}}</span></sc-if>
 <span style="flex: 1 1 0"></span>
 <span style="flex-shrink: 0; font-size: 14px; font-weight: 600">{{m.money}}</span>
 </button>
 <sc-if value="{{m.open}}" hint-placeholder-val="{{true}}">
 <div style="overflow-x: auto">
 <div style="min-width: 560px">
+<div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; padding: 8px 18px 6px 54px; border-top: 1px solid #EEF2F2; font-size: 12px; font-weight: 600; color: #5A6B6E"><span>Πελάτης · χώρος</span><span>Ημερομηνίες</span><span style="text-align: right">Ποσό</span><span style="text-align: right">Πηγή</span></div>
 <sc-for list="{{m.rows}}" as="it" hint-placeholder-count="4">
 <button type="button" onClick="{{it.open}}" style="{{it.rowStyle}}">
 <span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{it.sub}}</span></span>
@@ -447,7 +457,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <sc-for list="{{guests}}" as="g" hint-placeholder-count="8">
 <button type="button" onClick="{{g.open}}" style="{{g.rowStyle}}">
-<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.name}}</span><sc-if value="{{g.returning}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #F3E3F0; color: #6B2F5F">Επιστρέφει</span></sc-if></span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.contact}}</span></span>
+<span style="min-width: 0"><span style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.name}}</span><sc-if value="{{g.returning}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #F3E3F0; color: #6B2F5F">Επιστρέφει</span></sc-if></span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{g.contact}}</span></span>
 <span>{{g.staysText}}</span>
 <span style="font-weight: 500">{{g.spentText}}</span>
 <span style="{{g.whenStyle}}">{{g.whenText}}</span>
@@ -479,7 +489,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div><div style="font-weight: 600; font-size: 16px">{{conv.name}}</div><div style="font-size: 13px; color: #4A5B5E">{{conv.meta}}</div></div>
 </div>
 <div id="conv-msgs" style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; background: #F7FAFA; overflow-y: auto">
-<sc-for list="{{conv.msgs}}" as="m" hint-placeholder-count="2"><div style="{{m.style}}">{{m.text}}<span style="display: block; font-size: 11px; color: #4A5B5E; margin-top: 4px">{{m.when}}</span></div></sc-for>
+<sc-for list="{{conv.msgs}}" as="m" hint-placeholder-count="2"><div style="{{m.style}}">{{m.text}}<span style="display: block; font-size: 12px; color: #4A5B5E; margin-top: 4px">{{m.when}}</span></div></sc-for>
 <sc-if value="{{conv.empty}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #4A5B5E">Δεν έχετε μιλήσει ακόμα. Γράψε το πρώτο μήνυμα.</div></sc-if>
 </div>
 <div style="padding: 14px 18px; border-top: 1px solid #EEF2F2; display: flex; flex-direction: column; gap: 10px">
@@ -541,7 +551,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" data-date="{{c.date}}" onPointerDown="{{c.down}}" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
 <span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.isOver}}" hint-placeholder-val="{{false}}"><span style="width: 7px; height: 7px; border-radius: 4px; background: #0F5257"></span></sc-if></span>
 <span style="display: block; font-size: 15px; font-weight: 600; margin-top: 4px">{{c.room}}</span>
-<span style="display: block; font-size: 11px; color: #4A5B5E">{{c.sub}}</span>
+<span style="display: block; font-size: 12px; color: #4A5B5E">{{c.sub}}</span>
 </button>
 </sc-if>
 </sc-for>
@@ -855,7 +865,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Επόμενες 14 μέρες</h3>
 <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
 <sc-for list="{{room.days}}" as="d" hint-placeholder-count="14">
-<button type="button" onClick="{{d.click}}" aria-label="{{d.aria}}" title="{{d.aria}}" style="{{d.style}}"><span style="font-size: 10px; opacity: 0.85">{{d.dow}}</span><span style="font-size: 14px; font-weight: 600">{{d.num}}</span></button>
+<button type="button" onClick="{{d.click}}" aria-label="{{d.aria}}" title="{{d.aria}}" style="{{d.style}}"><span style="font-size: 11px; opacity: 0.85">{{d.dow}}</span><span style="font-size: 14px; font-weight: 600">{{d.num}}</span></button>
 </sc-for>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 12px; color: #4A5B5E">
@@ -956,7 +966,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{goReqs}}" style="{{nav.reqs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 13l3-8h10l3 8v6H4z"></path><path d="M4 13h5l1 2h4l1-2h5"></path></svg><span style="flex: 1">Αιτήματα</span><sc-if value="{{hasReqBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{reqBadge}}</span></sc-if></button></sc-if>
 <button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path class="ic-ring" d="M9 3v4"></path><path class="ic-ring ic-ring2" d="M15 3v4"></path><circle class="ic-day" cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"></circle></svg><span style="flex: 1">Ημερολόγιο</span></button>
 <button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-line ic-l1" d="M9 6h11"></path><path class="ic-line ic-l2" d="M9 12h11"></path><path class="ic-line ic-l3" d="M9 18h11"></path><path d="M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
-<button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-bubble" d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #C2502A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
+<button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-bubble" d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
 <button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><g class="ic-person"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path></g><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
 <button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-arc" d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path class="ic-bar ic-b1" d="M5 10h8"></path><path class="ic-bar ic-b2" d="M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle class="ic-knob ic-k1" cx="16" cy="6" r="2"></circle><circle class="ic-knob ic-k2" cx="10" cy="12" r="2"></circle><circle class="ic-knob ic-k3" cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
@@ -1067,7 +1077,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', yOpen: {}, mOpen: {}, listDates: false, listSort: (() => { try { return localStorage.getItem('lm.listSort') === 'name' ? 'name' : 'date'; } catch (e) { return 'date'; } })(), thread: 't1', msgDraft: '',
+      tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', calDays: (() => { try { return localStorage.getItem('lm.calDays') === '14' ? 14 : 7; } catch (e) { return 7; } })(), filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', yOpen: {}, mOpen: {}, listDates: false, listSort: (() => { try { return localStorage.getItem('lm.listSort') === 'name' ? 'name' : 'date'; } catch (e) { return 'date'; } })(), thread: 't1', msgDraft: '',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
@@ -1117,6 +1127,8 @@ class Component extends DCLogic {
     }
     this.state.bookings = this.expire(this.state.bookings);
     this.state.bookingsAuto = this.autoAssign(this.state.bookings, this.state.blocks);
+    // Booking.com's calendar sync only says the nights are taken: no guest name, email or phone. The preview shows them the same way (the Beds24 version keeps names: Beds24 sends them).
+    if (!this.REAL) this.state.bookings = this.state.bookings.map(b => b.source === 'booking' ? Object.assign({}, b, { name: 'Booking.com', email: '', phone: '', synced: true }) : b);
     this.state.live = null; this.state.checking = null; this.state.pushBusy = false; this.state.pushPerm = PUSH.perm(); this.state.testIn = 0;
     this.state.toggles.push = PUSH.on();
     this.ON = { b1: '2026-05-03', b2: '2026-04-18', b3: '2026-03-29', b4: '2026-02-11', b5: '2026-06-02', b6: '2026-06-27', b7: '2026-05-19', b8: '2026-07-01', b9: '2026-06-14', b10: '2026-05-30', b11: '2026-06-20', b12: '2026-04-02', b13: '2026-07-08', b14: '2026-07-14', b15: '2026-06-09', b16: '2026-07-14', p1: '2026-07-14', p2: '2026-07-13', p3: '2026-07-14' };
@@ -1142,6 +1154,7 @@ class Component extends DCLogic {
       { name: 'Ελισάβετ Ραφαηλίδου', date: '2025-09-02', when: '2–6 Σεπ 2025', unit: 'Δωμάτιο 4', nights: 4, total: 340, source: 'site', email: 'elisavet@example.com', phone: '+30 69xx xxx xxx' },
       { name: 'Martin Dvořák', date: '2025-08-10', when: '10–15 Αυγ 2025', unit: 'Δωμάτιο 9', nights: 5, total: 675, source: 'booking', email: 'μέσω Booking', phone: '+420 6xx xxx xxx' }
     ];
+    this.PAST = this.PAST.filter(p => p.source !== 'booking');
     if (this.REAL) {
       this.PAST = [];
       // The day changes at midnight in Greece even if the admin stays open (or wakes up the next morning).
@@ -1153,9 +1166,57 @@ class Component extends DCLogic {
 
   /* Closed nights are saved in the database: whatever changed in state.blocks is written there. */
   setState(p) {
-    const before = this.state.blocks;
+    const before = this.state.blocks, oBefore = this.state.overrides, xBefore = this.state.extra;
     super.setState(p);
     if (this.REAL && !this._fromServer && before && this.state.blocks !== before && PUSH.client) this.syncBlocks(before, this.state.blocks);
+    if (this.REAL && !this._fromServer && PUSH.client && this.pricesLoaded) {
+      if (oBefore && this.state.overrides !== oBefore) this.syncOverrides(oBefore, this.state.overrides);
+      if (xBefore !== this.state.extra) this.syncExtra(this.state.extra);
+    }
+  }
+  /* Site prices live in the database: seasons, specific nights and the extra-guest charge. */
+  loadPrices() {
+    if (!this.REAL || !PUSH.client) return Promise.resolve();
+    const sb = PUSH.client;
+    return Promise.all([
+      sb.from('price_seasons').select('id, name, range_label, ranges, room, apt, min_nights, priority').order('priority'),
+      sb.from('price_overrides').select('night, room, apt, min_nights').gte('night', this.add(this.TODAY, -60)).limit(3000),
+      sb.from('site_settings').select('extra_guest').limit(1)
+    ]).then(rs => {
+      const bad = rs.find(r => r.error);
+      if (bad) { this.say('Δεν φορτώθηκαν οι τιμές: ' + bad.error.message); return; }
+      const overrides = {};
+      (rs[1].data || []).forEach(r => { overrides[r.night] = { room: r.room, apt: r.apt, min: r.min_nights }; });
+      const patch = { overrides: overrides };
+      if (rs[0].data && rs[0].data.length) patch.seasons = rs[0].data.map(r => ({ id: r.id, name: r.name, range: r.range_label, ranges: r.ranges || [], room: r.room, apt: r.apt, min: r.min_nights, priority: r.priority }));
+      if (rs[2].data && rs[2].data.length && rs[2].data[0].extra_guest != null) patch.extra = rs[2].data[0].extra_guest;
+      this._fromServer = true;
+      this.setState(patch);
+      this._fromServer = false;
+      this.pricesLoaded = true;
+    });
+  }
+  syncOverrides(a, b) {
+    const sb = PUSH.client, who = this.state.user ? this.state.user.name : '';
+    const same = (x, y) => x && y && x.room === y.room && x.apt === y.apt && x.min === y.min;
+    const num = v => (v === '' || v == null || isNaN(Number(v))) ? null : Number(v);
+    const up = Object.keys(b).filter(k => b[k] && !same(a[k], b[k])).map(k => ({ night: k, room: num(b[k].room), apt: num(b[k].apt), min_nights: num(b[k].min), updated_at: new Date().toISOString(), updated_by: who }));
+    const del = Object.keys(a).filter(k => a[k] && !b[k]);
+    const jobs = [];
+    if (up.length) jobs.push(sb.from('price_overrides').upsert(up, { onConflict: 'night' }));
+    if (del.length) jobs.push(sb.from('price_overrides').delete().in('night', del));
+    Promise.all(jobs).then(rs => {
+      const bad = rs.find(r => r.error);
+      if (bad) { this.say('Δεν αποθηκεύτηκε η τιμή: ' + bad.error.message); this.loadPrices(); }
+    });
+  }
+  syncExtra(v) {
+    clearTimeout(this._extraT);
+    this._extraT = setTimeout(() => {
+      PUSH.client.from('site_settings').update({ extra_guest: v }).eq('id', true).then(res => {
+        if (res.error) { this.say('Δεν αποθηκεύτηκε το επιπλέον άτομο: ' + res.error.message); this.loadPrices(); }
+      });
+    }, 400);
   }
   syncBlocks(a, b) {
     const sb = PUSH.client, who = this.state.user ? this.state.user.name : '';
@@ -1626,10 +1687,10 @@ class Component extends DCLogic {
   }
   seasonFor(date) {
     const md = date.slice(5);
-    for (const id of ['peak', 'high', 'low']) {
-      const se = this.state.seasons.find(x => x.id === id);
-      if (se && se.ranges.some(r => r[0] <= md && md <= r[1])) return se;
-    }
+    // Highest priority first (the database sets it; the preview seasons follow the old peak > high > low order).
+    const order = { peak: 3, high: 2, low: 1 };
+    const list = this.state.seasons.slice().sort((a, b) => (b.priority != null ? b.priority : order[b.id] || 0) - (a.priority != null ? a.priority : order[a.id] || 0));
+    for (const se of list) if ((se.ranges || []).some(r => r[0] <= md && md <= r[1])) return se;
     return null;
   }
   priceFor(date) {
@@ -1664,7 +1725,7 @@ class Component extends DCLogic {
     this.setState({ seasons: this.state.seasons.map(se => se.id === id ? Object.assign({}, se, { [key]: Math.max(floor, se[key] + delta) }) : se) });
   }
   badgeFor(b) {
-    const base = 'display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
+    const base = 'display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
     if (b.status === 'confirmed' && b.kind === 'free') return { badge: 'Χωρίς χρέωση', badgeStyle: base + 'background: #EFE9F6; color: #4B2F6B' };
     if (b.status === 'confirmed' && b.kind === 'test') return { badge: 'Δοκιμή', badgeStyle: base + 'background: #ECEAE5; color: #4A4F5C' };
     if (b.status === 'confirmed' && b.source === 'direct') return { badge: 'Από εμάς', badgeStyle: base + 'background: #D9EAD3; color: #24502A' };
@@ -1724,11 +1785,11 @@ class Component extends DCLogic {
     /* Tiles */
     const pillBase = 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px;';
     const ST = {
-      stay: { label: 'Μένουν', pill: pillBase + 'background: #0F5257; color: #FFFFFF', card: 'background: #E3F0EF; border: 1px solid #C6DFDD' },
-      arr: { label: 'Άφιξη', pill: pillBase + 'background: #1E3A5F; color: #FFFFFF', card: 'background: #E5EDF8; border: 1px solid #C9D7EE' },
-      dep: { label: 'Αναχώρηση', pill: pillBase + 'background: #7A4708; color: #FFFFFF', card: 'background: #FCF1DE; border: 1px solid #EED9AE' },
-      free: { label: 'Ελεύθερο', pill: pillBase + 'background: #EEF3F4; color: #3E4656', card: 'background: #FFFFFF; border: 1px dashed #A7B4B6' },
-      shut: { label: 'Κλειστό', pill: pillBase + 'background: #4A4F5C; color: #FFFFFF', card: 'background: #ECEAE5; border: 1px solid #DAD6CE' }
+      stay: { label: 'Μένουν', pill: pillBase + 'background: #DCEBEA; color: #0F5257', accent: '#0F5257' },
+      arr: { label: 'Άφιξη', pill: pillBase + 'background: #DCE5F3; color: #1E3A5F', accent: '#1E3A5F' },
+      dep: { label: 'Αναχώρηση', pill: pillBase + 'background: #FBEFD9; color: #7A4708', accent: '#C99A3B' },
+      free: { label: 'Ελεύθερο', pill: pillBase + 'background: #F1F4F4; color: #4A5B5E', accent: 'transparent' },
+      shut: { label: 'Κλειστό', pill: pillBase + 'background: #ECEAE5; color: #4A4F5C', accent: '#8A8F9C' }
     };
     const actBase = 'min-height: 40px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;';
     let occupied = 0, arrivals = 0, departures = 0;
@@ -1749,9 +1810,9 @@ class Component extends DCLogic {
       let action = '', actionStyle = '', doAction = () => {};
       if (dep) {
         const done = !!s.cleaned[dep.id];
-        action = done ? 'Καθαρίστηκε' : 'Θέλει καθάρισμα';
+        action = done ? '✓ Καθαρό' : 'Σημείωσε ως καθαρό';
         actionStyle = actBase + (done ? 'border: 1px solid #2F6B4F; background: #E1EFE7; color: #1F5039' : 'border: 1px solid #D9B86A; background: #FFFFFF; color: #7A4708');
-        doAction = () => this.setState({ cleaned: Object.assign({}, s.cleaned, { [dep.id]: !done }) });
+        doAction = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ cleaned: Object.assign({}, s.cleaned, { [dep.id]: !done }) }); };
       }
       /* 14-day strip */
       let nBooked = 0, nShut = 0;
@@ -1761,19 +1822,20 @@ class Component extends DCLogic {
         let c = '#DCE5E6';
         if (o === 'block') { c = '#B3261E'; nShut++; }
         else if (o) { c = o.source === 'booking' ? '#8DB3E2' : '#0F5257'; nBooked++; }
-        cells.push({ style: 'flex: 1 1 0; height: ' + (i === 0 ? 12 : 8) + 'px; align-self: flex-end; border-radius: 2px; background: ' + c });
+        cells.push({ style: 'flex: 1 1 0; height: ' + (i === 0 ? 14 : 10) + 'px; align-self: flex-end; border-radius: 2px; background: ' + c });
       }
       const roomOn = s.room === u.id;
       return {
         st: st, id: u.id,
         cells: cells, stripEnd: this.fmt(this.add(T, 13)),
         stripLabel: 'Επόμενες 14 μέρες: ' + nBooked + ' με κράτηση, ' + nShut + ' κλειστές, ' + (14 - nBooked - nShut) + ' ελεύθερες',
-        openRoom: () => this.openRoom(u.id), roomPressed: roomOn ? 'true' : 'false',
+        openRoom: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (roomOn) this.setState({ room: null }); else this.openRoom(u.id); }, roomPressed: roomOn ? 'true' : 'false',
+        roomAria: u.name + ': λεπτομέρειες δωματίου',
         roomBtnStyle: actBase + (roomOn ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         unit: u.name, status: ST[st].label, pill: ST[st].pill,
-        card: 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column;' + ST[st].card,
+        card: 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px 16px 20px; display: flex; flex-direction: column; cursor: pointer; background: #FFFFFF; transition: box-shadow 0.15s;' + (roomOn ? 'border: 1px solid #0F5257; box-shadow: inset 4px 0 0 ' + (ST[st].accent === 'transparent' ? '#0F5257' : ST[st].accent) + ', 0 0 0 1px #0F5257' : (st === 'free' ? 'border: 1px dashed #B5C3C5' : 'border: 1px solid #E1E8E9') + '; box-shadow: inset 4px 0 0 ' + ST[st].accent),
         guest: guest, sub: sub, hasLink: !!linkTo, noLink: !linkTo,
-        openGuest: () => { if (linkTo) this.open(linkTo); },
+        openGuest: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (linkTo) this.open(linkTo); },
         action: action, actionStyle: actionStyle, hasAction: !!action, doAction: doAction
       };
     });
@@ -1815,9 +1877,9 @@ class Component extends DCLogic {
       const mine = confirmed.filter(b => b.unit === ru.id && b.kind !== 'test');
       const upcoming = mine.filter(b => this.endOf(b) > T).sort((a, b) => a.start < b.start ? -1 : 1).slice(0, 5).map(b => ({
         name: b.name,
-        when: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + this.money(b.total),
+        when: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + (b.source === 'booking' ? '' : ' · ' + this.money(b.total)),
         src: srcOf(b),
-        srcStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;' + (b.source !== 'booking' ? 'background: #DCEBEA; color: #0F5257' : 'background: #DCE5F3; color: #1E3A5F'),
+        srcStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 10px;' + (b.source !== 'booking' ? 'background: #DCEBEA; color: #0F5257' : 'background: #DCE5F3; color: #1E3A5F'),
         open: () => this.open(b.id)
       }));
       const shutDates = Object.keys(s.blocks).filter(k => s.blocks[k] && k.split('|')[0] === ru.id).map(k => k.split('|')[1]).filter(x => x >= T).sort();
@@ -1841,7 +1903,7 @@ class Component extends DCLogic {
           }
         };
       });
-      const hist = mine.filter(b => this.endOf(b) <= T).map(b => ({ key: b.start, name: b.name, when: this.range(b.start, this.endOf(b)) + ' ' + b.start.slice(0, 4) + ' · ' + b.nights + ' νύχτες', money: this.money(b.total), src: srcOf(b) }))
+      const hist = mine.filter(b => this.endOf(b) <= T).map(b => ({ key: b.start, name: b.name, when: this.range(b.start, this.endOf(b)) + ' ' + b.start.slice(0, 4) + ' · ' + b.nights + ' νύχτες', money: b.source === 'booking' ? '' : this.money(b.total), src: srcOf(b) }))
         .concat(this.PAST.filter(p => p.unit === ru.name).map(p => ({ key: p.date, name: p.name, when: p.when + ' · ' + p.nights + ' νύχτες', money: this.money(p.total), src: p.source === 'site' ? 'Σάιτ' : 'Booking' })))
         .sort((a, b) => b.key.localeCompare(a.key)).slice(0, 3);
       /* This month */
@@ -1850,7 +1912,7 @@ class Component extends DCLogic {
       let x = mKey + '-01', mDays = 0, mBooked = 0, mRev = 0;
       while (x.slice(0, 7) === mKey) {
         const o = this.occ(ru.id, x);
-        if (o && o !== 'block' && o.kind !== 'test') { mBooked++; mRev += (o.total || 0) / o.nights; }
+        if (o && o !== 'block' && o.kind !== 'test') { mBooked++; if (o.source !== 'booking') mRev += (o.total || 0) / o.nights; }
         mDays++; x = this.add(x, 1);
       }
       const tonight = this.occ(ru.id, T);
@@ -1859,7 +1921,7 @@ class Component extends DCLogic {
         capText: (ru.id === 'apt' ? 'Ξεχωριστό διαμέρισμα' : 'Δωμάτιο') + ' · ως ' + ru.cap + ' άτομα',
         nowTitle: tile.guest, nowSub: tile.sub, nowHasLink: tile.hasLink, nowNoLink: tile.noLink, nowOpen: tile.openGuest,
         occLabel: 'Νύχτες ' + this.MONG[mIdx], occText: mBooked + ' / ' + mDays,
-        revLabel: 'Έσοδα ' + this.MONG[mIdx], revText: this.money(mRev),
+        revLabel: 'Έσοδα σάιτ ' + this.MONG[mIdx], revText: this.money(mRev),
         days: days,
         upcoming: upcoming, noUpcoming: upcoming.length === 0,
         shut: shutRows, hasShut: shutRows.length > 0,
@@ -1889,7 +1951,7 @@ class Component extends DCLogic {
       return {
         label: c.label, count: String(n), pressed: on ? 'true' : 'false',
         style: 'display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer;' + (on ? c.solid : c.soft) + (n === 0 && c.id ? '; opacity: 0.6' : ''),
-        countStyle: 'min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; font-size: 11px; display: inline-flex; align-items: center; justify-content: center;' + (on ? 'background: rgba(255,255,255,0.22)' : 'background: rgba(24,40,43,0.08)'),
+        countStyle: 'min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 10px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;' + (on ? 'background: rgba(255,255,255,0.22)' : 'background: rgba(24,40,43,0.08)'),
         pick: () => this.setState({ tileFilter: on ? null : c.id })
       };
     });
@@ -2010,9 +2072,9 @@ class Component extends DCLogic {
         const left = 24 - b.ago, on = false;
         return {
           name: b.name, current: on ? 'true' : 'false',
-          meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο'),
+          meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο') + (b.priceless ? '' : ' · ' + this.money(b.total)),
           note: b.note || '', hasNote: !!b.note,
-          timer: left + (left === 1 ? ' ώρα' : ' ώρες'), timerStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
+          timer: left + (left === 1 ? ' ώρα' : ' ώρες'), timerStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
           style: rowBase + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
           open: () => this.openReq(b.id)
         };
@@ -2023,7 +2085,7 @@ class Component extends DCLogic {
       done: answered.map(b => {
         const w = ansWord(b);
         return {
-          name: b.name, badge: w[0], badgeStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + w[1],
+          name: b.name, badge: w[0], badgeStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + w[1],
           meta: this.range(b.start, this.endOf(b)) + (b.unit ? ' · ' + this.unitName(b.unit) : '') + (b.by && String(b.by).split(' · ')[1] ? ' · ' + String(b.by).split(' · ')[1] : ''),
           style: rowBase + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
           open: () => this.open(b.id)
@@ -2033,14 +2095,14 @@ class Component extends DCLogic {
 
     /* Calendar */
     const days = [];
-    const CAL_DAYS = 7; // a week: one-night stays and requests still show the guest's name
+    const CAL_DAYS = s.calDays === 14 ? 14 : 7; // one week (names fit) or two weeks (longer stays fit whole)
     for (let i = 0; i < CAL_DAYS; i++) days.push(this.add(s.calStart, i));
     const calRowStyle = 'display: grid; grid-template-columns: 124px repeat(' + CAL_DAYS + ', minmax(0, 1fr)); gap: 3px; margin-bottom: 3px';
     const head = days.map(x => {
       const d = this.dt(x);
       const wk = d.getUTCDay() === 0 || d.getUTCDay() === 6;
       const hp = this.priceFor(x);
-      return { price: hp.room != null ? '€' + hp.room : '–', priceStyle: 'display: block; font-size: 10px; font-weight: 600; margin-top: 2px; color: ' + (x === T ? '#FFFFFF' : (hp.over ? '#9A6B12' : '#6B7A7D')), dow: this.DAY[d.getUTCDay()], num: d.getUTCDate(), style: 'text-align: center; line-height: 1.15; padding: 4px 0; border-radius: 10px;' + (x === T ? 'background: #0F5257; color: #FFFFFF; font-weight: 600' : (wk ? 'color: #18282B; font-weight: 500' : 'color: #4A5B5E')) };
+      return { price: hp.room != null ? '€' + hp.room : '–', priceStyle: 'display: block; font-size: 11px; font-weight: 600; margin-top: 2px; color: ' + (x === T ? '#FFFFFF' : (hp.over ? '#9A6B12' : '#6B7A7D')), dow: this.DAY[d.getUTCDay()], num: d.getUTCDate(), style: 'text-align: center; line-height: 1.15; padding: 4px 0; border-radius: 10px;' + (x === T ? 'background: #0F5257; color: #FFFFFF; font-weight: 600' : (wk ? 'color: #18282B; font-weight: 500' : 'color: #4A5B5E')) };
     });
     const uIdx = id => this.UNITS.findIndex(u => u.id === id);
     const cs = s.calSel;
@@ -2070,7 +2132,7 @@ class Component extends DCLogic {
     const segBase = 'touch-action: none; user-select: none; -webkit-user-select: none; height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
     const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: pick1(unit, x), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
       style: segBase + 'padding: 0;' + (inMove(unit, x) ? (mvChk && mvChk.ok ? 'border: 2px dashed #0F5257; background: #CFE4E2' : 'border: 2px dashed #B3261E; background: #FBE4DF')
-        : inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
+        : inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 1px solid ' + (x === T ? '#D3E4E3' : '#EEF2F2') + '; background: ' + (x === T ? '#EDF5F4' : '#FAFBFB')) });
     // Waiting requests show as an outline in the room they would get; they are answered in the Requests section.
     const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const mv = s.calMove ? B.find(b => b.id === s.calMove.id) : null;
@@ -2110,15 +2172,22 @@ class Component extends DCLogic {
     const reqCard = (p, span, dragFrom) => {
       const wide = span >= 2;
       const btn = 'flex: 0 1 auto; min-width: 48px; height: 40px; padding: 0 ' + (wide ? 26 : 12) + 'px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
+      const left = 24 - p.ago;
+      const bits = [p.nights + (p.nights === 1 ? ' νύχτα' : ' νύχτες'), p.guests + (p.guests === 1 ? ' άτομο' : ' άτομα')];
+      if (!p.priceless) bits.push(this.money(p.total) + (p.promo && p.discountPct ? ' (−' + p.discountPct + '%)' : ''));
       return {
         expanded: true, plain: false, aria: 'Αίτημα ' + p.name, wide: wide, narrow: !wide,
+        meta: this.range(p.start, this.endOf(p)) + ' · ' + bits.join(' · '),
+        timer: 'Λήγει σε ' + left + (left === 1 ? ' ώρα' : ' ώρες'),
+        timerStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
+        note: p.note || '', hasNote: !!p.note, message: () => this.openThread(p.id),
         title: (span > 1 ? 'Αίτημα · ' : '') + p.name, closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
         canAccept: !!req.canAccept && !!dragFrom, accept: req.accept, reject: req.reject,
         close: () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calReq: null }); },
         down: dragFrom ? moveDown(p, dragFrom) : () => {},
         headStyle: 'min-height: 30px; padding: 0 2px; border: 0; background: transparent; color: #18282B; font: inherit; font-size: 13px; font-weight: 600; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'pointer'),
         okStyle: btn + 'border: 0; background: #0F5257; color: #FFFFFF',
-        noStyle: btn + 'border: 0; background: #B3261E; color: #FFFFFF',
+        noStyle: btn + 'border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412',
         style: 'grid-column: span ' + span + '; align-self: start; box-sizing: border-box; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 10px 12px 12px; margin: 4px 0; border-radius: 14px; border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.14);' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
       };
     };
@@ -2135,7 +2204,7 @@ class Component extends DCLogic {
           const movable = this.canMoveRoom(o);
           segs.push({ label: o.name, sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)) + (movable ? '. Σύρε πάνω ή κάτω για άλλο δωμάτιο.' : ''),
             tap: () => { if (this.justDragged) { this.justDragged = false; return; } this.open(o.id); }, down: moveDown(o),
-            style: segBase + 'grid-column: span ' + span + ';' + (movable ? 'cursor: grab;' : '') + (mv && mv.id === o.id && mvT ? 'opacity: 0.4;' : '') + (mvT === u.id && o.id !== mv.id && o.start < this.endOf(mv) && mv.start < this.endOf(o) ? 'box-shadow: 0 0 0 2px #B3261E;' : '') + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #D9EAD3; color: #24502A' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #CFE0F3; color: #1E3A5F'))) });
+            style: segBase + 'grid-column: span ' + span + ';' + (movable ? 'cursor: grab;' : '') + (mv && mv.id === o.id && mvT ? 'opacity: 0.4;' : '') + (mvT === u.id && o.id !== mv.id && o.start < this.endOf(mv) && mv.start < this.endOf(o) ? 'box-shadow: 0 0 0 2px #B3261E;' : '') + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #B9DCB0; color: #1D4521' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #A9C7EA; color: #12305A'))) });
           i = j + 1;
         } else if (o === 'block') {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', cell: u.id + '|' + x, down: calDown(u.id, x),
@@ -2320,11 +2389,11 @@ class Component extends DCLogic {
     };
     const rowOf = b => Object.assign({
       name: b.name,
-      sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : ''),
+      sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + (b.source === 'booking' ? '' : ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : '')),
       dates: this.range(b.start, this.endOf(b)),
       nightsText: b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες'),
-      money: b.source === 'booking' ? '–' : this.money(b.total),
-      comm: '',
+      money: b.source === 'booking' ? '' : this.money(b.total),
+      comm: b.source === 'booking' ? 'πληρώνει στο Booking' : '',
       rowStyle: 'width: 100%; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) minmax(0, 1fr) 110px; gap: 14px; align-items: center; padding: 8px 18px 8px 54px; min-height: 56px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;' + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
       open: () => this.open(b.id)
     }, this.badgeFor(b));
@@ -2544,7 +2613,7 @@ class Component extends DCLogic {
       { id: 'here', label: 'Μένουν τώρα', fn: g => !!g.current },
       { id: 'back', label: 'Επιστρέφουν', fn: g => g.count >= 2 },
       { id: 'site', label: 'Από το σάιτ', fn: g => !!g.sources.site },
-      { id: 'booking', label: 'Από Booking', fn: g => !!g.sources.booking }
+      { id: 'direct', label: 'Από εμάς', fn: g => !!g.sources.direct }
     ];
     const allG = Object.keys(gmap).map(k => gmap[k]);
     const gFilters = gDefs.map(f => ({ label: f.label + ' · ' + allG.filter(f.fn).length, style: f.id === s.gFilter ? chipOn : chipOff, pick: () => this.setState({ gFilter: f.id }) }));
@@ -2574,7 +2643,7 @@ class Component extends DCLogic {
     if (s.customer && gmap[s.customer]) {
       const g = gmap[s.customer];
       hasGuest = true;
-      const bdBase = 'font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
+      const bdBase = 'font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
       const badges = [];
       if (g.count >= 2) badges.push({ label: 'Επιστρέφει', style: bdBase + 'background: #F3E3F0; color: #6B2F5F' });
       if (g.current) badges.push({ label: 'Μένει τώρα', style: bdBase + 'background: #DCEBEA; color: #0F5257' });
@@ -2956,7 +3025,7 @@ class Component extends DCLogic {
       guests: guests, noGuests: guests.length === 0, guestTotal: allG.length + ' συνολικά', gFilters: gFilters, gQuery: s.gQuery,
       setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
       guest: guest, hasGuest: hasGuest,
-      showSlot: (s.tab === 'list' || s.tab === 'guests') && !hasDetail && !hasGuest && !(s.newOpen && s.nb),
+      showSlot: false,
       goToday: () => this.go('today'), goCal: () => { this.setState({ calStart: T }); this.go('cal'); }, goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
       navBadge: String(badgeN), hasNavBadge: auto && badgeN > 0,
       reqBadge: String(reqPending.length), hasReqBadge: reqPending.length > 0, reqList: reqList, goReqs: () => this.go('reqs'),
@@ -2968,6 +3037,19 @@ class Component extends DCLogic {
       syncNow: this.REAL ? () => (bkLinked ? this.syncFeeds(null) : (this.go('settings'), this.setState({ bkOpen: true }))) : () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
       toast: s.toast, hasToast: !!s.toast,
       stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, hasStripBtn: hasStripBtn, stripBtn: stripBtn,
+      page: (() => {
+        const n = (k, one, many) => k + ' ' + (k === 1 ? one : many);
+        const P = {
+          today: { title: 'Σήμερα', sub: n(occupied, 'δωμάτιο με πελάτες', 'δωμάτια με πελάτες') + ' · ' + n(arrivals, 'άφιξη', 'αφίξεις') + ' · ' + n(departures, 'αναχώρηση', 'αναχωρήσεις') },
+          reqs: { title: 'Αιτήματα', sub: pending.length ? n(pending.length, 'αίτημα περιμένει απάντηση', 'αιτήματα περιμένουν απάντηση') : 'Κανένα αίτημα σε αναμονή' },
+          list: { title: 'Κρατήσεις', sub: 'Όλες οι κρατήσεις, ανά χρονιά και μήνα', action: () => this.openNew(), actionLabel: 'Νέα κράτηση' },
+          msgs: { title: 'Μηνύματα', sub: 'Μόνο πελάτες που έκλεισαν από το σάιτ · οι πελάτες του Booking απαντώνται στο Booking' },
+          guests: { title: 'Πελάτες', sub: 'Όσοι έκλεισαν από το σάιτ ή απευθείας μαζί σας' },
+          prices: { title: 'Τιμές', sub: 'Τιμές του σάιτ ανά νύχτα · οι τιμές του Booking αλλάζουν στο extranet' },
+          settings: { title: 'Ρυθμίσεις', sub: '' }
+        }[s.tab];
+        return P ? { show: true, title: P.title, sub: P.sub, hasAction: !!P.action, action: P.action || (() => {}), actionLabel: P.actionLabel || '' } : { show: false, title: '', sub: '', hasAction: false, action: () => {}, actionLabel: '' };
+      })(),
       tiles: shownTiles, noTiles: shownTiles.length === 0, statusChips: statusChips, occupiedText: occupied + ' από 12 με πελάτες',
       occupancy: occupancy, siteRevenue: siteRevenue, todayMoves: arrivals + ' · ' + departures,
       req: req,
@@ -3003,6 +3085,9 @@ class Component extends DCLogic {
       },
       calPrev: () => { const p = this.add(s.calStart, -7); this.setState({ calStart: p < T ? T : p }); },
       calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
+      calSpans: [7, 14].map(n => ({ label: n === 7 ? '1 εβδομάδα' : '2 εβδομάδες', pressed: (s.calDays === 14 ? 14 : 7) === n ? 'true' : 'false',
+        style: 'height: 36px; padding: 0 14px; border: 0; border-radius: 18px; font-size: 13px; font-weight: 600; cursor: pointer;' + ((s.calDays === 14 ? 14 : 7) === n ? 'background: #0F5257; color: #FFFFFF' : 'background: transparent; color: #2E4448'),
+        pick: () => { try { localStorage.setItem('lm.calDays', String(n)); } catch (e) {} this.setState({ calDays: n }); } })),
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
@@ -3348,7 +3433,7 @@ class Component extends DCLogic {
     PUSH.client = SB;
     comp.reload = loadRequests;
     comp.props = Object.assign({}, comp.props, { owners: AUTH.users() });
-    loadRequests(); comp.loadFeeds();
+    loadRequests(); comp.loadFeeds(); comp.loadPrices();
     if (channel) SB.removeChannel(channel);
     channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
       if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
@@ -3357,7 +3442,9 @@ class Component extends DCLogic {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'request_messages' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ical_feeds' }, function () { comp.loadFeeds(); })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); }).subscribe();
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'price_overrides' }, function () { comp.loadPrices(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'price_seasons' }, function () { comp.loadPrices(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); comp.loadPrices(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
     // a request can expire while the page is open
     clearInterval(startLive.t); startLive.t = setInterval(loadRequests, 5 * 60000);
