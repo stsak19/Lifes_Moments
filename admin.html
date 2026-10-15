@@ -273,7 +273,20 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="{{calRowStyle}}">
 <span style="font-size: 12px; color: #4A5B5E; display: flex; align-items: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{row.label}}</span>
 <sc-for list="{{row.segs}}" as="sg" hint-placeholder-count="10">
-<button type="button" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button>
+<sc-if value="{{sg.plain}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button></sc-if>
+<sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
+<div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
+<div onPointerDown="{{sg.down}}" style="{{sg.headStyle}}">
+<span style="min-width: 0"><span style="display: block; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{sg.title}}</span><span style="display: block; font-size: 11px; font-weight: 500; color: #7A4708">{{sg.sub}}</span></span>
+<button type="button" onClick="{{sg.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 26px; height: 26px; padding: 0; border-radius: 13px; border: 0; background: transparent; color: #7A4708; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.4; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; font-weight: 400; color: #5C3606; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical">«{{sg.note}}»</div></sc-if>
+<div style="display: flex; gap: 6px">
+<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">{{sg.acceptLabel}}</button></sc-if>
+<button type="button" onClick="{{sg.reject}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">Απόρριψη</button>
+</div>
+</div>
+</sc-if>
 </sc-for>
 </div>
 </sc-for>
@@ -284,7 +297,20 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div data-row="{{row.id}}" style="{{row.style}}">
 <span style="{{row.labelStyle}}">{{row.label}}</span>
 <sc-for list="{{row.segs}}" as="sg" hint-placeholder-count="10">
-<button type="button" data-cell="{{sg.cell}}" data-sel="{{sg.sel}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button>
+<sc-if value="{{sg.plain}}" hint-placeholder-val="{{true}}"><button type="button" data-cell="{{sg.cell}}" data-sel="{{sg.sel}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button></sc-if>
+<sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
+<div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
+<div onPointerDown="{{sg.down}}" style="{{sg.headStyle}}">
+<span style="min-width: 0"><span style="display: block; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{sg.title}}</span><span style="display: block; font-size: 11px; font-weight: 500; color: #7A4708">{{sg.sub}}</span></span>
+<button type="button" onClick="{{sg.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 26px; height: 26px; padding: 0; border-radius: 13px; border: 0; background: transparent; color: #7A4708; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.4; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+<sc-if value="{{sg.hasNote}}" hint-placeholder-val="{{false}}"><div style="font-size: 12px; font-weight: 400; color: #5C3606; white-space: normal; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical">«{{sg.note}}»</div></sc-if>
+<div style="display: flex; gap: 6px">
+<sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">{{sg.acceptLabel}}</button></sc-if>
+<button type="button" onClick="{{sg.reject}}" style="flex: 1 1 0; min-width: 0; height: 34px; padding: 0 10px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap">Απόρριψη</button>
+</div>
+</div>
+</sc-if>
 </sc-for>
 </div>
 </sc-for>
@@ -699,40 +725,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </aside>
 </sc-if>
 
-<sc-if value="{{hasCalReq}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Αίτημα στο ημερολόγιο" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
-<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
-<div>
-<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 10px; background: #FBEFD9; color: #7A4708">Αίτημα σε αναμονή</span>
-<h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{req.name}}</h2>
-<div style="font-size: 13px; color: #4A5B5E">{{req.timerText}}</div>
-</div>
-<button type="button" onClick="{{calReqClose}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
-</div>
-<div style="border-top: 1px solid #EEF2F2">
-<div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Ημερομηνίες</span><span style="font-weight: 500">{{req.dates}}</span></div>
-<div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Νύχτες · άτομα</span><span style="font-weight: 500">{{req.nights}} · {{req.guests}}</span></div>
-<div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Δωμάτιο</span><span style="font-weight: 600">{{req.pickedName}}</span></div>
-<div style="display: flex; justify-content: space-between; min-height: 42px; align-items: center; border-bottom: 1px solid #EEF2F2"><span style="color: #4A5B5E">Σύνολο</span><span style="font-weight: 600">{{req.total}}</span></div>
-<div style="display: flex; justify-content: space-between; gap: 10px; min-height: 42px; align-items: center"><span style="color: #4A5B5E">Επαφή</span><span style="text-align: right; font-size: 13px">{{req.contact}}</span></div>
-</div>
-<sc-if value="{{req.hasNote}}" hint-placeholder-val="{{false}}">
-<div style="padding: 12px 14px; border-radius: 12px; background: #F4F7F7; font-size: 14px"><div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Μήνυμα πελάτη</div>«{{req.note}}»</div>
-</sc-if>
-<sc-if value="{{req.noFree}}" hint-placeholder-val="{{false}}">
-<div style="font-size: 13px; color: #8A3412">Δεν υπάρχει ελεύθερο δωμάτιο για αυτές τις μέρες. Μπορείς μόνο να το απορρίψεις.</div>
-</sc-if>
-<sc-if value="{{req.canAccept}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{req.accept}}" style="min-height: 46px; padding: 6px 18px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{req.acceptLabel}}</button>
-</sc-if>
-<button type="button" onClick="{{req.reject}}" style="height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 600; cursor: pointer">Απόρριψη</button>
-<sc-if value="{{req.canDrag}}" hint-placeholder-val="{{true}}"><div style="font-size: 12px; color: #4A5B5E">Για άλλο δωμάτιο, σύρε το αίτημα πάνω ή κάτω στο ημερολόγιο.</div></sc-if>
-<div style="display: flex; flex-wrap: wrap; gap: 4px 16px">
-<button type="button" onClick="{{req.message}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Μήνυμα στον πελάτη</button>
-<button type="button" onClick="{{calReqFull}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Όλα τα αιτήματα</button>
-</div>
-</aside>
-</sc-if>
 <sc-if value="{{hasDetail}}" hint-placeholder-val="{{false}}">
 <aside aria-label="Λεπτομέρειες κράτησης" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
@@ -2073,6 +2065,16 @@ class Component extends DCLogic {
       if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
       this.drag = this.canMoveRoom(o) ? { kind: 'move', id: o.id, from: from || o.unit, target: from || o.unit, moved: false } : null;
     };
+    // The request opened on the calendar grows into a card with Accept / Decline under its name.
+    const reqCard = (p, span, dragFrom) => ({
+      expanded: true, plain: false, aria: 'Αίτημα ' + p.name,
+      title: 'Αίτημα · ' + p.name, sub: this.range(p.start, this.endOf(p)) + ' · ' + p.guests + ' άτ. · ' + (p.priceless ? 'χωρίς τιμή' : this.money(p.total)) + ' · λήγει σε ' + (24 - p.ago) + ' ώρ.',
+      note: p.note || '', hasNote: !!p.note,
+      canAccept: !!req.canAccept && !!dragFrom, acceptLabel: 'Αποδοχή', accept: req.accept, reject: req.reject,
+      close: () => this.setState({ calReq: null }),
+      down: dragFrom ? moveDown(p, dragFrom) : () => {}, headStyle: 'display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'default'),
+      style: 'grid-column: span ' + span + '; align-self: start; position: relative; z-index: 4; box-sizing: border-box; width: ' + (span < 4 ? '240px' : '100%') + '; display: flex; flex-direction: column; gap: 8px; padding: 8px 8px 8px 10px; border-radius: 10px; border: 2px solid #B7791F; background: #FBEFD9; color: #5C3606; box-shadow: 0 6px 18px rgba(92, 54, 6, 0.18);' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
+    });
     const rows = this.UNITS.map(u => {
       const segs = [];
       let i = 0;
@@ -2099,6 +2101,7 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
+          if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
           segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
             style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 2px solid #B7791F; background: #FBEFD9;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
           i = j + 1;
@@ -2107,7 +2110,8 @@ class Component extends DCLogic {
           i++;
         }
       }
-      return { id: u.id, label: u.name, segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
+      segs.forEach(g => { if (!g.expanded) g.plain = true; });
+      return { id: u.id, label: u.name, segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
     const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
       const segs = [];
@@ -2119,6 +2123,7 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && days[j + 1] < end) j++;
           const span = j - i + 1;
+          if (s.calReq === b.id && showReq) { segs.push(reqCard(b, span, null)); i = j + 1; continue; }
           segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name.charAt(0), aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
             style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
           i = j + 1;
@@ -2127,6 +2132,7 @@ class Component extends DCLogic {
           i++;
         }
       }
+      segs.forEach(g => { if (!g.expanded) g.plain = true; });
       return { label: b.type === 'apt' ? 'Διαμέρισμα · ' + b.guests + ' άτ.' : 'Δωμάτιο · ' + b.guests + ' άτ.', segs: segs };
     });
     const d0 = this.dt(days[0]), d1 = this.dt(days[13]);
@@ -2952,7 +2958,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους για να απαντήσεις. Κλικ σε κράτηση για λεπτομέρειες.',
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους: μεγαλώνουν και βγαίνουν από κάτω τα κουμπιά Αποδοχή και Απόρριψη. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
@@ -2979,7 +2985,6 @@ class Component extends DCLogic {
         this.say('Κατέβηκε το αρχείο του ' + this.MONG[+T.slice(5, 7) - 1] + ' ' + T.slice(0, 4) + ' με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
       },
       detail: detail, hasDetail: hasDetail,
-      hasCalReq: s.tab === 'cal' && showReq, calReqClose: () => this.setState({ calReq: null }), calReqFull: () => this.go('reqs'),
       room: room, hasRoom: hasRoom
     });
   }
