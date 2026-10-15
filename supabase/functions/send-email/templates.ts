@@ -55,6 +55,30 @@ function phoneOf(raw: unknown): { show: string; tel: string } | null {
 }
 const refText = (g: Guest) => (g.ref_no ? 'LM-' + g.ref_no : '');
 const firstName = (name: string) => clean(name).split(/\s+/)[0] || clean(name);
+
+/** The name to greet someone with: "Γεια σου Νίκο", not "Γεια σου Νίκος".
+ *  Greek male names take the vocative: -ος → -ο (Νίκος → Νίκο) or -ε when stressed three syllables from
+ *  the end (Αλέξανδρος → Αλέξανδρε, Δημήτριος → Δημήτριε); -ης → -η (Γιάννης → Γιάννη); -ας → -α (Κώστας → Κώστα).
+ *  When the right form can't be worked out (a Latin "Nikos", an unaccented "Αλεξανδρος") it returns '' and
+ *  the email just says "Γεια σου,". English emails keep the name as typed. */
+const VOC_O = new Set(['στέλιος', 'μάριος']); // spoken two-syllable names that look like the -ε kind
+function greetName(name: string, lang: string): string {
+  const n = firstName(name);
+  if (lang === 'en' || !n) return n;
+  if (/[a-z]/i.test(n)) return /(os|is|as|es|us)$/i.test(n) ? '' : n;   // Latin "Nikos" can't be declined: leave it out
+  if (!/^[Ͱ-Ͽἀ-῿-]+$/.test(n)) return n;
+  const low = n.toLocaleLowerCase('el');
+  const cap = (w: string) => w.charAt(0).toLocaleUpperCase('el') + w.slice(1);
+  if (/[ηή]ς$/.test(low) || /[αά]ς$/.test(low)) return cap(low.slice(0, -1));
+  if (!/[οό]ς$/.test(low)) return cap(low);                 // women's names (Μαρία, Ελένη, Κλειώ) stay as they are
+  const stem = low.slice(0, -2);
+  if (VOC_O.has(low)) return cap(stem + 'ο');
+  // count vowel sounds from the stressed one to the end (αι, ει, οι, ου, αυ, ευ, υι count as one)
+  const nuclei = low.match(/(αι|άι|αί|ει|έι|εί|οι|όι|οί|ου|όυ|ού|αυ|αύ|ευ|εύ|υι|ϋ|ΐ|ΰ|ϊ|[αεηιουωάέήίόύώ])/g) ?? [];
+  const stressed = nuclei.findIndex((v) => /[άέήίόύώΐΰ]/.test(v));
+  if (stressed < 0) return nuclei.length <= 2 ? cap(stem + 'ο') : '';  // no accent typed: only safe when two syllables
+  return cap(stem + (nuclei.length - stressed >= 3 ? 'ε' : 'ο'));
+}
 const oneLine = (s: unknown) => clean(s).split('\n').map((x) => x.trim()).filter(Boolean).join(', ');
 
 // ---------- a document that is written as HTML and as plain text at the same time ----------
@@ -68,9 +92,10 @@ class Doc {
   raw(html: string, text = '') { this.h.push(html); if (text) this.t.push(text); }
 
   greeting(name: string, intro: string) {
+    const who = greetName(name, this.lang);
     this.raw(
-      `<tr><td class="px" style="padding:36px 40px 8px 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${this.tr('Γεια σου', 'Hello')} <strong>${esc(firstName(name))}</strong>,<br><br>${esc(intro)}</td></tr>`,
-      `${this.tr('Γεια σου', 'Hello')} ${firstName(name)},\n\n${intro}`
+      `<tr><td class="px" style="padding:36px 40px 8px 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${this.tr('Γεια σου', 'Hello')}${who ? ` <strong>${esc(who)}</strong>` : ''},<br><br>${esc(intro)}</td></tr>`,
+      `${this.tr('Γεια σου', 'Hello')}${who ? ' ' + who : ''},\n\n${intro}`
     );
   }
   paragraph(text: string) {
