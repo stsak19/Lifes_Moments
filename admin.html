@@ -342,8 +342,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 <div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin: 14px 0 6px">Δωμάτια</div>
 <sc-for list="{{rows}}" as="row" hint-placeholder-count="12">
-<div style="{{calRowStyle}}">
-<span style="font-size: 13px; font-weight: 500; display: flex; align-items: center; white-space: nowrap">{{row.label}}</span>
+<div data-row="{{row.id}}" style="{{row.style}}">
+<span style="{{row.labelStyle}}">{{row.label}}</span>
 <sc-for list="{{row.segs}}" as="sg" hint-placeholder-count="10">
 <button type="button" data-cell="{{sg.cell}}" data-sel="{{sg.sel}}" onPointerDown="{{sg.down}}" onClick="{{sg.tap}}" aria-label="{{sg.aria}}" style="{{sg.style}}">{{sg.label}}</button>
 </sc-for>
@@ -351,6 +351,9 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-for>
 </div>
 </section>
+<sc-if value="{{calMoving}}" hint-placeholder-val="{{false}}">
+<div role="status" style="{{calMoveStyle}}">{{calMoveText}}</div>
+</sc-if>
 <sc-if value="{{hasCalSel}}" hint-placeholder-val="{{false}}">
 <div role="status" style="position: sticky; bottom: 16px; z-index: 6; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.3); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; background: #0A3A3E; color: #FFFFFF; border-radius: 16px; padding: 12px 16px">
 <div style="flex: 1 1 260px"><div style="font-weight: 600">{{calSelTitle}}</div><div style="font-size: 13px; color: #CFE4E2">{{calSelSub}}</div></div>
@@ -1351,8 +1354,8 @@ class Component extends DCLogic {
     for (let i = 0; i < nights; i++) { if (this.occ(unit, this.add(start, i), ignore)) return false; }
     return true;
   }
-  firstClash(unit, start, nights) {
-    for (let i = 0; i < nights; i++) { const o = this.occ(unit, this.add(start, i)); if (o) return o; }
+  firstClash(unit, start, nights, ignore) {
+    for (let i = 0; i < nights; i++) { const o = this.occ(unit, this.add(start, i), ignore); if (o) return o; }
     return null;
   }
   candidates(b) {
@@ -1533,6 +1536,29 @@ class Component extends DCLogic {
     }).sort((a, b) => a.last < b.last ? 1 : -1);
     const keep = (this.state.threads || []).filter(t => t.msgs.length === 0 && !by[String(t.bid || '').replace(/^db-/, '')]);
     return keep.concat(server);
+  }
+  /* Moving a booking to another room keeps its dates. Only our own bookings (site, direct, Booking typed by hand),
+     confirmed, not over yet, room to room, and only into a room that fits the guests and is free those nights. */
+  canMoveRoom(b) {
+    return !!b && !b.synced && b.status === 'confirmed' && b.type === 'room' && !!b.unit && this.endOf(b) > this.TODAY
+      && (this.isAuto() || b.source === 'site' || b.source === 'direct' || !!b.stayId);
+  }
+  moveCheck(b, unit) {
+    const u = this.UNITS.find(x => x.id === unit);
+    if (!u || unit === b.unit) return { ok: false, same: true, why: '' };
+    if (unit === 'apt') return { ok: false, why: 'το διαμέρισμα είναι ξεχωριστή κατηγορία' };
+    if (u.cap < b.guests) return { ok: false, why: 'χωράει ως ' + u.cap + ' άτομα' };
+    const c = this.firstClash(unit, b.start, b.nights, b.id);
+    if (c) return { ok: false, why: c === 'block' ? 'έχει κλειστές μέρες' : 'πιασμένο από ' + c.name };
+    return { ok: true, why: 'ελεύθερο ' + this.range(b.start, this.endOf(b)) };
+  }
+  moveRoom(b, unit) {
+    const chk = this.moveCheck(b, unit);
+    if (!chk.ok) { if (!chk.same) this.say('Δεν γίνεται: το ' + this.unitName(unit) + ' ' + chk.why + '.'); return; }
+    const msg = b.name + ' μεταφέρθηκε από το ' + this.unitName(b.unit) + ' στο ' + this.unitName(unit) + ', ίδιες ημερομηνίες.';
+    if (b.real) { this.saveReal(b, { unit: unit }, () => this.say(msg)); return; }
+    this.patch(b.id, { unit: unit });
+    this.say(msg + (this.isAuto() ? ' Ενημερώθηκε και το Beds24.' : ''));
   }
   /* Opening a conversation marks the guest's messages as read, for both owners. */
   markRead(t) {
@@ -2037,8 +2063,17 @@ class Component extends DCLogic {
     const guard = fn => () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calSel: null, calEdit: false }); fn(); };
     const segBase = 'touch-action: none; user-select: none; -webkit-user-select: none; height: 34px; min-width: 0; box-sizing: border-box; border-radius: 8px; font-size: 12px; font-weight: 500; padding: 0 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; cursor: pointer;';
     const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: pick1(unit, x), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
-      style: segBase + 'padding: 0;' + (inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
+      style: segBase + 'padding: 0;' + (inMove(unit, x) ? (mvChk && mvChk.ok ? 'border: 2px dashed #0F5257; background: #CFE4E2' : 'border: 2px dashed #B3261E; background: #FBE4DF')
+        : inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
     const pendAt = () => null; // requests live only in the Requests section
+    const mv = s.calMove ? B.find(b => b.id === s.calMove.id) : null;
+    const mvT = mv && s.calMove.target !== mv.unit ? s.calMove.target : null;
+    const mvChk = mvT ? this.moveCheck(mv, mvT) : null;
+    const inMove = (unit, x) => !!mvT && unit === mvT && x >= mv.start && x < this.endOf(mv);
+    const moveDown = o => (e) => {
+      if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
+      this.drag = this.canMoveRoom(o) ? { kind: 'move', id: o.id, from: o.unit, target: o.unit, moved: false } : null;
+    };
     const rows = this.UNITS.map(u => {
       const segs = [];
       let i = 0;
@@ -2049,13 +2084,15 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && this.occ(u.id, days[j + 1]) === o) j++;
           const span = j - i + 1;
-          segs.push({ label: span > 1 ? o.name : o.name.charAt(0), sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)), tap: () => this.open(o.id),
-            style: segBase + 'grid-column: span ' + span + ';' + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #D9EAD3; color: #24502A' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #CFE0F3; color: #1E3A5F'))) });
+          const movable = this.canMoveRoom(o);
+          segs.push({ label: span > 1 ? o.name : o.name.charAt(0), sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)) + (movable ? '. Σύρε πάνω ή κάτω για άλλο δωμάτιο.' : ''),
+            tap: () => { if (this.justDragged) { this.justDragged = false; return; } this.open(o.id); }, down: moveDown(o),
+            style: segBase + 'grid-column: span ' + span + ';' + (movable ? 'cursor: grab;' : '') + (mv && mv.id === o.id && mvT ? 'opacity: 0.4;' : '') + (mvT === u.id && o.id !== mv.id && o.start < this.endOf(mv) && mv.start < this.endOf(o) ? 'box-shadow: 0 0 0 2px #B3261E;' : '') + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #D9EAD3; color: #24502A' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #CFE0F3; color: #1E3A5F'))) });
           i = j + 1;
         } else if (o === 'block') {
           segs.push({ label: '×', aria: u.name + ', ' + this.fmt(x) + ', κλειστό', cell: u.id + '|' + x, down: calDown(u.id, x),
             sel: inCalSel(u.id, x) ? '1' : '',
-            style: segBase + 'text-align: center; padding: 0; background: #C94A3F; color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0'),
+            style: segBase + 'text-align: center; padding: 0; background: #C94A3F; color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1;' + (inCalSel(u.id, x) ? 'border: 2px solid #0F5257' : 'border: 0') + (inMove(u.id, x) ? '; box-shadow: 0 0 0 2px #8A1C12' : ''),
             tap: pick1(u.id, x) });
           i++;
         } else if (pendAt(u.id, x)) {
@@ -2071,7 +2108,7 @@ class Component extends DCLogic {
           i++;
         }
       }
-      return { label: u.name, segs: segs };
+      return { id: u.id, label: u.name, segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
     const reqRows = [].map(b => {
       const segs = [];
@@ -2614,8 +2651,13 @@ class Component extends DCLogic {
         this.setState({ sel: { a: a, b: b }, draft: keep ? this.state.draft : this.draftFrom(pr) });
       },
       priceDragEnd: () => {
-        if (this.drag && this.drag.moved) { this.justDragged = true; setTimeout(() => { this.justDragged = false; }, 0); }
+        const d = this.drag;
+        if (d && d.moved) { this.justDragged = true; setTimeout(() => { this.justDragged = false; }, 0); }
         this.drag = null;
+        if (d && d.kind === 'move') {
+          if (this.state.calMove) this.setState({ calMove: null });
+          if (d.moved && d.target && d.target !== d.from) { const b = this.list().find(x => x.id === d.id); if (b) this.moveRoom(b, d.target); }
+        }
       },
       priceChannelNote: 'Ισχύει μόνο για το σάιτ, όχι για το Booking.'
     };
@@ -2874,8 +2916,19 @@ class Component extends DCLogic {
       occupancy: occupancy, siteRevenue: siteRevenue, todayMoves: arrivals + ' · ' + departures,
       req: req,
       calTitle: calTitle, calRowStyle: calRowStyle, head: head, rows: rows, reqRows: reqRows, hasReqRows: reqRows.length > 0,
+      calMoving: !!mv, calMoveText: !mv ? '' : !mvT ? 'Σύρε τον/την ' + mv.name + ' πάνω ή κάτω σε άλλο δωμάτιο · οι ημερομηνίες μένουν ίδιες' : 'Στο ' + this.unitName(mvT) + ': ' + (mvChk.ok ? mvChk.why + ' · άφησέ το για μεταφορά' : 'δεν γίνεται, ' + mvChk.why),
+      calMoveStyle: 'position: sticky; bottom: 16px; z-index: 6; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.3); border-radius: 16px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: #FFFFFF; background: ' + (mvChk && !mvChk.ok ? '#8A1C12' : '#0A3A3E'),
       calDragMove: (e) => {
         const d = this.drag;
+        if (d && d.kind === 'move' && e) {
+          if (e.pointerType === 'mouse' && e.buttons === 0) { this.drag = null; this.setState({ calMove: null }); return; }
+          const el = document.elementFromPoint(e.clientX, e.clientY);
+          const r = el && el.closest ? el.closest('[data-row]') : null;
+          const unit = r ? r.getAttribute('data-row') : d.target;
+          if (!d.moved) { d.moved = true; this.setState({ calMove: { id: d.id, target: unit }, calSel: null, calEdit: false }); d.target = unit; return; }
+          if (unit && unit !== d.target) { d.target = unit; this.setState({ calMove: { id: d.id, target: unit } }); }
+          return;
+        }
         if (!d || d.kind !== 'cal' || !e) return;
         if (e.pointerType === 'mouse' && e.buttons === 0) { this.drag = null; return; }
         const el = document.elementFromPoint(e.clientX, e.clientY);
@@ -2896,8 +2949,8 @@ class Component extends DCLogic {
       calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
-        ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Τα αιτήματα φαίνονται στο δωμάτιο που προτείνεται. Αν διαλέξεις άλλο στην απάντηση, μετακινούνται εκεί. Κλικ σε κράτηση για λεπτομέρειες.',
+        ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
