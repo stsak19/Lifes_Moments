@@ -25,9 +25,7 @@ on conflict (night) do update
       min_nights = coalesce(public.price_overrides.min_nights, excluded.min_nights);
 update public.price_overrides set min_nights = 1 where min_nights is null and not closed;
 
--- 3. Seasons are gone.
-drop function if exists public.site_prices(date, date);
-drop table public.price_seasons;
+-- 3. Seasons are no longer read by anything (price_seasons stays in the database, unused).
 
 -- 4. What a night is: its own setting, or the same date in the most recent earlier year.
 --    29 February with nothing of its own looks at 28 February.
@@ -50,20 +48,18 @@ revoke execute on function public.night_setting(date) from public, anon, authent
 
 -- 5. Public: each night's price for the site. Closed nights and nights with no price give nulls.
 create or replace function public.site_prices(p_from date, p_to date)
-returns table (night date, room integer, apt integer, min_nights integer, closed boolean, extra_guest integer)
+returns table (night date, room integer, apt integer, min_nights integer, extra_guest integer)
 language sql stable security definer set search_path = ''
 as $$
   select d::date,
          case when coalesce(s.closed, false) then null else s.room end,
          case when coalesce(s.closed, false) then null else s.apt end,
          coalesce(s.min_nights, 1),
-         coalesce(s.closed, false),
          (select extra_guest from public.site_settings where id)
   from generate_series(p_from, least(p_to, p_from + 400), interval '1 day') d
   left join lateral public.night_setting(d::date) s on true
   order by 1;
 $$;
-grant execute on function public.site_prices(date, date) to anon, authenticated;
 
 -- 6. A closed night is full on the site: no requests can be sent for it.
 --    (Booking.com is not closed by this; closing rooms in the room calendar does that.)
