@@ -279,7 +279,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
 <button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
-<div style="display: flex; gap: 4px">
+<div style="display: flex; gap: 8px">
 <sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
 <button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
 </div>
@@ -299,7 +299,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{sg.expanded}}" hint-placeholder-val="{{false}}">
 <div role="group" aria-label="{{sg.aria}}" style="{{sg.style}}">
 <button type="button" onPointerDown="{{sg.down}}" onClick="{{sg.close}}" aria-label="{{sg.closeAria}}" style="{{sg.headStyle}}">{{sg.title}}</button>
-<div style="display: flex; gap: 4px">
+<div style="display: flex; gap: 8px">
 <sc-if value="{{sg.canAccept}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{sg.accept}}" aria-label="Αποδοχή" style="{{sg.okStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Αποδοχή</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if></button></sc-if>
 <button type="button" onClick="{{sg.reject}}" aria-label="Απόρριψη" style="{{sg.noStyle}}"><sc-if value="{{sg.wide}}" hint-placeholder-val="{{true}}">Απόρριψη</sc-if><sc-if value="{{sg.narrow}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.6; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></sc-if></button>
 </div>
@@ -2109,17 +2109,17 @@ class Component extends DCLogic {
     // The request opened on the calendar grows into a card with Accept / Decline under its name.
     const reqCard = (p, span, dragFrom) => {
       const wide = span >= 2;
-      const btn = 'flex: 1 1 0; min-width: 0; height: 32px; padding: 0 6px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
+      const btn = 'flex: 1 1 0; min-width: 0; height: 36px; padding: 0 10px; border-radius: 18px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
       return {
         expanded: true, plain: false, aria: 'Αίτημα ' + p.name, wide: wide, narrow: !wide,
         title: (span > 1 ? 'Αίτημα · ' : '') + p.name, closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
         canAccept: !!req.canAccept && !!dragFrom, accept: req.accept, reject: req.reject,
         close: () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calReq: null }); },
         down: dragFrom ? moveDown(p, dragFrom) : () => {},
-        headStyle: 'height: 28px; padding: 0 2px; border: 0; background: transparent; color: #7A4708; font: inherit; font-size: 12px; font-weight: 700; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'pointer'),
+        headStyle: 'min-height: 30px; padding: 0 2px; border: 0; background: transparent; color: #18282B; font: inherit; font-size: 13px; font-weight: 600; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'pointer'),
         okStyle: btn + 'border: 0; background: #0F5257; color: #FFFFFF',
         noStyle: btn + 'border: 0; background: #B3261E; color: #FFFFFF',
-        style: 'grid-column: span ' + span + '; align-self: start; box-sizing: border-box; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 4px 6px 6px; border-radius: 8px; border: 2px solid #B7791F; background: #FBEFD9;' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
+        style: 'grid-column: span ' + span + '; align-self: start; box-sizing: border-box; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 10px 12px 12px; margin: 4px 0; border-radius: 14px; border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.14);' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
       };
     };
     const rows = this.UNITS.map(u => {
@@ -2150,7 +2150,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
           segs.push({ label: (span > 1 ? 'Αίτημα · ' : '') + p.name, sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
-            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 2px solid #B7791F; background: #FBEFD9;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
+            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
