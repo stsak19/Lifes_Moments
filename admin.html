@@ -311,7 +311,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{calEditApt}}" hint-placeholder-val="{{false}}"><div style="flex: 1 1 140px"><label for="ce-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμέρισμα (€/νύχτα)</label><input id="ce-apt" type="number" inputmode="numeric" min="0" value="{{calDraft.apt}}" onChange="{{setCalApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
 <div style="flex: 1 1 120px"><label for="ce-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="ce-min" type="number" inputmode="numeric" min="1" value="{{calDraft.min}}" onChange="{{setCalMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 <button type="button" onClick="{{calApply}}" style="height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{calApplyLabel}}</button>
-<sc-if value="{{calHasOver}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calResetPrice}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; height: 44px">Βασική τιμή</button></sc-if>
+<sc-if value="{{calHasOver}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calResetPrice}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; height: 44px">Όπως πέρσι</button></sc-if>
 </div>
 </section>
 </sc-if>
@@ -494,8 +494,9 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{priceNext}}" aria-label="Επόμενος μήνας" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M9 6l6 6-6 6"></path></svg></button>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #4A5B5E">
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #C3D1D3; background: #FFFFFF"></span>Βασική τιμή</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 2px solid #0F5257; background: #FFFFFF"></span>Ειδική τιμή</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #8FA5A8; background: #FFFFFF"></span>Τιμή χρονιάς</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px dashed #8FA5A8; background: #FFFFFF"></span>Όπως πέρσι</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 3px; border: 1px solid #E9C3BD; background: #FBEAE8"></span>Κλειστά</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #DCEBEA"></span>Επιλογή</span>
 </div>
 </div>
@@ -509,8 +510,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{c.blank}}" hint-placeholder-val="{{false}}"><div></div></sc-if>
 <sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
 <button type="button" data-date="{{c.date}}" onPointerDown="{{c.down}}" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
-<span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.isOver}}" hint-placeholder-val="{{false}}"><span style="width: 7px; height: 7px; border-radius: 4px; background: #0F5257"></span></sc-if></span>
-<span style="display: block; font-size: 15px; font-weight: 600; margin-top: 4px">{{c.room}}</span>
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.hasTag}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 500; color: #6B7A7D">{{c.tag}}</span></sc-if></span>
+<span style="{{c.roomStyle}}">{{c.room}}</span>
 <span style="display: block; font-size: 12px; color: #4A5B5E">{{c.sub}}</span>
 </button>
 </sc-if>
@@ -536,8 +537,11 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <div><label for="p-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="p-min" type="number" inputmode="numeric" min="1" value="{{draft.min}}" onChange="{{setDraftMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 <button type="button" onClick="{{applyPrice}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{applyLabel}}</button>
+<sc-if value="{{canClose}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{closeDays}}" style="height: 44px; border-radius: 22px; border: 1px solid #D9A39B; background: #FFFFFF; color: #A3271B; font-size: 14px; font-weight: 600; cursor: pointer">{{closeLabel}}</button>
+</sc-if>
 <sc-if value="{{selHasOver}}" hint-placeholder-val="{{false}}">
-<button type="button" onClick="{{resetPrice}}" style="height: 44px; border-radius: 22px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Επαναφορά στη βασική τιμή</button>
+<button type="button" onClick="{{resetPrice}}" style="height: 44px; border-radius: 22px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Όπως πέρσι</button>
 </sc-if>
 <button type="button" onClick="{{clearSel}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Ακύρωση επιλογής</button>
 </div>
@@ -1042,13 +1046,19 @@ class Component extends DCLogic {
       blocks: blocks,
       toggles: { push: false }, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
       extra: 15,
-      seasons: [
-        { id: 'low', name: 'Χαμηλή σεζόν', range: 'Μάιος – Ιούνιος, Σεπτέμβριος', ranges: [['05-01', '06-30'], ['09-01', '09-30']], room: 85, apt: 150, min: 2 },
-        { id: 'high', name: 'Υψηλή σεζόν', range: 'Ιούλιος – Αύγουστος', ranges: [['07-01', '08-31']], room: 120, apt: 190, min: 3 },
-        { id: 'peak', name: 'Δεκαπενταύγουστος', range: '10 – 20 Αυγούστου', ranges: [['08-10', '08-20']], room: 145, apt: 230, min: 4 }
-      ],
       priceMonth: '2026-07', sel: null, draft: { room: '', apt: '', min: '' },
-      overrides: { '2026-07-24': { room: 135, apt: 210, min: 2 }, '2026-07-25': { room: 135, apt: 210, min: 2 } },
+      overrides: (() => {
+        // Preview: last year's prices (2025), a couple of nights set for this year, and the winter closed.
+        const o = {};
+        const put = (a, b, v) => { let d = new Date(a + 'T00:00:00Z'); const z = new Date(b + 'T00:00:00Z'); while (d <= z) { o[d.toISOString().slice(0, 10)] = Object.assign({}, v); d.setUTCDate(d.getUTCDate() + 1); } };
+        put('2025-05-01', '2025-06-30', { room: 85, apt: 150, min: 2, closed: false });
+        put('2025-07-01', '2025-08-31', { room: 120, apt: 190, min: 3, closed: false });
+        put('2025-08-10', '2025-08-20', { room: 145, apt: 230, min: 4, closed: false });
+        put('2025-09-01', '2025-09-30', { room: 85, apt: 150, min: 2, closed: false });
+        put('2025-11-01', '2025-12-31', { room: null, apt: null, min: 1, closed: true });
+        put('2026-07-24', '2026-07-25', { room: 135, apt: 210, min: 2, closed: false });
+        return o;
+      })(),
       bookings: [
         { id: 'b1', name: 'Νίκος Παπαδόπουλος', type: 'room', unit: 'r1', start: '2026-07-12', nights: 4, guests: 2, total: 480, source: 'site', status: 'confirmed', email: 'nikos@example.com', phone: '+30 69xx xxx xxx' },
         { id: 'b2', name: 'Anna Schmidt', type: 'room', unit: 'r2', start: '2026-07-14', nights: 3, guests: 2, total: 360, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+49 1xx xxx xxxx' },
@@ -1127,22 +1137,21 @@ class Component extends DCLogic {
       if (xBefore !== this.state.extra) this.syncExtra(this.state.extra);
     }
   }
-  /* Site prices live in the database: seasons, specific nights and the extra-guest charge. */
+  /* Site prices live in the database: each night's price (or closed) and the extra-guest charge.
+     Every year is loaded, because a night nobody set takes the same date from an earlier year. */
   loadPrices() {
     if (!this.REAL || !PUSH.client) return Promise.resolve();
     const sb = PUSH.client;
     return Promise.all([
-      sb.from('price_seasons').select('id, name, range_label, ranges, room, apt, min_nights, priority').order('priority'),
-      sb.from('price_overrides').select('night, room, apt, min_nights').gte('night', this.add(this.TODAY, -60)).limit(3000),
+      sb.from('price_overrides').select('night, room, apt, min_nights, closed').order('night').limit(20000),
       sb.from('site_settings').select('extra_guest').limit(1)
     ]).then(rs => {
       const bad = rs.find(r => r.error);
       if (bad) { this.say('Δεν φορτώθηκαν οι τιμές: ' + bad.error.message); return; }
       const overrides = {};
-      (rs[1].data || []).forEach(r => { overrides[r.night] = { room: r.room, apt: r.apt, min: r.min_nights }; });
+      (rs[0].data || []).forEach(r => { overrides[r.night] = { room: r.room, apt: r.apt, min: r.min_nights, closed: !!r.closed }; });
       const patch = { overrides: overrides };
-      if (rs[0].data && rs[0].data.length) patch.seasons = rs[0].data.map(r => ({ id: r.id, name: r.name, range: r.range_label, ranges: r.ranges || [], room: r.room, apt: r.apt, min: r.min_nights, priority: r.priority }));
-      if (rs[2].data && rs[2].data.length && rs[2].data[0].extra_guest != null) patch.extra = rs[2].data[0].extra_guest;
+      if (rs[1].data && rs[1].data.length && rs[1].data[0].extra_guest != null) patch.extra = rs[1].data[0].extra_guest;
       this._fromServer = true;
       this.setState(patch);
       this._fromServer = false;
@@ -1151,9 +1160,9 @@ class Component extends DCLogic {
   }
   syncOverrides(a, b) {
     const sb = PUSH.client, who = this.state.user ? this.state.user.name : '';
-    const same = (x, y) => x && y && x.room === y.room && x.apt === y.apt && x.min === y.min;
+    const same = (x, y) => x && y && x.room === y.room && x.apt === y.apt && x.min === y.min && !!x.closed === !!y.closed;
     const num = v => (v === '' || v == null || isNaN(Number(v))) ? null : Number(v);
-    const up = Object.keys(b).filter(k => b[k] && !same(a[k], b[k])).map(k => ({ night: k, room: num(b[k].room), apt: num(b[k].apt), min_nights: num(b[k].min), updated_at: new Date().toISOString(), updated_by: who }));
+    const up = Object.keys(b).filter(k => b[k] && !same(a[k], b[k])).map(k => ({ night: k, room: num(b[k].room), apt: num(b[k].apt), min_nights: num(b[k].min), closed: !!b[k].closed, updated_at: new Date().toISOString(), updated_by: who }));
     const del = Object.keys(a).filter(k => a[k] && !b[k]);
     const jobs = [];
     if (up.length) jobs.push(sb.from('price_overrides').upsert(up, { onConflict: 'night' }));
@@ -1471,7 +1480,7 @@ class Component extends DCLogic {
     const base = { kind: 'paid', type: 'room', name: '', phone: '', email: '', start: this.TODAY, end: this.add(this.TODAY, 2), guests: '2', unit: '', amount: '', pay: 'cash', note: '', error: '' };
     this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, room: null, req: null, calSel: null, calEdit: false });
   }
-  /* What these nights cost at the normal price; null when a night has no price (out of season) */
+  /* What these nights cost at the normal price; null when a night has no price or is closed */
   normalPrice(type, start, nights, guests) {
     let sum = 0;
     for (let i = 0; i < nights; i++) {
@@ -1638,23 +1647,28 @@ class Component extends DCLogic {
     while (this.state.blocks[unit + '|' + d]) { keys.push(unit + '|' + d); d = this.add(d, 1); }
     this.setBlocks([], keys);
   }
-  seasonFor(date) {
-    const md = date.slice(5);
-    // Highest priority first (the database sets it; the preview seasons follow the old peak > high > low order).
-    const order = { peak: 3, high: 2, low: 1 };
-    const list = this.state.seasons.slice().sort((a, b) => (b.priority != null ? b.priority : order[b.id] || 0) - (a.priority != null ? a.priority : order[a.id] || 0));
-    for (const se of list) if ((se.ranges || []).some(r => r[0] <= md && md <= r[1])) return se;
-    return null;
-  }
+  /* A night's price: what was set for that date, or else the same date in the most recent earlier year
+     (29 Feb falls back to 28 Feb). own = set for this date; from = the year it was taken from. */
   priceFor(date) {
-    const se = this.seasonFor(date);
-    const o = this.state.overrides[date];
-    const pick = (k) => (o && o[k] != null) ? o[k] : (se ? se[k] : null);
-    return { room: pick('room'), apt: pick('apt'), min: pick('min'), over: !!o, season: se };
+    const o = this.state.overrides;
+    const out = (v, own, from) => ({ room: v && !v.closed ? v.room : null, apt: v && !v.closed ? v.apt : null, min: v ? v.min : null, rawRoom: v ? v.room : null, rawApt: v ? v.apt : null, closed: !!(v && v.closed), own: own, from: from, none: !v || (!v.closed && v.room == null) });
+    if (o[date]) return out(o[date], true, null);
+    const y = Number(date.slice(0, 4)), md = date.slice(4);
+    if (!this._minYear || this._minYearOf !== o) { this._minYearOf = o; this._minYear = Object.keys(o).reduce((m, k) => Math.min(m, Number(k.slice(0, 4))), y); }
+    for (let yy = y - 1; yy >= this._minYear; yy--) {
+      const v = o[yy + md] || (md === '-02-29' ? o[yy + '-02-28'] : null);
+      if (v) return out(v, false, yy);
+    }
+    return out(null, false, null);
+  }
+  /* Whether an earlier year has something for this date (so removing this year's setting falls back to it). */
+  hasPrevYear(date) {
+    const o = this.state.overrides, y = Number(date.slice(0, 4)), md = date.slice(4);
+    return Object.keys(o).some(k => Number(k.slice(0, 4)) < y && (k.slice(4) === md || (md === '-02-29' && k.slice(4) === '-02-28')));
   }
   draftFrom(pr) {
     const str = v => v != null ? String(v) : '';
-    return { room: str(pr.room), apt: str(pr.apt), min: pr.min != null ? String(pr.min) : '2' };
+    return { room: str(pr.room != null ? pr.room : pr.rawRoom), apt: str(pr.apt != null ? pr.apt : pr.rawApt), min: pr.min != null ? String(pr.min) : '2' };
   }
   selDays() {
     const sel = this.state.sel;
@@ -1673,9 +1687,6 @@ class Component extends DCLogic {
     else n = { a: sel.a, b: x };
     const pr = this.priceFor(n.a);
     this.setState({ sel: n, draft: this.draftFrom(pr) });
-  }
-  bumpSeason(id, key, delta, floor) {
-    this.setState({ seasons: this.state.seasons.map(se => se.id === id ? Object.assign({}, se, { [key]: Math.max(floor, se[key] + delta) }) : se) });
   }
   badgeFor(b) {
     const base = 'display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
@@ -2068,7 +2079,7 @@ class Component extends DCLogic {
       const d = this.dt(x);
       const wk = d.getUTCDay() === 0 || d.getUTCDay() === 6;
       const hp = this.priceFor(x);
-      return { price: hp.room != null ? '€' + hp.room : '–', priceStyle: 'display: block; font-size: 11px; font-weight: 600; margin-top: 2px; color: ' + (x === T ? '#FFFFFF' : (hp.over ? '#9A6B12' : '#6B7A7D')), dow: this.DAY[d.getUTCDay()], num: d.getUTCDate(), style: 'text-align: center; line-height: 1.15; padding: 4px 0; border-radius: 10px;' + (x === T ? 'background: #0F5257; color: #FFFFFF; font-weight: 600' : (wk ? 'color: #18282B; font-weight: 500' : 'color: #4A5B5E')) };
+      return { price: hp.closed ? 'κλειστά' : (hp.room != null ? '€' + hp.room : '–'), priceStyle: 'display: block; font-size: 11px; font-weight: 600; margin-top: 2px; color: ' + (x === T ? '#FFFFFF' : (hp.closed ? '#A3271B' : '#6B7A7D')), dow: this.DAY[d.getUTCDay()], num: d.getUTCDate(), style: 'text-align: center; line-height: 1.15; padding: 4px 0; border-radius: 10px;' + (x === T ? 'background: #0F5257; color: #FFFFFF; font-weight: 600' : (wk ? 'color: #18282B; font-weight: 500' : 'color: #4A5B5E')) };
     });
     const uIdx = id => this.UNITS.findIndex(u => u.id === id);
     const cs = s.calSel;
@@ -2264,7 +2275,7 @@ class Component extends DCLogic {
       /* Price and minimum nights for the selected days */
       const fut = ds.filter(x => x >= T);
       const selRooms = units.some(u => u.id !== 'apt'), selApt = units.some(u => u.id === 'apt');
-      const noBase = fut.some(x => this.priceFor(x).room == null);
+      const noBase = fut.some(x => { const p = this.priceFor(x); return p.room == null || p.apt == null; });
       const showRoom = selRooms || noBase, showApt = selApt || noBase;
       const futLabel = fut.length === 0 ? '' : (fut.length === 1 ? this.DAY[this.dt(fut[0]).getUTCDay()] + ' ' + this.fmt(fut[0]) : this.range(fut[0], fut[fut.length - 1]));
       const cd = s.calDraft;
@@ -2280,16 +2291,16 @@ class Component extends DCLogic {
         },
         calEditOpen: !!s.calEdit && fut.length > 0,
         calEditTitle: 'Τιμή και ελάχιστες νύχτες · ' + futLabel,
-        calEditSub: (selRooms ? 'Η τιμή δωματίου ισχύει για όλα τα δωμάτια αυτές τις μέρες, όχι μόνο για όσα διάλεξες.' : 'Ισχύει για το διαμέρισμα αυτές τις μέρες.') + (fut.length < ds.length ? ' Οι μέρες που πέρασαν δεν αλλάζουν.' : '') + (noBase ? ' Κάποιες μέρες είναι εκτός σεζόν, γι’ αυτό ζητάμε και τις δύο τιμές.' : ''),
+        calEditSub: (selRooms ? 'Η τιμή δωματίου ισχύει για όλα τα δωμάτια αυτές τις μέρες, όχι μόνο για όσα διάλεξες.' : 'Ισχύει για το διαμέρισμα αυτές τις μέρες.') + (fut.length < ds.length ? ' Οι μέρες που πέρασαν δεν αλλάζουν.' : '') + (noBase ? ' Κάποιες μέρες δεν έχουν τιμή ή είναι κλειστές, γι’ αυτό ζητάμε και τις δύο τιμές (ανοίγουν με την εφαρμογή).' : ''),
         calEditRoom: showRoom, calEditApt: showApt, calDraft: cd,
         setCalRoom: setCD('room'), setCalApt: setCD('apt'), setCalMin: setCD('min'),
-        calHasOver: fut.some(x => !!s.overrides[x]),
+        calHasOver: fut.some(x => !!s.overrides[x] && this.hasPrevYear(x)),
         calApplyLabel: 'Εφαρμογή σε ' + fut.length + (fut.length === 1 ? ' νύχτα' : ' νύχτες'),
         calApply: () => {
           const r = parseInt(cd.room, 10), a = parseInt(cd.apt, 10), m = parseInt(cd.min, 10);
           if ((showRoom && !(r > 0)) || (showApt && !(a > 0)) || !(m >= 1)) { this.say('Συμπλήρωσε τιμή και ελάχιστες νύχτες.'); return; }
           const no = Object.assign({}, this.state.overrides);
-          fut.forEach(x => { const p = this.priceFor(x); no[x] = { room: showRoom ? r : p.room, apt: showApt ? a : p.apt, min: m }; });
+          fut.forEach(x => { const p = this.priceFor(x); no[x] = { room: showRoom ? r : p.room, apt: showApt ? a : p.apt, min: m, closed: false }; });
           this.setState({ overrides: no, calSel: null, calEdit: false });
           const what = [];
           if (showRoom) what.push('δωμάτιο ' + this.money(r));
@@ -2298,9 +2309,9 @@ class Component extends DCLogic {
         },
         calResetPrice: () => {
           const no = Object.assign({}, this.state.overrides);
-          fut.forEach(x => { delete no[x]; });
+          fut.forEach(x => { if (this.hasPrevYear(x)) delete no[x]; });
           this.setState({ overrides: no, calSel: null, calEdit: false });
-          this.say(futLabel + ': επανήλθε η βασική τιμή της σεζόν.');
+          this.say(futLabel + ': πήραν ξανά τις τιμές της προηγούμενης χρονιάς.');
         }
       });
     }
@@ -2398,13 +2409,6 @@ class Component extends DCLogic {
     };
 
     /* Prices and settings */
-    const seasons = s.seasons.map(se => ({
-      name: se.name, range: se.range, min: se.min,
-      roomText: this.money(se.room), aptText: this.money(se.apt),
-      roomUp: () => this.bumpSeason(se.id, 'room', 5, 20), roomDown: () => this.bumpSeason(se.id, 'room', -5, 20),
-      aptUp: () => this.bumpSeason(se.id, 'apt', 5, 20), aptDown: () => this.bumpSeason(se.id, 'apt', -5, 20),
-      minUp: () => this.bumpSeason(se.id, 'min', 1, 1), minDown: () => this.bumpSeason(se.id, 'min', -1, 1)
-    }));
     const togDefs = [
       (() => {
         const p = s.pushPerm;
@@ -2647,27 +2651,32 @@ class Component extends DCLogic {
     const priceCells = [];
     for (let i = 0; i < firstDow; i++) priceCells.push({ blank: true, real: false, pick: () => {} });
     const selSet = this.selDays();
-    let overInMonth = 0;
+    let closedInMonth = 0;
     for (let i = 1; i <= pDays; i++) {
       const x = s.priceMonth + '-' + (i < 10 ? '0' + i : String(i));
       const pr = this.priceFor(x);
-      if (pr.over) overInMonth++;
+      if (pr.closed) closedInMonth++;
       let booked = 0;
       this.UNITS.forEach(u => { const o = this.occ(u.id, x); if (o && o !== 'block') booked++; });
       const past = x < T;
       const on = selSet.indexOf(x) !== -1;
       const dow = this.dt(x).getUTCDay();
+      const edge = pr.own ? 'solid' : 'dashed';
       const look = on ? 'background: #DCEBEA; border: 1px solid #0F5257;'
-        : (pr.over ? 'background: #FFFFFF; border: 2px solid #0F5257;'
-        : (pr.season ? 'background: #FFFFFF; border: 1px solid #E6ECED;' : 'background: #F4F2EE; border: 1px solid #F4F2EE;'));
+        : (pr.closed ? 'background: #FBEAE8; border: 1px ' + edge + ' #E9C3BD;'
+        : (pr.none ? 'background: #F4F2EE; border: 1px solid #F4F2EE;'
+        : 'background: #FFFFFF; border: 1px ' + edge + ' ' + (pr.own ? '#8FA5A8' : '#B5C4C6') + ';'));
+      const tag = !pr.own && pr.from ? '’' + String(pr.from).slice(2) : '';
+      const what = pr.closed ? 'Κλειστά' : (pr.none ? '—' : this.money(pr.room));
       priceCells.push({
         blank: false, real: true,
         num: String(i), numStyle: 'font-size: 12px; font-weight: 600; color: ' + (dow === 0 || dow === 6 ? '#18282B' : '#4A5B5E'),
-        isOver: pr.over,
-        room: pr.room != null ? this.money(pr.room) : '—',
-        sub: pr.room != null ? 'Δ ' + this.money(pr.apt) + ' · ' + booked + '/12' : 'εκτός σεζόν',
+        hasTag: !!tag, tag: tag,
+        room: what,
+        roomStyle: 'display: block; font-size: ' + (pr.closed ? '14px' : '15px') + '; font-weight: 600; margin-top: 4px; color: ' + (pr.closed ? '#A3271B' : (pr.own || pr.none ? '#18282B' : '#4A5B5E')),
+        sub: pr.closed ? '' : (pr.none ? 'χωρίς τιμή' : 'Δ ' + this.money(pr.apt) + ' · ' + booked + '/12'),
         disabled: past, pressed: on ? 'true' : 'false',
-        aria: this.fmt(x) + (pr.room != null ? ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt) : ', εκτός σεζόν') + (pr.over ? ', ειδική τιμή' : ''),
+        aria: this.fmt(x) + (pr.closed ? ', κλειστά' : (pr.none ? ', χωρίς τιμή' : ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt))) + (tag ? ', όπως το ' + pr.from : ''),
         style: 'touch-action: none; user-select: none; -webkit-user-select: none; width: 100%; min-height: 76px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
         date: x,
         down: (e) => {
@@ -2679,7 +2688,8 @@ class Component extends DCLogic {
       });
     }
     const hasSel = selSet.length > 0;
-    const selHasOver = selSet.some(d => !!s.overrides[d]);
+    const selHasOver = selSet.some(d => !!s.overrides[d] && this.hasPrevYear(d));
+    const selAllClosed = selSet.length > 0 && selSet.every(d => this.priceFor(d).closed);
     const roundTo5 = v => Math.max(5, Math.round(v / 5) * 5);
     const scaleDraft = f => {
       const d = s.draft;
@@ -2692,7 +2702,7 @@ class Component extends DCLogic {
       priceNext: () => { const d = new Date(Date.UTC(pm[0], pm[1], 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
       priceDow: ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
       priceCells: priceCells,
-      priceNote: 'Σε κάθε μέρα: πάνω η τιμή δωματίου ανά νύχτα, κάτω του διαμερίσματος (Δ) και πόσοι χώροι είναι ήδη κλεισμένοι.' + (overInMonth ? ' Αυτόν τον μήνα ' + overInMonth + (overInMonth === 1 ? ' μέρα έχει' : ' μέρες έχουν') + ' ειδική τιμή.' : ''),
+      priceNote: 'Σε κάθε μέρα: πάνω η τιμή δωματίου ανά νύχτα, κάτω του διαμερίσματος (Δ) και πόσοι χώροι είναι ήδη κλεισμένοι. Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
       hasSel: hasSel, noSel: !hasSel, selHasOver: selHasOver,
       selLabel: !hasSel ? '' : (selSet.length === 1 ? this.DAY[this.dt(selSet[0]).getUTCDay()] + ' ' + this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1])),
       selSub: !hasSel ? '' : (selSet.length === 1 ? (s.sel.b ? '1 νύχτα' : '1 νύχτα · πάτα κι άλλη μέρα για διάστημα') : selSet.length + ' νύχτες'),
@@ -2702,26 +2712,30 @@ class Component extends DCLogic {
       setDraftMin: e => this.setState({ draft: Object.assign({}, s.draft, { min: e && e.target ? e.target.value : '' }) }),
       draftUp: () => scaleDraft(1.1),
       draftDown: () => scaleDraft(0.9),
-      draftSeason: () => {
-        const se = hasSel ? this.seasonFor(selSet[0]) : null;
-        if (!se) { this.say('Αυτή η μέρα είναι εκτός σεζόν, δεν έχει βασική τιμή.'); return; }
-        this.setState({ draft: this.draftFrom(se) });
+      applyLabel: (selAllClosed ? 'Άνοιγμα · ' : 'Εφαρμογή σε ') + selSet.length + (selSet.length === 1 ? ' νύχτα' : ' νύχτες'),
+      canClose: hasSel && !selAllClosed,
+      closeLabel: 'Κλειστά' + (selSet.length > 1 ? ' · ' + selSet.length + ' μέρες' : ''),
+      closeDays: () => {
+        const no = Object.assign({}, s.overrides);
+        selSet.forEach(d => { const p = this.priceFor(d); no[d] = { room: p.rawRoom, apt: p.rawApt, min: p.min != null ? p.min : 1, closed: true }; });
+        const label = selSet.length === 1 ? this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1]);
+        this.setState({ overrides: no, sel: null });
+        this.say(label + ': κλειστά. Το σάιτ δεν δέχεται αιτήματα αυτές τις μέρες.');
       },
-      applyLabel: 'Εφαρμογή σε ' + selSet.length + (selSet.length === 1 ? ' νύχτα' : ' νύχτες'),
       applyPrice: () => {
         const r = parseInt(s.draft.room, 10), a = parseInt(s.draft.apt, 10), m = parseInt(s.draft.min, 10);
         if (!(r > 0) || !(a > 0) || !(m >= 1)) { this.say('Συμπλήρωσε τιμή δωματίου, τιμή διαμερίσματος και ελάχιστες νύχτες.'); return; }
         const no = Object.assign({}, s.overrides);
-        selSet.forEach(d => { no[d] = { room: r, apt: a, min: m }; });
+        selSet.forEach(d => { no[d] = { room: r, apt: a, min: m, closed: false }; });
         const label = selSet.length === 1 ? this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1]);
         this.setState({ overrides: no, sel: null });
-        this.say('Ειδική τιμή ' + label + ': δωμάτιο ' + this.money(r) + ', διαμέρισμα ' + this.money(a) + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.'));
+        this.say(label + ': δωμάτιο ' + this.money(r) + ', διαμέρισμα ' + this.money(a) + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.'));
       },
       resetPrice: () => {
         const no = Object.assign({}, s.overrides);
-        selSet.forEach(d => { delete no[d]; });
+        selSet.forEach(d => { if (this.hasPrevYear(d)) delete no[d]; });
         this.setState({ overrides: no, sel: null });
-        this.say('Επανήλθε η βασική τιμή.');
+        this.say('Πήραν ξανά ό,τι είχαν την προηγούμενη χρονιά.');
       },
       clearSel: () => this.setState({ sel: null }),
       priceDragMove: (e) => {
@@ -2811,7 +2825,7 @@ class Component extends DCLogic {
         units: free.length ? free.map(u => ({ id: u.id, sel: u.id === unit, label: u.name + ' · ως ' + u.cap + ' άτομα' })) : [{ id: '', sel: true, label: '—' }],
         noUnit: !!blockReason, noUnitText: blockReason,
         isPaid: f.kind === 'paid' || f.kind === 'booking', showPays: f.kind === 'paid',
-        normalText: nights <= 0 ? '–' : (normal == null ? 'εκτός σεζόν, βάλε ποσό' : this.money(normal) + ' για ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες')),
+        normalText: nights <= 0 ? '–' : (normal == null ? 'χωρίς τιμή ή κλειστά, βάλε ποσό' : this.money(normal) + ' για ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες')),
         amountPh: normal != null ? String(normal) : 'ποσό',
         hasDiscount: disc > 0, discountText: 'Έκπτωση ' + disc + '% · στον λογιστή πάει το ' + (amt != null ? this.money(amt) : ''),
         pays: [['cash', 'Μετρητά'], ['card', 'Κάρτα (POS)'], ['bank', 'Τράπεζα']].map(py => ({ label: py[1], pressed: f.pay === py[0] ? 'true' : 'false', style: f.pay === py[0] ? chipOn : chipOff, pick: () => upd({ pay: py[0] }) })),
@@ -2826,9 +2840,9 @@ class Component extends DCLogic {
         syncNote: auto ? 'Το δωμάτιο κλείνει αμέσως και στο Booking.com.' : 'Το δωμάτιο κλείνει και στο Booking.com στον επόμενο συγχρονισμό (1–4 ώρες).',
         save: () => {
           const name = (f.name || '').trim();
-          if (missing.length) { upd({ tried: true, error: nameMissing ? 'Γράψε ονοματεπώνυμο.' : (normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.') }); return; }
+          if (missing.length) { upd({ tried: true, error: nameMissing ? 'Γράψε ονοματεπώνυμο.' : (normal == null && f.amount === '' ? 'Κάποια μέρα δεν έχει τιμή ή είναι κλειστή. Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.') }); return; }
           if (blockReason) { upd({ error: blockReason }); return; }
-          if (f.kind === 'paid' && (amt == null || !Number.isFinite(amt) || amt < 0)) { upd({ error: normal == null && f.amount === '' ? 'Δεν υπάρχει τιμή για αυτές τις μέρες (εκτός σεζόν). Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.' }); return; }
+          if (f.kind === 'paid' && (amt == null || !Number.isFinite(amt) || amt < 0)) { upd({ error: normal == null && f.amount === '' ? 'Κάποια μέρα δεν έχει τιμή ή είναι κλειστή. Γράψε το ποσό που πληρώνει.' : 'Βάλε το ποσό που πληρώνει.' }); return; }
           if (this.REAL && PUSH.client) {
             if (this._savingStay) return;
             const bk = f.kind === 'booking';
@@ -3065,7 +3079,7 @@ class Component extends DCLogic {
       sortOpts: [['date', 'Ημερομηνία'], ['name', 'Όνομα']].map(o => ({ v: o[0], t: o[1], sel: s.listSort === o[0] })),
       setListSort: (e) => { const v = e && e.target && e.target.value === 'name' ? 'name' : 'date'; try { localStorage.setItem('lm.listSort', v); } catch (x) {} this.setState({ listSort: v }); },
       setQuery: (e) => this.setState({ query: e && e.target ? e.target.value : '', yOpen: {}, mOpen: {} }),
-      seasons: seasons, extraText: this.money(s.extra),
+      extraText: this.money(s.extra),
       extraVal: s.extraDraft != null ? s.extraDraft : s.extra,
       setExtra: (e) => { const t = e && e.target ? e.target.value : ''; const v = parseInt(t, 10); this.setState(isNaN(v) || v < 0 ? { extraDraft: t } : { extraDraft: t, extra: v }); },
       toggles: toggles, bk: bk, site: site,
@@ -3416,7 +3430,6 @@ class Component extends DCLogic {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'request_messages' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ical_feeds' }, function () { comp.loadFeeds(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'price_overrides' }, function () { comp.loadPrices(); })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'price_seasons' }, function () { comp.loadPrices(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); comp.loadPrices(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
     // a request can expire while the page is open
