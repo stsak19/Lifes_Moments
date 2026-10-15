@@ -511,7 +511,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
 <button type="button" data-date="{{c.date}}" onPointerDown="{{c.down}}" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
 <span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.hasTag}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 500; color: #6B7A7D">{{c.tag}}</span></sc-if></span>
-<span style="display: flex; flex-wrap: nowrap; align-items: baseline; gap: 5px; margin-top: 4px; min-width: 0; overflow: hidden"><span style="{{c.roomStyle}}">{{c.room}}</span><sc-if value="{{c.hasApt}}" hint-placeholder-val="{{true}}"><span style="font-size: 11px; font-weight: 500; color: #4A5B5E; white-space: nowrap">Δ&nbsp;{{c.apt}}</span></sc-if></span>
+<sc-if value="{{c.hasApt}}" hint-placeholder-val="{{true}}"><span style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 5px"><span style="min-width: 0; padding-right: 5px"><span style="display: block; font-size: 10px; font-weight: 500; color: #6B7A7D; line-height: 1.2">Δωμ.</span><span style="{{c.roomStyle}}">{{c.room}}</span></span><span style="min-width: 0; padding-left: 6px; border-left: 1px solid #D5E0E1"><span style="display: block; font-size: 10px; font-weight: 500; color: #6B7A7D; line-height: 1.2">Διαμ.</span><span style="{{c.aptStyle}}">{{c.apt}}</span></span></span></sc-if>
+<sc-if value="{{c.noApt}}" hint-placeholder-val="{{false}}"><span style="display: block; margin-top: 5px"><span style="{{c.roomStyle}}">{{c.room}}</span></span></sc-if>
 <sc-if value="{{c.hasSub}}" hint-placeholder-val="{{false}}"><span style="display: block; font-size: 12px; color: #4A5B5E">{{c.sub}}</span></sc-if>
 </button>
 </sc-if>
@@ -2659,8 +2660,9 @@ class Component extends DCLogic {
         num: String(i), numStyle: 'font-size: 12px; font-weight: 600; color: ' + (dow === 0 || dow === 6 ? '#18282B' : '#4A5B5E'),
         hasTag: !!tag, tag: tag,
         room: what,
-        roomStyle: 'font-size: 14px; font-weight: 600; white-space: nowrap; color: ' + (pr.closed ? '#A3271B' : (pr.own || pr.none ? '#18282B' : '#4A5B5E')),
-        hasApt: !pr.closed && !pr.none && pr.apt != null, apt: pr.apt != null ? this.money(pr.apt) : '',
+        roomStyle: 'display: block; font-size: 14px; font-weight: 600; white-space: nowrap; color: ' + (pr.closed ? '#A3271B' : (pr.own || pr.none ? '#18282B' : '#4A5B5E')),
+        hasApt: !pr.closed && !pr.none && pr.apt != null, noApt: pr.closed || pr.none || pr.apt == null, apt: pr.apt != null ? this.money(pr.apt) : '',
+        aptStyle: 'display: block; font-size: 14px; font-weight: 600; white-space: nowrap; color: ' + (pr.own ? '#18282B' : '#4A5B5E'),
         hasSub: pr.none && !pr.closed, sub: 'χωρίς τιμή',
         disabled: past, pressed: on ? 'true' : 'false',
         aria: this.fmt(x) + (pr.closed ? ', κλειστά' : (pr.none ? ', χωρίς τιμή' : ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt))) + (tag ? ', όπως το ' + pr.from : ''),
@@ -2689,7 +2691,7 @@ class Component extends DCLogic {
       priceNext: () => { const d = new Date(Date.UTC(pm[0], pm[1], 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
       priceDow: ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
       priceCells: priceCells,
-      priceNote: 'Σε κάθε μέρα: η τιμή δωματίου ανά νύχτα και δίπλα του διαμερίσματος (Δ). Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
+      priceNote: 'Σε κάθε μέρα: αριστερά η τιμή δωματίου ανά νύχτα, δεξιά του διαμερίσματος. Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
       hasSel: hasSel, noSel: !hasSel, selHasOver: selHasOver,
       selLabel: !hasSel ? '' : (selSet.length === 1 ? this.DAY[this.dt(selSet[0]).getUTCDay()] + ' ' + this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1])),
       selSub: !hasSel ? '' : (selSet.length === 1 ? (s.sel.b ? '1 νύχτα' : '1 νύχτα · πάτα κι άλλη μέρα για διάστημα') : selSet.length + ' νύχτες'),
