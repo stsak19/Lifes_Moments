@@ -2109,7 +2109,7 @@ class Component extends DCLogic {
     // The request opened on the calendar grows into a card with Accept / Decline under its name.
     const reqCard = (p, span, dragFrom) => {
       const wide = span >= 2;
-      const btn = 'flex: 1 1 0; min-width: 0; height: 36px; padding: 0 10px; border-radius: 18px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
+      const btn = 'flex: 0 1 auto; min-width: 44px; height: 36px; padding: 0 ' + (wide ? 18 : 10) + 'px; border-radius: 18px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
       return {
         expanded: true, plain: false, aria: 'Αίτημα ' + p.name, wide: wide, narrow: !wide,
         title: (span > 1 ? 'Αίτημα · ' : '') + p.name, closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
