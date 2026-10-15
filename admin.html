@@ -314,6 +314,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #CFE0F3"></span>Booking.com</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #D9EAD3"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
+<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1.5px dashed #B7791F"></span>Αίτημα σε αναμονή</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="font-weight: 700; color: #9A6B12">€</span>Τιμή δωματίου · χρυσή αν είναι ειδική</span>
 </div>
@@ -2065,7 +2066,8 @@ class Component extends DCLogic {
     const emptyCell = (aria, x, tap, unit) => ({ label: '', aria: aria, tap: pick1(unit, x), cell: unit + '|' + x, down: calDown(unit, x), sel: inCalSel(unit, x) ? '1' : '',
       style: segBase + 'padding: 0;' + (inMove(unit, x) ? (mvChk && mvChk.ok ? 'border: 2px dashed #0F5257; background: #CFE4E2' : 'border: 2px dashed #B3261E; background: #FBE4DF')
         : inCalSel(unit, x) ? 'border: 1px solid #0F5257; background: #BFDCD9' : 'border: 0; background: ' + (x === T ? '#E3EEEE' : '#F4F7F7')) });
-    const pendAt = () => null; // requests live only in the Requests section
+    // Waiting requests show as an outline in the room they would get; they are answered in the Requests section.
+    const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const mv = s.calMove ? B.find(b => b.id === s.calMove.id) : null;
     const mvT = mv && s.calMove.target !== mv.unit ? s.calMove.target : null;
     const mvChk = mvT ? this.moveCheck(mv, mvT) : null;
@@ -2100,8 +2102,8 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
-          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ', προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)), tap: () => this.openReq(p.id),
-            style: segBase + 'grid-column: span ' + span + '; border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606; font-weight: 600' });
+          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για απάντηση.', tap: guard(() => this.openReq(p.id)),
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2110,7 +2112,7 @@ class Component extends DCLogic {
       }
       return { id: u.id, label: u.name, segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
-    const reqRows = [].map(b => {
+    const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
       const segs = [];
       const end = this.endOf(b);
       let i = 0;
@@ -2121,7 +2123,7 @@ class Component extends DCLogic {
           while (j + 1 < days.length && days[j + 1] < end) j++;
           const span = j - i + 1;
           segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name.charAt(0), aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.openReq(b.id),
-            style: segBase + 'grid-column: span ' + span + '; border: 1px dashed #B7791F; background: #FBEFD9; color: #5C3606' });
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
           i = j + 1;
         } else {
           segs.push({ label: '', aria: '', tap: () => {}, style: 'height: 34px; border-radius: 8px; background: transparent; border: 0; padding: 0; cursor: default' });
@@ -2950,7 +2952,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.',
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που προτείνεται· πάτα πάνω τους για να απαντήσεις. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
