@@ -1710,24 +1710,14 @@ class Component extends DCLogic {
     const chipOff = chipBase + 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-weight: 500';
     const confirmed = B.filter(b => b.status === 'confirmed');
     const pending = B.filter(b => b.status === 'pending').sort((a, b) => b.ago - a.ago);
-    const feed = confirmed.filter(b => b.ago != null && b.ago < 24).sort((a, b) => a.ago - b.ago);
     const srcText = b => b.source === 'site' ? 'σάιτ' : 'Booking';
+    // New bookings on the home screen: only the site's own, never Booking.com's.
+    const feed = confirmed.filter(b => b.source !== 'booking' && b.ago != null && b.ago < 24).sort((a, b) => a.ago - b.ago);
 
     /* Strip */
     const tPill = c => 'flex-shrink: 0; font-size: 12px; font-weight: 600; color: ' + c;
     let stripItems, stripTitle, stripSub, stripStyle, stripTitleStyle, hasStripBtn = false, stripBtn = () => {};
     const stripBase = 'display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; border-radius: 20px; padding: 18px 22px;';
-    const hoursAgo = b => b.ago != null ? b.ago : (b.createdAt ? Math.max(0, Math.floor((Date.now() - Date.parse(b.createdAt)) / 36e5)) : null);
-    const newBk = confirmed.filter(b => b.source === 'booking' && hoursAgo(b) != null && hoursAgo(b) < 24).sort((a, b) => hoursAgo(a) - hoursAgo(b));
-    const bkItems = newBk.map(b => {
-      const h = hoursAgo(b);
-      return {
-        name: b.name,
-        meta: this.range(b.start, this.endOf(b)) + ' · ' + (b.unit ? this.unitName(b.unit) : 'χωρίς δωμάτιο') + ' · ' + (h === 0 ? 'μόλις τώρα' : 'πριν ' + h + (h === 1 ? ' ώρα' : ' ώρες')),
-        timer: 'Booking', timerStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #DCE5F3; color: #1E3A5F',
-        open: () => this.open(b.id)
-      };
-    });
     if (!auto) {
       const n = pending.length;
       stripItems = pending.map(b => ({
@@ -1737,18 +1727,16 @@ class Component extends DCLogic {
         timerStyle: tPill(24 - b.ago <= 6 ? '#8A3412' : '#7A4708'),
         open: () => this.openReq(b.id)
       }));
-      stripItems = stripItems.concat(bkItems);
-      const nb = bkItems.length, bkText = nb === 1 ? '1 νέα κράτηση από Booking' : nb + ' νέες κρατήσεις από Booking';
-      stripTitle = n === 0 ? (nb ? bkText : 'Κανένα αίτημα σε αναμονή') : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
-      stripSub = n === 0 ? (nb ? 'Τελευταίες 24 ώρες · δεν θέλουν απάντηση' : 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.') : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες' + (nb ? ' · και ' + bkText.charAt(0).toLowerCase() + bkText.slice(1) : '');
-      stripStyle = stripBase + (n === 0 ? (nb ? 'background: #DCE5F3' : 'background: #FFFFFF') : 'background: #FBEFD9');
-      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? (nb ? '#1E3A5F' : '#18282B') : '#5C3606');
+      stripTitle = n === 0 ? 'Κανένα αίτημα σε αναμονή' : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
+      stripSub = n === 0 ? 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.' : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες';
+      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FBEFD9');
+      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#5C3606');
       if (n > 0) { hasStripBtn = true; stripBtn = () => this.openReq(pending[0].id); }
     } else {
       const n = feed.length;
       stripItems = feed.map(b => ({
         name: b.name,
-        meta: this.range(b.start, this.endOf(b)) + ' · ' + (b.unit ? this.unitName(b.unit) : 'χωρίς δωμάτιο') + ' · ' + srcText(b),
+        meta: this.range(b.start, this.endOf(b)) + ' · ' + (b.unit ? this.unitName(b.unit) : 'χωρίς δωμάτιο'),
         timer: 'πριν ' + b.ago + ' ώρες',
         timerStyle: tPill('#4A5B5E'),
         open: () => this.open(b.id)
@@ -2412,7 +2400,7 @@ class Component extends DCLogic {
     const togDefs = [
       (() => {
         const p = s.pushPerm;
-        const what = auto ? 'Μόλις κλειστεί κράτηση από σάιτ ή Booking' : 'Νέο αίτημα, και υπενθύμιση 4 ώρες πριν λήξει';
+        const what = auto ? 'Μόλις κλειστεί κράτηση από το σάιτ' : 'Νέο αίτημα, και υπενθύμιση 4 ώρες πριν λήξει';
         const sub = s.pushBusy ? 'Περιμένει την απάντησή σου στο παράθυρο του browser…'
           : p === 'unsupported' ? (PUSH.ios && !PUSH.standalone ? 'Στο iPhone: Κοινοποίηση → «Προσθήκη στην οθόνη Αφετηρίας», και άνοιξε τη Διαχείριση από το εικονίδιο' : 'Αυτός ο browser δεν υποστηρίζει ειδοποιήσεις')
           : p === 'denied' ? 'Μπλοκαρισμένες από τον browser · άνοιξέ τες από τις ρυθμίσεις του για αυτή τη σελίδα'
