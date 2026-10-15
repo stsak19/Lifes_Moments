@@ -1541,21 +1541,34 @@ class Component extends DCLogic {
   /* Moving a booking to another room keeps its dates. Only our own bookings (site, direct, Booking typed by hand),
      confirmed, not over yet, room to room, and only into a room that fits the guests and is free those nights. */
   canMoveRoom(b) {
+    if (b && b.status === 'pending') return !this.isAuto() && b.type === 'room';
     return !!b && !b.synced && b.status === 'confirmed' && b.type === 'room' && !!b.unit && this.endOf(b) > this.TODAY
       && (this.isAuto() || b.source === 'site' || b.source === 'direct' || !!b.stayId);
   }
-  moveCheck(b, unit) {
+  moveCheck(b, unit, from) {
     const u = this.UNITS.find(x => x.id === unit);
-    if (!u || unit === b.unit) return { ok: false, same: true, why: '' };
+    if (!u || unit === (from || b.unit)) return { ok: false, same: true, why: '' };
     if (unit === 'apt') return { ok: false, why: 'το διαμέρισμα είναι ξεχωριστή κατηγορία' };
     if (u.cap < b.guests) return { ok: false, why: 'χωράει ως ' + u.cap + ' άτομα' };
     const c = this.firstClash(unit, b.start, b.nights, b.id);
     if (c) return { ok: false, why: c === 'block' ? 'έχει κλειστές μέρες' : 'πιασμένο από ' + c.name };
     return { ok: true, why: 'ελεύθερο ' + this.range(b.start, this.endOf(b)) };
   }
-  moveRoom(b, unit) {
-    const chk = this.moveCheck(b, unit);
+  moveRoom(b, unit, from) {
+    const chk = this.moveCheck(b, unit, from);
     if (!chk.ok) { if (!chk.same) this.say('Δεν γίνεται: το ' + this.unitName(unit) + ' ' + chk.why + '.'); return; }
+    if (b.status === 'pending') {
+      // A waiting request only gets a chosen room; it is confirmed there when an owner accepts it.
+      this.setState({ picks: Object.assign({}, this.state.picks, { [b.id]: unit }) });
+      const done = () => this.say('Το αίτημα του/της ' + b.name + ' πάει στο ' + this.unitName(unit) + '. Το κλειδώνεις με την αποδοχή.');
+      if (b.real && b.dbId && PUSH.client) {
+        PUSH.client.from('booking_requests').update({ unit: unit }).eq('id', b.dbId).eq('status', 'pending').select('id').then(res => {
+          if (res.error) { this.say('Δεν αποθηκεύτηκε η επιλογή δωματίου: ' + res.error.message); return; }
+          done(); if (this.reload) this.reload();
+        }, () => this.say('Δεν αποθηκεύτηκε η επιλογή δωματίου, έλεγξε τη σύνδεση.'));
+      } else done();
+      return;
+    }
     const msg = b.name + ' μεταφέρθηκε από το ' + this.unitName(b.unit) + ' στο ' + this.unitName(unit) + ', ίδιες ημερομηνίες.';
     if (b.real) { this.saveReal(b, { unit: unit }, () => this.say(msg)); return; }
     this.patch(b.id, { unit: unit });
@@ -1903,9 +1916,10 @@ class Component extends DCLogic {
     const tentative = {};
     const clashT = (unit, b) => pending.some(p => p.id !== b.id && tentative[p.id] === unit && p.start < this.endOf(b) && b.start < this.endOf(p));
     const fitsT = (unit, b) => this.isFree(unit, b.start, b.nights) && !clashT(unit, b);
-    if (!auto) pending.forEach(b => {
+    const wantOf = b => s.picks[b.id] || b.unit || null;
+    if (!auto) pending.slice().sort((a, b) => (wantOf(a) ? 0 : 1) - (wantOf(b) ? 0 : 1)).forEach(b => {
       const cands = this.candidates(b);
-      const want = s.picks[b.id];
+      const want = wantOf(b);
       let u = (want && cands.some(c => c.id === want) && fitsT(want, b)) ? want : null;
       if (!u) { const c = cands.find(c2 => fitsT(c2.id, b)); u = c ? c.id : null; }
       if (u) tentative[b.id] = u;
@@ -1922,7 +1936,7 @@ class Component extends DCLogic {
         showReq = true;
         const cands = this.candidates(rb);
         const freeIds = cands.filter(u => this.isFree(u.id, rb.start, rb.nights)).map(u => u.id);
-        const suggested = freeIds.find(id => !clashT(id, rb)) || freeIds[0] || null;
+        const suggested = (tentative[rb.id] && freeIds.indexOf(tentative[rb.id]) !== -1 ? tentative[rb.id] : null) || freeIds.find(id => !clashT(id, rb)) || freeIds[0] || null;
         const picked = (s.picks[rb.id] && freeIds.indexOf(s.picks[rb.id]) !== -1) ? s.picks[rb.id] : suggested;
         const left = 24 - rb.ago;
         const tag = 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 10px;';
@@ -2069,12 +2083,18 @@ class Component extends DCLogic {
     // Waiting requests show as an outline in the room they would get; they are answered in the Requests section.
     const pendAt = (unit, x) => auto ? null : (pending.find(p => tentative[p.id] === unit && p.start <= x && x < this.endOf(p)) || null);
     const mv = s.calMove ? B.find(b => b.id === s.calMove.id) : null;
-    const mvT = mv && s.calMove.target !== mv.unit ? s.calMove.target : null;
-    const mvChk = mvT ? this.moveCheck(mv, mvT) : null;
+    const mvT = mv && s.calMove.target !== s.calMove.from ? s.calMove.target : null;
+    let mvChk = mvT ? this.moveCheck(mv, mvT, s.calMove.from) : null;
+    if (mvChk && mvChk.ok) {
+      // another waiting request already sits there on those nights
+      const other = pending.find(p => p.id !== mv.id && tentative[p.id] === mvT && p.start < this.endOf(mv) && mv.start < this.endOf(p));
+      if (other) mvChk = { ok: false, why: 'έχει το αίτημα του/της ' + other.name };
+    }
+    this._mvBlock = mvChk && !mvChk.ok ? mvChk.why : null;
     const inMove = (unit, x) => !!mvT && unit === mvT && x >= mv.start && x < this.endOf(mv);
-    const moveDown = o => (e) => {
+    const moveDown = (o, from) => (e) => {
       if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
-      this.drag = this.canMoveRoom(o) ? { kind: 'move', id: o.id, from: o.unit, target: o.unit, moved: false } : null;
+      this.drag = this.canMoveRoom(o) ? { kind: 'move', id: o.id, from: from || o.unit, target: from || o.unit, moved: false } : null;
     };
     const rows = this.UNITS.map(u => {
       const segs = [];
@@ -2102,8 +2122,8 @@ class Component extends DCLogic {
           let j = i;
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
-          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για απάντηση.', tap: guard(() => this.openReq(p.id)),
-            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
+          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για απάντηση' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.openReq(p.id)), down: moveDown(p, u.id),
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2658,7 +2678,10 @@ class Component extends DCLogic {
         this.drag = null;
         if (d && d.kind === 'move') {
           if (this.state.calMove) this.setState({ calMove: null });
-          if (d.moved && d.target && d.target !== d.from) { const b = this.list().find(x => x.id === d.id); if (b) this.moveRoom(b, d.target); }
+          if (d.moved && d.target && d.target !== d.from) {
+            if (this._mvBlock) { this.say('Δεν γίνεται: το ' + this.unitName(d.target) + ' ' + this._mvBlock + '.'); }
+            else { const b = this.list().find(x => x.id === d.id); if (b) this.moveRoom(b, d.target, d.from); }
+          }
         }
       },
       priceChannelNote: 'Ισχύει μόνο για το σάιτ, όχι για το Booking.'
@@ -2918,7 +2941,7 @@ class Component extends DCLogic {
       occupancy: occupancy, siteRevenue: siteRevenue, todayMoves: arrivals + ' · ' + departures,
       req: req,
       calTitle: calTitle, calRowStyle: calRowStyle, head: head, rows: rows, reqRows: reqRows, hasReqRows: reqRows.length > 0,
-      calMoving: !!mv, calMoveText: !mv ? '' : !mvT ? 'Σύρε τον/την ' + mv.name + ' πάνω ή κάτω σε άλλο δωμάτιο · οι ημερομηνίες μένουν ίδιες' : 'Στο ' + this.unitName(mvT) + ': ' + (mvChk.ok ? mvChk.why + ' · άφησέ το για μεταφορά' : 'δεν γίνεται, ' + mvChk.why),
+      calMoving: !!mv, calMoveText: !mv ? '' : !mvT ? 'Σύρε ' + (mv.status === 'pending' ? 'το αίτημα του/της ' : 'τον/την ') + mv.name + ' πάνω ή κάτω σε άλλο δωμάτιο · οι ημερομηνίες μένουν ίδιες' : 'Στο ' + this.unitName(mvT) + ': ' + (mvChk.ok ? mvChk.why + ' · άφησέ το για μεταφορά' : 'δεν γίνεται, ' + mvChk.why),
       calMoveStyle: 'position: sticky; bottom: 16px; z-index: 6; box-shadow: 0 8px 24px rgba(10, 58, 62, 0.3); border-radius: 16px; padding: 12px 16px; font-size: 14px; font-weight: 600; color: #FFFFFF; background: ' + (mvChk && !mvChk.ok ? '#8A1C12' : '#0A3A3E'),
       calDragMove: (e) => {
         const d = this.drag;
@@ -2927,8 +2950,8 @@ class Component extends DCLogic {
           const el = document.elementFromPoint(e.clientX, e.clientY);
           const r = el && el.closest ? el.closest('[data-row]') : null;
           const unit = r ? r.getAttribute('data-row') : d.target;
-          if (!d.moved) { d.moved = true; this.setState({ calMove: { id: d.id, target: unit }, calSel: null, calEdit: false }); d.target = unit; return; }
-          if (unit && unit !== d.target) { d.target = unit; this.setState({ calMove: { id: d.id, target: unit } }); }
+          if (!d.moved) { d.moved = true; this.setState({ calMove: { id: d.id, target: unit, from: d.from }, calSel: null, calEdit: false }); d.target = unit; return; }
+          if (unit && unit !== d.target) { d.target = unit; this.setState({ calMove: { id: d.id, target: unit, from: d.from } }); }
           return;
         }
         if (!d || d.kind !== 'cal' || !e) return;
@@ -2952,7 +2975,7 @@ class Component extends DCLogic {
       calToday: () => this.setState({ calStart: T }),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
-        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που προτείνεται· πάτα πάνω τους για να απαντήσεις. Κλικ σε κράτηση για λεπτομέρειες.',
+        : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους για να απαντήσεις. Κλικ σε κράτηση για λεπτομέρειες.',
       filters: filters, query: s.query,
       years: listGroupVals.years, noItems: listGroupVals.noItems, toggleAll: listGroupVals.toggleAll, toggleAllLabel: listGroupVals.toggleAllLabel,
       datesOpen: listGroupVals.datesOpen, datesExp: listGroupVals.datesExp, datesLabel: listGroupVals.datesLabel, datesBtnStyle: listGroupVals.datesBtnStyle, toggleDates: listGroupVals.toggleDates,
