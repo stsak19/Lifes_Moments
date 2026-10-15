@@ -211,9 +211,32 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </sc-if>
 
+<sc-if value="{{show.reqs}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
+<nav aria-label="Λίστα αιτημάτων" style="flex: 1 1 260px; max-width: 360px; min-width: 0; background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 16px 18px 10px"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">Σε αναμονή</h1><span style="font-size: 13px; color: #4A5B5E">{{reqList.pendingCount}}</span></div>
+<sc-for list="{{reqList.pending}}" as="r" hint-placeholder-count="3">
+<button type="button" onClick="{{r.open}}" aria-current="{{r.current}}" style="{{r.style}}">
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.name}}</span><span style="{{r.timerStyle}}">{{r.timer}}</span></span>
+<span style="display: block; font-size: 12px; color: #4A5B5E">{{r.meta}}</span>
+<sc-if value="{{r.hasNote}}" hint-placeholder-val="{{false}}"><span style="display: block; font-size: 12px; color: #2E4448; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">«{{r.note}}»</span></sc-if>
+</button>
+</sc-for>
+<sc-if value="{{reqList.noPending}}" hint-placeholder-val="{{false}}"><div style="padding: 4px 18px 16px; font-size: 13px; color: #4A5B5E">Κανένα αίτημα σε αναμονή.</div></sc-if>
+<button type="button" onClick="{{reqList.toggleDone}}" aria-expanded="{{reqList.doneExp}}" style="width: 100%; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 0; border-top: 1px solid #E6ECED; background: #F6F9F9; color: #18282B; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{reqList.doneChev}}"><path d="M9 6l6 6-6 6"></path></svg>Απαντημένα<span style="font-weight: 500; color: #4A5B5E">{{reqList.doneCount}}</span></button>
+<sc-if value="{{reqList.doneOpen}}" hint-placeholder-val="{{false}}">
+<sc-for list="{{reqList.done}}" as="r" hint-placeholder-count="3">
+<button type="button" onClick="{{r.open}}" style="{{r.style}}">
+<span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.name}}</span><span style="{{r.badgeStyle}}">{{r.badge}}</span></span>
+<span style="display: block; font-size: 12px; color: #4A5B5E">{{r.meta}}</span>
+</button>
+</sc-for>
+<sc-if value="{{reqList.noDone}}" hint-placeholder-val="{{false}}"><div style="padding: 10px 18px 16px; font-size: 13px; color: #4A5B5E">Δεν έχεις απαντήσει ακόμα σε αίτημα.</div></sc-if>
+</sc-if>
+</nav>
+<div style="flex: 999 1 460px; min-width: 0">
 <sc-if value="{{show.req}}" hint-placeholder-val="{{false}}">
 <section aria-label="Αίτημα κράτησης" style="background: #FFFFFF; border-radius: 20px; padding: 28px 32px 32px; display: flex; flex-direction: column; gap: 24px">
-<button type="button" onClick="{{req.back}}" style="align-self: flex-start; display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px 0 8px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; font-size: 13px; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg>Πίσω στην Αρχική</button>
 <div>
 <div style="font-size: 13px; font-weight: 600; color: #7A4708">{{req.label}}</div>
 <h1 style="margin: 4px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 34px; font-weight: 600">{{req.name}}</h1>
@@ -260,12 +283,19 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding-top: 18px; border-top: 1px solid #E6ECED">
+<button type="button" onClick="{{req.message}}" style="height: 46px; padding: 0 18px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px; font-weight: 500; cursor: pointer; margin-right: auto">Μήνυμα στον πελάτη</button>
 <button type="button" onClick="{{req.reject}}" style="height: 46px; padding: 0 22px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px; font-weight: 600; cursor: pointer">Απόρριψη</button>
 <sc-if value="{{req.canAccept}}" hint-placeholder-val="{{true}}">
 <button type="button" onClick="{{req.accept}}" style="height: 46px; padding: 0 26px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{req.acceptLabel}}</button>
 </sc-if>
 </div>
 </section>
+</sc-if>
+<sc-if value="{{reqList.emptyRight}}" hint-placeholder-val="{{false}}">
+<div style="background: #FFFFFF; border-radius: 20px; padding: 28px 32px; color: #4A5B5E"><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: #18282B">Όλα απαντημένα</div><div style="margin-top: 6px; font-size: 14px">Μόλις έρθει νέο αίτημα από το σάιτ, θα εμφανιστεί εδώ και θα πάρεις ειδοποίηση.</div></div>
+</sc-if>
+</div>
+</div>
 </sc-if>
 
 <sc-if value="{{show.cal}}" hint-placeholder-val="{{false}}">
@@ -960,6 +990,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 <nav aria-label="Μενού" style="display: flex; flex-wrap: wrap; gap: 4px">
 <button type="button" onClick="{{goToday}}" style="{{nav.today}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-roof" d="M3 11l9-7 9 7"></path><path d="M5 10v10h14V10"></path></svg><span style="flex: 1">Αρχική</span><sc-if value="{{hasNavBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{navBadge}}</span></sc-if></button>
+<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{goReqs}}" style="{{nav.reqs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 13l3-8h10l3 8v6H4z"></path><path d="M4 13h5l1 2h4l1-2h5"></path></svg><span style="flex: 1">Αιτήματα</span><sc-if value="{{hasReqBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{reqBadge}}</span></sc-if></button></sc-if>
 <button type="button" onClick="{{goCal}}" style="{{nav.cal}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M4 10h16"></path><path class="ic-ring" d="M9 3v4"></path><path class="ic-ring ic-ring2" d="M15 3v4"></path><circle class="ic-day" cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"></circle></svg><span style="flex: 1">Ημερολόγιο</span></button>
 <button type="button" onClick="{{goList}}" style="{{nav.list}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-line ic-l1" d="M9 6h11"></path><path class="ic-line ic-l2" d="M9 12h11"></path><path class="ic-line ic-l3" d="M9 18h11"></path><path d="M4 6h.01M4 12h.01M4 18h.01"></path></svg><span style="flex: 1">Κρατήσεις</span></button>
 <button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-bubble" d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #C2502A; color: #FFFFFF; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
@@ -1410,10 +1441,11 @@ class Component extends DCLogic {
       email: r.email, phone: r.phone, note: r.note || '', by: r.decided_by || ''
     };
   }
-  applyRows(rows, stays, blocks) {
+  applyRows(rows, stays, blocks, msgs) {
     const demo = this.REAL ? [] : this.state.bookings.filter(b => !b.real && b.status !== 'pending' && b.id !== 'p0');
     const real = rows.map(r => this.fromRow(r)).concat((stays || []).map(r => this.fromStay(r)));
     const patch = { bookings: demo.concat(real), live: true };
+    if (msgs && this.REAL) patch.threads = this.threadsFrom(msgs);
     if (blocks) { const nb = {}; blocks.forEach(x => { nb[x.unit + '|' + x.night] = true; }); patch.blocks = nb; }
     patch.bookingsAuto = this.autoAssign(patch.bookings, patch.blocks || this.state.blocks);
     this._fromServer = true;
@@ -1438,7 +1470,7 @@ class Component extends DCLogic {
     if (PUSH.client && this.state.live !== true) { this._openWhenLoaded = id; return; }
     const b = this.list().find(x => (x.id === id || x.dbId === id) && x.status === 'pending');
     if (b) id = b.id;
-    this.setState({ tab: 'today', detail: null, customer: null, newOpen: false, req: b ? id : null });
+    this.setState({ tab: 'reqs', detail: null, customer: null, room: null, newOpen: false, req: b ? id : null });
   }
   say(msg) {
     clearTimeout(this._t);
@@ -1484,12 +1516,35 @@ class Component extends DCLogic {
     this.setState({ quick: list });
   }
   bookedOn(b) { return this.ON[b.id] || this.TODAY; }
+  /* Real conversations: one per site booking request, from public.request_messages. The guest's message from the
+     booking form is the first one. Empty conversations opened from a booking in this session are kept. */
+  threadsFrom(msgs) {
+    const hm = new Intl.DateTimeFormat('el-GR', { timeZone: 'Europe/Athens', hour: '2-digit', minute: '2-digit', hour12: false });
+    const by = {};
+    msgs.forEach(m => { (by[m.request_id] = by[m.request_id] || []).push(m); });
+    const server = Object.keys(by).map(rid => {
+      const list = by[rid];
+      return {
+        id: 'q-' + rid, bid: 'db-' + rid, dbId: rid, real: true, last: list[list.length - 1].created_at,
+        unread: list.some(m => m.sender === 'guest' && !m.read_at),
+        msgs: list.map(m => ({ id: m.id, from: m.sender === 'owner' ? 'host' : 'guest', t: this.fmt(athensISOof(m.created_at)) + ' ' + hm.format(new Date(m.created_at)), text: m.body, by: m.created_by || '', status: m.sender === 'owner' ? (m.email_status || 'pending') : '', err: m.email_error || '' }))
+      };
+    }).sort((a, b) => a.last < b.last ? 1 : -1);
+    const keep = (this.state.threads || []).filter(t => t.msgs.length === 0 && !by[String(t.bid || '').replace(/^db-/, '')]);
+    return keep.concat(server);
+  }
+  /* Opening a conversation marks the guest's messages as read, for both owners. */
+  markRead(t) {
+    if (!t || !t.real || !t.unread || !PUSH.client) return;
+    PUSH.client.from('request_messages').update({ read_at: new Date().toISOString() }).eq('request_id', t.dbId).eq('sender', 'guest').is('read_at', null).then(() => {}, () => {});
+  }
   openThread(bid) {
     const ob = this.list().find(x => x.id === bid);
     if (!ob || ob.source !== 'site') { this.say('Μηνύματα εδώ μόνο για κρατήσεις από το σάιτ.'); return; }
     let t = this.state.threads.find(x => x.bid === bid);
     let threads = this.state.threads;
-    if (!t) { t = { id: 't' + Date.now(), bid: bid, unread: false, msgs: [] }; threads = [t].concat(threads); }
+    if (!t) { t = { id: 't' + Date.now(), bid: bid, unread: false, msgs: !ob.real && ob.note ? [{ from: 'guest', t: this.fmt(this.bookedOn(ob)), text: ob.note }] : [] }; threads = [t].concat(threads); }
+    this.markRead(t);
     this.setState({ threads: threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x), thread: t.id, tab: 'msgs', detail: t.bid, customer: null, req: null, calSel: null, calEdit: false });
   }
   csv(rows, name) {
@@ -1502,7 +1557,7 @@ class Component extends DCLogic {
   open(id) { this.setState({ detail: id, customer: null, room: null, newOpen: false }); }
   openGuest(name) { this.setState({ customer: name, detail: null, room: null, newOpen: false }); }
   openRoom(id) { this.setState({ room: this.state.room === id ? null : id, detail: null, customer: null, newOpen: false }); }
-  openReq(id) { this.setState({ tab: 'today', req: id, detail: null, newOpen: false }); }
+  openReq(id) { this.setState({ tab: 'reqs', req: id, detail: null, customer: null, room: null, newOpen: false }); }
   /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
      the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
      calendar is read again from the database, so it never shows something that was not saved. */
@@ -1829,10 +1884,12 @@ class Component extends DCLogic {
     });
 
     /* Request view */
-    let req = { back: () => this.setState({ req: null }), accept: () => {}, reject: () => {}, rooms: [] };
+    let req = { back: () => this.setState({ req: null }), accept: () => {}, reject: () => {}, message: () => {}, rooms: [] };
     let showReq = false;
-    if (!auto && s.req) {
-      const rb = B.find(b => b.id === s.req && b.status === 'pending');
+    const reqPending = auto ? [] : B.filter(b => b.status === 'pending').sort((a, b) => b.ago - a.ago);
+    const reqId = !auto && s.tab === 'reqs' ? ((s.req && reqPending.some(b => b.id === s.req)) ? s.req : (reqPending[0] ? reqPending[0].id : null)) : null;
+    if (reqId) {
+      const rb = B.find(b => b.id === reqId && b.status === 'pending');
       if (rb) {
         showReq = true;
         const cands = this.candidates(rb);
@@ -1882,6 +1939,7 @@ class Component extends DCLogic {
           hasPromo: !!rb.promo && rb.discountPct > 0,
           promoText: 'Κωδικός ' + (rb.promo || '') + ' · −' + (rb.discountPct || 0) + '%' + (rb.fullTotal && !rb.priceless ? ' · από ' + this.money(rb.fullTotal) + ' σε ' + this.money(rb.total) : ' · αφαίρεσέ το από την τιμή'),
           back: () => this.setState({ req: null }),
+          message: () => this.openThread(rb.id),
           accept: () => {
             if (!picked || this.state.checking) return;
             // Booking.com's calendar is read again right now, so a booking made there in the last hours is caught before charging.
@@ -1906,6 +1964,40 @@ class Component extends DCLogic {
         };
       }
     }
+
+    /* Requests list (left column of the Requests section) */
+    const rowBase = 'width: 100%; display: flex; flex-direction: column; gap: 2px; padding: 12px 18px; border: 0; border-top: 1px solid #EEF2F2; color: #18282B; font-size: 14px; text-align: left; cursor: pointer;';
+    const answered = auto ? [] : B.filter(b => b.source === 'site' && b.status !== 'pending' && (b.real ? !!b.dbId : true))
+      .sort((a, b) => this.bookedOn(a) < this.bookedOn(b) ? 1 : -1).slice(0, 30);
+    const ansWord = b => b.status === 'confirmed' ? ['Αποδεκτό', 'background: #DCEBEA; color: #0F5257'] : b.status === 'cancelled' ? ['Ακυρώθηκε', 'background: #EEF2F2; color: #4A5B5E'] : b.expired ? ['Έληξε', 'background: #EEF2F2; color: #4A5B5E'] : ['Απορρίφθηκε', 'background: #FBE4DF; color: #8A3412'];
+    const doneOpen = !!s.reqDoneOpen || reqPending.length === 0;
+    const reqList = {
+      pendingCount: String(reqPending.length), noPending: reqPending.length === 0,
+      pending: reqPending.map(b => {
+        const left = 24 - b.ago, on = b.id === reqId;
+        return {
+          name: b.name, current: on ? 'true' : 'false',
+          meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο'),
+          note: b.note || '', hasNote: !!b.note,
+          timer: left + (left === 1 ? ' ώρα' : ' ώρες'), timerStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
+          style: rowBase + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
+          open: () => this.setState({ req: b.id, detail: null, customer: null, room: null })
+        };
+      }),
+      doneOpen: doneOpen, doneExp: doneOpen ? 'true' : 'false', doneCount: String(answered.length), noDone: answered.length === 0,
+      doneChev: 'flex-shrink: 0; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; color: #4A5B5E; transition: transform 0.15s; transform: rotate(' + (doneOpen ? 90 : 0) + 'deg)',
+      toggleDone: () => this.setState({ reqDoneOpen: !doneOpen }),
+      done: answered.map(b => {
+        const w = ansWord(b);
+        return {
+          name: b.name, badge: w[0], badgeStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + w[1],
+          meta: this.range(b.start, this.endOf(b)) + (b.unit ? ' · ' + this.unitName(b.unit) : '') + (b.by && String(b.by).split(' · ')[1] ? ' · ' + String(b.by).split(' · ')[1] : ''),
+          style: rowBase + (s.detail === b.id ? 'background: #F0F6F6' : 'background: #FFFFFF'),
+          open: () => this.open(b.id)
+        };
+      }),
+      emptyRight: !showReq
+    };
 
     /* Calendar */
     const days = [];
@@ -2638,10 +2730,10 @@ class Component extends DCLogic {
         name: b ? b.name : '–', unread: !!t.unread,
         when: last ? last.t.split(' ').slice(0, 2).join(' ') : '',
         meta: b ? this.range(b.start, this.endOf(b)) + ' · ' + (b.source === 'site' ? 'σάιτ' : 'Booking') : '',
-        preview: last ? (last.from === 'host' ? 'Εσύ: ' : '') + last.text : 'Χωρίς μηνύματα',
+        preview: last ? (last.from === 'host' ? ((last.by && s.user && last.by !== s.user.name ? last.by.split(' ')[0] : 'Εσύ') + ': ') : '') + last.text : 'Χωρίς μηνύματα',
         nameStyle: 'flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: ' + (t.unread ? '700' : '500'),
         style: 'width: 100%; display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border: 0; border-bottom: 1px solid #EEF2F2; text-align: left; color: #18282B; font-size: 14px; cursor: pointer;' + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
-        open: () => this.setState({ thread: t.id, msgDraft: '', detail: t.bid, customer: null, threads: this.state.threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x) })
+        open: () => { this.markRead(t); this.setState({ thread: t.id, msgDraft: '', detail: t.bid, customer: null, threads: this.state.threads.map(x => x.id === t.id ? Object.assign({}, x, { unread: false }) : x) }) }
       };
     });
     const cb = curT ? findB(curT.bid) : null;
@@ -2650,15 +2742,18 @@ class Component extends DCLogic {
       meta: cb ? this.range(cb.start, this.endOf(cb)) + ' · ' + cb.guests + ' άτομα · ' + (cb.unit ? this.unitName(cb.unit) : (cb.type === 'apt' ? 'Διαμέρισμα' : 'χωρίς δωμάτιο ακόμα')) : '',
       via: 'Φτάνει στον πελάτη με email' + (cb && cb.email ? ' (' + cb.email + ')' : ''),
       openBooking: () => { if (cb) this.setState({ detail: cb.id }); },
-      msgs: curT ? curT.msgs.map(m => ({ text: m.text, when: (m.from === 'host' ? 'Εσύ · ' : '') + m.t,
+      msgs: curT ? curT.msgs.map(m => ({ text: m.text,
+        when: m.from === 'host'
+          ? (m.by && s.user && m.by !== s.user.name ? m.by : 'Εσύ') + ' · ' + m.t + (m.status === 'sent' ? ' · στάλθηκε με email' : m.status === 'failed' ? ' · το email δεν έφυγε' : m.status === 'pending' ? ' · στέλνεται…' : '')
+          : (cb ? cb.name.split(' ')[0] : 'Πελάτης') + ' · ' + m.t,
         style: 'max-width: 78%; box-sizing: border-box; padding: 10px 13px; border-radius: 14px; white-space: pre-wrap; font-size: 14px;' + (m.from === 'host' ? 'align-self: flex-end; background: #DCEBEA; color: #0A3A3E' : 'align-self: flex-start; background: #FFFFFF; border: 1px solid #E6ECED') })) : []
     };
     const unreadN = siteThreads.filter(t => t.unread).length;
 
 
     return Object.assign(priceVals, calSelVals, {
-      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { msgs: s.tab === 'msgs', today: s.tab === 'today' && !showReq, req: s.tab === 'today' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, reqs: s.tab === 'reqs' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
+      show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: s.tab === 'reqs' && showReq, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
       owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
@@ -2727,6 +2822,24 @@ class Component extends DCLogic {
       sendMsg: () => {
         const v = (this.state.msgDraft || '').trim();
         if (!v || !curT) { this.say('Γράψε πρώτα το μήνυμα.'); return; }
+        if (cb && cb.real && cb.dbId) {
+          const sb = PUSH.client;
+          if (!sb) { this.say('Δεν υπάρχει σύνδεση, δοκίμασε ξανά.'); return; }
+          if (this._sending) return;
+          this._sending = true;
+          this.setState({ msgDraft: '' });
+          sb.from('request_messages').insert({ request_id: cb.dbId, sender: 'owner', body: v, created_by: s.user ? s.user.name : null }).select('id').single().then(res => {
+            if (res.error || !res.data) { this._sending = false; this.setState({ msgDraft: v }); this.say('Δεν στάλθηκε' + (res.error ? ': ' + res.error.message : '') + '. Δοκίμασε ξανά.'); return; }
+            if (this.reload) this.reload();
+            return sb.functions.invoke('guest-message', { body: { message_id: res.data.id } }).then(r => {
+              this._sending = false;
+              const d = r && r.data;
+              this.say(d && d.ok ? 'Στάλθηκε με email στον/στην ' + cb.name + '.' : 'Το μήνυμα αποθηκεύτηκε, αλλά το email δεν έφυγε' + (d && d.error ? ' (' + d.error + ')' : '') + '.');
+              if (this.reload) this.reload();
+            }, () => { this._sending = false; this.say('Το μήνυμα αποθηκεύτηκε, αλλά το email δεν έφυγε. Έλεγξε τη σύνδεση.'); if (this.reload) this.reload(); });
+          }, () => { this._sending = false; this.setState({ msgDraft: v }); this.say('Δεν στάλθηκε, έλεγξε τη σύνδεση.'); });
+          return;
+        }
         this.setState({ msgDraft: '', threads: this.state.threads.map(x => x.id === curT.id ? Object.assign({}, x, { unread: false, msgs: x.msgs.concat([{ from: 'host', t: this.fmt(T) + ' ' + nowHM(), text: v }]) }) : x) });
         this.say('Στάλθηκε στον/στην ' + (cb ? cb.name : 'πελάτη') + '.');
       },
@@ -2744,7 +2857,8 @@ class Component extends DCLogic {
       guest: guest, hasGuest: hasGuest,
       showSlot: (s.tab === 'list' || s.tab === 'guests') && !hasDetail && !hasGuest && !(s.newOpen && s.nb),
       goToday: () => this.go('today'), goCal: () => { this.setState({ calStart: T }); this.go('cal'); }, goList: () => this.go('list'), goPrices: () => this.go('prices'), goSettings: () => this.go('settings'),
-      navBadge: String(badgeN), hasNavBadge: badgeN > 0,
+      navBadge: String(badgeN), hasNavBadge: auto && badgeN > 0,
+      reqBadge: String(reqPending.length), hasReqBadge: reqPending.length > 0, reqList: reqList, goReqs: () => this.go('reqs'),
       isAuto: auto, isManual: !auto,
       syncAgo: s.syncAgo,
       syncLine: this.REAL ? bkLine : 'Τελευταίος έλεγχος ' + s.syncAgo,
@@ -3110,11 +3224,12 @@ class Component extends DCLogic {
     return Promise.all([
       SB.from('booking_requests').select('*').eq('is_test', false).gte('check_out', from).order('created_at', { ascending: false }).limit(1000),
       SB.from('owner_stays').select('*').gte('check_out', from).order('check_in').limit(2000),
-      SB.from('unit_blocks').select('unit, night').gte('night', comp.add(athensISO(), -60)).limit(5000)
+      SB.from('unit_blocks').select('unit, night').gte('night', comp.add(athensISO(), -60)).limit(5000),
+      SB.from('request_messages').select('id, request_id, sender, body, created_at, created_by, read_at, email_status, email_error').order('created_at').limit(5000)
     ]).then(function (rs) {
       const bad = rs.find(function (r) { return r.error; });
       if (bad) { comp.say('Δεν φορτώθηκαν οι κρατήσεις: ' + bad.error.message); comp.setState({ live: false }); return; }
-      comp.applyRows(rs[0].data || [], rs[1].data || [], rs[2].data || []);
+      comp.applyRows(rs[0].data || [], rs[1].data || [], rs[2].data || [], rs[3].data || []);
     });
   }
   function startLive() {
@@ -3128,6 +3243,7 @@ class Component extends DCLogic {
       loadRequests();
     }).on('postgres_changes', { event: '*', schema: 'public', table: 'owner_stays' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'request_messages' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ical_feeds' }, function () { comp.loadFeeds(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
