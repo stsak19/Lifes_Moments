@@ -259,11 +259,12 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <div>
 <h2 style="margin: 0 0 8px; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">{{req.pickTitle}}</h2>
-<div style="border: 1px solid #E6ECED; border-radius: 12px; overflow: hidden">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px">
 <sc-for list="{{req.rooms}}" as="rm" hint-placeholder-count="4">
-<button type="button" onClick="{{rm.pick}}" disabled="{{rm.disabled}}" aria-pressed="{{rm.pressed}}" style="{{rm.rowStyle}}">
-<span style="{{rm.radio}}"></span>
-<span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600">{{rm.name}}</span><span style="display: block; font-size: 13px; color: #4A5B5E">{{rm.sub}}</span></span>
+<button type="button" onClick="{{rm.pick}}" disabled="{{rm.disabled}}" aria-pressed="{{rm.pressed}}" style="{{rm.tileStyle}}">
+<span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px"><span style="font-size: 16px; font-weight: 600; line-height: 1.25">{{rm.name}}</span><span style="{{rm.check}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span>
+<span style="font-size: 13px; color: #4A5B5E">{{rm.cap}}</span>
+<sc-if value="{{rm.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 1.35; color: #4A5B5E">{{rm.note}}</span></sc-if>
 <sc-if value="{{rm.hasTag}}" hint-placeholder-val="{{false}}"><span style="{{rm.tagStyle}}">{{rm.tag}}</span></sc-if>
 </button>
 </sc-for>
@@ -1944,23 +1945,24 @@ class Component extends DCLogic {
         const rooms = ordered.map(u => {
           const free = freeIds.indexOf(u.id) !== -1;
           const on = u.id === picked;
-          let sub = 'Έως ' + u.cap + ' άτομα · ελεύθερο ' + this.range(rb.start, this.endOf(rb));
+          let note = '';
           if (!free) {
             const c = this.firstClash(u.id, rb.start, rb.nights);
-            sub = 'Έως ' + u.cap + ' άτομα · ' + (c === 'block' ? 'κλειστό αυτές τις μέρες' : c.name + ' ως ' + this.fmt(this.endOf(c)));
+            note = c === 'block' ? 'Κλειστό αυτές τις μέρες' : c.name + ' ως ' + this.fmt(this.endOf(c));
           } else if (clashT(u.id, rb)) {
             const other = pending.find(p => p.id !== rb.id && tentative[p.id] === u.id && p.start < this.endOf(rb) && rb.start < this.endOf(p));
-            sub += ' · το ζητάει και το αίτημα του/της ' + (other ? other.name : 'άλλου πελάτη');
+            note = 'Το ζητάει και ' + (other ? other.name : 'άλλο αίτημα');
           } else if (u.id === suggested && rb.type !== 'apt') {
-            sub += ' · αφήνει τα μεγαλύτερα ελεύθερα';
+            note = 'Αφήνει τα μεγαλύτερα ελεύθερα';
           }
           return {
-            name: u.name, sub: sub,
+            name: u.name, cap: 'Έως ' + u.cap + ' άτομα',
+            note: note, hasNote: !!note,
             hasTag: (u.id === suggested) || !free,
             tag: !free ? 'Πιασμένο' : 'Προτείνεται',
-            tagStyle: tag + (!free ? 'background: #EEF2F2; color: #4A5B5E' : 'background: #DCEBEA; color: #0F5257'),
-            radio: 'flex-shrink: 0; width: 18px; height: 18px; border-radius: 9px; box-sizing: border-box;' + (on ? 'border: 6px solid #0F5257' : 'border: 2px solid #A7B4B6'),
-            rowStyle: 'width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 16px; min-height: 60px; border: 0; border-bottom: 1px solid #EEF2F2; color: #18282B; text-align: left;' + (on ? 'background: #F0F6F6;' : 'background: #FFFFFF;') + (free ? 'cursor: pointer' : 'cursor: default; opacity: 0.55'),
+            tagStyle: tag + ' align-self: flex-start; margin-top: auto;' + (!free ? 'background: #EEF2F2; color: #4A5B5E' : 'background: #DCEBEA; color: #0F5257'),
+            check: 'flex-shrink: 0; width: 22px; height: 22px; border-radius: 11px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;' + (on ? 'background: #0F5257; color: #FFFFFF' : free ? 'border: 2px solid #C3D1D3; color: transparent' : 'display: none'),
+            tileStyle: 'display: flex; flex-direction: column; gap: 4px; min-height: 116px; padding: 14px; border-radius: 14px; color: #18282B; text-align: left; font: inherit; transition: background 0.15s, box-shadow 0.15s;' + (on ? 'border: 1px solid #0F5257; box-shadow: inset 0 0 0 1px #0F5257; background: #F0F6F6;' : 'border: 1px solid #DCE4E5; background: #FFFFFF;') + (free ? 'cursor: pointer' : 'cursor: default; background: #F6F8F8; opacity: 0.6'),
             disabled: !free, pressed: on ? 'true' : 'false',
             pick: () => { if (free) this.setState({ picks: Object.assign({}, s.picks, { [rb.id]: u.id }) }); }
           };
