@@ -511,8 +511,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{c.real}}" hint-placeholder-val="{{true}}">
 <button type="button" data-date="{{c.date}}" onPointerDown="{{c.down}}" onClick="{{c.pick}}" disabled="{{c.disabled}}" aria-pressed="{{c.pressed}}" aria-label="{{c.aria}}" style="{{c.style}}">
 <span style="display: flex; justify-content: space-between; align-items: center; gap: 4px"><span style="{{c.numStyle}}">{{c.num}}</span><sc-if value="{{c.hasTag}}" hint-placeholder-val="{{false}}"><span style="font-size: 11px; font-weight: 500; color: #6B7A7D">{{c.tag}}</span></sc-if></span>
-<span style="{{c.roomStyle}}">{{c.room}}</span>
-<span style="display: block; font-size: 12px; color: #4A5B5E">{{c.sub}}</span>
+<span style="display: flex; flex-wrap: nowrap; align-items: baseline; gap: 5px; margin-top: 4px; min-width: 0; overflow: hidden"><span style="{{c.roomStyle}}">{{c.room}}</span><sc-if value="{{c.hasApt}}" hint-placeholder-val="{{true}}"><span style="font-size: 11px; font-weight: 500; color: #4A5B5E; white-space: nowrap">Δ&nbsp;{{c.apt}}</span></sc-if></span>
+<sc-if value="{{c.hasSub}}" hint-placeholder-val="{{false}}"><span style="display: block; font-size: 12px; color: #4A5B5E">{{c.sub}}</span></sc-if>
 </button>
 </sc-if>
 </sc-for>
@@ -532,7 +532,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="font-size: 13px; color: #4A5B5E">{{selSub}}</div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
-<div><label for="p-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο (€/νύχτα)</label><input id="p-room" type="number" inputmode="numeric" min="0" value="{{draft.room}}" onChange="{{setDraftRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div><label for="p-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο</label><input id="p-room" type="number" inputmode="numeric" min="0" value="{{draft.room}}" onChange="{{setDraftRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 <div><label for="p-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμέρισμα (€)</label><input id="p-apt" type="number" inputmode="numeric" min="0" value="{{draft.apt}}" onChange="{{setDraftApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 </div>
 <div><label for="p-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="p-min" type="number" inputmode="numeric" min="1" value="{{draft.min}}" onChange="{{setDraftMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
@@ -2656,8 +2656,6 @@ class Component extends DCLogic {
       const x = s.priceMonth + '-' + (i < 10 ? '0' + i : String(i));
       const pr = this.priceFor(x);
       if (pr.closed) closedInMonth++;
-      let booked = 0;
-      this.UNITS.forEach(u => { const o = this.occ(u.id, x); if (o && o !== 'block') booked++; });
       const past = x < T;
       const on = selSet.indexOf(x) !== -1;
       const dow = this.dt(x).getUTCDay();
@@ -2673,11 +2671,12 @@ class Component extends DCLogic {
         num: String(i), numStyle: 'font-size: 12px; font-weight: 600; color: ' + (dow === 0 || dow === 6 ? '#18282B' : '#4A5B5E'),
         hasTag: !!tag, tag: tag,
         room: what,
-        roomStyle: 'display: block; font-size: ' + (pr.closed ? '14px' : '15px') + '; font-weight: 600; margin-top: 4px; color: ' + (pr.closed ? '#A3271B' : (pr.own || pr.none ? '#18282B' : '#4A5B5E')),
-        sub: pr.closed ? '' : (pr.none ? 'χωρίς τιμή' : 'Δ ' + this.money(pr.apt) + ' · ' + booked + '/12'),
+        roomStyle: 'font-size: 14px; font-weight: 600; white-space: nowrap; color: ' + (pr.closed ? '#A3271B' : (pr.own || pr.none ? '#18282B' : '#4A5B5E')),
+        hasApt: !pr.closed && !pr.none && pr.apt != null, apt: pr.apt != null ? this.money(pr.apt) : '',
+        hasSub: pr.none && !pr.closed, sub: 'χωρίς τιμή',
         disabled: past, pressed: on ? 'true' : 'false',
         aria: this.fmt(x) + (pr.closed ? ', κλειστά' : (pr.none ? ', χωρίς τιμή' : ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt))) + (tag ? ', όπως το ' + pr.from : ''),
-        style: 'touch-action: none; user-select: none; -webkit-user-select: none; width: 100%; min-height: 76px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
+        style: 'touch-action: none; user-select: none; -webkit-user-select: none; width: 100%; min-height: 62px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
         date: x,
         down: (e) => {
           if (past) return;
@@ -2702,7 +2701,7 @@ class Component extends DCLogic {
       priceNext: () => { const d = new Date(Date.UTC(pm[0], pm[1], 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
       priceDow: ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
       priceCells: priceCells,
-      priceNote: 'Σε κάθε μέρα: πάνω η τιμή δωματίου ανά νύχτα, κάτω του διαμερίσματος (Δ) και πόσοι χώροι είναι ήδη κλεισμένοι. Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
+      priceNote: 'Σε κάθε μέρα: η τιμή δωματίου ανά νύχτα και δίπλα του διαμερίσματος (Δ). Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
       hasSel: hasSel, noSel: !hasSel, selHasOver: selHasOver,
       selLabel: !hasSel ? '' : (selSet.length === 1 ? this.DAY[this.dt(selSet[0]).getUTCDay()] + ' ' + this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1])),
       selSub: !hasSel ? '' : (selSet.length === 1 ? (s.sel.b ? '1 νύχτα' : '1 νύχτα · πάτα κι άλλη μέρα για διάστημα') : selSet.length + ' νύχτες'),
