@@ -1509,6 +1509,33 @@ class Component extends DCLogic {
     if (c) return { ok: false, why: c === 'block' ? 'έχει κλειστές μέρες' : 'πιασμένο από ' + c.name };
     return { ok: true, why: 'ελεύθερο ' + this.range(b.start, this.endOf(b)) };
   }
+  /* Swap the rooms of two items (bookings or waiting requests). Checks were done while dragging. */
+  setRoom(b, unit) {
+    if (b.status === 'pending') {
+      this.setState({ picks: Object.assign({}, this.state.picks, { [b.id]: unit }) });
+      if (b.real && b.dbId && PUSH.client) return PUSH.client.from('booking_requests').update({ unit: unit }).eq('id', b.dbId).eq('status', 'pending').select('id');
+      return Promise.resolve({ data: [1] });
+    }
+    if (b.real) {
+      const sb = PUSH.client;
+      return b.stayId ? sb.from('owner_stays').update({ unit: unit }).eq('id', b.stayId).select('id') : sb.from('booking_requests').update({ unit: unit }).eq('id', b.dbId).select('id');
+    }
+    this.patch(b.id, { unit: unit });
+    return Promise.resolve({ data: [1] });
+  }
+  swapRooms(sw) {
+    const L = this.list(), a = L.find(x => x.id === sw.a), b = L.find(x => x.id === sw.b);
+    if (!a || !b) return;
+    // the one leaving the target first, so the two never hold the same room at once
+    Promise.resolve(this.setRoom(b, sw.from)).then(r1 => {
+      if (r1 && r1.error) throw r1.error;
+      return this.setRoom(a, sw.to);
+    }).then(r2 => {
+      if (r2 && r2.error) throw r2.error;
+      this.say('Άλλαξαν θέση: ' + a.name + ' στο ' + this.unitName(sw.to) + ', ' + b.name + ' στο ' + this.unitName(sw.from) + '.');
+      if (this.reload && (a.real || b.real)) this.reload();
+    }).catch(e => { this.say('Δεν έγινε η αλλαγή θέσης' + (e && e.message ? ': ' + e.message : '') + '.'); if (this.reload) this.reload(); });
+  }
   moveRoom(b, unit, from) {
     const chk = this.moveCheck(b, unit, from);
     if (!chk.ok) { if (!chk.same) this.say('Δεν γίνεται: το ' + this.unitName(unit) + ' ' + chk.why + '.'); return; }
@@ -2047,10 +2074,29 @@ class Component extends DCLogic {
     const mv = s.calMove ? B.find(b => b.id === s.calMove.id) : null;
     const mvT = mv && s.calMove.target !== s.calMove.from ? s.calMove.target : null;
     let mvChk = mvT ? this.moveCheck(mv, mvT, s.calMove.from) : null;
-    if (mvChk && mvChk.ok) {
-      // another waiting request already sits there on those nights
-      const other = pending.find(p => p.id !== mv.id && tentative[p.id] === mvT && p.start < this.endOf(mv) && mv.start < this.endOf(p));
-      if (other) mvChk = { ok: false, why: 'έχει το αίτημα του/της ' + other.name };
+    this._mvSwap = null;
+    if (mvT) {
+      // Dropping onto exactly one other booking or request swaps their rooms, when both fit where they go.
+      const from = s.calMove.from;
+      const over = (a, b) => a.start < this.endOf(b) && b.start < this.endOf(a);
+      const atOf = x => x.status === 'pending' ? tentative[x.id] : x.unit;
+      const inTarget = B.filter(x => x.id !== mv.id && (x.status === 'confirmed' || x.status === 'pending') && atOf(x) === mvT && over(x, mv));
+      const closedIn = (unit, b) => { for (let i = 0; i < b.nights; i++) if (s.blocks[unit + '|' + this.add(b.start, i)]) return true; return false; };
+      const freeBut = (unit, b, skip) => !B.some(x => skip.indexOf(x.id) === -1 && (x.status === 'confirmed' || x.status === 'pending') && atOf(x) === unit && over(x, b)) && !closedIn(unit, b);
+      const tu = this.UNITS.find(u => u.id === mvT), fu = this.UNITS.find(u => u.id === from);
+      if (inTarget.length === 1) {
+        const o = inTarget[0];
+        let why = '';
+        if (!this.canMoveRoom(o) || o.type !== mv.type) why = o.status === 'pending' ? 'έχει το αίτημα του/της ' + o.name : 'πιασμένο από ' + o.name + ', που δεν μετακινείται';
+        else if (!tu || tu.cap < mv.guests || mvT === 'apt') why = 'χωράει ως ' + (tu ? tu.cap : 0) + ' άτομα';
+        else if (!fu || fu.cap < o.guests) why = 'ο/η ' + o.name + ' δεν χωράει στο ' + this.unitName(from);
+        else if (!freeBut(mvT, mv, [mv.id, o.id])) why = 'δεν αδειάζει όλες τις νύχτες';
+        else if (!freeBut(from, o, [mv.id, o.id])) why = 'ο/η ' + o.name + ' δεν χωράει στο ' + this.unitName(from) + ' εκείνες τις νύχτες';
+        mvChk = why ? { ok: false, why: why } : { ok: true, why: 'αλλάζει θέση με ' + (o.status === 'pending' ? 'το αίτημα του/της ' : 'τον/την ') + o.name + ', που πάει στο ' + this.unitName(from) };
+        if (!why) this._mvSwap = { a: mv.id, b: o.id, to: mvT, from: from };
+      } else if (inTarget.length > 1) {
+        mvChk = { ok: false, why: 'έχει ' + inTarget.length + ' κρατήσεις εκείνες τις νύχτες' };
+      }
     }
     this._mvBlock = mvChk && !mvChk.ok ? mvChk.why : null;
     const inMove = (unit, x) => !!mvT && unit === mvT && x >= mv.start && x < this.endOf(mv);
@@ -2662,6 +2708,7 @@ class Component extends DCLogic {
           if (this.state.calMove) this.setState({ calMove: null });
           if (d.moved && d.target && d.target !== d.from) {
             if (this._mvBlock) { this.say('Δεν γίνεται: το ' + this.unitName(d.target) + ' ' + this._mvBlock + '.'); }
+            else if (this._mvSwap && this._mvSwap.a === d.id && this._mvSwap.to === d.target) { this.swapRooms(this._mvSwap); }
             else { const b = this.list().find(x => x.id === d.id); if (b) this.moveRoom(b, d.target, d.from); }
           }
         }
