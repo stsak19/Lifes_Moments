@@ -259,7 +259,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <section aria-label="Ημερολόγιο δωματίων" onPointerMove="{{calDragMove}}" style="background: #FFFFFF; border-radius: 18px; padding: 16px; overflow-x: auto">
-<div style="min-width: 940px">
+<div style="min-width: 600px">
 <div style="{{calRowStyle}}">
 <span></span>
 <sc-for list="{{head}}" as="h" hint-placeholder-count="14">
@@ -2004,8 +2004,9 @@ class Component extends DCLogic {
 
     /* Calendar */
     const days = [];
-    for (let i = 0; i < 14; i++) days.push(this.add(s.calStart, i));
-    const calRowStyle = 'display: grid; grid-template-columns: 124px repeat(14, minmax(0, 1fr)); gap: 3px; margin-bottom: 3px';
+    const CAL_DAYS = 7; // a week: one-night stays and requests still show the guest's name
+    for (let i = 0; i < CAL_DAYS; i++) days.push(this.add(s.calStart, i));
+    const calRowStyle = 'display: grid; grid-template-columns: 124px repeat(' + CAL_DAYS + ', minmax(0, 1fr)); gap: 3px; margin-bottom: 3px';
     const head = days.map(x => {
       const d = this.dt(x);
       const wk = d.getUTCDay() === 0 || d.getUTCDay() === 6;
@@ -2059,17 +2060,17 @@ class Component extends DCLogic {
     };
     // The request opened on the calendar grows into a card with Accept / Decline under its name.
     const reqCard = (p, span, dragFrom) => {
-      const wide = span >= 3;
+      const wide = span >= 2;
       const btn = 'flex: 1 1 0; min-width: 0; height: 32px; padding: 0 6px; border-radius: 16px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; display: flex; align-items: center; justify-content: center;';
       return {
         expanded: true, plain: false, aria: 'Αίτημα ' + p.name, wide: wide, narrow: !wide,
-        title: span > 1 ? 'Αίτημα · ' + p.name : '!', closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
+        title: (span > 1 ? 'Αίτημα · ' : '') + p.name, closeAria: 'Αίτημα ' + p.name + '. Πάτα για να κλείσει, ή σύρε για άλλο δωμάτιο.',
         canAccept: !!req.canAccept && !!dragFrom, accept: req.accept, reject: req.reject,
         close: () => { if (this.justDragged) { this.justDragged = false; return; } this.setState({ calReq: null }); },
         down: dragFrom ? moveDown(p, dragFrom) : () => {},
         headStyle: 'height: 28px; padding: 0 2px; border: 0; background: transparent; color: #7A4708; font: inherit; font-size: 12px; font-weight: 700; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; touch-action: none; user-select: none; -webkit-user-select: none; cursor: ' + (dragFrom && p.type === 'room' ? 'grab' : 'pointer'),
         okStyle: btn + 'border: 0; background: #0F5257; color: #FFFFFF',
-        noStyle: btn + 'border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412',
+        noStyle: btn + 'border: 0; background: #B3261E; color: #FFFFFF',
         style: 'grid-column: span ' + span + '; align-self: start; box-sizing: border-box; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 4px 6px 6px; border-radius: 8px; border: 2px solid #B7791F; background: #FBEFD9;' + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '')
       };
     };
@@ -2084,7 +2085,7 @@ class Component extends DCLogic {
           while (j + 1 < days.length && this.occ(u.id, days[j + 1]) === o) j++;
           const span = j - i + 1;
           const movable = this.canMoveRoom(o);
-          segs.push({ label: span > 1 ? o.name : o.name.charAt(0), sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)) + (movable ? '. Σύρε πάνω ή κάτω για άλλο δωμάτιο.' : ''),
+          segs.push({ label: o.name, sel: '', aria: u.name + ', ' + o.name + ', ' + this.range(o.start, this.endOf(o)) + (movable ? '. Σύρε πάνω ή κάτω για άλλο δωμάτιο.' : ''),
             tap: () => { if (this.justDragged) { this.justDragged = false; return; } this.open(o.id); }, down: moveDown(o),
             style: segBase + 'grid-column: span ' + span + ';' + (movable ? 'cursor: grab;' : '') + (mv && mv.id === o.id && mvT ? 'opacity: 0.4;' : '') + (mvT === u.id && o.id !== mv.id && o.start < this.endOf(mv) && mv.start < this.endOf(o) ? 'box-shadow: 0 0 0 2px #B3261E;' : '') + (o.kind === 'free' || o.kind === 'test' ? 'border: 1px solid #B9A6CF; background: #EFE9F6; color: #4B2F6B' : (o.source === 'direct' ? 'border: 0; background: #D9EAD3; color: #24502A' : (o.source === 'site' ? 'border: 0; background: #0F5257; color: #FFFFFF' : 'border: 0; background: #CFE0F3; color: #1E3A5F'))) });
           i = j + 1;
@@ -2100,7 +2101,7 @@ class Component extends DCLogic {
           while (j + 1 < days.length && !this.occ(u.id, days[j + 1]) && pendAt(u.id, days[j + 1]) === p) j++;
           const span = j - i + 1;
           if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
-          segs.push({ label: span > 1 ? 'Αίτημα · ' + p.name : '!', sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
+          segs.push({ label: (span > 1 ? 'Αίτημα · ' : '') + p.name, sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
             style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 2px solid #B7791F; background: #FBEFD9;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
           i = j + 1;
         } else {
@@ -2122,7 +2123,7 @@ class Component extends DCLogic {
           while (j + 1 < days.length && days[j + 1] < end) j++;
           const span = j - i + 1;
           if (s.calReq === b.id && showReq) { segs.push(reqCard(b, span, null)); i = j + 1; continue; }
-          segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name.charAt(0), aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
+          segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name, aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
             style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
           i = j + 1;
         } else {
@@ -2133,7 +2134,7 @@ class Component extends DCLogic {
       segs.forEach(g => { if (!g.expanded) g.plain = true; });
       return { label: b.type === 'apt' ? 'Διαμέρισμα · ' + b.guests + ' άτ.' : 'Δωμάτιο · ' + b.guests + ' άτ.', segs: segs };
     });
-    const d0 = this.dt(days[0]), d1 = this.dt(days[13]);
+    const d0 = this.dt(days[0]), d1 = this.dt(days[days.length - 1]);
     const calTitle = d0.getUTCMonth() === d1.getUTCMonth()
       ? d0.getUTCDate() + ' – ' + d1.getUTCDate() + ' ' + this.MONG[d1.getUTCMonth()]
       : d0.getUTCDate() + ' ' + this.MONG[d0.getUTCMonth()] + ' – ' + d1.getUTCDate() + ' ' + this.MONG[d1.getUTCMonth()];
