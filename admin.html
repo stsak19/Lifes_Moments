@@ -214,7 +214,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{show.reqs}}" hint-placeholder-val="{{false}}">
-<nav aria-label="Λίστα αιτημάτων" style="max-width: 760px; background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 16px; max-width: 1100px">
+<nav aria-label="Αιτήματα σε αναμονή" style="background: #FFFFFF; border-radius: 18px; overflow: hidden; min-width: 0; align-self: start; box-shadow: inset 0 3px 0 #E9B949">
 <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 16px 18px 10px"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">Σε αναμονή</h1><span style="font-size: 13px; color: #4A5B5E">{{reqList.pendingCount}}</span></div>
 <div style="padding: 0 18px 12px; font-size: 13px; color: #4A5B5E">Πάτα ένα αίτημα: ανοίγει το ημερολόγιο στις μέρες του, για να το δεις, να το σύρεις αν θες σε άλλο δωμάτιο και να απαντήσεις.</div>
 <sc-for list="{{reqList.pending}}" as="r" hint-placeholder-count="3">
@@ -225,17 +226,18 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </button>
 </sc-for>
 <sc-if value="{{reqList.noPending}}" hint-placeholder-val="{{false}}"><div style="padding: 4px 18px 16px; font-size: 13px; color: #4A5B5E">Κανένα αίτημα σε αναμονή.</div></sc-if>
-<button type="button" onClick="{{reqList.toggleDone}}" aria-expanded="{{reqList.doneExp}}" style="width: 100%; display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border: 0; border-top: 1px solid #E6ECED; background: #F6F9F9; color: #18282B; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{reqList.doneChev}}"><path d="M9 6l6 6-6 6"></path></svg>Απαντημένα<span style="font-weight: 500; color: #4A5B5E">{{reqList.doneCount}}</span></button>
-<sc-if value="{{reqList.doneOpen}}" hint-placeholder-val="{{false}}">
+</nav>
+<nav aria-label="Απαντημένα αιτήματα" style="background: #FFFFFF; border-radius: 18px; overflow: hidden; min-width: 0; align-self: start; box-shadow: inset 0 3px 0 #0F5257">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 16px 18px 10px"><h1 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">Απαντημένα</h1><span style="font-size: 13px; color: #4A5B5E">{{reqList.doneCount}}</span></div>
 <sc-for list="{{reqList.done}}" as="r" hint-placeholder-count="3">
 <button type="button" onClick="{{r.open}}" style="{{r.style}}">
 <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{r.name}}</span><span style="{{r.badgeStyle}}">{{r.badge}}</span></span>
 <span style="display: block; font-size: 12px; color: #4A5B5E">{{r.meta}}</span>
 </button>
 </sc-for>
-<sc-if value="{{reqList.noDone}}" hint-placeholder-val="{{false}}"><div style="padding: 10px 18px 16px; font-size: 13px; color: #4A5B5E">Δεν έχεις απαντήσει ακόμα σε αίτημα.</div></sc-if>
-</sc-if>
+<sc-if value="{{reqList.noDone}}" hint-placeholder-val="{{false}}"><div style="padding: 4px 18px 16px; font-size: 13px; color: #4A5B5E">Δεν έχεις απαντήσει ακόμα σε αίτημα.</div></sc-if>
 </nav>
+</div>
 </sc-if>
 
 <sc-if value="{{show.cal}}" hint-placeholder-val="{{false}}">
