@@ -528,11 +528,7 @@ export function buildMessageMail(g: Guest, body: string, s: Settings): Mail {
   const facts = [unitName(g, lang), nights + ' ' + (nights === 1 ? tr('νύχτα', 'night') : tr('νύχτες', 'nights'))].join(' · ');
 
   d.raw(
-    `<tr><td class="px" style="padding:32px 40px 0 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${tr('Γεια σου', 'Hello')} <strong>${esc(firstName(g.name))}</strong>,</td></tr>`,
-    `${tr('Γεια σου', 'Hello')} ${firstName(g.name)},`
-  );
-  d.raw(
-    `<tr><td class="px" style="padding:16px 40px 0 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border-radius:12px;"><tr>` +
+    `<tr><td class="px" style="padding:32px 40px 0 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border-radius:12px;"><tr>` +
     `<td width="4" bgcolor="${C.brand}" style="width:4px;background:${C.brand};border-radius:12px 0 0 12px;font-size:0;line-height:0;">&nbsp;</td>` +
     `<td style="padding:20px 22px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${nl(text)}</td>` +
     `</tr></table></td></tr>`,
