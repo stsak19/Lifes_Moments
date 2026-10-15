@@ -55,7 +55,7 @@ button:disabled{cursor:default}
 /* Messages fill the screen */
 @media (min-width:900px){#app main:has(#inbox){padding-bottom:28px !important}#inbox{flex-wrap:nowrap !important;height:calc(100vh - 56px);min-height:460px}#app main:has(#inbox) aside[aria-label="Λεπτομέρειες κράτησης"]{top:28px;max-height:calc(100vh - 56px)}#inbox > div{min-height:0}#inbox .inbox-list{flex:0 0 260px !important;overflow-y:auto}#conv-msgs{min-height:0;max-height:none}}
 /* Side panels (booking, guest, new booking) stay in view while the list scrolls */
-@media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *{flex-shrink:0}}
+@media (min-width:900px){aside[aria-label="Λεπτομέρειες κράτησης"],aside[aria-label="Καρτέλα πελάτη"],aside[aria-label="Νέα κράτηση"],aside[aria-label="Λεπτομέρειες δωματίου"],aside.panel-slot{position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;overscroll-behavior:contain;flex:0 0 340px !important}.content-row{flex-wrap:nowrap !important}aside[aria-label="Λεπτομέρειες κράτησης"] > *,aside[aria-label="Καρτέλα πελάτη"] > *,aside[aria-label="Νέα κράτηση"] > *,aside[aria-label="Λεπτομέρειες δωματίου"] > *{flex-shrink:0}}
 @media (max-width:899px){aside.panel-slot{display:none !important}}
 /* Search and filters stay at the top while the list scrolls (desktop) */
 .list-head{display:flex;flex-direction:column;gap:16px}
@@ -190,9 +190,18 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 <div style="font-size: 13px; color: #4A5B5E">{{t.sub}}</div>
 </div>
+<div role="img" aria-label="{{t.stripLabel}}" style="margin-top: 12px">
+<div style="display: flex; gap: 3px">
+<sc-for list="{{t.cells}}" as="c" hint-placeholder-count="14"><span style="{{c.style}}"></span></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: #5A6B6E"><span>Σήμερα</span><span>{{t.stripEnd}}</span></div>
+</div>
+<div style="margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; gap: 8px">
 <sc-if value="{{t.hasAction}}" hint-placeholder-val="{{false}}">
 <button type="button" onClick="{{t.doAction}}" style="{{t.actionStyle}}">{{t.action}}</button>
 </sc-if>
+<button type="button" onClick="{{t.openRoom}}" aria-pressed="{{t.roomPressed}}" style="{{t.roomBtnStyle}}">Λεπτομέρειες</button>
+</div>
 </article>
 </sc-for>
 </div>
@@ -778,6 +787,106 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="font-size: 12px; color: #4A5B5E">Τα στοιχεία σβήνονται αυτόματα [χρόνια] μετά την τελευταία διαμονή, για τον GDPR.</div>
 </aside>
 </sc-if>
+
+<sc-if value="{{hasRoom}}" hint-placeholder-val="{{false}}">
+<aside aria-label="Λεπτομέρειες δωματίου" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div>
+<span style="{{room.pill}}">{{room.status}}</span>
+<h2 style="margin: 8px 0 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">{{room.name}}</h2>
+<div style="font-size: 13px; color: #4A5B5E">{{room.capText}}</div>
+</div>
+<button type="button" onClick="{{room.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+</div>
+
+<div style="background: #F4F7F7; border-radius: 14px; padding: 12px 14px">
+<div style="font-size: 12px; color: #4A5B5E">Τώρα</div>
+<sc-if value="{{room.nowHasLink}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{room.nowOpen}}" style="min-height: 30px; padding: 0; border: 0; background: transparent; color: #18282B; font-size: 15px; font-weight: 600; text-align: left; text-decoration: underline; text-decoration-color: #A7B4B6; text-underline-offset: 3px; cursor: pointer">{{room.nowTitle}}</button>
+</sc-if>
+<sc-if value="{{room.nowNoLink}}" hint-placeholder-val="{{false}}">
+<div style="min-height: 30px; display: flex; align-items: center; font-size: 15px; font-weight: 600">{{room.nowTitle}}</div>
+</sc-if>
+<div style="font-size: 13px; color: #4A5B5E">{{room.nowSub}}</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">{{room.occLabel}}</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{room.occText}}</div></div>
+<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">{{room.revLabel}}</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{room.revText}}</div></div>
+</div>
+
+<div>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Επόμενες 14 μέρες</h3>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{room.days}}" as="d" hint-placeholder-count="14">
+<button type="button" onClick="{{d.click}}" aria-label="{{d.aria}}" title="{{d.aria}}" style="{{d.style}}"><span style="font-size: 10px; opacity: 0.85">{{d.dow}}</span><span style="font-size: 14px; font-weight: 600">{{d.num}}</span></button>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 12px; color: #4A5B5E">
+<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #0F5257"></span>Σάιτ / απευθείας</span>
+<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #8DB3E2"></span>Booking</span>
+<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #B3261E"></span>Κλειστό</span>
+<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 3px; border: 1px solid #A7B4B6; background: #FFFFFF"></span>Ελεύθερο</span>
+</div>
+<div style="font-size: 12px; color: #4A5B5E; margin-top: 6px">Πάτα ελεύθερη μέρα για να την κλείσεις, κόκκινη για να ανοίξει.</div>
+</div>
+
+<div>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Επόμενες κρατήσεις</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{room.upcoming}}" as="b" hint-placeholder-count="3">
+<button type="button" onClick="{{b.open}}" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; border-radius: 12px; border: 1px solid #E3EAEB; background: #FFFFFF; color: #18282B; font-size: 14px; text-align: left; cursor: pointer">
+<span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{b.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{b.when}}</span></span>
+<span style="{{b.srcStyle}}">{{b.src}}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{room.noUpcoming}}" hint-placeholder-val="{{false}}">
+<div style="font-size: 13px; color: #4A5B5E">Καμία κράτηση από σήμερα και μετά.</div>
+</sc-if>
+</div>
+
+<sc-if value="{{room.hasShut}}" hint-placeholder-val="{{true}}">
+<div>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Κλειστές μέρες</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{room.shut}}" as="sh" hint-placeholder-count="1">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 48px; padding: 6px 6px 6px 12px; border-radius: 12px; background: #FCEBEA">
+<span><span style="display: block; font-weight: 600; color: #7A1B14">{{sh.when}}</span><span style="display: block; font-size: 12px; color: #7A1B14">{{sh.nights}}</span></span>
+<button type="button" onClick="{{sh.reopen}}" style="flex-shrink: 0; min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D9A39E; background: #FFFFFF; color: #7A1B14; font-size: 12px; font-weight: 600; cursor: pointer">Άνοιγμα</button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<div>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Ιστορικό</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{room.history}}" as="h" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #EEF2F2">
+<span style="min-width: 0"><span style="display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{h.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{h.when}}</span></span>
+<span style="flex-shrink: 0; text-align: right"><span style="display: block; font-weight: 500">{{h.money}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{h.src}}</span></span>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{room.noHistory}}" hint-placeholder-val="{{false}}">
+<div style="font-size: 13px; color: #4A5B5E">Δεν υπάρχουν ακόμα παλιές διαμονές.</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-if value="{{room.canCloseTonight}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{room.closeTonight}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Κλείσιμο απόψε</button>
+</sc-if>
+<sc-if value="{{room.canOpenTonight}}" hint-placeholder-val="{{false}}">
+<button type="button" onClick="{{room.openTonight}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Άνοιγμα από απόψε</button>
+</sc-if>
+<button type="button" onClick="{{room.newBooking}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #0F5257; background: #FFFFFF; color: #0F5257; font-size: 14px; font-weight: 600; cursor: pointer">Νέα κράτηση</button>
+<button type="button" onClick="{{room.toCal}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Στο ημερολόγιο</button>
+</div>
+</aside>
+</sc-if>
 </div>
 
 <sc-if value="{{qdel.open}}" hint-placeholder-val="{{false}}">
@@ -921,7 +1030,7 @@ class Component extends DCLogic {
     this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
-      tab: 'today', detail: null, req: null, customer: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
+      tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', thread: 't1', msgDraft: '',
       syncAgo: 'πριν 6 λεπτά', cleaned: {},
       threads: [
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
@@ -1279,12 +1388,12 @@ class Component extends DCLogic {
     return cur ? cur.bid : null;
   }
   go(tab) {
-    this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, sel: null, calSel: null, calEdit: false, newOpen: false });
+    this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, room: null, sel: null, calSel: null, calEdit: false, newOpen: false });
   }
 
   openNew(pre) {
     const base = { kind: 'paid', type: 'room', name: '', phone: '', email: '', start: this.TODAY, end: this.add(this.TODAY, 2), guests: '2', unit: '', amount: '', pay: 'cash', note: '', error: '' };
-    this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, req: null, calSel: null, calEdit: false });
+    this.setState({ newOpen: true, nb: Object.assign(base, pre || {}), detail: null, customer: null, room: null, req: null, calSel: null, calEdit: false });
   }
   /* What these nights cost at the normal price; null when a night has no price (out of season) */
   normalPrice(type, start, nights, guests) {
@@ -1322,8 +1431,9 @@ class Component extends DCLogic {
     a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
   }
-  open(id) { this.setState({ detail: id, customer: null, newOpen: false }); }
-  openGuest(name) { this.setState({ customer: name, detail: null, newOpen: false }); }
+  open(id) { this.setState({ detail: id, customer: null, room: null, newOpen: false }); }
+  openGuest(name) { this.setState({ customer: name, detail: null, room: null, newOpen: false }); }
+  openRoom(id) { this.setState({ room: this.state.room === id ? null : id, detail: null, customer: null, newOpen: false }); }
   openReq(id) { this.setState({ tab: 'today', req: id, detail: null, newOpen: false }); }
   /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
      the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
@@ -1353,6 +1463,7 @@ class Component extends DCLogic {
     }, () => { this.say('Δεν αποθηκεύτηκε, έλεγξε τη σύνδεση και δοκίμασε ξανά.'); if (this.reload) this.reload(); });
   }
   block(unit, date) { this.setBlocks([unit + '|' + date], []); }
+  unblockDay(unit, date) { this.setBlocks([], [unit + '|' + date]); }
   unblockFrom(unit, date) {
     const keys = [];
     let d = date;
@@ -1465,7 +1576,7 @@ class Component extends DCLogic {
       free: { label: 'Ελεύθερο', pill: pillBase + 'background: #EEF3F4; color: #3E4656', card: 'background: #FFFFFF; border: 1px dashed #A7B4B6' },
       shut: { label: 'Κλειστό', pill: pillBase + 'background: #4A4F5C; color: #FFFFFF', card: 'background: #ECEAE5; border: 1px solid #DAD6CE' }
     };
-    const actBase = 'margin-top: 12px; min-height: 40px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;';
+    const actBase = 'min-height: 40px; padding: 0 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;';
     let occupied = 0, arrivals = 0, departures = 0;
     const tiles = this.UNITS.map(u => {
       const cur = confirmed.find(b => b.unit === u.id && b.start <= T && T < this.endOf(b));
@@ -1487,17 +1598,24 @@ class Component extends DCLogic {
         action = done ? 'Καθαρίστηκε' : 'Θέλει καθάρισμα';
         actionStyle = actBase + (done ? 'border: 1px solid #2F6B4F; background: #E1EFE7; color: #1F5039' : 'border: 1px solid #D9B86A; background: #FFFFFF; color: #7A4708');
         doAction = () => this.setState({ cleaned: Object.assign({}, s.cleaned, { [dep.id]: !done }) });
-      } else if (st === 'free') {
-        action = 'Κλείσιμο απόψε';
-        actionStyle = actBase + 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448';
-        doAction = () => { this.block(u.id, T); this.say(u.name + ' κλειστό απόψε' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); };
-      } else if (st === 'shut') {
-        action = 'Άνοιγμα';
-        actionStyle = actBase + 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448';
-        doAction = () => { this.unblockFrom(u.id, T); this.say(u.name + ' άνοιξε ξανά.'); };
       }
+      /* 14-day strip */
+      let nBooked = 0, nShut = 0;
+      const cells = [];
+      for (let i = 0; i < 14; i++) {
+        const o = this.occ(u.id, this.add(T, i));
+        let c = '#DCE5E6';
+        if (o === 'block') { c = '#B3261E'; nShut++; }
+        else if (o) { c = o.source === 'booking' ? '#8DB3E2' : '#0F5257'; nBooked++; }
+        cells.push({ style: 'flex: 1 1 0; height: ' + (i === 0 ? 12 : 8) + 'px; align-self: flex-end; border-radius: 2px; background: ' + c });
+      }
+      const roomOn = s.room === u.id;
       return {
-        st: st,
+        st: st, id: u.id,
+        cells: cells, stripEnd: this.fmt(this.add(T, 13)),
+        stripLabel: 'Επόμενες 14 μέρες: ' + nBooked + ' με κράτηση, ' + nShut + ' κλειστές, ' + (14 - nBooked - nShut) + ' ελεύθερες',
+        openRoom: () => this.openRoom(u.id), roomPressed: roomOn ? 'true' : 'false',
+        roomBtnStyle: actBase + (roomOn ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         unit: u.name, status: ST[st].label, pill: ST[st].pill,
         card: 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column;' + ST[st].card,
         guest: guest, sub: sub, hasLink: !!linkTo, noLink: !linkTo,
@@ -1505,6 +1623,101 @@ class Component extends DCLogic {
         action: action, actionStyle: actionStyle, hasAction: !!action, doAction: doAction
       };
     });
+
+    /* Room panel */
+    const srcOf = b => b.source === 'booking' ? 'Booking' : (b.kind === 'free' ? 'Δωρεάν' : (b.kind === 'test' ? 'Δοκιμή' : (b.source === 'site' ? 'Σάιτ' : 'Απευθείας')));
+    let room = { close: () => {}, newBooking: () => {}, nowOpen: () => {}, closeTonight: () => {}, openTonight: () => {}, toCal: () => {}, days: [], upcoming: [], shut: [], history: [] };
+    let hasRoom = false;
+    const ru = s.room ? this.UNITS.find(x => x.id === s.room) : null;
+    if (ru) {
+      hasRoom = true;
+      const tile = tiles.find(x => x.id === ru.id);
+      const closedMsg = auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.';
+      const DOWF = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
+      const dayBase = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 48px; padding: 0; border-radius: 10px; cursor: pointer; font-family: inherit; line-height: 1.1;';
+      const days = [];
+      for (let i = 0; i < 14; i++) {
+        const x = this.add(T, i);
+        const d = this.dt(x);
+        const o = this.occ(ru.id, x);
+        const label = DOWF[d.getUTCDay()] + ' ' + this.fmt(x);
+        let style, aria, click;
+        if (o === 'block') {
+          style = dayBase + 'border: 1px solid #B3261E; background: #B3261E; color: #FFFFFF';
+          aria = label + ', κλειστό. Πάτα για άνοιγμα.';
+          click = () => { this.unblockDay(ru.id, x); this.say(ru.name + ': άνοιξε η ' + this.fmt(x) + '.'); };
+        } else if (o) {
+          style = dayBase + (o.source !== 'booking' ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #8DB3E2; background: #8DB3E2; color: #0A2540');
+          aria = label + ', ' + o.name + '. Πάτα για την κράτηση.';
+          click = () => this.open(o.id);
+        } else {
+          style = dayBase + 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B';
+          aria = label + ', ελεύθερο. Πάτα για κλείσιμο.';
+          click = () => { this.block(ru.id, x); this.say(ru.name + ' κλειστό ' + this.fmt(x) + closedMsg); };
+        }
+        if (i === 0) style += '; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #18282B';
+        days.push({ dow: i === 0 ? 'Σήμ' : this.DAY[d.getUTCDay()], num: String(d.getUTCDate()), style: style, aria: aria, click: click });
+      }
+      const mine = confirmed.filter(b => b.unit === ru.id && b.kind !== 'test');
+      const upcoming = mine.filter(b => this.endOf(b) > T).sort((a, b) => a.start < b.start ? -1 : 1).slice(0, 5).map(b => ({
+        name: b.name,
+        when: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + this.money(b.total),
+        src: srcOf(b),
+        srcStyle: 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 10px;' + (b.source !== 'booking' ? 'background: #DCEBEA; color: #0F5257' : 'background: #DCE5F3; color: #1E3A5F'),
+        open: () => this.open(b.id)
+      }));
+      const shutDates = Object.keys(s.blocks).filter(k => s.blocks[k] && k.split('|')[0] === ru.id).map(k => k.split('|')[1]).filter(x => x >= T).sort();
+      const shut = [];
+      shutDates.forEach(x => {
+        const last = shut[shut.length - 1];
+        if (last && this.add(last.to, 1) === x) last.to = x; else shut.push({ from: x, to: x });
+      });
+      const shutRows = shut.map(r => {
+        let n = 1, x = r.from;
+        while (x !== r.to) { x = this.add(x, 1); n++; }
+        return {
+          when: r.from === r.to ? this.fmt(r.from) : this.range(r.from, r.to),
+          nights: n + (n === 1 ? ' νύχτα' : ' νύχτες'),
+          reopen: () => {
+            const nb = Object.assign({}, this.state.blocks);
+            let y = r.from;
+            for (let i = 0; i < n; i++) { delete nb[ru.id + '|' + y]; y = this.add(y, 1); }
+            this.setState({ blocks: nb });
+            this.say(ru.name + ' άνοιξε ξανά για ' + (n === 1 ? 'τη ' + this.fmt(r.from) : (n + ' νύχτες')) + '.');
+          }
+        };
+      });
+      const hist = mine.filter(b => this.endOf(b) <= T).map(b => ({ key: b.start, name: b.name, when: this.range(b.start, this.endOf(b)) + ' ' + b.start.slice(0, 4) + ' · ' + b.nights + ' νύχτες', money: this.money(b.total), src: srcOf(b) }))
+        .concat(this.PAST.filter(p => p.unit === ru.name).map(p => ({ key: p.date, name: p.name, when: p.when + ' · ' + p.nights + ' νύχτες', money: this.money(p.total), src: p.source === 'site' ? 'Σάιτ' : 'Booking' })))
+        .sort((a, b) => b.key.localeCompare(a.key)).slice(0, 3);
+      /* This month */
+      const mKey = T.slice(0, 7);
+      const mIdx = Number(mKey.slice(5, 7)) - 1;
+      let x = mKey + '-01', mDays = 0, mBooked = 0, mRev = 0;
+      while (x.slice(0, 7) === mKey) {
+        const o = this.occ(ru.id, x);
+        if (o && o !== 'block' && o.kind !== 'test') { mBooked++; mRev += (o.total || 0) / o.nights; }
+        mDays++; x = this.add(x, 1);
+      }
+      const tonight = this.occ(ru.id, T);
+      room = {
+        name: ru.name, status: tile.status, pill: tile.pill,
+        capText: (ru.id === 'apt' ? 'Ξεχωριστό διαμέρισμα' : 'Δωμάτιο') + ' · ως ' + ru.cap + ' άτομα',
+        nowTitle: tile.guest, nowSub: tile.sub, nowHasLink: tile.hasLink, nowNoLink: tile.noLink, nowOpen: tile.openGuest,
+        occLabel: 'Νύχτες ' + this.MONG[mIdx], occText: mBooked + ' / ' + mDays,
+        revLabel: 'Έσοδα ' + this.MONG[mIdx], revText: this.money(mRev),
+        days: days,
+        upcoming: upcoming, noUpcoming: upcoming.length === 0,
+        shut: shutRows, hasShut: shutRows.length > 0,
+        history: hist, noHistory: hist.length === 0,
+        canCloseTonight: !tonight, canOpenTonight: tonight === 'block',
+        closeTonight: () => { this.block(ru.id, T); this.say(ru.name + ' κλειστό απόψε' + closedMsg); },
+        openTonight: () => { this.unblockFrom(ru.id, T); this.say(ru.name + ' άνοιξε ξανά.'); },
+        newBooking: () => { let st = T; while (!this.isFree(ru.id, st, 2) && st < this.add(T, 365)) st = this.add(st, 1); this.openNew({ type: ru.id === 'apt' ? 'apt' : 'room', unit: ru.id, start: st, end: this.add(st, 2), guests: String(Math.min(2, ru.cap)) }); },
+        toCal: () => this.setState({ tab: 'cal', calStart: this.add(T, -2), room: null, detail: null, customer: null }),
+        close: () => this.setState({ room: null })
+      };
+    }
 
     const tf = s.tileFilter || null;
     const shownTiles = tf ? tiles.filter(x => x.st === tf) : tiles;
@@ -2469,7 +2682,8 @@ class Component extends DCLogic {
         this.csv(rows, 'logistis-' + T.slice(0, 7) + '.csv');
         this.say('Κατέβηκε το αρχείο του ' + this.MONG[+T.slice(5, 7) - 1] + ' ' + T.slice(0, 4) + ' με ' + paid.length + ' κρατήσεις με πληρωμή.' + (left ? ' ' + left + (left === 1 ? ' δωρεάν ή δοκιμή δεν μπήκε' : ' δωρεάν ή δοκιμές δεν μπήκαν') + ', γιατί δεν υπάρχουν χρήματα.' : ''));
       },
-      detail: detail, hasDetail: hasDetail
+      detail: detail, hasDetail: hasDetail,
+      room: room, hasRoom: hasRoom
     });
   }
 }
