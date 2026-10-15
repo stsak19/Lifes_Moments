@@ -206,7 +206,7 @@ class Doc {
   }
 }
 
-function page(lang: string, o: { title: string; preheader: string; eyebrow: string; h1: string[]; sub?: string; body: string; footer: string }): string {
+function page(lang: string, o: { title: string; preheader: string; eyebrow: string; h1: string[]; sub?: string; body: string; footer: string; small?: boolean }): string {
   return `<!doctype html>
 <html lang="${lang}" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -239,9 +239,9 @@ function page(lang: string, o: { title: string; preheader: string; eyebrow: stri
     <div style="font-family:${SERIF};font-size:28px;line-height:32px;font-weight:600;color:${C.brand};letter-spacing:0.5px;">Life&#8217;s Moments</div>
     <div style="font-family:${SANS};font-size:11px;letter-spacing:4px;color:${C.mute};padding-top:6px;">${lang === 'en' ? 'THASOS' : 'ΘΑΣΟΣ'}</div>
   </td></tr>
-${o.h1.length ? `  <tr><td align="center" class="px" style="padding:56px 32px 52px 32px;background-color:${C.brand};background-image:linear-gradient(160deg,#4a8fd6 0%,${C.brand} 55%,${C.deep} 100%);">
-    <div style="font-family:${SANS};font-size:12px;letter-spacing:3px;color:#cfe3f7;padding-bottom:14px;">${esc(o.eyebrow)}</div>
-    <div class="h1" style="font-family:${SERIF};font-size:38px;line-height:44px;font-weight:500;color:#ffffff;">${o.h1.map(esc).join('<br>')}</div>
+${o.h1.length ? `  <tr><td align="center" class="px" style="padding:${o.small ? '30px 32px 30px 32px' : '56px 32px 52px 32px'};background-color:${C.brand};background-image:linear-gradient(160deg,#4a8fd6 0%,${C.brand} 55%,${C.deep} 100%);">
+    <div style="font-family:${SANS};font-size:12px;letter-spacing:3px;color:#cfe3f7;padding-bottom:${o.small ? 8 : 14}px;">${esc(o.eyebrow)}</div>
+    <div class="${o.small ? '' : 'h1'}" style="font-family:${SERIF};font-size:${o.small ? '26px' : '38px'};line-height:${o.small ? '32px' : '44px'};font-weight:500;color:#ffffff;">${o.h1.map(esc).join('<br>')}</div>
     ${o.sub ? `<div style="font-family:${SANS};font-size:15px;line-height:24px;color:#e3effb;padding-top:16px;">${esc(o.sub)}</div>` : ''}
   </td></tr>` : `<tr><td style="padding:0 40px;"><div style="border-top:1px solid ${C.line2};font-size:0;line-height:0;">&nbsp;</div></td></tr>`}
 ${o.body}
@@ -260,9 +260,9 @@ function footerFor(d: Doc, g?: Guest): { html: string; text: string } {
   const l2 = ref ? d.tr(`Αυτό το μήνυμα στάλθηκε αυτόματα για την κράτηση ${ref}.`, `This message was sent automatically for booking ${ref}.`) : d.tr('Αυτό το μήνυμα στάλθηκε αυτόματα.', 'This message was sent automatically.');
   return { html: l1 + '<br>' + esc(l2), text: `\n--\nLife’s Moments${addr ? ' · ' + addr : ''}\n${l2}` };
 }
-function finish(d: Doc, o: { subject: string; title: string; preheader: string; eyebrow: string; h1: string[]; sub?: string; footerHtml?: string; footerText?: string }, g?: Guest): Mail {
+function finish(d: Doc, o: { subject: string; title: string; preheader: string; eyebrow: string; h1: string[]; sub?: string; footerHtml?: string; footerText?: string; small?: boolean }, g?: Guest): Mail {
   const f = footerFor(d, g);
-  const html = page(d.lang, { title: o.title, preheader: o.preheader, eyebrow: o.eyebrow, h1: o.h1, sub: o.sub, body: d.h.join('\n'), footer: o.footerHtml ?? f.html });
+  const html = page(d.lang, { title: o.title, preheader: o.preheader, eyebrow: o.eyebrow, h1: o.h1, sub: o.sub, body: d.h.join('\n'), footer: o.footerHtml ?? f.html, small: o.small });
   const text = d.t.join('\n\n').replace(/\n{3,}/g, '\n\n').trim() + (o.footerText ?? f.text);
   return { subject: o.subject, html, text };
 }
@@ -524,17 +524,30 @@ export function buildMessageMail(g: Guest, body: string, s: Settings): Mail {
   const text = String(body ?? '').replace(/\r/g, '').trim();
   const ref = refText(g);
   const subject = tr('Μήνυμα για την κράτησή σου – Life’s Moments', 'A message about your booking – Life’s Moments');
-  const stay = [ref, fmtShort(g.check_in, lang) + ' – ' + fmtShort(g.check_out, lang), unitName(g, lang)].filter(Boolean).join(' · ');
+  const nights = nightsOf(g.check_in, g.check_out);
+  const facts = [unitName(g, lang), nights + ' ' + (nights === 1 ? tr('νύχτα', 'night') : tr('νύχτες', 'nights'))].join(' · ');
 
   d.raw(
-    `<tr><td class="px" style="padding:32px 40px 0 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${tr('Γεια σου', 'Hello')} <strong>${esc(firstName(g.name))}</strong>,</td></tr>` +
-    `<tr><td class="px" style="padding:12px 40px 0 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${nl(text)}</td></tr>`,
-    `${tr('Γεια σου', 'Hello')} ${firstName(g.name)},\n\n${text}`
+    `<tr><td class="px" style="padding:32px 40px 0 40px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${tr('Γεια σου', 'Hello')} <strong>${esc(firstName(g.name))}</strong>,</td></tr>`,
+    `${tr('Γεια σου', 'Hello')} ${firstName(g.name)},`
   );
   d.raw(
-    `<tr><td class="px" style="padding:24px 40px 32px 40px;font-family:${SANS};font-size:15px;line-height:24px;color:${C.body};">${esc(tr('Με εκτίμηση,', 'Kind regards,'))}<br><strong style="color:${C.ink};">${esc(tr('η ομάδα του Life’s Moments', 'the Life’s Moments team'))}</strong></td></tr>`,
-    `${tr('Με εκτίμηση,', 'Kind regards,')}\n${tr('η ομάδα του Life’s Moments', 'the Life’s Moments team')}`
+    `<tr><td class="px" style="padding:16px 40px 0 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border-radius:12px;"><tr>` +
+    `<td width="4" bgcolor="${C.brand}" style="width:4px;background:${C.brand};border-radius:12px 0 0 12px;font-size:0;line-height:0;">&nbsp;</td>` +
+    `<td style="padding:20px 22px;font-family:${SANS};font-size:16px;line-height:26px;color:${C.ink};">${nl(text)}</td>` +
+    `</tr></table></td></tr>`,
+    text
   );
+  d.raw(
+    `<tr><td class="px" style="padding:20px 40px 0 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${C.line};border-radius:12px;"><tr><td style="padding:14px 18px;">` +
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="font-family:${SANS};font-size:11px;letter-spacing:2px;color:${C.mute};">${esc(tr('Η ΚΡΑΤΗΣΗ ΣΟΥ', 'YOUR BOOKING'))}</td>` +
+    (ref ? `<td align="right" style="font-family:${SANS};font-size:12px;color:${C.brand};font-weight:600;">${esc(ref)}</td>` : '') + `</tr></table>` +
+    `<div style="font-family:${SERIF};font-size:18px;line-height:24px;color:${C.deep};font-weight:600;padding-top:6px;">${esc(fmtShort(g.check_in, lang))} <span style="color:#9bb8d6;font-weight:400;">&rarr;</span> ${esc(fmtShort(g.check_out, lang))}</div>` +
+    `<div style="font-family:${SANS};font-size:13px;line-height:20px;color:${C.body};padding-top:2px;">${esc(facts)}</div>` +
+    `</td></tr></table></td></tr>`,
+    `${tr('Η κράτησή σου', 'Your booking')}${ref ? ' ' + ref : ''}: ${fmtDay(g.check_in, lang)} – ${fmtDay(g.check_out, lang)} · ${facts}`
+  );
+  d.signoff(tr('Ήσυχα, δίπλα στη θάλασσα.', 'Quiet, by the sea.'), tr('Με εκτίμηση,', 'Kind regards,'));
 
   const addr = oneLine(s.address);
   const short = text.replace(/\s+/g, ' ');
@@ -542,9 +555,10 @@ export function buildMessageMail(g: Guest, body: string, s: Settings): Mail {
     subject,
     title: subject,
     preheader: short.length > 110 ? short.slice(0, 107) + '…' : short,
-    eyebrow: '',
-    h1: [],
-    footerHtml: `${esc(tr('Για την κράτησή σου', 'About your booking'))} · ${esc(stay)}<br>Life&#8217;s Moments${addr ? ' · ' + esc(addr) : ''}`,
-    footerText: `\n--\n${tr('Για την κράτησή σου', 'About your booking')}: ${stay}\nLife’s Moments${addr ? ' · ' + addr : ''}`
+    eyebrow: tr('ΝΕΟ ΜΗΝΥΜΑ', 'NEW MESSAGE'),
+    h1: [tr('Ένα μήνυμα για σένα', 'A message for you')],
+    small: true,
+    footerHtml: `Life&#8217;s Moments${addr ? ' · ' + esc(addr) : ''}`,
+    footerText: `\n--\nLife’s Moments${addr ? ' · ' + addr : ''}`
   }, g);
 }
