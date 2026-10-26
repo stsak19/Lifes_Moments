@@ -2506,7 +2506,6 @@ html.gs-lock { overflow: hidden; }
             '<p class="jline jin">' + esc(j.line[l]) + '</p>' +
             '<ol class="jsteps"><i class="jfill" aria-hidden="true"></i>' + steps + '</ol>' +
             (j.tip ? '<blockquote class="jq jin"><span>' + esc(t('jrn.tip')) + '</span>' + esc(j.tip[l]) + '</blockquote>' : '') +
-            '<button type="button" class="jgo jin" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + ' ' + arrow + '</button>' +
           '</div></article>';
       }).join('');
       const tabs = $('#jTabs');
