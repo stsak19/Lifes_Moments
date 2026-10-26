@@ -872,6 +872,19 @@ html .intro .cap.hcenter { pointer-events: none; }
 /* no line beside the days */
 .jsteps { border-left: 0; }
 .jsteps::before, .jfill { display: none; }
+
+/* ---------- Journeys in one place: pick a stay above, only that one shows ---------- */
+.jtabs { display: flex; gap: 10px; margin: 0 0 44px; overflow-x: auto; scrollbar-width: none; scroll-margin-top: 90px; }
+.jtabs::-webkit-scrollbar { display: none; }
+.jtab { flex: 1 1 0; min-width: 150px; text-align: left; padding: 14px 18px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: transparent; color: var(--muted); font: 400 19px/1.2 var(--font-display); cursor: pointer; transition: background-color .35s ease, color .35s ease, border-color .35s ease, transform .35s ease; }
+.jtab small { display: block; margin-bottom: 6px; font: 500 10.5px/1 system-ui, -apple-system, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+.jtab:hover { color: var(--ink); border-color: var(--accent); }
+.jtab.on { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.jtab.on small { color: rgba(255, 255, 255, .78); }
+.jrow:not(.act) { display: none !important; }
+.jrow.act .jtx { animation: jswap .7s cubic-bezier(.2, .7, .2, 1); }
+@keyframes jswap { from { opacity: 0; transform: translateY(18px); } }
+@media (max-width: 760px) { .jtabs { margin: 0 -16px 28px; padding: 0 16px; } .jtab { min-width: 62vw; font-size: 17px; } }
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -1571,6 +1584,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
 
     <div class="wrap">
+      <div class="jtabs" id="jTabs" role="tablist" aria-label="Journeys"></div>
       <div class="jlist" id="jList"></div>
       <div class="jcta" data-reveal>
         <p data-i18n="jrn.ctaText">Every journey starts on the same terrace, by the sea.</p>
@@ -2424,7 +2438,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             }).join('')
           : j.ideas.map((d) => '<li data-shot="0"><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
         const imgs = shots.map((sh, k) => '<img class="jshot' + (k ? '' : ' on') + '" src="' + sh[0] + '" alt="' + esc(sh[2]) + '" loading="lazy" decoding="async" data-credit="' + esc(sh[1]) + '" data-place="' + esc(sh[2]) + '">').join('');
-        return '<article class="jrow" style="--n:' + shots.length + '">' +
+        return '<article class="jrow' + (i === cur ? ' act' : '') + '" role="tabpanel" style="--n:' + shots.length + '">' +
           '<figure class="jph"><div class="jstack">' + imgs + '</div>' +
             '<div class="jph-cap"><span class="jph-num">01 / ' + pad(shots.length) + '</span><span class="jph-place">' + esc(j.name[l]) + '</span></div>' +
             '<figcaption>' + esc(j.credit || '') + '</figcaption></figure>' +
@@ -2438,8 +2452,24 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
             '<button type="button" class="jgo jin" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + ' ' + arrow + '</button>' +
           '</div></article>';
       }).join('');
+      const tabs = $('#jTabs');
+      if (tabs) tabs.innerHTML = JOURNEYS.map((j, i) =>
+        '<button type="button" role="tab" class="jtab' + (i === cur ? ' on' : '') + '" aria-selected="' + (i === cur) + '" data-jtab="' + i + '">' +
+          '<small>' + esc(j.nights ? t('jrn.nights', { n: j.nights }) : t('jrn.own')) + '</small>' + esc(j.name[l]) + '</button>').join('');
       wire();
     }
+    let cur = 0;
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-jtab]'); if (!b) return;
+      const k = +b.dataset.jtab; if (k === cur) return;
+      cur = k;
+      $$('.jtab').forEach((x, n) => { x.classList.toggle('on', n === k); x.setAttribute('aria-selected', String(n === k)); });
+      $$('.jrow', listEl).forEach((r, n) => { r.classList.toggle('act', n === k); r.classList.remove('seen'); });
+      const row = $$('.jrow', listEl)[k];
+      requestAnimationFrame(() => requestAnimationFrame(() => { row.classList.add('seen'); fill(); if (lenis && lenis.resize) lenis.resize(); }));
+      const top = $('#jTabs').getBoundingClientRect().top;
+      if (top < 0) goTo('#jTabs');
+    });
 
     /* Motion: rows reveal as they arrive, the photo changes to the day being read,
        and the line beside the days fills as the guest scrolls. */
