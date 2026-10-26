@@ -805,6 +805,55 @@ html .intro .cap.hcenter { pointer-events: none; }
   .jtx { padding-top: 0; }
   .jgo { width: 100%; justify-content: center; }
 }
+
+/* ---------- Journeys v5: motion ----------
+   The photo opens like a curtain when the row arrives, then crossfades to each day's place
+   with a slow zoom; a big place name sits on the photo; the line beside the days fills as you scroll. */
+.jph { overflow: hidden; clip-path: inset(14% 10% 14% 10% round var(--r-img)); transition: clip-path 1.4s cubic-bezier(.7, 0, .2, 1); }
+.jrow.seen .jph { clip-path: inset(0 0 0 0 round var(--r-img)); }
+.jstack { position: absolute; inset: -6% 0; transform: translateY(calc(var(--py, 0) * -6%)); will-change: transform; }
+.jshot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.18);
+  transition: opacity 1.1s ease, transform 1.6s cubic-bezier(.2, .7, .2, 1); }
+.jshot.on { opacity: 1; transform: scale(1.04); animation: jkb 14s ease-out .4s forwards; }
+@keyframes jkb { to { transform: scale(1.12); } }
+.jrow:hover .jph img { transform: none; }
+.jrow:hover .jph .jshot.on { transform: scale(1.04); }
+.jph::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(6, 10, 18, .62), rgba(6, 10, 18, 0) 42%); }
+.jph-cap { position: absolute; left: clamp(18px, 2.4vw, 32px); right: 18px; bottom: clamp(18px, 2.4vw, 30px); z-index: 2; color: #F8F4EC; }
+.jph-num { display: block; margin-bottom: 8px; font-size: 11px; letter-spacing: .3em; opacity: .85; }
+.jph-place { display: block; font: 400 clamp(30px, 3.4vw, 54px)/1 var(--font-display); letter-spacing: -.01em; text-shadow: 0 2px 24px rgba(0, 0, 0, .35); }
+.jph-cap.swap .jph-place { animation: jcap .9s cubic-bezier(.2, .7, .2, 1); }
+.jph-cap.swap .jph-num { animation: jcap .9s .05s cubic-bezier(.2, .7, .2, 1) backwards; }
+@keyframes jcap { from { opacity: 0; transform: translateY(18px); filter: blur(6px); } }
+.jph figcaption { z-index: 2; }
+
+/* text arrives in a soft stagger */
+.jtx .jin, .jsteps li { opacity: 0; transform: translateY(26px); transition: opacity .9s ease, transform 1s cubic-bezier(.2, .7, .2, 1); }
+.jrow.seen .jtx .jin, .jrow.seen .jsteps li { opacity: 1; transform: none; }
+.jrow.seen .jmeta { transition-delay: .25s; } .jrow.seen h3 { transition-delay: .35s; } .jrow.seen .jlede { transition-delay: .48s; }
+.jrow.seen .jline { transition-delay: .6s; } .jrow.seen .jsteps li { transition-delay: .7s; } .jrow.seen .jq, .jrow.seen .jgo { transition-delay: .8s; }
+.jtx h3 { background: linear-gradient(90deg, var(--ink) 50%, var(--accent-2)); -webkit-background-clip: text; background-clip: text; }
+
+/* the route: line fills with scroll, the day being read lights up */
+.jsteps { position: relative; border-left-color: transparent; }
+.jsteps::before, .jfill { content: ""; position: absolute; left: -1px; top: 4px; bottom: 4px; width: 1px; background: var(--line); }
+.jfill { background: var(--accent); transform-origin: top; transform: scaleY(var(--p, 0)); transition: transform .15s linear; }
+.jsteps li p { transition: color .5s ease; }
+.jsteps li::before { transition: background-color .4s ease, transform .5s cubic-bezier(.2, .7, .2, 1), box-shadow .5s ease; z-index: 1; }
+.jsteps li.now::before { background: var(--accent); transform: scale(1.5); box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent); }
+.jsteps li.now p { color: var(--ink); }
+.jsteps li.now .jsd { color: var(--accent); }
+.jsteps li { padding-bottom: 26px; }
+
+@media (max-width: 900px) {
+  .jph { position: sticky; top: 56px; z-index: 2; aspect-ratio: auto; height: 58vh; max-height: none; clip-path: inset(10% 6% 10% 6%); }
+  .jrow.seen .jph { clip-path: inset(0); }
+  .jph-place { font-size: 34px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jph, .jshot, .jtx .jin, .jsteps li { transition: none !important; animation: none !important; }
+  .jph { clip-path: none; } .jstack { transform: none; }
+}
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2257,6 +2306,21 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
      Each text is [English, Greek]. "Book" sets the nights; the guest only taps the arrival day. */
   (function journeys() {
     const PX = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + (w || 900);
+    const US = (id, w) => 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&q=72&w=' + (w || 1400);
+    // A photo for each place, so the big picture changes as the guest reads the days.
+    // [url, credit]. Free under the Pexels / Unsplash licences.
+    const PLACE = {
+      'Arrival': [US('photo-1576178962078-529b1d037634'), 'Razvan Alexandru · Unsplash'],
+      'Metalia & the Palataki': [PX(15511299, 1400), 'Radu Bradu · Pexels'],
+      'Kastro & Pefkari': [US('photo-1632326012734-e9d1dc64e1e4'), 'Alex Stavrică · Unsplash'],
+      'Giola & Archangel Michael': [US('photo-1722623853927-76deff057f8f'), 'Fadi Al Shami · Unsplash'],
+      'Alyki & Psili Ammos': [PX(14987668, 1400), 'Adelina Andreea · Pexels'],
+      'Theologos': [US('photo-1625742530460-7c9bf0d02a25'), 'Miriana Dorobanțu · Unsplash'],
+      'Limenas': [US('photo-1662065425034-a67a191d9e32'), 'Elias Tsapaliaris · Unsplash'],
+      'Golden Beach & Maries': [PX(10505160, 1400), 'Igor Ermurachi · Pexels'],
+      'A day off': ['../photos/balcony-sea.jpg', ''],
+      'Departure': [PX(39567764, 1400), 'Ricardo Oliveira · Pexels']
+    };
     const JOURNEYS = [
       { nights: 3, img: '../photos/terrace-dusk.jpg',
         name: ['Limenaria, slowly', 'Λιμενάρια, με την ησυχία σας'],
@@ -2270,7 +2334,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           [['Kastro & Pefkari', 'Κάστρο & Πευκάρι'], ['Up the mountain road to the stone village of Kastro; the afternoon under the pines at Pefkari.', 'Ο ορεινός δρόμος ως το πέτρινο Κάστρο· το απόγευμα κάτω από τα πεύκα στο Πευκάρι.']],
           [['Departure', 'Αναχώρηση'], ['One last coffee with the sea in front of you.', 'Ένας τελευταίος καφές με τη θάλασσα μπροστά σας.']]
         ] },
-      { nights: 5, img: PX(14987668), credit: 'Adelina Andreea · Pexels',
+      { nights: 5, img: US('photo-1722623853927-76deff057f8f'), credit: 'Fadi Al Shami · Unsplash',
         name: ['The south coast', 'Η νότια ακτή'],
         moment: ['Morning in the rock pool of Giola, before anyone else arrives.', 'Πρωινή βουτιά στη Γκιόλα, πριν φτάσει ο κόσμος.'],
         tip: ['Be at Giola before 10:00; by noon the rocks fill up.', 'Να είστε στη Γκιόλα πριν τις 10:00· το μεσημέρι γεμίζουν τα βράχια.'],
@@ -2284,7 +2348,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           [['Theologos', 'Θεολόγος'], ['Stone houses and cobbled lanes in the old capital; lunch in the village.', 'Πέτρινα σπίτια και καλντερίμια στην παλιά πρωτεύουσα· μεσημεριανό στο χωριό.']],
           [['Departure', 'Αναχώρηση'], ['Pine honey from the village for the road home.', 'Πευκόμελο από το χωριό για τον δρόμο της επιστροφής.']]
         ] },
-      { nights: 7, img: PX(28498153), credit: 'Artiom Petrachi · Pexels',
+      { nights: 7, img: US('photo-1662065425034-a67a191d9e32'), credit: 'Elias Tsapaliaris · Unsplash',
         name: ['The whole island', 'Όλο το νησί'],
         moment: ['Ancient Thasos in the morning, golden sand by afternoon.', 'Αρχαία Θάσος το πρωί, χρυσή άμμος το απόγευμα.'],
         tip: ['Stop in Theologos or Maries for pine honey straight from the beekeeper.', 'Σταματήστε στον Θεολόγο ή στις Μαριές για πευκόμελο κατευθείαν από τον μελισσοκόμο.'],
@@ -2329,28 +2393,78 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
       listEl.innerHTML = JOURNEYS.map((j, i) => {
         const label = j.nights ? t('jrn.nights', { n: j.nights }) : t('jrn.own');
-        // the route told as short lines: day, place, how far, one sentence
+        // the photos: the journey's cover first, then one per day (if that place has one)
+        const shots = [[j.img, j.credit || '', j.name[l]]];
         const steps = j.days
           ? j.days.map((d, n) => {
               const m = DRIVE[d[0][0]];
+              const ph = PLACE[d[0][0]];
+              let k = 0;
+              if (ph) { k = shots.length; shots.push([ph[0], ph[1], d[0][l]]); }
               const far = m === undefined ? '' : ' · ' + (m === 0 ? esc(t('jrn.walk')) : m + '′');
-              return '<li><span class="jsd">' + esc(t('jrn.day', { n: n + 1 })) + far + '</span><p><b>' + esc(d[0][l]) + '.</b> ' + esc(d[1][l]) + '</p></li>';
+              return '<li data-shot="' + k + '"><span class="jsd">' + esc(t('jrn.day', { n: n + 1 })) + far + '</span><p><b>' + esc(d[0][l]) + '.</b> ' + esc(d[1][l]) + '</p></li>';
             }).join('')
-          : j.ideas.map((d) => '<li><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
-        return '<article class="jrow">' +
-          '<figure class="jph"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
-            (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
+          : j.ideas.map((d) => '<li data-shot="0"><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
+        const imgs = shots.map((sh, k) => '<img class="jshot' + (k ? '' : ' on') + '" src="' + sh[0] + '" alt="' + esc(sh[2]) + '" loading="lazy" decoding="async" data-credit="' + esc(sh[1]) + '" data-place="' + esc(sh[2]) + '">').join('');
+        return '<article class="jrow" style="--n:' + shots.length + '">' +
+          '<figure class="jph"><div class="jstack">' + imgs + '</div>' +
+            '<div class="jph-cap"><span class="jph-num">01 / ' + pad(shots.length) + '</span><span class="jph-place">' + esc(j.name[l]) + '</span></div>' +
+            '<figcaption>' + esc(j.credit || '') + '</figcaption></figure>' +
           '<div class="jtx">' +
-            '<p class="jmeta"><span>' + esc(label) + '</span>' + (j.best ? '<span>' + esc(t('jrn.best')) + ' ' + esc(j.best[l]) + '</span>' : '') + '</p>' +
-            '<h3>' + esc(j.name[l]) + '</h3>' +
-            (j.moment ? '<p class="jlede">' + esc(j.moment[l]) + '</p>' : '') +
-            '<p class="jline">' + esc(j.line[l]) + '</p>' +
-            '<ol class="jsteps">' + steps + '</ol>' +
-            (j.tip ? '<blockquote class="jq"><span>' + esc(t('jrn.tip')) + '</span>' + esc(j.tip[l]) + '</blockquote>' : '') +
-            '<button type="button" class="jgo" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + ' ' + arrow + '</button>' +
+            '<p class="jmeta jin"><span>' + esc(label) + '</span>' + (j.best ? '<span>' + esc(t('jrn.best')) + ' ' + esc(j.best[l]) + '</span>' : '') + '</p>' +
+            '<h3 class="jin">' + esc(j.name[l]) + '</h3>' +
+            (j.moment ? '<p class="jlede jin">' + esc(j.moment[l]) + '</p>' : '') +
+            '<p class="jline jin">' + esc(j.line[l]) + '</p>' +
+            '<ol class="jsteps"><i class="jfill" aria-hidden="true"></i>' + steps + '</ol>' +
+            (j.tip ? '<blockquote class="jq jin"><span>' + esc(t('jrn.tip')) + '</span>' + esc(j.tip[l]) + '</blockquote>' : '') +
+            '<button type="button" class="jgo jin" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + ' ' + arrow + '</button>' +
           '</div></article>';
       }).join('');
+      wire();
     }
+
+    /* Motion: rows reveal as they arrive, the photo changes to the day being read,
+       and the line beside the days fills as the guest scrolls. */
+    let io1, io2;
+    function wire() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (io1) io1.disconnect(); if (io2) io2.disconnect();
+      io1 = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('seen'); io1.unobserve(e.target); } }), { threshold: 0.18 });
+      $$('.jrow', listEl).forEach((r) => reduce ? r.classList.add('seen') : io1.observe(r));
+      io2 = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const li = e.target, row = li.closest('.jrow');
+        $$('.jsteps li', row).forEach((x) => x.classList.toggle('now', x === li));
+        show(row, +li.dataset.shot);
+      }), { rootMargin: '-45% 0px -45% 0px' });
+      $$('.jsteps li', listEl).forEach((li) => io2.observe(li));
+    }
+    function show(row, k) {
+      const imgs = $$('.jshot', row), img = imgs[k] || imgs[0];
+      if (img.classList.contains('on')) return;
+      imgs.forEach((x) => x.classList.toggle('on', x === img));
+      const cap = row.querySelector('.jph-cap'), place = row.querySelector('.jph-place');
+      cap.classList.remove('swap'); void cap.offsetWidth; cap.classList.add('swap');
+      row.querySelector('.jph-num').textContent = pad(imgs.indexOf(img) + 1) + ' / ' + pad(imgs.length);
+      place.textContent = img.dataset.place;
+      row.querySelector('.jph figcaption').textContent = img.dataset.credit;
+    }
+    function fill() {
+      const vh = window.innerHeight;
+      $$('.jsteps', listEl).forEach((ol) => {
+        const r = ol.getBoundingClientRect();
+        const p = Math.min(1, Math.max(0, (vh * 0.55 - r.top) / r.height));
+        ol.style.setProperty('--p', p.toFixed(3));
+      });
+      $$('.jrow.seen', listEl).forEach((row) => {
+        const r = row.getBoundingClientRect();
+        const p = Math.min(1, Math.max(-1, (vh / 2 - (r.top + r.height / 2)) / vh));
+        row.style.setProperty('--py', p.toFixed(3));
+      });
+    }
+    let raf = 0;
+    window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; fill(); }); }, { passive: true });
+    window.addEventListener('resize', fill);
 
     // phones have no hover: a tap on the photo opens or closes the plan
     listEl.addEventListener('click', (e) => {
