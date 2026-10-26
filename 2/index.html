@@ -689,6 +689,19 @@ html .intro .cap.hcenter { pointer-events: none; }
 .jpop .jt b { display: inline; }
 .jpop .jt b::after { content: " · "; color: var(--muted); font-weight: 400; }
 
+/* ---------- hover v2: the photo slides aside and the plan appears in its place ----------
+   Only the places of each day (the bold lines), no extra details. */
+.jpop li { grid-template-columns: 52px 1fr; padding: 7px 0; font-size: 13.5px; align-items: baseline; }
+.jpop li b { font-weight: 500; color: var(--ink); }
+@media (hover: hover) and (min-width: 1001px) {
+  .jcard .jpop, .jcard.jleft .jpop { left: 0; right: 0; top: 0; width: auto; aspect-ratio: 4 / 5; z-index: 1; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; padding: 18px 20px; transform: none; box-shadow: none; background: var(--deep); border-color: transparent; }
+  .jcard .jfig { z-index: 2; transition: transform .7s cubic-bezier(.2, .7, .2, 1), box-shadow .7s ease; }
+  .jcard.hasplan:hover .jfig { transform: translateX(calc(100% + 22px)); box-shadow: 0 24px 50px -24px var(--shadow); }
+  .jcard.hasplan.jleft:hover .jfig { transform: translateX(calc(-100% - 22px)); }
+  .jcard:hover .jpop { transition-delay: .15s, .15s, 0s; }
+}
+
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2192,8 +2205,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         const stops = j.days ? j.days.slice(1, -1).map((d) => esc(d[0][l])).join(' · ') : esc(j.line[l]);
         // the day-by-day plan that shows next to the photo on hover (on phones: tap the photo)
         const pop = j.days ? '<div class="jpop" role="tooltip" id="jp' + i + '"><p class="jpop-h">' + esc(t('jrn.inN', { n: j.nights })) + '</p><ol>' +
-          j.days.map((d, n) => '<li><span class="jd">' + esc(t('jrn.day', { n: n + 1 })) + '</span><span class="jt"><b>' + esc(d[0][l]) + '</b>' + esc(d[1][l]) + '</span></li>').join('') + '</ol></div>' : '';
-        return '<article class="jcard' + (i >= JOURNEYS.length / 2 ? ' jleft' : '') + '"' + (j.days ? ' aria-describedby="jp' + i + '"' : '') + '>' + pop +
+          j.days.map((d, n) => '<li><span class="jd">' + esc(t('jrn.day', { n: n + 1 })) + '</span><b>' + esc(d[0][l]) + '</b></li>').join('') + '</ol></div>' : '';
+        return '<article class="jcard' + (j.days ? ' hasplan' : '') + (i >= JOURNEYS.length / 2 ? ' jleft' : '') + '"' + (j.days ? ' aria-describedby="jp' + i + '"' : '') + '>' + pop +
           '<figure class="jfig"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
             '<span class="jtag">' + esc(label) + '</span>' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
           '<h3>' + esc(j.name[l]) + '</h3><p class="jstops">' + stops + '</p>' +
