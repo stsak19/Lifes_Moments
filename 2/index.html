@@ -1138,6 +1138,43 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .gart { height: 170px; }
 @media (max-width: 760px) { .guide-head { min-height: 380px; padding: 24px 20px; margin-inline: -4px; } }
 
+/* guide: tap a place to open it */
+.gcards { align-items: start; grid-auto-flow: row dense; }
+.gcard { cursor: pointer; outline: none; }
+.gcard:focus-visible { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent-2); }
+.gart { transition: height .5s cubic-bezier(.2, .7, .2, 1); }
+.gcard.open { grid-column: span 2; transform: none; border-color: var(--accent-2); box-shadow: 0 18px 50px -24px rgba(6, 10, 18, .45); }
+.gcard.open .gart { height: 300px; }
+.gcard.open .gart svg { width: 84px; height: 84px; }
+.gcard.open .gbody { padding: 24px 28px 26px; }
+.gcard.open .gbody h3 { font-size: 34px; }
+.gmore { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .5s cubic-bezier(.2, .7, .2, 1); }
+.gmore-in { overflow: hidden; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.gmore-in p { color: var(--ink); opacity: .85; }
+.gmore-in p:first-child { margin-top: 6px; }
+.gcard.open .gmore { grid-template-rows: 1fr; }
+.gtips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px; padding: 0; list-style: none; }
+.gtips li { padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12.5px; }
+.gfoot { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-top: auto; padding-top: 10px; }
+.gfoot .gdir { margin-top: 0; padding-top: 0; }
+.gmorebtn { color: var(--muted); font-size: 13px; }
+.gmorebtn::after { content: " +"; }
+.gcard.open .gmorebtn::after { content: " −"; }
+.gx { position: absolute; right: 12px; bottom: 12px; z-index: 1; width: 30px; height: 30px; border-radius: 50%; background: rgba(6, 10, 18, .35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; transform: scale(.8); transition: opacity .3s, transform .3s; }
+.gx::before, .gx::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; background: #fff; transform: translate(-50%, -50%) rotate(45deg); }
+.gx::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.gcard.open .gx { opacity: 1; transform: none; }
+::view-transition-group(*) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2, .7, .2, 1); }
+@media (max-width: 980px) { .gcard.open .gart { height: 240px; } }
+@media (max-width: 760px) {
+  .gcard { transition: flex-basis .45s cubic-bezier(.2, .7, .2, 1), border-color .3s; }
+  .gcard.open { flex-basis: 92%; }
+  .gcard.open .gart { height: 220px; }
+  .gcard.open .gbody { padding: 18px 20px 20px; }
+  .gcard.open .gbody h3 { font-size: 28px; }
+}
+@media (prefers-reduced-motion: reduce) { .gart, .gmore, .gcard { transition: none !important; } }
+
 /* hero photo: a very slow push-in so the still image feels alive */
 .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform-origin: 62% 55%; animation: kb 26s ease-in-out infinite alternate; }
 @keyframes kb { from { transform: scale(1); } to { transform: scale(1.09) translate(-1%, -.5%); } }
@@ -1861,7 +1898,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Quiet nights', 'mom.4d': 'Stars over the terrace and no alarm in the morning.',
       'mom.l': ['Morning', 'Midday', 'Golden hour', 'Night'], 'mom.nowL': 'On Thasos now', 'mom.note': 'Illustration. Photos of each moment will replace it.',
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
-      'nav.guide': 'Guide', 'nav.jrn': 'Journeys', 'jrn.title': "Thasos, <em>night by night</em>", 'jrn.lead1': "Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.", 'jrn.lead2': 'Pick a stay and the nights are set for you.', 'jrn.nights': '{n} nights', 'jrn.own': 'Your own', 'jrn.route': 'The route', 'jrn.book': 'Book {n} nights', 'jrn.pick': 'Choose your dates', 'jrn.day': 'Day {n}', 'jrn.ownH': 'Mix your own days', 'jrn.inN': 'What you can do in {n} nights', 'jrn.walk': 'on foot', 'jrn.tip': 'Our tip:', 'jrn.best': 'Best in', 'jrn.cta': 'Live it yourself →', 'jrn.ctaText': 'Every journey starts on the same terrace, by the sea.', 'jres.title': 'Booking', 'jres.text': 'Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.', 'jres.btn': 'Check availability', 'j.hint': 'Tap your arrival day. We will add the {n} nights.', 'j.nofit': '{n} nights from that day are not free. Try another arrival day.', 'j.note': 'We are interested in the "{name}" journey.', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
+      'nav.guide': 'Guide', 'nav.jrn': 'Journeys', 'jrn.title': "Thasos, <em>night by night</em>", 'jrn.lead1': "Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.", 'jrn.lead2': 'Pick a stay and the nights are set for you.', 'jrn.nights': '{n} nights', 'jrn.own': 'Your own', 'jrn.route': 'The route', 'jrn.book': 'Book {n} nights', 'jrn.pick': 'Choose your dates', 'jrn.day': 'Day {n}', 'jrn.ownH': 'Mix your own days', 'jrn.inN': 'What you can do in {n} nights', 'jrn.walk': 'on foot', 'jrn.tip': 'Our tip:', 'jrn.best': 'Best in', 'jrn.cta': 'Live it yourself →', 'jrn.ctaText': 'Every journey starts on the same terrace, by the sea.', 'jres.title': 'Booking', 'jres.text': 'Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.', 'jres.btn': 'Check availability', 'j.hint': 'Tap your arrival day. We will add the {n} nights.', 'j.nofit': '{n} nights from that day are not free. Try another arrival day.', 'j.note': 'We are interested in the "{name}" journey.', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions', 'guide.close': 'Close', 'guide.more': 'More',
       'g.all': 'All', 'g.beach': 'Beaches', 'g.village': 'Villages', 'g.sight': 'Sights', 'g.taste': 'Taste',
       'rev.1': "The place was wonderful, the location magical and the rooms spotlessly clean! Thank you very much to Sasha for her kindness and smile!", 'rev.2': "An ideal choice for anyone looking for relaxation and tranquility on their vacation. The hotel is located in an area that provides easy access to many nearby beaches. Rooms with sea view and spotlessly clean. The hostess, Ms. Sasha, is very helpful, cheerful and always willing to make your stay as pleasant as possible. The breakfast is fresh and delicious. I think we made the best choice, we will definitely choose you again in the future!", 'rev.3': "Awesome view! Hot water and fast internet, very clean and Nasia very helpful!! I highly recommend it!", 'rev.src': "Guest review on Google", 'rev.eyebrow': 'Reviews', 'rev.drag': 'Drag for the next one', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
       'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
@@ -1918,7 +1955,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Ήσυχα βράδια', 'mom.4d': 'Αστέρια πάνω από τη βεράντα και πρωινό χωρίς ξυπνητήρι.',
       'mom.l': ['Πρωί', 'Μεσημέρι', 'Δειλινό', 'Νύχτα'], 'mom.nowL': 'Τώρα στη Θάσο', 'mom.note': 'Εικονογράφηση. Θα μπουν φωτογραφίες για κάθε στιγμή.',
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
-      'nav.guide': 'Οδηγός', 'nav.jrn': 'Ταξίδια', 'jrn.title': "Η Θάσος, <em>νύχτα τη νύχτα</em>", 'jrn.lead1': "Το Life's Moments βρίσκεται στην ήσυχη νοτιοδυτική ακτή, κοντά στα Λιμενάρια. Από εδώ όλο το νησί είναι μια σύντομη διαδρομή: κρυφοί κολπίσκοι, πέτρινα χωριά, μια αρχαία πόλη δίπλα στο λιμάνι.", 'jrn.lead2': 'Διαλέξτε μια διαμονή και οι νύχτες μπαίνουν μόνες τους.', 'jrn.nights': '{n} νύχτες', 'jrn.own': 'Δικό σας', 'jrn.route': 'Η διαδρομή', 'jrn.book': 'Κράτηση {n} νυχτών', 'jrn.pick': 'Επιλογή ημερομηνιών', 'jrn.day': 'Μέρα {n}', 'jrn.ownH': 'Φτιάξτε τις δικές σας μέρες', 'jrn.inN': 'Τι προλαβαίνετε σε {n} νύχτες', 'jrn.walk': 'με τα πόδια', 'jrn.tip': 'Η συμβουλή μας:', 'jrn.best': 'Καλύτερα:', 'jrn.cta': 'Ζήστε το κι εσείς →', 'jrn.ctaText': 'Κάθε ταξίδι ξεκινά από την ίδια βεράντα, δίπλα στη θάλασσα.', 'jres.title': 'Κρατήσεις', 'jres.text': 'Κάθε ταξίδι είναι ένα δωμάτιο ή το απαρτμέντ για τις νύχτες που γράφει. Οι ιδιοκτήτες απαντούν σε κάθε αίτημα μέσα σε 24 ώρες, και λίγες μέρες πριν φτάσετε σας έρχεται email με ιδέες για το νησί.', 'jres.btn': 'Δείτε διαθεσιμότητα', 'j.hint': 'Πατήστε τη μέρα άφιξης. Θα προσθέσουμε τις {n} νύχτες.', 'j.nofit': 'Οι {n} νύχτες από εκείνη τη μέρα δεν είναι ελεύθερες. Δοκιμάστε άλλη μέρα άφιξης.', 'j.note': 'Μας ενδιαφέρει το ταξίδι «{name}».', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
+      'nav.guide': 'Οδηγός', 'nav.jrn': 'Ταξίδια', 'jrn.title': "Η Θάσος, <em>νύχτα τη νύχτα</em>", 'jrn.lead1': "Το Life's Moments βρίσκεται στην ήσυχη νοτιοδυτική ακτή, κοντά στα Λιμενάρια. Από εδώ όλο το νησί είναι μια σύντομη διαδρομή: κρυφοί κολπίσκοι, πέτρινα χωριά, μια αρχαία πόλη δίπλα στο λιμάνι.", 'jrn.lead2': 'Διαλέξτε μια διαμονή και οι νύχτες μπαίνουν μόνες τους.', 'jrn.nights': '{n} νύχτες', 'jrn.own': 'Δικό σας', 'jrn.route': 'Η διαδρομή', 'jrn.book': 'Κράτηση {n} νυχτών', 'jrn.pick': 'Επιλογή ημερομηνιών', 'jrn.day': 'Μέρα {n}', 'jrn.ownH': 'Φτιάξτε τις δικές σας μέρες', 'jrn.inN': 'Τι προλαβαίνετε σε {n} νύχτες', 'jrn.walk': 'με τα πόδια', 'jrn.tip': 'Η συμβουλή μας:', 'jrn.best': 'Καλύτερα:', 'jrn.cta': 'Ζήστε το κι εσείς →', 'jrn.ctaText': 'Κάθε ταξίδι ξεκινά από την ίδια βεράντα, δίπλα στη θάλασσα.', 'jres.title': 'Κρατήσεις', 'jres.text': 'Κάθε ταξίδι είναι ένα δωμάτιο ή το απαρτμέντ για τις νύχτες που γράφει. Οι ιδιοκτήτες απαντούν σε κάθε αίτημα μέσα σε 24 ώρες, και λίγες μέρες πριν φτάσετε σας έρχεται email με ιδέες για το νησί.', 'jres.btn': 'Δείτε διαθεσιμότητα', 'j.hint': 'Πατήστε τη μέρα άφιξης. Θα προσθέσουμε τις {n} νύχτες.', 'j.nofit': 'Οι {n} νύχτες από εκείνη τη μέρα δεν είναι ελεύθερες. Δοκιμάστε άλλη μέρα άφιξης.', 'j.note': 'Μας ενδιαφέρει το ταξίδι «{name}».', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες', 'guide.close': 'Κλείσιμο', 'guide.more': 'Περισσότερα',
       'g.all': 'Όλα', 'g.beach': 'Παραλίες', 'g.village': 'Χωριά', 'g.sight': 'Αξιοθέατα', 'g.taste': 'Γεύσεις',
       'rev.1': "Ο χώρος ήταν υπέροχος, η τοποθεσία μαγική και τα δωμάτια πεντακάθαρα! Ευχαριστούμε πολύ τη Σάσα για την ευγένεια και το χαμόγελό της!", 'rev.2': "Ιδανική επιλογή για όποιον ψάχνει χαλάρωση και ηρεμία στις διακοπές του. Το κατάλυμα βρίσκεται σε σημείο με εύκολη πρόσβαση σε πολλές κοντινές παραλίες. Δωμάτια με θέα στη θάλασσα και πεντακάθαρα. Η οικοδέσποινα, η κ. Σάσα, είναι πολύ εξυπηρετική, χαμογελαστή και πάντα πρόθυμη να κάνει τη διαμονή σας όσο πιο ευχάριστη γίνεται. Το πρωινό είναι φρέσκο και νόστιμο. Νομίζω πως κάναμε την καλύτερη επιλογή, σίγουρα θα σας ξαναδιαλέξουμε στο μέλλον!", 'rev.3': "Φοβερή θέα! Ζεστό νερό και γρήγορο ίντερνετ, πολύ καθαρό και η Νάσια πολύ εξυπηρετική!! Το συστήνω ανεπιφύλακτα!", 'rev.src': "Κριτική επισκέπτη στο Google", 'rev.eyebrow': 'Κριτικές', 'rev.drag': 'Σύρετε για το επόμενο', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
       'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Προς το παρόν δοκιμαστικό σπίτι · εδώ μπαίνουν οι φωτογραφίες 360°'
@@ -2967,35 +3004,35 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   (function guide() {
     const GUIDE = [
       { cat: 'beach', q: 'Metalia beach Limenaria Thasos', area: ['Limenaria', 'Λιμενάρια'], name: ['Metalia', 'Μεταλλεία'],
-        line: ['Pebbles and flat rocks below the Palataki. Quiet, with a small beach bar and a passage through the rocks to hidden coves.', 'Βότσαλο και πλάκες κάτω από το Παλατάκι. Ήσυχη, με ένα μικρό beach bar και ένα πέρασμα στα βράχια προς κρυφούς κολπίσκους.'] },
+        line: ['Pebbles and flat rocks below the Palataki. Quiet, with a small beach bar and a passage through the rocks to hidden coves.', 'Βότσαλο και πλάκες κάτω από το Παλατάκι. Ήσυχη, με ένα μικρό beach bar και ένα πέρασμα στα βράχια προς κρυφούς κολπίσκους.'], more: [['Walking distance from the house. Go in the late afternoon, when the rocks are warm and the beach empties out.', 'Two pairs of water shoes help on the flat rocks.'], ['Πολύ κοντά στο σπίτι. Πηγαίνετε αργά το απόγευμα, όταν οι πλάκες είναι ζεστές και η παραλία αδειάζει.', 'Τα παπούτσια θαλάσσης βοηθούν πάνω στα βράχια.']], tips: [['Close by', 'Pebbles', 'Beach bar'], ['Πολύ κοντά', 'Βότσαλο', 'Beach bar']] },
       { cat: 'beach', q: 'Pefkari beach Thasos', area: ['Next to Limenaria', 'Δίπλα στα Λιμενάρια'], name: ['Pefkari', 'Πευκάρι'],
-        line: ['Pine trees almost down to the water, just next door.', 'Πεύκα σχεδόν ως το νερό, ακριβώς δίπλα.'] },
+        line: ['Pine trees almost down to the water, just next door.', 'Πεύκα σχεδόν ως το νερό, ακριβώς δίπλα.'], more: [['Shade under the pines all day, so it suits a long, slow beach day with children.', 'Calm, shallow water most mornings.'], ['Σκιά από τα πεύκα όλη μέρα, ιδανική για μια μεγάλη, ήρεμη μέρα στη θάλασσα με παιδιά.', 'Ήρεμα, ρηχά νερά τα περισσότερα πρωινά.']], tips: [['Pine shade', 'Family friendly', 'Sand'], ['Σκιά από πεύκα', 'Για οικογένειες', 'Άμμος']] },
       { cat: 'beach', q: 'Giola Thasos', area: ['South coast', 'Νότια ακτή'], name: ['Giola', 'Γκιόλα'],
-        line: ['A natural pool in the rocks, right by the open sea.', 'Φυσική πισίνα μέσα στα βράχια, δίπλα στο ανοιχτό πέλαγος.'] },
+        line: ['A natural pool in the rocks, right by the open sea.', 'Φυσική πισίνα μέσα στα βράχια, δίπλα στο ανοιχτό πέλαγος.'], more: [['A short walk down from the road, over rocks. Best on a calm day, when the sea does not spill into the pool.', 'Take water and good shoes; there is nothing at the pool itself.'], ['Λίγα λεπτά περπάτημα από τον δρόμο, πάνω σε βράχια. Καλύτερα μια μέρα χωρίς αέρα, όταν η θάλασσα δεν μπαίνει στη λίμνη.', 'Πάρτε νερό και καλά παπούτσια· στο σημείο δεν υπάρχει τίποτα.']], tips: [['Calm days', 'Short walk', 'Bring water'], ['Μέρα χωρίς αέρα', 'Λίγο περπάτημα', 'Πάρτε νερό']] },
       { cat: 'beach', q: 'Golden Beach Thasos', area: ['East coast', 'Ανατολική ακτή'], name: ['Golden Beach', 'Χρυσή Αμμουδιά'],
         img: 'https://images.pexels.com/photos/28498153/pexels-photo-28498153.jpeg?auto=compress&cs=tinysrgb&w=800', credit: 'Artiom Petrachi',
-        line: ['A long beach with golden sand below green hills.', 'Μεγάλη παραλία με χρυσή άμμο, κάτω από πράσινους λόφους.'] },
+        line: ['A long beach with golden sand below green hills.', 'Μεγάλη παραλία με χρυσή άμμο, κάτω από πράσινους λόφους.'], more: [['Plenty of room even in August, with tavernas and sunbeds along the shore.', 'Combine it with a stop in Panagia village above it.'], ['Χώρος για όλους ακόμη και τον Αύγουστο, με ταβέρνες και ξαπλώστρες κατά μήκος της ακτής.', 'Συνδυάστε τη με μια στάση στο χωριό Παναγία, από πάνω.']], tips: [['Sand', 'Tavernas', 'Long beach'], ['Άμμος', 'Ταβέρνες', 'Μεγάλη παραλία']] },
       { cat: 'beach', q: 'Alyki beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Alyki', 'Αλυκή'],
         img: 'https://images.pexels.com/photos/14987668/pexels-photo-14987668.jpeg?auto=compress&cs=tinysrgb&w=800', credit: 'Adelina Andreea',
-        line: ['Two small bays next to an ancient marble quarry.', 'Δύο μικροί κόλποι δίπλα σε ένα αρχαίο λατομείο μαρμάρου.'] },
+        line: ['Two small bays next to an ancient marble quarry.', 'Δύο μικροί κόλποι δίπλα σε ένα αρχαίο λατομείο μαρμάρου.'], more: [['Walk the path past the quarry and the ruins to the rocks on the far side, where the marble meets the sea.', 'Morning light is softest here.'], ['Περπατήστε το μονοπάτι δίπλα στο λατομείο και τα ερείπια ως τα βράχια στην άλλη πλευρά, όπου το μάρμαρο συναντά τη θάλασσα.', 'Το πρωινό φως είναι το πιο όμορφο εδώ.']], tips: [['Ancient quarry', 'Walk', 'Morning'], ['Αρχαίο λατομείο', 'Περπάτημα', 'Πρωί']] },
       { cat: 'beach', q: 'Psili Ammos beach Thasos', area: ['South-east', 'Νοτιοανατολικά'], name: ['Psili Ammos', 'Ψιλή Άμμος'],
-        line: ['A long beach with fine sand and clear water.', 'Μεγάλη παραλία με ψιλή άμμο και καθαρά νερά.'] },
+        line: ['A long beach with fine sand and clear water.', 'Μεγάλη παραλία με ψιλή άμμο και καθαρά νερά.'], more: [['Shallow for many metres from the shore, so it is easy with small children.', 'Sunbeds and a few cafés by the sand.'], ['Ρηχά για πολλά μέτρα από την ακτή, εύκολη με μικρά παιδιά.', 'Ξαπλώστρες και λίγα καφέ πάνω στην άμμο.']], tips: [['Fine sand', 'Shallow', 'Family friendly'], ['Ψιλή άμμος', 'Ρηχά', 'Για οικογένειες']] },
       { cat: 'village', q: 'Kastro Thasos', area: ['Above Limenaria', 'Πάνω από τα Λιμενάρια'], name: ['Kastro', 'Κάστρο'],
-        line: ['A stone village up in the hills, reached by road from Limenaria. Restored houses and complete quiet.', 'Πέτρινο χωριό ψηλά στο βουνό, με δρόμο από τα Λιμενάρια. Αναπαλαιωμένα σπίτια και απόλυτη ησυχία.'] },
+        line: ['A stone village up in the hills, reached by road from Limenaria. Restored houses and complete quiet.', 'Πέτρινο χωριό ψηλά στο βουνό, με δρόμο από τα Λιμενάρια. Αναπαλαιωμένα σπίτια και απόλυτη ησυχία.'], more: [['The drive up is part of the trip, with views back down to the sea. Go before sunset and stay for the light.', 'A coffee in the square is the whole plan.'], ['Η διαδρομή προς τα πάνω είναι μέρος της εμπειρίας, με θέα ως τη θάλασσα. Πηγαίνετε πριν τη δύση και μείνετε για το φως.', 'Ένας καφές στην πλατεία είναι όλο το πρόγραμμα.']], tips: [['Mountain drive', 'Sunset', 'Quiet'], ['Ορεινή διαδρομή', 'Ηλιοβασίλεμα', 'Ησυχία']] },
       { cat: 'village', q: 'Theologos Thasos', area: ['Inland', 'Ενδοχώρα'], name: ['Theologos', 'Θεολόγος'],
-        line: ['The island\'s capital in Ottoman times. Stone houses and cobbled lanes.', 'Η πρωτεύουσα του νησιού στα χρόνια της Τουρκοκρατίας. Πέτρινα σπίτια και καλντερίμια.'] },
+        line: ['The island\'s capital in Ottoman times. Stone houses and cobbled lanes.', 'Η πρωτεύουσα του νησιού στα χρόνια της Τουρκοκρατίας. Πέτρινα σπίτια και καλντερίμια.'], more: [['Walk the main lane slowly and look up at the slate roofs. The tavernas here are known for spit-roasted meat.', 'Cooler than the coast on hot days.'], ['Περπατήστε αργά τον κεντρικό δρόμο και κοιτάξτε τις πλακόστρωτες στέγες. Οι ταβέρνες εδώ φημίζονται για το σούβλισμα.', 'Πιο δροσερά από την ακτή τις ζεστές μέρες.']], tips: [['Stone houses', 'Tavernas', 'Cool air'], ['Πέτρινα σπίτια', 'Ταβέρνες', 'Δροσιά']] },
       { cat: 'village', q: 'Maries Thasos', area: ['Inland', 'Ενδοχώρα'], name: ['Maries', 'Μαριές'],
-        line: ['A mountain village known for its bees and honey.', 'Ορεινό χωριό γνωστό για τα μελίσσια και το μέλι του.'] },
+        line: ['A mountain village known for its bees and honey.', 'Ορεινό χωριό γνωστό για τα μελίσσια και το μέλι του.'], more: [['A green, shady village with running water. Ask in the village for local honey.', 'Good for a slow morning away from the beach.'], ['Πράσινο, σκιερό χωριό με τρεχούμενα νερά. Ρωτήστε στο χωριό για ντόπιο μέλι.', 'Ωραίο για ένα ήρεμο πρωινό μακριά από την παραλία.']], tips: [['Honey', 'Shade', 'Morning'], ['Μέλι', 'Σκιά', 'Πρωί']] },
       { cat: 'sight', q: 'Palataki Limenaria Thasos', area: ['Limenaria', 'Λιμενάρια'], name: ['The Palataki', 'Το Παλατάκι'],
-        line: ['Built in 1903 for a German mining company. Pine trees, benches and a wide view of the sea.', 'Χτίστηκε το 1903 για μια γερμανική εταιρεία μεταλλείων. Πεύκα, παγκάκια και ανοιχτή θέα στη θάλασσα.'] },
+        line: ['Built in 1903 for a German mining company. Pine trees, benches and a wide view of the sea.', 'Χτίστηκε το 1903 για μια γερμανική εταιρεία μεταλλείων. Πεύκα, παγκάκια και ανοιχτή θέα στη θάλασσα.'], more: [['A short walk from the house. Come at sunset, sit on a bench under the pines and watch the sea turn gold.', 'The path down leads to the Metalia rocks.'], ['Λίγα λεπτά με τα πόδια από το σπίτι. Ελάτε στο ηλιοβασίλεμα, καθίστε σε ένα παγκάκι κάτω από τα πεύκα και δείτε τη θάλασσα να χρυσίζει.', 'Το μονοπάτι κατεβαίνει στα βράχια των Μεταλλείων.']], tips: [['Close by', 'Sunset', 'History'], ['Πολύ κοντά', 'Ηλιοβασίλεμα', 'Ιστορία']] },
       { cat: 'sight', q: 'Archangel Michael Monastery Thasos', area: ['South coast', 'Νότια ακτή'], name: ['Archangel Michael', 'Αρχάγγελος Μιχαήλ'],
-        line: ['A monastery on the cliffs, high above the sea.', 'Μοναστήρι πάνω στα βράχια, ψηλά πάνω από τη θάλασσα.'] },
+        line: ['A monastery on the cliffs, high above the sea.', 'Μοναστήρι πάνω στα βράχια, ψηλά πάνω από τη θάλασσα.'], more: [['A working monastery, so dress modestly: shoulders and knees covered.', 'The terrace has one of the widest sea views on the island.'], ['Ενεργό μοναστήρι, οπότε σεμνό ντύσιμο: καλυμμένοι ώμοι και γόνατα.', 'Από τη βεράντα του φαίνεται από τις πιο ανοιχτές θέες του νησιού.']], tips: [['Dress code', 'Sea view', 'Short visit'], ['Σεμνό ντύσιμο', 'Θέα', 'Σύντομη στάση']] },
       { cat: 'sight', q: 'Ancient Agora Thasos Limenas', area: ['Limenas', 'Λιμένας'], name: ['Ancient Thasos', 'Αρχαία Θάσος'],
-        line: ['The ancient agora, the theatre and the old city walls, in the island\'s main port.', 'Η αρχαία αγορά, το θέατρο και τα τείχη της πόλης, στο κεντρικό λιμάνι του νησιού.'] },
+        line: ['The ancient agora, the theatre and the old city walls, in the island\'s main port.', 'Η αρχαία αγορά, το θέατρο και τα τείχη της πόλης, στο κεντρικό λιμάνι του νησιού.'], more: [['Start at the agora by the harbour, then walk up through the pines to the theatre.', 'Pair it with lunch and a walk along Limenas port.'], ['Ξεκινήστε από την αγορά δίπλα στο λιμάνι και ανεβείτε μέσα από τα πεύκα ως το θέατρο.', 'Συνδυάστε το με φαγητό και βόλτα στο λιμάνι του Λιμένα.']], tips: [['History', 'Walk', 'Half day'], ['Ιστορία', 'Περπάτημα', 'Μισή μέρα']] },
       { cat: 'taste', area: ['Villages', 'Χωριά'], name: ['Pine honey', 'Πευκόμελο'],
-        line: ['The island\'s best-known honey. Buy it straight from local beekeepers.', 'Το πιο γνωστό μέλι του νησιού. Πάρτε το κατευθείαν από ντόπιους μελισσοκόμους.'] },
+        line: ['The island\'s best-known honey. Buy it straight from local beekeepers.', 'Το πιο γνωστό μέλι του νησιού. Πάρτε το κατευθείαν από ντόπιους μελισσοκόμους.'], more: [['Look for roadside stands and small shops in the mountain villages, where the beekeepers sell their own jars.', 'It keeps well and travels home easily.'], ['Αναζητήστε πάγκους στον δρόμο και μικρά μαγαζιά στα ορεινά χωριά, όπου οι μελισσοκόμοι πουλάνε τα δικά τους βάζα.', 'Κρατάει πολύ και ταξιδεύει εύκολα για το σπίτι.']], tips: [['Local', 'Gift', 'Villages'], ['Ντόπιο', 'Για δώρο', 'Χωριά']] },
       { cat: 'taste', area: ['Villages', 'Χωριά'], name: ['Olives & spoon sweets', 'Ελιές & γλυκά του κουταλιού'],
-        line: ['Thasian olives, and walnut spoon sweet at the village cafés.', 'Θασίτικη ελιά και γλυκό καρυδάκι στα καφενεία των χωριών.'] }
+        line: ['Thasian olives, and walnut spoon sweet at the village cafés.', 'Θασίτικη ελιά και γλυκό καρυδάκι στα καφενεία των χωριών.'], more: [['Order a spoon sweet with your coffee in any village café; it is how guests are welcomed on the island.', 'Thasian olives make a good gift to take back.'], ['Παραγγείλτε γλυκό του κουταλιού με τον καφέ σε οποιοδήποτε καφενείο χωριού· έτσι υποδέχεται το νησί τους επισκέπτες.', 'Η θασίτικη ελιά είναι ωραίο δώρο για το σπίτι.']], tips: [['Village cafés', 'Gift', 'Tradition'], ['Καφενεία', 'Για δώρο', 'Παράδοση']] }
     ];
     const ICON = {
       beach: '<path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M3 21c2 0 2-1.2 4.5-1.2S9.5 21 12 21s2.5-1.2 4.5-1.2S19 21 21 21"/><circle cx="12" cy="10" r="4"/><path d="M12 2.5v1.5M4.8 5.8l1 1M19.2 5.8l-1 1"/>',
@@ -3008,18 +3045,54 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const tabsEl = $('#gTabs'), cardsEl = $('#gCards');
     const L = () => (lang === 'el' ? 1 : 0);
     const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    let openQ = null;
+    const keyOf = (g) => g.name[0];
     function render() {
       tabsEl.innerHTML = CATS.map((c) => '<button type="button" data-c="' + c + '" aria-pressed="' + (c === cat) + '">' + t('g.' + c) + '</button>').join('');
-      cardsEl.innerHTML = GUIDE.filter((g) => cat === 'all' || g.cat === cat).map((g) =>
-        '<article class="gcard"><div class="gart' + (g.img ? ' has-img' : '') + '" data-c="' + g.cat + '">' +
+      cardsEl.innerHTML = GUIDE.filter((g) => cat === 'all' || g.cat === cat).map((g) => {
+        const open = keyOf(g) === openQ;
+        return '<article class="gcard' + (open ? ' open' : '') + '" data-k="' + esc(keyOf(g)) + '" tabindex="0" role="button" aria-expanded="' + open + '">' +
+        '<div class="gart' + (g.img ? ' has-img' : '') + '" data-c="' + g.cat + '">' +
         (g.img ? '<img src="' + g.img + '" alt="' + esc(g.name[L()]) + '" loading="lazy"><span class="gcredit">' + esc(g.credit) + ' · Pexels</span>'
                : '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">' + ICON[g.cat] + '</svg>') +
-        '<span class="garea">' + esc(g.area[L()]) + '</span></div><div class="gbody"><h3>' + esc(g.name[L()]) + '</h3><p>' + esc(g.line[L()]) + '</p>' +
-        (g.q ? '<a class="gdir" href="https://www.google.com/maps/search/?api=1&amp;query=' + encodeURIComponent(g.q) + '" target="_blank" rel="noopener">' + t('guide.dir') + ' ↗</a>' : '') +
-        '</div></article>').join('');
-      cardsEl.scrollLeft = 0;
+        '<span class="garea">' + esc(g.area[L()]) + '</span><span class="gx" aria-hidden="true"></span></div>' +
+        '<div class="gbody"><h3>' + esc(g.name[L()]) + '</h3><p>' + esc(g.line[L()]) + '</p>' +
+        (g.more ? '<div class="gmore"><div class="gmore-in">' + g.more[L()].map((x) => '<p>' + esc(x) + '</p>').join('') +
+          '<ul class="gtips">' + g.tips[L()].map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></div></div>' : '') +
+        '<div class="gfoot">' +
+        (g.q ? '<a class="gdir" href="https://www.google.com/maps/search/?api=1&amp;query=' + encodeURIComponent(g.q) + '" target="_blank" rel="noopener">' + t('guide.dir') + ' ↗</a>' : '<span></span>') +
+        '<span class="gmorebtn">' + (open ? t('guide.close') : t('guide.more')) + '</span></div>' +
+        '</div></article>';
+      }).join('');
     }
-    tabsEl.addEventListener('click', (e) => { const b = e.target.closest('button[data-c]'); if (b) { cat = b.dataset.c; render(); } });
+    function toggle(card) {
+      const k = card.dataset.k;
+      openQ = openQ === k ? null : k;
+      const apply = () => {
+        cardsEl.querySelectorAll('.gcard').forEach((c) => {
+          const on = c.dataset.k === openQ;
+          c.classList.toggle('open', on);
+          c.setAttribute('aria-expanded', on);
+          c.querySelector('.gmorebtn').textContent = on ? t('guide.close') : t('guide.more');
+        });
+      };
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (document.startViewTransition && !reduce) {
+        cardsEl.querySelectorAll('.gcard').forEach((c, i) => { c.style.viewTransitionName = 'gc' + i; });
+        const vt = document.startViewTransition(apply);
+        vt.finished.finally(() => cardsEl.querySelectorAll('.gcard').forEach((c) => { c.style.viewTransitionName = ''; }));
+      } else apply();
+      if (openQ) {
+        setTimeout(() => {
+          const el = cardsEl.querySelector('.gcard.open'); if (!el) return;
+          if (window.matchMedia('(max-width: 760px)').matches) el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+          else { const r = el.getBoundingClientRect(); if (r.bottom > innerHeight || r.top < 80) el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+        }, 420);
+      }
+    }
+    cardsEl.addEventListener('click', (e) => { if (e.target.closest('.gdir')) return; const c = e.target.closest('.gcard'); if (c) toggle(c); });
+    cardsEl.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('gcard')) { e.preventDefault(); toggle(e.target); } });
+    tabsEl.addEventListener('click', (e) => { const b = e.target.closest('button[data-c]'); if (b) { cat = b.dataset.c; openQ = null; render(); cardsEl.scrollLeft = 0; } });
     render();
     langHooks.push(render);
   })();
