@@ -702,6 +702,29 @@ html .intro .cap.hcenter { pointer-events: none; }
   .jcard:hover .jpop { transition-delay: .15s, .15s, 0s; }
 }
 
+/* ---------- hover v3: accordion ----------
+   The card under the mouse widens: its photo stays on the left, the plan opens on its right,
+   and the other cards narrow to make room, so no photo covers another. */
+.jmedia { position: relative; }
+@media (hover: hover) and (min-width: 1001px) {
+  .jlist { display: flex; gap: 22px; }
+  .jcard { flex: 1 1 0; transition: flex-grow .65s cubic-bezier(.2, .7, .2, 1); }
+  .jcard.hasplan:hover { flex-grow: 2.1; }
+  .jmedia { height: calc((min(100vw, 1180px) - 48px - 66px) / 4 * 1.25); overflow: hidden; border-radius: var(--r-img); }
+  .jcard .jfig, .jcard.hasplan:hover .jfig, .jcard.hasplan.jleft:hover .jfig { position: absolute; left: 0; top: 0; height: 100%; width: 100%; aspect-ratio: auto;
+    transform: none; box-shadow: none; transition: width .65s cubic-bezier(.2, .7, .2, 1); }
+  .jcard.hasplan:hover .jfig { width: calc(50% - 7px); }
+  .jcard .jpop, .jcard.jleft .jpop { left: calc(50% + 7px); right: 0; top: 0; height: 100%; width: auto; aspect-ratio: auto; padding: 16px 18px; border-radius: var(--r-img); }
+  .jcard:hover .jpop { transition-delay: .25s, .25s, 0s; }
+  .jcard h3, .jcard .jstops { max-width: 34ch; }
+}
+@media (hover: none), (max-width: 1000px) {
+  .jmedia { aspect-ratio: 4 / 5; border-radius: var(--r-img); overflow: hidden; }
+  .jcard .jfig { position: absolute; inset: 0; aspect-ratio: auto; }
+  .jpop, .jcard.jleft .jpop { z-index: 3; height: 100%; aspect-ratio: auto; }
+}
+@media (hover: hover) and (min-width: 1001px) { .jlist { flex-direction: row; align-items: stretch; } .jcard { min-width: 0; } }
+
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2206,9 +2229,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         // the day-by-day plan that shows next to the photo on hover (on phones: tap the photo)
         const pop = j.days ? '<div class="jpop" role="tooltip" id="jp' + i + '"><p class="jpop-h">' + esc(t('jrn.inN', { n: j.nights })) + '</p><ol>' +
           j.days.map((d, n) => '<li><span class="jd">' + esc(t('jrn.day', { n: n + 1 })) + '</span><b>' + esc(d[0][l]) + '</b></li>').join('') + '</ol></div>' : '';
-        return '<article class="jcard' + (j.days ? ' hasplan' : '') + (i >= JOURNEYS.length / 2 ? ' jleft' : '') + '"' + (j.days ? ' aria-describedby="jp' + i + '"' : '') + '>' + pop +
+        return '<article class="jcard' + (j.days ? ' hasplan' : '') + (i >= JOURNEYS.length / 2 ? ' jleft' : '') + '"' + (j.days ? ' aria-describedby="jp' + i + '"' : '') + '><div class="jmedia">' + pop +
           '<figure class="jfig"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
-            '<span class="jtag">' + esc(label) + '</span>' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
+            '<span class="jtag">' + esc(label) + '</span>' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure></div>' +
           '<h3>' + esc(j.name[l]) + '</h3><p class="jstops">' + stops + '</p>' +
           '<button type="button" class="jbook" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) +
             ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>' +
@@ -2219,7 +2242,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     // phones have no hover: a tap on the photo opens or closes the plan
     listEl.addEventListener('click', (e) => {
       if (!window.matchMedia('(hover: none)').matches) return;
-      const fig = e.target.closest('.jfig, .jpop'); if (!fig) return;
+      const fig = e.target.closest('.jmedia'); if (!fig) return;
       const card = fig.closest('.jcard'); if (!card.querySelector('.jpop')) return;
       const on = !card.classList.contains('show');
       $$('.jcard.show', listEl).forEach((c) => c.classList.remove('show'));
