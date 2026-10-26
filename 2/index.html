@@ -630,6 +630,34 @@ html .intro .cap.hcenter { pointer-events: none; }
   .hs-arrow:focus-visible { opacity: 1; pointer-events: auto; }  /* still there for keyboard users */
 }
 
+/* ---------- Journeys, lighter: four cards in one row ---------- */
+.jrn { padding-block: 96px 100px; }
+.jrn-head { grid-template-columns: 1fr auto; margin-bottom: 44px; }
+.jrn-lead { margin: 0; max-width: 30ch; color: var(--muted); font-size: 17px; line-height: 1.55; }
+.jlist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.jcard { display: flex; flex-direction: column; min-width: 0; }
+.jcard .jfig { aspect-ratio: 4 / 5; position: relative; }
+.jcard .jfig img { transform: scale(1); transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.jcard:hover .jfig img { transform: scale(1.04); }
+.jtag { position: absolute; left: 12px; top: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(248, 244, 236, .92); color: #13263A; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; }
+.jcard h3 { margin: 18px 0 6px; font: 400 25px/1.15 var(--font-display); letter-spacing: -.005em; }
+.jstops { margin: 0 0 14px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+.jbook { margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 4px 0; border: 0; border-bottom: 1px solid currentColor; background: none; color: var(--accent-2); font: inherit; font-size: 14.5px; cursor: pointer; }
+.jbook svg { transition: transform .25s ease; }
+.jbook:hover svg { transform: translateX(3px); }
+@media (max-width: 1000px) { .jlist { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 18px; } }
+@media (max-width: 760px) {
+  .jrn { padding-block: 60px 64px; }
+  .jrn-head { grid-template-columns: 1fr; margin-bottom: 26px; }
+  .jlist { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; }
+  .jlist::-webkit-scrollbar { display: none; }
+  .jcard { flex: 0 0 74vw; scroll-snap-align: start; }
+  .jcard h3 { font-size: 22px; margin-top: 14px; }
+}
+.jcard .jfig { position: relative; top: auto; margin: 0; }
+@media (max-width: 760px) { .jlist { flex-direction: row; } .jcard .jfig { aspect-ratio: 4 / 5; } }
+@media (max-width: 760px) { .jlist { scroll-padding-inline: 16px; } }
+
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -1325,23 +1353,13 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <p class="eyebrow sec-eyebrow"><span class="num">01</span><span data-i18n="nav.jrn">Journeys</span></p>
           <h2 class="sec-title" id="jrnTitle" data-i18n-html="jrn.title">Thasos, <em>night by night</em></h2>
         </div>
-        <div class="jrn-intro">
-          <p data-i18n="jrn.lead1">Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.</p>
-          <p data-i18n="jrn.lead2">Pick one of the stays below and the nights are set for you. The places are only ideas: go where the day takes you.</p>
-        </div>
+        <p class="jrn-lead" data-i18n="jrn.lead2">Pick a stay and the nights are set for you.</p>
       </div>
     </div>
 
     <div class="wrap">
       <div class="jlist" id="jList"></div>
 
-      <aside class="jres" data-reveal aria-labelledby="jresTitle">
-        <div>
-          <h3 id="jresTitle" data-i18n="jres.title">Booking</h3>
-          <p data-i18n="jres.text">Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.</p>
-        </div>
-        <button type="button" class="btn" id="jresBtn" data-i18n="jres.btn">Check availability</button>
-      </aside>
     </div>
   </section>
 
@@ -1609,7 +1627,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Quiet nights', 'mom.4d': 'Stars over the terrace and no alarm in the morning.',
       'mom.l': ['Morning', 'Midday', 'Golden hour', 'Night'], 'mom.nowL': 'On Thasos now', 'mom.note': 'Illustration. Photos of each moment will replace it.',
       'rate.eyebrow': 'Guest rating', 'rate.num': '5.0',
-      'nav.guide': 'Guide', 'nav.jrn': 'Journeys', 'jrn.title': "Thasos, <em>night by night</em>", 'jrn.lead1': "Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.", 'jrn.lead2': 'Pick one of the stays below and the nights are set for you. The places are only ideas: go where the day takes you.', 'jrn.nights': '{n} nights', 'jrn.own': 'Your own', 'jrn.route': 'The route', 'jrn.book': 'Book {n} nights', 'jrn.pick': 'Choose your dates', 'jrn.day': 'Day {n}', 'jres.title': 'Booking', 'jres.text': 'Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.', 'jres.btn': 'Check availability', 'j.hint': 'Tap your arrival day. We will add the {n} nights.', 'j.nofit': '{n} nights from that day are not free. Try another arrival day.', 'j.note': 'We are interested in the "{name}" journey.', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
+      'nav.guide': 'Guide', 'nav.jrn': 'Journeys', 'jrn.title': "Thasos, <em>night by night</em>", 'jrn.lead1': "Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.", 'jrn.lead2': 'Pick a stay and the nights are set for you.', 'jrn.nights': '{n} nights', 'jrn.own': 'Your own', 'jrn.route': 'The route', 'jrn.book': 'Book {n} nights', 'jrn.pick': 'Choose your dates', 'jrn.day': 'Day {n}', 'jres.title': 'Booking', 'jres.text': 'Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.', 'jres.btn': 'Check availability', 'j.hint': 'Tap your arrival day. We will add the {n} nights.', 'j.nofit': '{n} nights from that day are not free. Try another arrival day.', 'j.note': 'We are interested in the "{name}" journey.', 'guide.title': 'Thasos <em>around you</em>', 'guide.lead': 'Beaches, villages and places worth the drive.', 'guide.dir': 'Directions',
       'g.all': 'All', 'g.beach': 'Beaches', 'g.village': 'Villages', 'g.sight': 'Sights', 'g.taste': 'Taste',
       'rev.1': "The place was wonderful, the location magical and the rooms spotlessly clean! Thank you very much to Sasha for her kindness and smile!", 'rev.2': "An ideal choice for anyone looking for relaxation and tranquility on their vacation. The hotel is located in an area that provides easy access to many nearby beaches. Rooms with sea view and spotlessly clean. The hostess, Ms. Sasha, is very helpful, cheerful and always willing to make your stay as pleasant as possible. The breakfast is fresh and delicious. I think we made the best choice, we will definitely choose you again in the future!", 'rev.3': "Awesome view! Hot water and fast internet, very clean and Nasia very helpful!! I highly recommend it!", 'rev.src': "Guest review on Google", 'rev.eyebrow': 'Reviews', 'rev.drag': 'Drag for the next one', 'rev.title': 'What guests <em>say</em>', 'rev.ph': '[A guest review from Google, picked by the owner]', 'rev.name': '[Name]', 'rev.when': '[Month, year]',
       'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
@@ -1666,7 +1684,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'mom.4t': 'Ήσυχα βράδια', 'mom.4d': 'Αστέρια πάνω από τη βεράντα και πρωινό χωρίς ξυπνητήρι.',
       'mom.l': ['Πρωί', 'Μεσημέρι', 'Δειλινό', 'Νύχτα'], 'mom.nowL': 'Τώρα στη Θάσο', 'mom.note': 'Εικονογράφηση. Θα μπουν φωτογραφίες για κάθε στιγμή.',
       'rate.eyebrow': 'Βαθμολογία επισκεπτών', 'rate.num': '5,0',
-      'nav.guide': 'Οδηγός', 'nav.jrn': 'Ταξίδια', 'jrn.title': "Η Θάσος, <em>νύχτα τη νύχτα</em>", 'jrn.lead1': "Το Life's Moments βρίσκεται στην ήσυχη νοτιοδυτική ακτή, κοντά στα Λιμενάρια. Από εδώ όλο το νησί είναι μια σύντομη διαδρομή: κρυφοί κολπίσκοι, πέτρινα χωριά, μια αρχαία πόλη δίπλα στο λιμάνι.", 'jrn.lead2': 'Διαλέξτε μία από τις διαμονές παρακάτω και οι νύχτες ορίζονται μόνες τους. Τα μέρη είναι απλώς ιδέες: πηγαίνετε όπου σας πάει η μέρα.', 'jrn.nights': '{n} νύχτες', 'jrn.own': 'Δικό σας', 'jrn.route': 'Η διαδρομή', 'jrn.book': 'Κράτηση {n} νυχτών', 'jrn.pick': 'Επιλογή ημερομηνιών', 'jrn.day': 'Μέρα {n}', 'jres.title': 'Κρατήσεις', 'jres.text': 'Κάθε ταξίδι είναι ένα δωμάτιο ή το απαρτμέντ για τις νύχτες που γράφει. Οι ιδιοκτήτες απαντούν σε κάθε αίτημα μέσα σε 24 ώρες, και λίγες μέρες πριν φτάσετε σας έρχεται email με ιδέες για το νησί.', 'jres.btn': 'Δείτε διαθεσιμότητα', 'j.hint': 'Πατήστε τη μέρα άφιξης. Θα προσθέσουμε τις {n} νύχτες.', 'j.nofit': 'Οι {n} νύχτες από εκείνη τη μέρα δεν είναι ελεύθερες. Δοκιμάστε άλλη μέρα άφιξης.', 'j.note': 'Μας ενδιαφέρει το ταξίδι «{name}».', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
+      'nav.guide': 'Οδηγός', 'nav.jrn': 'Ταξίδια', 'jrn.title': "Η Θάσος, <em>νύχτα τη νύχτα</em>", 'jrn.lead1': "Το Life's Moments βρίσκεται στην ήσυχη νοτιοδυτική ακτή, κοντά στα Λιμενάρια. Από εδώ όλο το νησί είναι μια σύντομη διαδρομή: κρυφοί κολπίσκοι, πέτρινα χωριά, μια αρχαία πόλη δίπλα στο λιμάνι.", 'jrn.lead2': 'Διαλέξτε μια διαμονή και οι νύχτες μπαίνουν μόνες τους.', 'jrn.nights': '{n} νύχτες', 'jrn.own': 'Δικό σας', 'jrn.route': 'Η διαδρομή', 'jrn.book': 'Κράτηση {n} νυχτών', 'jrn.pick': 'Επιλογή ημερομηνιών', 'jrn.day': 'Μέρα {n}', 'jres.title': 'Κρατήσεις', 'jres.text': 'Κάθε ταξίδι είναι ένα δωμάτιο ή το απαρτμέντ για τις νύχτες που γράφει. Οι ιδιοκτήτες απαντούν σε κάθε αίτημα μέσα σε 24 ώρες, και λίγες μέρες πριν φτάσετε σας έρχεται email με ιδέες για το νησί.', 'jres.btn': 'Δείτε διαθεσιμότητα', 'j.hint': 'Πατήστε τη μέρα άφιξης. Θα προσθέσουμε τις {n} νύχτες.', 'j.nofit': 'Οι {n} νύχτες από εκείνη τη μέρα δεν είναι ελεύθερες. Δοκιμάστε άλλη μέρα άφιξης.', 'j.note': 'Μας ενδιαφέρει το ταξίδι «{name}».', 'guide.title': 'Η Θάσος <em>γύρω σας</em>', 'guide.lead': 'Παραλίες, χωριά και μέρη που αξίζουν τη διαδρομή.', 'guide.dir': 'Οδηγίες',
       'g.all': 'Όλα', 'g.beach': 'Παραλίες', 'g.village': 'Χωριά', 'g.sight': 'Αξιοθέατα', 'g.taste': 'Γεύσεις',
       'rev.1': "Ο χώρος ήταν υπέροχος, η τοποθεσία μαγική και τα δωμάτια πεντακάθαρα! Ευχαριστούμε πολύ τη Σάσα για την ευγένεια και το χαμόγελό της!", 'rev.2': "Ιδανική επιλογή για όποιον ψάχνει χαλάρωση και ηρεμία στις διακοπές του. Το κατάλυμα βρίσκεται σε σημείο με εύκολη πρόσβαση σε πολλές κοντινές παραλίες. Δωμάτια με θέα στη θάλασσα και πεντακάθαρα. Η οικοδέσποινα, η κ. Σάσα, είναι πολύ εξυπηρετική, χαμογελαστή και πάντα πρόθυμη να κάνει τη διαμονή σας όσο πιο ευχάριστη γίνεται. Το πρωινό είναι φρέσκο και νόστιμο. Νομίζω πως κάναμε την καλύτερη επιλογή, σίγουρα θα σας ξαναδιαλέξουμε στο μέλλον!", 'rev.3': "Φοβερή θέα! Ζεστό νερό και γρήγορο ίντερνετ, πολύ καθαρό και η Νάσια πολύ εξυπηρετική!! Το συστήνω ανεπιφύλακτα!", 'rev.src': "Κριτική επισκέπτη στο Google", 'rev.eyebrow': 'Κριτικές', 'rev.drag': 'Σύρετε για το επόμενο', 'rev.title': 'Τι λένε οι <em>επισκέπτες</em>', 'rev.ph': '[Σχόλιο επισκέπτη από το Google, που θα διαλέξει ο ιδιοκτήτης]', 'rev.name': '[Όνομα]', 'rev.when': '[Μήνας, έτος]',
       'tour.enter': 'Μπείτε στο σπίτι', 'tour.coverNote': 'Προς το παρόν δοκιμαστικό σπίτι · εδώ μπαίνουν οι φωτογραφίες 360°'
@@ -2125,7 +2143,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         ] },
       { nights: 0, img: '../photos/balcony-sea.jpg',
         name: ['At your own pace', 'Με τον δικό σας ρυθμό'],
-        line: ['Stay as many nights as you like and shape the days yourself. Write a few words in the booking message about what you love: sea, mountain, food.', 'Μείνετε όσες νύχτες θέλετε και φτιάξτε τις μέρες όπως σας αρέσει. Γράψτε δυο λόγια στο μήνυμα της κράτησης για το τι αγαπάτε: θάλασσα, βουνό, φαγητό.'] }
+        line: ['As many nights as you like, your own plan.', 'Όσες νύχτες θέλετε, με το δικό σας πρόγραμμα.'] }
     ];
     const L = () => (lang === 'el' ? 1 : 0);
     const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -2138,20 +2156,17 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     function render() {
       const l = L();
       listEl.innerHTML = JOURNEYS.map((j, i) => {
-        const label = j.nights ? '<b>' + pad(j.nights) + '</b>' + t('jrn.nights', { n: j.nights }).replace(/^\d+\s*/, '') : '<b>—</b>' + t('jrn.own');
-        const days = j.days ? '<div class="jdays' + (open.has(i) ? ' open' : '') + '" id="jd' + i + '"><ol>' + j.days.map((d, n) =>
-          '<li><span class="jd">' + esc(t('jrn.day', { n: n + 1 })) + '</span><span class="jt"><b>' + esc(d[0][l]) + '</b><span>' + esc(d[1][l]) + '</span></span></li>').join('') + '</ol></div>' : '';
-        return '<article class="jitem" data-reveal>' +
-          '<figure class="jfig"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
-          '<div class="jbody"><p class="jnights">' + label + '</p><h3>' + esc(j.name[l]) + '</h3><p>' + esc(j.line[l]) + '</p>' +
-          '<div class="jacts">' +
-            '<button type="button" class="btn" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + '</button>' +
-            (j.days ? '<button type="button" class="jmore" data-jmore="' + i + '" aria-controls="jd' + i + '" aria-expanded="' + open.has(i) + '">' + esc(t('jrn.route')) +
-              ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>' : '') +
-          '</div>' + days + '</div></article>';
+        const label = j.nights ? t('jrn.nights', { n: j.nights }) : t('jrn.own');
+        // the route in one line: the places of each day, without arrival and departure
+        const stops = j.days ? j.days.slice(1, -1).map((d) => esc(d[0][l])).join(' · ') : esc(j.line[l]);
+        return '<article class="jcard">' +
+          '<figure class="jfig"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
+            '<span class="jtag">' + esc(label) + '</span>' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
+          '<h3>' + esc(j.name[l]) + '</h3><p class="jstops">' + stops + '</p>' +
+          '<button type="button" class="jbook" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) +
+            ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>' +
+          '</article>';
       }).join('');
-      // rows drawn after the page set up its reveal watcher would stay hidden: show them
-      $$('.jitem', listEl).forEach((el) => el.classList.add('in'));
     }
 
     listEl.addEventListener('click', (e) => {
@@ -2176,7 +2191,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       goTo('#stay');
       setTimeout(() => openCal(), mqMobile.matches ? 0 : 650);
     });
-    $('#jresBtn').addEventListener('click', () => { cal.want = 0; goTo('#stay'); setTimeout(() => openCal(), mqMobile.matches ? 0 : 650); });
     // a journey left half-picked does not follow the guest around
     new MutationObserver(() => { if (calPop.hidden && cal.want) { cal.want = 0; renderSum(); } }).observe(calPop, { attributes: true, attributeFilter: ['hidden'] });
     const fNote = $('#fNote'); if (fNote) fNote.addEventListener('input', () => { fNote.dataset.jauto = '0'; });
