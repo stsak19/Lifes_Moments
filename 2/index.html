@@ -563,9 +563,13 @@ html .intro { height: 100vh; height: 100svh; min-height: 520px; max-height: none
 html .stay { margin-top: 0; padding-top: 28px; }
 html .intro .cap.hcenter { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; margin: 0; padding: 0 24px; max-width: none; transform: none; color: #F8F4EC; }
-html .intro .hcenter h1 { margin: 0; white-space: nowrap; max-width: none; font: 400 clamp(44px, min(12.5vw, 9.5vw + 8px), 150px)/1 "GFS Didot", "Piazzolla", Georgia, serif; letter-spacing: -.01em; color: #F8F4EC; text-shadow: 0 2px 30px rgba(0, 0, 0, .35); }
-html .intro .hcenter .hplace { margin: 18px 0 0; font-size: clamp(13px, 1.1vw, 16px); letter-spacing: .5em; text-transform: uppercase; color: rgba(248, 244, 236, .9); padding-left: .5em; }
+html .intro .hcenter h1 { margin: 0; white-space: nowrap; max-width: none; font: 400 clamp(30px, 3.6vw, 52px)/1 "GFS Didot", "Piazzolla", Georgia, serif; letter-spacing: -.01em; color: #F8F4EC; text-shadow: 0 2px 30px rgba(0, 0, 0, .35); }
+html .intro .hcenter .hplace { margin: 12px 0 0; font-size: 11px; letter-spacing: .5em; text-transform: uppercase; color: rgba(248, 244, 236, .9); padding-left: .5em; }
 html .intro .shade { background: radial-gradient(70% 60% at 50% 50%, rgba(6, 10, 18, .38), rgba(6, 10, 18, .12) 70%, transparent), linear-gradient(to bottom, rgba(6, 10, 18, .35), transparent 22%, transparent 78%, rgba(6, 10, 18, .3)); }
+
+/* Like Six Senses: no bar over the video. The header slides in once the video has scrolled away. */
+.top { transition: transform .45s ease, opacity .45s ease, background-color .45s ease; }
+.top:not(.solid) { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
 </style>
 <style id="redesign">
