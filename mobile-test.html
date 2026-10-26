@@ -15,6 +15,23 @@
   html .top.solid .brand-name { font-size: 21px; }
   html .intro .hcenter .hlogo { display: none; }
 }
+
+/* phones: the place card always fits the screen - the photo gives up height, nothing scrolls */
+@media (max-width: 760px) {
+  html .gpanel { display: flex; flex-direction: column; height: calc(100svh - 14px); max-height: calc(100svh - 14px); overflow: hidden; }
+  html .gp-media { flex: 1 1 auto; min-height: 120px; }
+  html .gp-media svg.gp-ic { width: 64px; height: 64px; top: 40%; }
+  html .gp-cap h3 { font-size: 34px; }
+  html .gp-body { flex: 0 0 auto; gap: 11px; padding: 18px 20px calc(14px + env(safe-area-inset-bottom)); overflow: hidden; }
+  html .gp-lead { font-size: 18px; line-height: 1.32; }
+  html .gp-body p.gp-txt { font-size: 14.5px; line-height: 1.5; }
+  html .gp-map, html .gp-maplbl { display: none !important; }
+  html .gp-foot { padding-top: 4px; }
+}
+@media (max-width: 760px) and (max-height: 700px) {
+  html .gp-body p.gp-txt + p.gp-txt { display: none; }
+  html .gp-cap h3 { font-size: 30px; }
+}
 </style></head><body>
 <title>Life's Moments Mobile Test</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
