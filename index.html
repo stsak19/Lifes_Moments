@@ -268,6 +268,8 @@ h1, h2, h3 { text-wrap: balance; }
 .legend .sw { width: 12px; height: 12px; border-radius: 99px; background: var(--accent); }
 .legend s { color: var(--muted); }
 .cal-foot .btn { min-height: 40px; }
+.cal-nights { margin-left: auto; font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.cal-nights:empty { display: none; }
 .cal-scrim { display: none; }
 .stay.cal-open { z-index: 66; }
 
@@ -443,6 +445,13 @@ a.score:hover { border-color: var(--muted); }
 .form label.chk { flex-direction: row; align-items: flex-start; gap: 10px; line-height: 1.45; }
 .form .chk input { min-height: 0; width: 18px; height: 18px; padding: 0; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
 .form input { min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); }
+@media (min-width: 760px) {
+  .modal-card.wide-card { width: min(760px, 100%); padding: 36px 40px; }
+  .wide-card .form { display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; row-gap: 14px; }
+  .wide-card .form > * { grid-column: 1 / -1; }
+  .wide-card .form > label[for="fName"], .wide-card .form > label[for="fEmail"], .wide-card .form > label[for="fPhone"], .wide-card .form > label[for="fCode"] { grid-column: auto; }
+  .wide-card .form > #fWeb { grid-column: auto; }
+}
 .form label:has(input[required]) > span::after { content: " *"; color: var(--accent); }
 .form textarea { min-height: 92px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); line-height: 1.45; resize: vertical; }
 .form #fCode { text-transform: uppercase; letter-spacing: .06em; }
@@ -1131,6 +1140,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
           <div class="cal-months" id="calMonths"></div>
           <div class="cal-foot">
             <span class="legend" aria-hidden="true"><span><i class="sw"></i><span data-i18n="cal.yours">Your stay</span></span><span><s>14</s><span data-i18n="cal.booked">Booked</span></span></span>
+            <span class="cal-nights" id="calNights" aria-live="polite"></span>
             <button type="button" class="btn" id="calDone" data-i18n="cal.done">Done</button>
           </div>
         </div>
@@ -1342,7 +1352,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 </footer>
 
 <div class="modal" id="modal" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-card wide-card" role="dialog" aria-modal="true" aria-labelledby="mTitle">
     <button type="button" class="icon-btn x" id="mClose" aria-label="Close">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>
     </button>
@@ -1353,9 +1363,9 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
         <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
-        <label for="fNote"><span data-i18n="m.note">Message to the hosts (optional)</span><textarea id="fNote" name="note" rows="3" maxlength="1000" data-i18n-ph="m.noteph" placeholder="Arrival time, questions, anything we should know"></textarea></label>
         <label for="fCode"><span data-i18n="m.code">Discount code (optional)</span><input id="fCode" name="promo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" aria-describedby="fPromo"></label>
         <p class="fine" id="fPromo" role="status" hidden></p>
+        <label for="fNote"><span data-i18n="m.note">Message to the hosts (optional)</span><textarea id="fNote" name="note" rows="3" maxlength="1000" data-i18n-ph="m.noteph" placeholder="Arrival time, questions, anything we should know"></textarea></label>
         <label class="chk" for="fMkt"><input id="fMkt" name="marketing" type="checkbox"><span data-i18n="m.mkt">I would like to receive offers for future stays (optional). I can unsubscribe at any time.</span></label>
         <input id="fWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
@@ -1377,8 +1387,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <li><div><b data-i18n="m.s2">Host replies within 24 hours</b><span data-i18n="m.s2d">You get an email either way.</span></div></li>
         <li><div><b data-i18n="m.s3">Accepted: you're charged and booked</b><span data-i18n="m.s3d">Declined or no reply: the hold is released.</span></div></li>
       </ol>
-      <p class="fine" style="margin-bottom: 16px" data-i18n="m.demo">Demo only. Nothing was held or sent.</p>
-      <button type="button" class="btn wide" id="dClose" data-i18n="cal.done">Done</button>
+      <button type="button" class="btn wide" id="dClose" style="margin-top: 16px" data-i18n="cal.done">Done</button>
     </div>
   </div>
 </div>
@@ -1456,7 +1465,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Request your stay', 'm.name': 'Full name', 'm.phone': 'Phone', 'm.card': 'Card details', 'm.err': 'Fill in your name, a valid email and your phone to continue.',
       'm.submit': 'Hold card and send request', 'm.charged': "We'll reply within 24 hours. Your card is only charged once we confirm.", 'm.sent': 'Request sent',
       'm.s1': 'Card held', 'm.s1d': 'The amount is reserved, not charged.', 'm.s2': 'Host replies within 24 hours', 'm.s2d': 'You get an email either way.',
-      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.note': 'Message to the hosts (optional)', 'm.noteph': 'Arrival time, questions, anything we should know', 'm.code': 'Discount code (optional)', 'm.codeok': 'Code {c}: −{p}% off your stay.', 'm.codedates': 'Code {c} does not apply to these dates.', 'm.codebad': 'This code is not valid. Check it or leave the field empty.', 'm.codecheck': 'Checking the code…', 'm.codemail': 'Fill in the email the code was sent to, and it will be checked.', 'm.codeemail': 'This code works only with the email it was sent to.', 'm.demo': 'Your request reached the owners. No card is needed for now; payment is arranged with them.',
+      'm.s3': "Accepted: you're charged and booked", 'm.s3d': 'Declined or no reply: the hold is released.', 'm.mkt': 'I would like to receive offers for future stays (optional). I can unsubscribe at any time.', 'm.promo': 'Offer code {c} will be sent with your request.', 'm.note': 'Message to the hosts (optional)', 'm.noteph': 'Arrival time, questions, anything we should know', 'm.code': 'Discount code (optional)', 'm.codeok': 'Code {c}: −{p}% off your stay.', 'm.codedates': 'Code {c} does not apply to these dates.', 'm.codebad': 'This code is not valid. Check it or leave the field empty.', 'm.codecheck': 'Checking the code…', 'm.codemail': 'Fill in the email the code was sent to, and it will be checked.', 'm.codeemail': 'This code works only with the email it was sent to.',
       'guest': 'guest', 'guests': 'guests', 'm.emailed': "We'll reply to {e}.", 'm.sending': 'Sending…', 'm.closedT': 'Not taking bookings right now', 'm.closed': "We're not taking booking requests through the site at the moment. Please check back soon.", 'm.full': 'Those nights were just taken. Please pick other dates.', 'm.many': 'Too many requests right now. Please try again in a little while.', 'm.fail': "Your request didn't go through. Check your connection and try again.",
       'nav.day': 'A day', 'place.title': 'Quiet, by the <em>sea</em>',
       'mom.eyebrow': "A day at Life's Moments", 'mom.title': 'Every hour has its <em>moment</em>', 'mom.lead': 'A summer day at the house, from morning to night.',
@@ -1513,7 +1522,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'm.title': 'Αίτημα κράτησης', 'm.name': 'Ονοματεπώνυμο', 'm.phone': 'Τηλέφωνο', 'm.card': 'Στοιχεία κάρτας', 'm.err': 'Συμπληρώστε όνομα, σωστό email και τηλέφωνο για να συνεχίσετε.',
       'm.submit': 'Δέσμευση κάρτας και αποστολή', 'm.charged': 'Θα σας απαντήσουμε μέσα σε 24 ώρες. Η κάρτα σας χρεώνεται μόνο αν επιβεβαιώσουμε.', 'm.sent': 'Το αίτημα στάλθηκε',
       'm.s1': 'Η κάρτα δεσμεύτηκε', 'm.s1d': 'Το ποσό δεσμεύεται, δεν χρεώνεται.', 'm.s2': 'Απάντηση μέσα σε 24 ώρες', 'm.s2d': 'Θα λάβετε email σε κάθε περίπτωση.',
-      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.note': 'Μήνυμα προς εμάς (προαιρετικό)', 'm.noteph': 'Ώρα άφιξης, ερωτήσεις, ό,τι θέλετε να ξέρουμε', 'm.code': 'Κωδικός έκπτωσης (προαιρετικό)', 'm.codeok': 'Κωδικός {c}: −{p}% στη διαμονή σας.', 'm.codedates': 'Ο κωδικός {c} δεν ισχύει για αυτές τις ημερομηνίες.', 'm.codebad': 'Ο κωδικός δεν είναι σωστός. Ελέγξτε τον ή αφήστε το πεδίο κενό.', 'm.codecheck': 'Έλεγχος κωδικού…', 'm.codemail': 'Συμπληρώστε το email στο οποίο λάβατε τον κωδικό για να ελεγχθεί.', 'm.codeemail': 'Ο κωδικός ισχύει μόνο με το email στο οποίο στάλθηκε.', 'm.demo': 'Το αίτημά σας έφτασε στους ιδιοκτήτες. Δεν χρειάζεται κάρτα προς το παρόν· την πληρωμή την κανονίζετε μαζί τους.',
+      'm.s3': 'Αν γίνει δεκτό: χρεώνεστε και η κράτηση κλείνει', 'm.s3d': 'Αν απορριφθεί ή δεν υπάρξει απάντηση: η δέσμευση ακυρώνεται.', 'm.mkt': 'Θέλω να λαμβάνω προσφορές για επόμενες διαμονές (προαιρετικό). Μπορώ να διαγραφώ όποτε θέλω.', 'm.promo': 'Ο κωδικός προσφοράς {c} θα σταλεί μαζί με το αίτημά σας.', 'm.note': 'Μήνυμα προς εμάς (προαιρετικό)', 'm.noteph': 'Ώρα άφιξης, ερωτήσεις, ό,τι θέλετε να ξέρουμε', 'm.code': 'Κωδικός έκπτωσης (προαιρετικό)', 'm.codeok': 'Κωδικός {c}: −{p}% στη διαμονή σας.', 'm.codedates': 'Ο κωδικός {c} δεν ισχύει για αυτές τις ημερομηνίες.', 'm.codebad': 'Ο κωδικός δεν είναι σωστός. Ελέγξτε τον ή αφήστε το πεδίο κενό.', 'm.codecheck': 'Έλεγχος κωδικού…', 'm.codemail': 'Συμπληρώστε το email στο οποίο λάβατε τον κωδικό για να ελεγχθεί.', 'm.codeemail': 'Ο κωδικός ισχύει μόνο με το email στο οποίο στάλθηκε.',
       'guest': 'άτομο', 'guests': 'άτομα', 'm.emailed': 'Θα σας απαντήσουμε στο {e}.', 'm.sending': 'Αποστολή…', 'm.closedT': 'Δεν δεχόμαστε κρατήσεις αυτή την περίοδο', 'm.closed': 'Αυτή την περίοδο δεν δεχόμαστε αιτήματα κράτησης από το σάιτ. Ελάτε ξανά σύντομα.', 'm.full': 'Αυτές οι νύχτες μόλις κλείστηκαν. Διαλέξτε άλλες ημερομηνίες.', 'm.many': 'Πολλά αιτήματα αυτή τη στιγμή. Δοκιμάστε ξανά σε λίγο.', 'm.fail': 'Το αίτημα δεν στάλθηκε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.',
       'nav.day': 'Μια μέρα', 'place.title': 'Ήσυχα, δίπλα στη <em>θάλασσα</em>',
       'mom.eyebrow': "Μια μέρα στο Life's Moments", 'mom.title': 'Κάθε ώρα έχει τη <em>στιγμή</em> της', 'mom.lead': 'Μια καλοκαιρινή μέρα στο σπίτι, από το πρωί ως το βράδυ.',
@@ -1840,6 +1849,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     $('#gMinus').disabled = cal.guests <= 1;
     $('#calHint').textContent = cal.note || t(!cal.ci ? 'hint.1' : !cal.co ? 'hint.2' : 'hint.3');
     $('#calHint').classList.toggle('has-note', !!cal.note); // only real warnings show (e.g. booked nights)
+    const nSel = cal.ci && cal.co ? dayNum(cal.co) - dayNum(cal.ci) : 0;
+    $('#calNights').textContent = nSel ? plural(nSel, 'night', 'nights') : '';
     renderStatus();
   }
 
