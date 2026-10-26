@@ -18,11 +18,16 @@
 
 /* phones: the place card always fits the screen - the photo gives up height, nothing scrolls */
 @media (max-width: 760px) {
-  html .gpanel { display: flex; flex-direction: column; height: calc(100svh - 14px); max-height: calc(100svh - 14px); overflow: hidden; }
-  html .gp-media { flex: 1 1 auto; min-height: 120px; }
+  /* a floating pop-up card: space on every side, all corners rounded, grows in from the middle */
+  html .gsheet { place-items: center; padding: calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom)); }
+  html .gpanel { display: flex; flex-direction: column; width: 100%; height: auto;
+    max-height: min(760px, calc(100svh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); overflow: hidden; border-radius: 22px; box-shadow: 0 24px 60px rgba(6,10,18,.35);
+    opacity: 0; transform: translateY(18px) scale(.94); transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .3s ease; }
+  html .gsheet.on .gpanel { opacity: 1; transform: none; }
+  html .gp-media { flex: 0 1 36svh; min-height: 120px; }
   html .gp-media svg.gp-ic { width: 64px; height: 64px; top: 40%; }
   html .gp-cap h3 { font-size: 34px; }
-  html .gp-body { flex: 0 0 auto; gap: 11px; padding: 18px 20px calc(14px + env(safe-area-inset-bottom)); overflow: hidden; }
+  html .gp-body { flex: 0 0 auto; gap: 11px; padding: 18px 20px 16px; overflow: hidden; }
   html .gp-lead { font-size: 18px; line-height: 1.32; }
   html .gp-body p.gp-txt { font-size: 14.5px; line-height: 1.5; }
   html .gp-map, html .gp-maplbl { display: none !important; }
