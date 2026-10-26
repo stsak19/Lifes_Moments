@@ -1168,9 +1168,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       <span class="brand-txt"><span class="brand-name">Life's Moments</span><span class="brand-sub" data-i18n="brand.sub">Thasos</span></span>
     </a>
     <nav class="nav" aria-label="Main">
-      <a href="#moments" data-i18n="nav.day">A day</a>
-      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#journeys" data-i18n="nav.jrn">Journeys</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#place" data-i18n="nav.place">The place</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
       <a href="#reviews" data-i18n="rev.eyebrow">Reviews</a>
@@ -1210,9 +1209,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </button>
     </div>
     <nav aria-label="Menu">
-      <a href="#moments" data-i18n="nav.day">A day</a>
-      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#journeys" data-i18n="nav.jrn">Journeys</a>
+      <a href="#rooms" data-i18n="nav.rooms">Rooms</a>
       <a href="#place" data-i18n="nav.place">The place</a>
       <a href="#guide" data-i18n="nav.guide">Guide</a>
       <a href="#reviews" data-i18n="rev.eyebrow">Reviews</a>
@@ -1318,65 +1316,35 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
 
 
-  <!-- A day at the house: the picture is an illustration driven by scroll. Swap in real photos of each moment later. -->
-  <section class="moments" id="moments" aria-labelledby="momTitle">
-    <div class="wrap mom-head" data-reveal>
-      <div>
-        <p class="eyebrow sec-eyebrow"><span class="num">01</span><span data-i18n="mom.eyebrow">A day at Life's Moments</span></p>
-        <h2 class="sec-title" id="momTitle" data-i18n-html="mom.title">Every hour has its <em>moment</em></h2>
-      </div>
-      <p class="mom-lead" data-i18n="mom.lead">A summer day at the house, from morning to night.</p>
-    </div>
-    <div class="wrap mom-body">
-      <div class="mom-stage">
-        <div class="mom-scene" aria-hidden="true">
-          <svg viewBox="0 0 800 1000" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="mSky" x1="0" y1="0" x2="0" y2="1"><stop id="mSky1" offset="0"/><stop id="mSky2" offset=".58"/><stop id="mSky3" offset="1"/></linearGradient>
-              <linearGradient id="mSea" x1="0" y1="0" x2="0" y2="1"><stop id="mSea1" offset="0"/><stop id="mSea2" offset="1"/></linearGradient>
-              <radialGradient id="mMoonGlow"><stop offset="0" stop-color="#F1EBDD" stop-opacity=".22"/><stop offset="1" stop-color="#F1EBDD" stop-opacity="0"/></radialGradient>
-              <mask id="mMoonMask"><circle cx="590" cy="190" r="27" fill="#fff"/><circle cx="603" cy="181" r="25" fill="#000"/></mask>
-              <radialGradient id="mGlow"><stop id="mGlow1" offset="0" stop-opacity=".85"/><stop id="mGlow2" offset="1" stop-opacity="0"/></radialGradient>
-              <linearGradient id="mRefl" x1="0" y1="0" x2="0" y2="1"><stop id="mRefl1" offset="0" stop-opacity=".7"/><stop id="mRefl2" offset="1" stop-opacity="0"/></linearGradient>
-            </defs>
-            <rect width="800" height="624" fill="url(#mSky)"/>
-            <g id="mStars" fill="#FFFFFF"></g>
-            <g id="mMoon"><circle cx="590" cy="190" r="110" fill="url(#mMoonGlow)"/><circle cx="590" cy="190" r="27" fill="#F1EBDD" mask="url(#mMoonMask)"/></g>
-            <circle id="mGlow" cx="200" cy="560" r="180" fill="url(#mGlow)"/>
-            <circle id="mSun" cx="200" cy="560" r="46"/>
-            <path id="mIsle" d="M0 624 L0 600 C60 594 110 576 170 570 C230 564 270 552 330 560 C380 566 420 584 470 588 C520 592 560 600 620 602 C680 604 740 608 800 606 L800 624 Z"/>
-            <rect y="622" width="800" height="378" fill="url(#mSea)"/>
-            <rect id="mReflRect" x="160" y="624" width="80" height="230" fill="url(#mRefl)"/>
-            <g id="mWaves" fill="none" stroke-width="2" stroke-linecap="round" opacity=".45">
-              <path d="M40 662h90M300 670h60M520 658h120M700 676h70"/><path d="M90 712h70M380 706h110M610 722h60"/><path d="M20 772h80M250 784h120M560 768h90"/>
-            </g>
-            <path id="mHillL" d="M0 1000 L0 896 C70 878 150 896 230 1000 Z"/>
-            <path id="mHill" d="M250 1000 C330 902 460 852 600 840 C690 832 760 838 800 844 L800 1000 Z"/>
-            <g id="mHouse">
-              <rect class="m-wall" x="556" y="732" width="170" height="116"/>
-              <rect class="m-roof" x="548" y="726" width="186" height="8"/>
-              <rect class="m-roof" x="548" y="768" width="140" height="5"/><rect class="m-roof" x="548" y="806" width="140" height="5"/>
-              <rect class="m-win" x="566" y="744" width="22" height="22"/><rect class="m-win" x="600" y="744" width="22" height="22"/><rect class="m-win" x="634" y="744" width="22" height="22"/><rect class="m-win" x="696" y="744" width="18" height="22"/>
-              <rect class="m-win" x="566" y="782" width="22" height="22"/><rect class="m-win" x="600" y="782" width="22" height="22"/><rect class="m-win" x="634" y="782" width="22" height="22"/><rect class="m-win" x="696" y="782" width="18" height="22"/>
-              <rect class="m-win" x="566" y="820" width="22" height="24"/><rect class="m-win" x="600" y="820" width="22" height="24"/><rect class="m-win" x="634" y="820" width="22" height="24"/><rect class="m-win" x="696" y="820" width="18" height="24"/>
-            </g>
-            <g id="mTrees">
-              <path d="M152 940 C150 905 162 885 150 852" fill="none" stroke-width="9" stroke-linecap="round"/>
-              <circle cx="150" cy="832" r="36"/><circle cx="114" cy="848" r="27"/><circle cx="187" cy="845" r="29"/><circle cx="140" cy="808" r="25"/><circle cx="170" cy="814" r="22"/>
-              <ellipse cx="752" cy="790" rx="12" ry="52"/><ellipse cx="772" cy="806" rx="9" ry="38"/>
-            </g>
-          </svg>
-          <div class="mom-clock"><b id="momClock">08:00</b><span id="momLabel">Morning</span></div>
+  <!-- Journeys: ready-made stays (3, 5, 7 nights) in the spirit of Six Senses' "Journeys".
+       Texts and photos live in JOURNEYS in the script. "Book" picks the nights for the guest. -->
+  <section class="jrn" id="journeys" aria-labelledby="jrnTitle">
+    <div class="wrap">
+      <div class="jrn-head" data-reveal>
+        <div>
+          <p class="eyebrow sec-eyebrow"><span class="num">01</span><span data-i18n="nav.jrn">Journeys</span></p>
+          <h2 class="sec-title" id="jrnTitle" data-i18n-html="jrn.title">Thasos, <em>night by night</em></h2>
+        </div>
+        <div class="jrn-intro">
+          <p data-i18n="jrn.lead1">Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.</p>
+          <p data-i18n="jrn.lead2">Pick one of the stays below and the nights are set for you. The places are only ideas: go where the day takes you.</p>
         </div>
       </div>
-      <ol class="mom-list" id="momList">
-        <li class="mom on"><span class="mom-t">08:00</span><h3 data-i18n="mom.1t">Coffee on the terrace</h3><p data-i18n="mom.1d">The sea below, pine trees all around, and the day just starting.</p></li>
-        <li class="mom"><span class="mom-t">13:00</span><h3 data-i18n="mom.2t">Down to the sea</h3><p data-i18n="mom.2d">A short way to the beach, and back in time for a long lunch.</p></li>
-        <li class="mom"><span class="mom-t">19:30</span><h3 data-i18n="mom.3t">Golden hour</h3><p data-i18n="mom.3d">A drink outside while the light turns gold.</p></li>
-        <li class="mom"><span class="mom-t">22:00</span><h3 data-i18n="mom.4t">Quiet nights</h3><p data-i18n="mom.4d">Stars over the terrace and no alarm in the morning.</p></li>
-      </ol>
     </div>
-    <p class="wrap fine mom-note" data-i18n="mom.note">Illustration. Photos of each moment will replace it.</p>
+
+    <div class="jstrip" id="jStrip" aria-hidden="true"><div class="jstrip-track" id="jStripTrack"></div></div>
+
+    <div class="wrap">
+      <div class="jlist" id="jList"></div>
+
+      <aside class="jres" data-reveal aria-labelledby="jresTitle">
+        <div>
+          <h3 id="jresTitle" data-i18n="jres.title">Booking</h3>
+          <p data-i18n="jres.text">Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.</p>
+        </div>
+        <button type="button" class="btn" id="jresBtn" data-i18n="jres.btn">Check availability</button>
+      </aside>
+    </div>
   </section>
 
   <!-- Rooms: pick rooms or the apartment, then every unit slides by on its own. Photos per unit live in UNIT_PHOTOS in the script. -->
@@ -1405,41 +1373,10 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
   </section>
 
-  <!-- Journeys: ready-made stays (3, 5, 7 nights) in the spirit of Six Senses' "Journeys".
-       Texts and photos live in JOURNEYS in the script. "Book" picks the nights for the guest. -->
-  <section class="jrn" id="journeys" aria-labelledby="jrnTitle">
-    <div class="wrap">
-      <div class="jrn-head" data-reveal>
-        <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">03</span><span data-i18n="nav.jrn">Journeys</span></p>
-          <h2 class="sec-title" id="jrnTitle" data-i18n-html="jrn.title">Thasos, <em>night by night</em></h2>
-        </div>
-        <div class="jrn-intro">
-          <p data-i18n="jrn.lead1">Life's Moments sits on the quiet south-west coast, close to Limenaria. From here the whole island is within a short drive: hidden coves, stone villages, an ancient city by the port.</p>
-          <p data-i18n="jrn.lead2">Pick one of the stays below and the nights are set for you. The places are only ideas: go where the day takes you.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="jstrip" id="jStrip" aria-hidden="true"><div class="jstrip-track" id="jStripTrack"></div></div>
-
-    <div class="wrap">
-      <div class="jlist" id="jList"></div>
-
-      <aside class="jres" data-reveal aria-labelledby="jresTitle">
-        <div>
-          <h3 id="jresTitle" data-i18n="jres.title">Booking</h3>
-          <p data-i18n="jres.text">Each journey is a room or the apartment for the nights shown. The owners answer every request within 24 hours, and a few days before you arrive you get an email with ideas for the island.</p>
-        </div>
-        <button type="button" class="btn" id="jresBtn" data-i18n="jres.btn">Check availability</button>
-      </aside>
-    </div>
-  </section>
-
   <section class="place" id="place" aria-labelledby="placeTitle">
     <div class="wrap place-grid">
       <div class="place-main" data-reveal>
-        <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.place">The place</span></p>
+        <p class="eyebrow sec-eyebrow"><span class="num">03</span><span data-i18n="nav.place">The place</span></p>
         <h2 class="sec-title" id="placeTitle" data-i18n-html="place.title">Quiet, by the <em>sea</em></h2>
         <p class="place-lead" data-i18n-html="place.lead">Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span></p>
         <ul class="amen">
@@ -1483,7 +1420,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <img class="guide-img" src="https://images.pexels.com/photos/39567764/pexels-photo-39567764.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="" loading="lazy">
         <span class="gcredit">Ricardo Oliveira · Pexels</span>
         <div>
-          <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="nav.guide">Guide</span></p>
+          <p class="eyebrow sec-eyebrow"><span class="num">04</span><span data-i18n="nav.guide">Guide</span></p>
           <h2 class="sec-title" id="guideTitle" data-i18n-html="guide.title">Thasos <em>around you</em></h2>
         </div>
         <p class="guide-lead" data-i18n="guide.lead">Beaches, villages and places worth the drive.</p>
@@ -1496,7 +1433,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   <section class="reviews" id="reviews" aria-labelledby="revTitle">
     <div class="wrap">
       <div data-reveal>
-        <p class="eyebrow sec-eyebrow"><span class="num">06</span><span data-i18n="rev.eyebrow">Reviews</span></p>
+        <p class="eyebrow sec-eyebrow"><span class="num">05</span><span data-i18n="rev.eyebrow">Reviews</span></p>
         <h2 class="sec-title" id="revTitle" data-i18n-html="rev.title">What guests <em>say</em></h2>
       </div>
       <div class="rev-grid">
@@ -1846,7 +1783,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
   }
   /* The solid bar takes on the tone of the section under it, but a step darker (or lighter on dark tones)
      with its own line and shadow, so it never melts into the page. */
-  const tintSecs = ['.moments', '.rooms', '.place', '.guide', '.reviews', '.foot-wrap'].map((q) => $(q)).filter(Boolean);
+  const tintSecs = ['.jrn', '.rooms', '.place', '.guide', '.reviews', '.foot-wrap'].map((q) => $(q)).filter(Boolean);
   let lastTint = '';
   function tintTop() {
     const y = topBar.getBoundingClientRect().bottom;
