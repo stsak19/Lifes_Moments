@@ -604,6 +604,20 @@ html .intro .hcenter .hplace { margin-top: 12px; font-size: 11px; }
 html .intro .shade { background: radial-gradient(42% 26% at 50% 50%, rgba(6, 10, 18, .32), transparent 75%), linear-gradient(to bottom, rgba(6, 10, 18, .45), rgba(6, 10, 18, .1) 24%, transparent 60%, rgba(6, 10, 18, .25)); }
 html .intro .hcenter .hplace { color: #F8F4EC; text-shadow: 0 1px 10px rgba(0, 0, 0, .55); }
 
+/* ---------- slow zoom on each photo (Ken Burns), and arrows to move between them ---------- */
+.hslide { transform: scale(1); transition: opacity 1.6s ease, transform 0s linear 1.7s; }
+.hslide.on { transform: scale(1.12); transition: opacity 1.6s ease, transform 9s linear; }
+@media (prefers-reduced-motion: reduce) { .hslide, .hslide.on { transform: none; transition: opacity .4s ease; } }
+.hs-arrow { position: absolute; top: 50%; z-index: 3; transform: translateY(-50%); width: 56px; height: 56px; display: grid; place-items: center;
+  padding: 0; border: 0; border-radius: 50%; background: transparent; color: #F8F4EC; cursor: pointer; opacity: .85;
+  filter: drop-shadow(0 1px 6px rgba(0, 0, 0, .45)); transition: opacity .25s ease, background-color .25s ease; }
+.hs-arrow:hover { opacity: 1; background: rgba(248, 244, 236, .14); }
+.hs-arrow:focus-visible { outline: 1px solid #F8F4EC; outline-offset: 2px; }
+.hs-prev { left: clamp(10px, 2.5vw, 40px); }
+.hs-next { right: clamp(10px, 2.5vw, 40px); }
+@media (max-width: 760px) { .hs-arrow { width: 44px; height: 44px; top: auto; bottom: 22px; transform: none; } .hs-arrow svg { width: 22px; height: 22px; } }
+.hslide.on.first { transform: scale(1); }
+
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -1201,7 +1215,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     <img class="hero-still" src="../hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
     <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" aria-label="360° video around the building"></video>
     <div class="hslides" id="hSlides" aria-hidden="true">
-      <img class="hslide on" src="../photos/terrace-dusk.jpg" alt="" fetchpriority="high" decoding="async">
+      <img class="hslide on first" src="../photos/terrace-dusk.jpg" alt="" fetchpriority="high" decoding="async">
       <img class="hslide" src="https://images.pexels.com/photos/14987668/pexels-photo-14987668.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
       <img class="hslide" src="../photos/apt-living.jpg" alt="" loading="lazy" decoding="async">
       <img class="hslide" src="https://images.pexels.com/photos/28498153/pexels-photo-28498153.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
@@ -1219,6 +1233,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     </div>
     <span class="scroll-cue" aria-hidden="true"></span>
 
+    <button type="button" class="hs-arrow hs-prev" id="hsPrev" data-i18n-aria="u.prev" aria-label="Previous"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <button type="button" class="hs-arrow hs-next" id="hsNext" data-i18n-aria="u.next" aria-label="Next"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <div class="cap hero hcenter">
       <svg class="hlogo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>
       <h1>Life's Moments</h1>
@@ -2453,13 +2469,28 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
   /* ================= hero photos (version /2): one fades into the next every 6 s ================= */
   (function heroSlides() {
-    const imgs = $$('#hSlides .hslide'); if (imgs.length < 2 || reduce) return;
-    let i = 0;
-    setInterval(() => {
-      if (document.hidden) return;
-      imgs[i].classList.remove('on'); i = (i + 1) % imgs.length; imgs[i].classList.add('on');
-      const nx = imgs[(i + 1) % imgs.length]; if (nx.loading === 'lazy') nx.loading = 'eager';
-    }, 6000);
+    const imgs = $$('#hSlides .hslide'); if (!imgs.length) return;
+    let i = 0, timer = null;
+    function show(n) {
+      imgs[i].classList.remove('on');
+      i = (n + imgs.length) % imgs.length;
+      imgs[i].classList.add('on');
+      [1, -1].forEach((d) => { const x = imgs[(i + d + imgs.length) % imgs.length]; if (x.loading === 'lazy') x.loading = 'eager'; });
+    }
+    function restart() { clearInterval(timer); if (!reduce) timer = setInterval(() => { if (!document.hidden) show(i + 1); }, 7000); }
+    $('#hsPrev').addEventListener('click', () => { show(i - 1); restart(); });
+    $('#hsNext').addEventListener('click', () => { show(i + 1); restart(); });
+    // swipe on phones
+    let sx = null;
+    const intro = $('#intro');
+    intro.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    intro.addEventListener('touchend', (e) => {
+      if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 45) { show(i + (dx < 0 ? 1 : -1)); restart(); }
+    }, { passive: true });
+    // the first photo starts small and zooms like the others
+    requestAnimationFrame(() => requestAnimationFrame(() => imgs[0].classList.remove('first')));
+    restart();
   })();
 
   /* ================= hero: drone video or 3D house ================= */
