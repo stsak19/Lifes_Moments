@@ -166,12 +166,12 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-direction: column; gap: 26px">
 
 <section style="{{stripStyle}}">
-<div style="flex: 0 1 260px">
+<div style="flex: 0 1 auto">
 <div style="{{stripTitleStyle}}">{{stripTitle}}</div>
 <div style="{{stripSubStyle}}">{{stripSub}}</div>
 </div>
 <sc-if value="{{hasStripItems}}" hint-placeholder-val="{{true}}">
-<div style="flex: 1 1 460px; display: flex; flex-wrap: wrap; gap: 10px">
+<div style="flex: 0 1 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
 <sc-for list="{{stripItems}}" as="it" hint-placeholder-count="3">
 <button type="button" onClick="{{it.open}}" style="flex: 0 1 auto; max-width: 240px; min-height: 60px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 10px 14px; border: 1.5px solid #FF004F; border-radius: 12px; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
 <span style="display: flex; justify-content: space-between; gap: 12px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.name}}</span><span style="{{it.timerStyle}}">{{it.timer}}</span></span>
@@ -179,9 +179,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </button>
 </sc-for>
 </div>
-</sc-if>
-<sc-if value="{{hasStripBtn}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{stripBtn}}" style="flex: 0 0 auto; height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Απάντησε</button>
 </sc-if>
 </section>
 
@@ -1677,7 +1674,7 @@ class Component extends DCLogic {
     /* Strip */
     const tPill = c => 'flex-shrink: 0; font-size: 12px; font-weight: 600; color: ' + c;
     let stripItems, stripTitle, stripSub, stripStyle, stripTitleStyle, hasStripBtn = false, stripBtn = () => {};
-    const stripBase = 'display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; border-radius: 20px; padding: 18px 22px;';
+    const stripBase = 'display: flex; flex-wrap: wrap; align-items: center; justify-content: center; text-align: center; gap: 16px 24px; border-radius: 20px; padding: 18px 22px;';
     if (!auto) {
       const n = pending.length;
       stripItems = pending.map(b => ({
