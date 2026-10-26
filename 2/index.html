@@ -573,7 +573,10 @@ html .intro .shade { background: radial-gradient(70% 60% at 50% 50%, rgba(6, 10,
 .top { transition: background-color .4s ease, box-shadow .4s ease, border-color .4s ease, backdrop-filter .4s ease; }
 .top.at-top:not(.solid) { background: transparent !important; box-shadow: none !important; border-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .top.at-top:not(.solid)::before { opacity: 0; }
-.top.at-top:not(.solid) .brand, .top.at-top:not(.solid) .nav, .top.at-top:not(.solid) .lang, .top.at-top:not(.solid) .menu-btn { opacity: 0; pointer-events: none; }
+.top.at-top:not(.solid) .brand, .top.at-top:not(.solid) .nav, .top.at-top:not(.solid) .menu-btn { opacity: 0; pointer-events: none; }
+/* the language switch stays over the hero, in white */
+.top.at-top:not(.solid) .lang-btn, .top.at-top:not(.solid) .lang-btn * { color: #fff !important; border-color: rgba(255,255,255,.5) !important; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+.top.at-top:not(.solid) .lang-btn { background: rgba(6,10,18,.18) !important; }
 @media (max-width: 760px) {
   .top .brand-txt { display: none; }  /* only the logo mark on phones, so Book fits on the right */
   .top .book-btn { display: inline-flex; order: 3; min-height: 38px; padding: 0 14px; font-size: 11px; letter-spacing: .1em; }
