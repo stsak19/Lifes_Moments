@@ -12,8 +12,11 @@
 @media (max-width: 760px) {
   #journeys .jrow > .jph, #journeys .jrow > .jtx, #journeys .jcta { display: none !important; }
   #journeys #jTabs, #journeys #jList { display: none !important; }
-  .jmob { display: grid; gap: 14px; }
-  .jmc { position: relative; margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 5; background: #c9d3dc; }
+  .jmob { display: block; }
+  /* each place stays pinned under the header while the next one slides up over it */
+  .jmob { gap: 0; padding-bottom: 8px; }
+  .jmc { position: sticky; top: 72px; height: calc(100svh - 96px); max-height: 720px; margin: 0 0 18px; border-radius: 16px; overflow: hidden;
+    background: #c9d3dc; box-shadow: 0 -10px 30px rgba(8,18,30,.18); }
   .jmc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .jmc figcaption { position: absolute; inset: auto 0 0 0; padding: 70px 20px 20px; color: #fff;
     background: linear-gradient(to top, rgba(8,18,30,.82), rgba(8,18,30,.45) 55%, transparent); }
