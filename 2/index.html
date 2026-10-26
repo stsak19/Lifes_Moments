@@ -854,6 +854,13 @@ html .intro .cap.hcenter { pointer-events: none; }
   .jph, .jshot, .jtx .jin, .jsteps li { transition: none !important; animation: none !important; }
   .jph { clip-path: none; } .jstack { transform: none; }
 }
+
+/* ---------- Journeys: slower pace ----------
+   Each day gets room of its own, so every photo stays on screen for a while even with slow scrolling. */
+.jsteps li { min-height: 36vh; padding-bottom: 0; }
+.jsteps li:last-child { min-height: 0; padding-bottom: 8px; }
+.jshot { transition: opacity .8s ease, transform 1.4s cubic-bezier(.2, .7, .2, 1); }
+@media (max-width: 900px) { .jsteps li { min-height: 30vh; } }
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2431,13 +2438,20 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       if (io1) io1.disconnect(); if (io2) io2.disconnect();
       io1 = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('seen'); io1.unobserve(e.target); } }), { threshold: 0.18 });
       $$('.jrow', listEl).forEach((r) => reduce ? r.classList.add('seen') : io1.observe(r));
-      io2 = new IntersectionObserver((es) => es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        const li = e.target, row = li.closest('.jrow');
-        $$('.jsteps li', row).forEach((x) => x.classList.toggle('now', x === li));
-        show(row, +li.dataset.shot);
-      }), { rootMargin: '-45% 0px -45% 0px' });
-      $$('.jsteps li', listEl).forEach((li) => io2.observe(li));
+      io2 = null;
+      fill();
+    }
+    // the day nearest the reading line (a bit above the middle) is the one shown
+    function pickDay() {
+      const line = window.innerHeight * 0.5;
+      $$('.jrow', listEl).forEach((row) => {
+        const r = row.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        let best = null;
+        $$('.jsteps li', row).forEach((li) => { if (li.getBoundingClientRect().top <= line) best = li; });
+        $$('.jsteps li', row).forEach((x) => x.classList.toggle('now', x === best));
+        show(row, best ? +best.dataset.shot : 0);
+      });
     }
     function show(row, k) {
       const imgs = $$('.jshot', row), img = imgs[k] || imgs[0];
@@ -2450,6 +2464,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       row.querySelector('.jph figcaption').textContent = img.dataset.credit;
     }
     function fill() {
+      pickDay();
       const vh = window.innerHeight;
       $$('.jsteps', listEl).forEach((ol) => {
         const r = ol.getBoundingClientRect();
