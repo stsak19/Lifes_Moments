@@ -738,82 +738,19 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{room.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
 </div>
 
-<div style="background: #F4F7F7; border-radius: 14px; padding: 12px 14px">
-<div style="font-size: 12px; color: #4A5B5E">Τώρα</div>
-<sc-if value="{{room.nowHasLink}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{room.nowOpen}}" style="min-height: 30px; padding: 0; border: 0; background: transparent; color: #18282B; font-size: 15px; font-weight: 600; text-align: left; text-decoration: underline; text-decoration-color: #A7B4B6; text-underline-offset: 3px; cursor: pointer">{{room.nowTitle}}</button>
-</sc-if>
-<sc-if value="{{room.nowNoLink}}" hint-placeholder-val="{{false}}">
-<div style="min-height: 30px; display: flex; align-items: center; font-size: 15px; font-weight: 600">{{room.nowTitle}}</div>
-</sc-if>
-<div style="font-size: 13px; color: #4A5B5E">{{room.nowSub}}</div>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
-<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">{{room.occLabel}}</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{room.occText}}</div></div>
-<div style="background: #F4F7F7; border-radius: 12px; padding: 12px 14px"><div style="font-size: 12px; color: #4A5B5E">{{room.revLabel}}</div><div style="font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{room.revText}}</div></div>
-</div>
-
-<div>
-<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Επόμενες 14 μέρες</h3>
-<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
-<sc-for list="{{room.days}}" as="d" hint-placeholder-count="14">
-<button type="button" onClick="{{d.click}}" aria-label="{{d.aria}}" title="{{d.aria}}" style="{{d.style}}"><span style="font-size: 11px; opacity: 0.85">{{d.dow}}</span><span style="font-size: 14px; font-weight: 600">{{d.num}}</span></button>
-</sc-for>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 12px; color: #4A5B5E">
-<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #0F5257"></span>Σάιτ / απευθείας</span>
-<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #8DB3E2"></span>Booking</span>
-<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #B3261E"></span>Κλειστό</span>
-<span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 3px; border: 1px solid #A7B4B6; background: #FFFFFF"></span>Ελεύθερο</span>
-</div>
-</div>
-
 <div>
 <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">{{room.monthTitle}}</h3>
-<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; flex-direction: column">
 <sc-for list="{{room.upcoming}}" as="b" hint-placeholder-count="3">
-<button type="button" onClick="{{b.open}}" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; border-radius: 12px; border: 1px solid #E3EAEB; background: #FFFFFF; color: #18282B; font-size: 14px; text-align: left; cursor: pointer">
-<span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{b.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{b.when}}</span></span>
-<span style="{{b.srcStyle}}">{{b.src}}</span>
+<button type="button" onClick="{{b.open}}" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; padding: 0 4px; border: 0; border-bottom: 1px solid #EEF2F2; background: transparent; color: #18282B; font-size: 14px; text-align: left; cursor: pointer">
+<span style="font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{b.name}}</span>
+<span style="flex-shrink: 0; color: #4A5B5E">{{b.dates}}</span>
 </button>
 </sc-for>
 </div>
 <sc-if value="{{room.noUpcoming}}" hint-placeholder-val="{{false}}">
 <div style="font-size: 13px; color: #4A5B5E">Καμία κράτηση αυτόν τον μήνα.</div>
 </sc-if>
-</div>
-
-<sc-if value="{{room.hasShut}}" hint-placeholder-val="{{true}}">
-<div>
-<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Κλειστές μέρες</h3>
-<div style="display: flex; flex-direction: column; gap: 6px">
-<sc-for list="{{room.shut}}" as="sh" hint-placeholder-count="1">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 48px; padding: 6px 6px 6px 12px; border-radius: 12px; background: #FCEBEA">
-<span><span style="display: block; font-weight: 600; color: #7A1B14">{{sh.when}}</span><span style="display: block; font-size: 12px; color: #7A1B14">{{sh.nights}}</span></span>
-</div>
-</sc-for>
-</div>
-</div>
-</sc-if>
-
-<div>
-<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Ιστορικό</h3>
-<div style="display: flex; flex-direction: column; gap: 6px">
-<sc-for list="{{room.history}}" as="h" hint-placeholder-count="3">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid #EEF2F2">
-<span style="min-width: 0"><span style="display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{h.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{h.when}}</span></span>
-<span style="flex-shrink: 0; text-align: right"><span style="display: block; font-weight: 500">{{h.money}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{h.src}}</span></span>
-</div>
-</sc-for>
-</div>
-<sc-if value="{{room.noHistory}}" hint-placeholder-val="{{false}}">
-<div style="font-size: 13px; color: #4A5B5E">Δεν υπάρχουν ακόμα παλιές διαμονές.</div>
-</sc-if>
-</div>
-
-<div style="display: flex; flex-wrap: wrap; gap: 8px">
-<button type="button" onClick="{{room.toCal}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Στο ημερολόγιο</button>
 </div>
 </aside>
 </sc-if>
@@ -1865,6 +1802,7 @@ class Component extends DCLogic {
       const mK = T.slice(0, 7), mFirst = mK + '-01', mNext = this.add(mK + '-28', 7).slice(0, 7) + '-01';
       const upcoming = mine.filter(b => b.start < mNext && this.endOf(b) > mFirst).sort((a, b) => a.start < b.start ? -1 : 1).map(b => ({
         name: b.name,
+        dates: this.range(b.start, this.endOf(b)),
         when: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + (b.source === 'booking' ? '' : ' · ' + this.money(b.total)),
         src: srcOf(b),
         srcStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 10px;' + (b.source !== 'booking' ? 'background: #DCEBEA; color: #0F5257' : 'background: #DCE5F3; color: #1E3A5F'),
