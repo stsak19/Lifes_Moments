@@ -1689,8 +1689,8 @@ class Component extends DCLogic {
       }));
       stripTitle = n === 0 ? 'Κανένα αίτημα σε αναμονή' : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
       stripSub = n === 0 ? 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.' : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες';
-      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FF004F');
-      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#FFFFFF');
+      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FFFFFF; box-shadow: inset 0 0 0 2px #FF004F');
+      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#18282B');
       if (n > 0) { hasStripBtn = true; stripBtn = () => this.openReq(pending[0].id); }
     } else {
       const n = feed.length;
