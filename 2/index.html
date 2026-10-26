@@ -484,7 +484,7 @@ a.score:hover { border-color: var(--muted); }
    a short intro, a drifting strip of square photos, then one stay per row
    (square photo, "3 nights", title, a line of text, the day-by-day route that opens). */
 .jrn { padding-block: 110px 120px; }
-.jrn-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: 56px; }
+.jrn-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: 96px; }
 .jrn-intro p { margin: 0 0 14px; font-size: 17px; line-height: 1.65; color: var(--muted); max-width: 52ch; }
 .jrn-intro p:last-child { margin-bottom: 0; }
 
@@ -1332,8 +1332,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       </div>
     </div>
 
-    <div class="jstrip" id="jStrip" aria-hidden="true"><div class="jstrip-track" id="jStripTrack"></div></div>
-
     <div class="wrap">
       <div class="jlist" id="jList"></div>
 
@@ -2129,7 +2127,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         name: ['At your own pace', 'Με τον δικό σας ρυθμό'],
         line: ['Stay as many nights as you like and shape the days yourself. Write a few words in the booking message about what you love: sea, mountain, food.', 'Μείνετε όσες νύχτες θέλετε και φτιάξτε τις μέρες όπως σας αρέσει. Γράψτε δυο λόγια στο μήνυμα της κράτησης για το τι αγαπάτε: θάλασσα, βουνό, φαγητό.'] }
     ];
-    const STRIP = ['../photos/terrace-dusk.jpg', PX(14987668, 600), '../photos/room-blue.jpg', PX(39567764, 600), '../photos/balcony-sea.jpg', '../photos/exterior-dusk.jpg', PX(28498153, 600), '../photos/apt-living.jpg'];
     const L = () => (lang === 'el' ? 1 : 0);
     const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const listEl = $('#jList');
@@ -2137,9 +2134,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const pad = (n) => String(n).padStart(2, '0');
     const open = new Set();
 
-    // the strip runs twice so the drift loops without a jump
-    const strip = STRIP.map((s) => '<img src="' + s + '" alt="" loading="lazy" decoding="async">').join('');
-    $('#jStripTrack').innerHTML = strip + strip;
 
     function render() {
       const l = L();
