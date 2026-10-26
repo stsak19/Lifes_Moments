@@ -647,9 +647,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div><label for="nb-phone" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Τηλέφωνο</label><input id="nb-phone" type="tel" value="{{nb.phone}}" onChange="{{nb.setPhone}}" placeholder="προαιρετικό" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
 <div><label for="nb-email" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Email</label><input id="nb-email" type="email" value="{{nb.email}}" onChange="{{nb.setEmail}}" placeholder="προαιρετικό" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
 </div>
-<div style="display: flex; gap: 6px">
-<sc-for list="{{nb.types}}" as="t" hint-placeholder-count="2"><button type="button" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="{{t.style}}">{{t.label}}</button></sc-for>
-</div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
 <div><label for="nb-start" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Άφιξη</label><input id="nb-start" type="date" value="{{nb.start}}" onChange="{{nb.setStart}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
 <div><label for="nb-end" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Αναχώρηση</label><input id="nb-end" type="date" value="{{nb.end}}" onChange="{{nb.setEnd}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 15px"></div>
@@ -2227,7 +2224,7 @@ class Component extends DCLogic {
         }
       }
       segs.forEach(g => { if (!g.expanded) g.plain = true; });
-      return { id: u.id, label: u.name, segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
+      return { id: u.id, label: u.name, segs: segs, style: calRowStyle + (u.id === 'apt' ? '; margin-top: 16px; padding-top: 12px; border-top: 1px dashed #C3D1D3' : ''), labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
     const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
       const segs = [];
@@ -2830,12 +2827,13 @@ class Component extends DCLogic {
       const val = e => e && e.target ? e.target.value : '';
       const nights = (f.start && f.end) ? Math.round((this.dt(f.end) - this.dt(f.start)) / 864e5) : 0;
       const g = Math.max(1, parseInt(f.guests, 10) || 1);
-      const typeUnits = this.UNITS.filter(u => f.type === 'apt' ? u.id === 'apt' : u.id !== 'apt');
+      const typeUnits = this.UNITS;
       const maxG = Math.max.apply(null, typeUnits.map(u => u.cap));
       const fits = typeUnits.filter(u => u.cap >= g).sort((a, c) => a.cap - c.cap || a.n - c.n);
       const free = nights > 0 ? fits.filter(u => this.isFree(u.id, f.start, nights)) : [];
       const unit = free.some(u => u.id === f.unit) ? f.unit : (free[0] ? free[0].id : '');
-      const normal = nights > 0 ? this.normalPrice(f.type, f.start, nights, g) : null;
+      const ty = unit === 'apt' ? 'apt' : 'room';
+      const normal = nights > 0 ? this.normalPrice(ty, f.start, nights, g) : null;
       const amt = f.amount === '' ? normal : parseInt(f.amount, 10);
       const disc = normal && amt != null && amt >= 0 && amt < normal ? Math.round((1 - amt / normal) * 100) : 0;
       const card = on => 'width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 14px; min-height: 56px; border-radius: 12px; text-align: left; color: #18282B; font-size: 14px; cursor: pointer;' + (on ? 'border: 1px solid #0F5257; background: #F0F6F6' : 'border: 1px solid #E6ECED; background: #FFFFFF');
@@ -2846,8 +2844,8 @@ class Component extends DCLogic {
       ];
       let blockReason = '';
       if (nights <= 0) blockReason = 'Η αναχώρηση πρέπει να είναι μετά την άφιξη.';
-      else if (!fits.length) blockReason = (f.type === 'apt' ? 'Το διαμέρισμα' : 'Τα δωμάτια') + ' παίρνουν ως ' + maxG + ' άτομα.';
-      else if (!free.length) blockReason = 'Δεν υπάρχει ελεύθερο ' + (f.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο για ' + g + ' άτομα') + ' για όλες αυτές τις νύχτες.';
+      else if (!fits.length) blockReason = 'Τα δωμάτια παίρνουν ως ' + maxG + ' άτομα.';
+      else if (!free.length) blockReason = 'Δεν υπάρχει ελεύθερο δωμάτιο ή διαμέρισμα για ' + g + ' άτομα για όλες αυτές τις νύχτες.';
       /* Required: a name always; an amount for paid stays when these dates have no normal price (empty amount = normal price). */
       const nameMissing = !(f.name || '').trim();
       const amountReq = f.kind === 'paid' && normal == null;
@@ -2893,7 +2891,7 @@ class Component extends DCLogic {
             if (this._savingStay) return;
             const bk = f.kind === 'booking';
             const total = bk ? (f.amount === '' ? 0 : Math.max(0, parseInt(f.amount, 10) || 0)) : (f.kind === 'paid' ? amt : 0);
-            const row = { kind: bk ? 'paid' : f.kind, source: bk ? 'booking' : 'direct', unit_type: f.type, unit: unit, check_in: f.start, check_out: f.end, guests: g,
+            const row = { kind: bk ? 'paid' : f.kind, source: bk ? 'booking' : 'direct', unit_type: ty, unit: unit, check_in: f.start, check_out: f.end, guests: g,
               name: name, email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim(), total: total, pay: f.kind === 'paid' ? f.pay : null,
               created_by: this.state.user ? this.state.user.name : '' };
             this._savingStay = true;
@@ -2908,7 +2906,7 @@ class Component extends DCLogic {
           }
           if (f.kind === 'paid' && amt === 0) { upd({ error: 'Αν δεν πληρώνει τίποτα, διάλεξε «Χωρίς χρέωση».' }); return; }
           const id = 'm' + Date.now();
-          const rec = { by: this.who('Καταχώριση'), id: id, name: name, type: f.type, unit: unit, start: f.start, nights: nights, guests: g, total: f.kind === 'paid' ? amt : 0, source: 'direct', kind: f.kind, pay: f.pay, status: 'confirmed', email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim() };
+          const rec = { by: this.who('Καταχώριση'), id: id, name: name, type: ty, unit: unit, start: f.start, nights: nights, guests: g, total: f.kind === 'paid' ? amt : 0, source: 'direct', kind: f.kind, pay: f.pay, status: 'confirmed', email: (f.email || '').trim(), phone: (f.phone || '').trim(), note: (f.note || '').trim() };
           this.ON[id] = T;
           this.setState({ bookings: this.state.bookings.concat([rec]), bookingsAuto: this.state.bookingsAuto.concat([Object.assign({}, rec)]), newOpen: false, nb: null, detail: id });
           const what = f.kind === 'paid' ? this.money(amt) + (disc ? ' (έκπτωση ' + disc + '%)' : '') : (f.kind === 'free' ? 'χωρίς χρέωση' : 'δοκιμή');
