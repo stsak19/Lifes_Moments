@@ -334,7 +334,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </div>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 13px; color: #4A5B5E">
-<button type="button" onClick="{{downloadCsv}}" style="height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">CSV</button>
 </div>
 <div style="font-size: 13px; color: #4A5B5E">{{listSummary}}</div>
 </div>
@@ -346,12 +345,15 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-direction: column; gap: 10px">
 <sc-for list="{{years}}" as="y" hint-placeholder-count="2">
 <section aria-label="{{y.label}}" style="background: #FFFFFF; border-radius: 18px; overflow: hidden">
-<button type="button" onClick="{{y.toggle}}" aria-expanded="{{y.exp}}" style="width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; border: 0; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
+<div style="display: flex; align-items: center; padding-right: 14px">
+<button type="button" onClick="{{y.toggle}}" aria-expanded="{{y.exp}}" style="flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; border: 0; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{y.chev}}"><path d="M9 6l6 6-6 6"></path></svg>
 <span style="flex-shrink: 0; font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600">{{y.label}}</span>
 <span style="flex: 1 1 0; min-width: 0; font-size: 13px; color: #4A5B5E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{y.meta}}</span>
 <span style="flex-shrink: 0; font-weight: 600">{{y.money}}</span>
 </button>
+<button type="button" onClick="{{y.csv}}" aria-label="{{y.csvLabel}}" title="{{y.csvLabel}}" style="flex-shrink: 0; height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">CSV</button>
+</div>
 <sc-if value="{{y.open}}" hint-placeholder-val="{{true}}">
 <div style="border-top: 1px solid #E6ECED">
 <sc-for list="{{y.months}}" as="m" hint-placeholder-count="3">
@@ -2312,7 +2314,7 @@ class Component extends DCLogic {
     const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(ownMoney(liveB)) + ' από σάιτ και απευθείας';
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
     const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε' : 'Απορρίφθηκε' })[b.status] || b.status;
-    const downloadCsv = () => {
+    const downloadCsv = (listB, yr) => {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
       const MN = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
       const head = ['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο'];
@@ -2333,8 +2335,8 @@ class Component extends DCLogic {
         rows.push(sum('ΣΥΝΟΛΟ ΕΤΟΥΣ ' + y, yAll));
         rows.push([]);
       });
-      this.csv(rows, 'kratiseis.csv');
-      this.say('Κατέβηκε αρχείο με ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Ανοίγει και στο Excel.');
+      this.csv(rows, 'kratiseis-' + yr + '.csv');
+      this.say('Κατέβηκε το ' + yr + ': ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Ανοίγει και στο Excel.');
     };
     /* Group by year, then month, of the chosen date (arrival by default). Open by default: the current year and the
        first month from today on (or the latest one); everything while searching. A click remembers open/closed. */
@@ -2373,7 +2375,7 @@ class Component extends DCLogic {
       const all = [].concat.apply([], Object.keys(gY[y]).map(m => gY[y][m]));
       const ct = countText(all);
       return Object.assign(ct, {
-        label: y, open: open, exp: open ? 'true' : 'false', chev: chev(open, 2.2),
+        label: y, csv: () => downloadCsv(all, y), csvLabel: 'Λήψη CSV για το ' + y, open: open, exp: open ? 'true' : 'false', chev: chev(open, 2.2),
         meta: ct.meta + (ct.pending ? ' · ' + ct.pending : ''),
         toggle: () => this.setState({ yOpen: Object.assign({}, this.state.yOpen, { [y]: !open }) }),
         months: Object.keys(gY[y]).sort().map(m => {
