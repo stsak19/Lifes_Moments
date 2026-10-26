@@ -7,7 +7,7 @@
 //  - the admin page (owner login): preview and test sends
 // Needs the Resend key: Edge Function secret RESEND_API_KEY, or the Vault secret "resend_api_key".
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { buildGuestMail, buildOfferMail, GUEST_KINDS, type GuestKind, type Guest, type Mail, type Offer, type Settings } from './templates.ts';
+import { buildGuestMail, buildOfferMail, langOf, GUEST_KINDS, type GuestKind, type Guest, type Mail, type Offer, type Settings } from './templates.ts';
 import { unsubUrl } from '../_shared/unsub.ts';
 
 const URL_ = Deno.env.get('SUPABASE_URL')!;
@@ -199,7 +199,7 @@ async function runOffers() {
 // ---------- admin preview / test ----------
 function sample(lang: string): Guest {
   const d = (n: number) => new Date(Date.now() + n * DAY).toISOString().slice(0, 10);
-  return { name: lang === 'en' ? 'Maria Smith' : 'Μαρία Παπαδοπούλου', lang, unit_type: 'room', unit: 'r3', check_in: d(30), check_out: d(34), guests: 2, ref_no: 1042 };
+  return { name: ({ en: 'Maria Smith', tr: 'Ayşe Yılmaz', bg: 'Мария Иванова' } as Record<string, string>)[lang] ?? 'Μαρία Παπαδοπούλου', lang, unit_type: 'room', unit: 'r3', check_in: d(30), check_out: d(34), guests: 2, ref_no: 1042 };
 }
 function sampleOffer(): Offer {
   const d = (n: number) => new Date(Date.now() + n * DAY).toISOString().slice(0, 10);
@@ -241,7 +241,7 @@ Deno.serve(async (req) => {
     if (!who?.user || owner !== true) return json({ error: 'not_owner' }, 403, h);
 
     const kind = String(b.kind ?? '');
-    const lang = b.lang === 'en' ? 'en' : 'el';
+    const lang = langOf(b.lang);
     const isOffer = kind === 'offer';
     if (!isOffer && !(GUEST_KINDS as readonly string[]).includes(kind)) return json({ error: 'bad_input' }, 400, h);
     const s = await loadSettings();

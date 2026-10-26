@@ -29,7 +29,9 @@ Deno.serve(async (req) => {
   const promoRaw = String(b.promo ?? '').trim();
   const promo = /^[A-Za-z0-9_-]{3,24}$/.test(promoRaw) ? promoRaw.toUpperCase() : null;
   const marketing = b.marketing === true; // the optional tick for offers; never assumed
-  const lang = b.lang === 'en' ? 'en' : 'el';
+  // The email language the guest picked in the form (el, en, tr, bg). Without one, the database guesses as before.
+  const chosen = ['el', 'en', 'tr', 'bg'].includes(String(b.email_lang)) ? String(b.email_lang) : null;
+  const lang = chosen ?? (b.lang === 'en' ? 'en' : 'el');
 
   const bad: string[] = [];
   if (!unit_type) bad.push('unit_type');
@@ -75,7 +77,7 @@ Deno.serve(async (req) => {
   if (!fits) return json({ error: 'full' }, 409, h);
 
   const { data: row, error } = await admin.from('booking_requests')
-    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang, marketing_consent: marketing, promo_code: discount_pct ? promo : null, discount_pct })
+    .insert({ unit_type, check_in, check_out, guests, name, email, phone, note, lang, lang_chosen: chosen !== null, marketing_consent: marketing, promo_code: discount_pct ? promo : null, discount_pct })
     .select('id, name, unit_type, check_in, check_out, guests, ref_no').single();
   if (error) { log('insert_error', { message: error.message }); return json({ error: 'server' }, 500, h); }
   log('request_saved', { id: row.id, unit_type, nights: (Date.parse(check_out as string) - Date.parse(check_in as string)) / DAY });

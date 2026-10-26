@@ -444,6 +444,7 @@ a.score:hover { border-color: var(--muted); }
 .form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
 .form label.chk { flex-direction: row; align-items: flex-start; gap: 10px; line-height: 1.45; }
 .form .chk input { min-height: 0; width: 18px; height: 18px; padding: 0; margin: 1px 0 0; flex: none; accent-color: var(--accent); }
+.form select { min-height: 46px; padding: 0 40px 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center; color: var(--ink); font: 400 16px var(--font-body); appearance: none; -webkit-appearance: none; }
 .form input { min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 400 16px var(--font-body); }
 @media (min-width: 760px) {
   .modal-card.wide-card { width: min(760px, 100%); padding: 36px 40px; }
@@ -1362,6 +1363,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         <label for="fName"><span data-i18n="m.name">Full name</span><input id="fName" name="name" autocomplete="name" required></label>
         <label for="fEmail"><span>Email</span><input id="fEmail" name="email" type="email" autocomplete="email" required></label>
         <label for="fPhone"><span data-i18n="m.phone">Phone</span><input id="fPhone" name="phone" type="tel" autocomplete="tel" required></label>
+        <label for="fEmailLang"><span data-i18n="m.elang">In which language would you like to receive the emails?</span><select id="fEmailLang" name="email_lang"><option value="el">Ελληνικά</option><option value="en">English</option><option value="tr">Türkçe</option><option value="bg">Български</option></select></label>
         <label for="fCode"><span data-i18n="m.code">Discount code (optional)</span><input id="fCode" name="promo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" aria-describedby="fPromo"></label>
         <p class="fine" id="fPromo" role="status" hidden></p>
         <label for="fNote"><span data-i18n="m.note">Message to the hosts (optional)</span><textarea id="fNote" name="note" rows="3" maxlength="1000" data-i18n-ph="m.noteph" placeholder="Arrival time, questions, anything we should know"></textarea></label>
@@ -1423,7 +1425,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
      and add a button with data-lang="xx" in the header menu. */
   const I18N = {
     en: {
-      'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
+      'm.elang': 'In which language would you like to receive the emails?', 'brand.sub': 'Thasos', 'lang.label': 'Language', 'menu.open': 'Open menu', 'menu.close': 'Close menu',
       'nav.stay': 'Stay', 'nav.rooms': 'Rooms', 'nav.place': 'The place', 'nav.tour': '360° tour', 'nav.photos': 'Photos', 'units.title': 'Every room, <em>one by one</em>', 'units.lead': 'Eleven rooms and a separate apartment. Tap one to see all its photos.', 'unit.n': 'Room {n}', 'unit.apt': 'The Apartment', 'unit.photos': '{n} photos', 'unit.photo1': '1 photo', 'unit.soon': 'Photos coming soon', 'u.prev': 'Previous', 'u.next': 'Next', 'u.pause': 'Pause slideshow', 'u.play': 'Play slideshow', 'nav.book': 'Book now', 'sheet.cta': 'Check availability', 'fab.book': 'Book',
       'hero.eyebrow': "Life's Moments · Thasos", 'hero.title': 'Moments by the <em>Aegean</em>', 'hero.sub': 'Eleven rooms and a separate apartment on the island.',
       'hero.photo': 'Photo', 'hero.drone': 'Drone video', 'hero.3d': '3D house', 'hero.pause': 'Pause video', 'hero.play': 'Play video',
@@ -1480,7 +1482,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       'tour.enter': 'Step inside', 'tour.coverNote': 'Demo house for now · the real 360° photos go here'
     },
     el: {
-      'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
+      'm.elang': 'Σε ποια γλώσσα θέλεις να λαμβάνεις τα email;', 'brand.sub': 'Θάσος', 'lang.label': 'Γλώσσα', 'menu.open': 'Άνοιγμα μενού', 'menu.close': 'Κλείσιμο μενού',
       'nav.stay': 'Διαμονή', 'nav.rooms': 'Δωμάτια', 'nav.place': 'Ο χώρος', 'nav.tour': 'Περιήγηση 360°', 'nav.photos': 'Φωτογραφίες', 'units.title': 'Κάθε διαμέρισμα, <em>ένα ένα</em>', 'units.lead': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ. Πατήστε ένα για να δείτε όλες τις φωτογραφίες του.', 'unit.n': 'Διαμέρισμα {n}', 'unit.apt': 'Απαρτμέντ', 'unit.photos': '{n} φωτογραφίες', 'unit.photo1': '1 φωτογραφία', 'unit.soon': 'Φωτογραφίες σύντομα', 'u.prev': 'Προηγούμενο', 'u.next': 'Επόμενο', 'u.pause': 'Παύση', 'u.play': 'Αναπαραγωγή', 'nav.book': 'Κράτηση', 'sheet.cta': 'Δείτε διαθεσιμότητα', 'fab.book': 'Κράτηση',
       'hero.eyebrow': "Life's Moments · Θάσος", 'hero.title': 'Στιγμές δίπλα στο <em>Αιγαίο</em>', 'hero.sub': '11 διαμερίσματα και ένα ξεχωριστό απαρτμέντ στο νησί.',
       'hero.photo': 'Φωτογραφία', 'hero.drone': 'Βίντεο drone', 'hero.3d': '3D σπίτι', 'hero.pause': 'Παύση βίντεο', 'hero.play': 'Αναπαραγωγή',
@@ -1960,6 +1962,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     if (promo && !$('#fCode').value) $('#fCode').value = promo;
     codeState = { code: '', status: '', pct: 0 }; checkCode();
     ['#fName', '#fEmail', '#fPhone'].forEach((id) => $(id).removeAttribute('aria-invalid'));
+    if (!emailLangTouched) $('#fEmailLang').value = lang; // follows the site language until the guest picks one
     modal.hidden = false; lenis && lenis.stop();
     setTimeout(() => (siteOpen ? $('#fName') : $('#cClose')).focus(), 30);
   }
@@ -1999,6 +2002,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
       return codeState;
     });
   }
+  let emailLangTouched = false;
+  $('#fEmailLang').addEventListener('change', () => { emailLangTouched = true; });
   $('#fCode').addEventListener('input', () => { clearTimeout(codeTimer); codeTimer = setTimeout(checkCode, 450); });
   $('#fCode').addEventListener('change', () => { checkCode(); });
   // The code belongs to one email: check again when the email changes.
@@ -2048,7 +2053,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const payload = {
       unit_type: UNITS[cal.unit].id === 'apt' ? 'apt' : 'room', check_in: iso(cal.ci), check_out: iso(cal.co), guests: cal.guests,
       name: $('#fName').value.trim(), email: $('#fEmail').value.trim(), phone: $('#fPhone').value.trim(),
-      lang: lang === 'el' ? 'el' : 'en', website: $('#fWeb') ? $('#fWeb').value : '',
+      lang: lang === 'el' ? 'el' : 'en', email_lang: $('#fEmailLang').value, website: $('#fWeb') ? $('#fWeb').value : '',
       marketing: $('#fMkt').checked, promo: $('#fCode').value.trim().toUpperCase(), note: $('#fNote').value.trim()
     };
     const label = go.textContent;

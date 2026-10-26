@@ -1,5 +1,5 @@
 // The guest emails: request received, confirmed, before arrival, cancelled, offer, and the
-// rejected / expired notes. Greek and English, one look. Every email is built as HTML and as plain text.
+// rejected / expired notes. Greek, English, Turkish and Bulgarian (i18n.ts), one look. Every email is built as HTML and as plain text.
 // Property details come from public.email_settings (filled in by the owners in admin Settings); anything
 // left empty simply does not appear, so no email ever carries invented facts.
 
@@ -13,6 +13,10 @@ export type Offer = { discount_pct: number; code?: string | null; stay_from: str
 export type Mail = { subject: string; html: string; text: string };
 export const GUEST_KINDS = ['received', 'confirmed', 'prearrival', 'cancelled', 'rejected', 'expired'] as const;
 export type GuestKind = typeof GUEST_KINDS[number];
+import { TR, BG, TIPS_TR, TIPS_BG } from './i18n.ts';
+export const LANGS = ['el', 'en', 'tr', 'bg'] as const;
+/** Any stored language that is not one we write in becomes Greek, as before. */
+export const langOf = (l: unknown) => ((LANGS as readonly unknown[]).includes(l) ? l as string : 'el');
 
 const C = { page: '#eaf1f8', brand: '#1f5fa8', deep: '#163f73', ink: '#2b3a4a', body: '#4b5d70', mute: '#7a98b8', faint: '#8aa1b8', panel: '#f4f8fc', line: '#d9e6f3', line2: '#e6eef6' };
 const SANS = "'Segoe UI',Helvetica,Arial,sans-serif";
@@ -25,21 +29,28 @@ const lines = (s: unknown) => String(s ?? '').replace(/\r/g, '').split('\n').map
 const clean = (s: unknown) => String(s ?? '').trim();
 
 const dateOf = (iso: string) => new Date(iso + 'T12:00:00Z');
-const loc = (lang: string) => (lang === 'en' ? 'en-GB' : 'el-GR');
+const LOCALES: Record<string, string> = { el: 'el-GR', en: 'en-GB', tr: 'tr-TR', bg: 'bg-BG' };
+const loc = (lang: string) => LOCALES[lang] ?? 'el-GR';
+// Bulgarian has no short month names (it prints 10.06), so it gets the full one: "10 юни".
+const mon = (lang: string) => (lang === 'bg' ? 'long' as const : 'short' as const);
 export const fmtLong = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const fmtDay = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
-const fmtShort = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).replace(/[.,]/g, '');
-const fmtMonthDay = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { day: 'numeric', month: 'short', timeZone: 'UTC' }).replace(/[.,]/g, '');
+const fmtShort = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { weekday: 'short', day: 'numeric', month: mon(lang), timeZone: 'UTC' }).replace(/[.,]/g, '');
+const fmtMonthDay = (iso: string, lang: string) => dateOf(iso).toLocaleDateString(loc(lang), { day: 'numeric', month: mon(lang), timeZone: 'UTC' }).replace(/[.,]/g, '');
 const nightsOf = (a: string, b: string) => Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
-const euro = (n: number, lang: string) => '€' + n.toLocaleString(lang === 'en' ? 'en-GB' : 'el-GR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const euro = (n: number, lang: string) => '€' + n.toLocaleString(loc(lang), { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const num = (v: unknown): number | null => { if (v == null || v === '') return null; const n = Number(v); return Number.isFinite(n) ? n : null; };
 
 function unitName(g: Guest, lang: string): string {
   const m = /^r(\d+)$/.exec(g.unit ?? '');
-  if (m) return (lang === 'en' ? 'Room ' : 'Δωμάτιο ') + m[1];
-  return g.unit_type === 'apt' ? (lang === 'en' ? 'Apartment' : 'Διαμέρισμα') : (lang === 'en' ? 'Room' : 'Δωμάτιο');
+  const W: Record<string, [string, string]> = { el: ['Δωμάτιο', 'Διαμέρισμα'], en: ['Room', 'Apartment'], tr: ['Oda', 'Daire'], bg: ['Стая', 'Апартамент'] };
+  const [room, apt] = W[lang] ?? W.el;
+  if (m) return room + ' ' + m[1];
+  return g.unit_type === 'apt' ? apt : room;
 }
 function guestsText(n: number, lang: string) {
+  if (lang === 'tr') return n + ' kişi';
+  if (lang === 'bg') return n + (n === 1 ? ' гост' : ' гости');
   return lang === 'en' ? n + (n === 1 ? ' guest' : ' guests') : n + (n === 1 ? ' άτομο' : ' άτομα');
 }
 /** "6978499347" -> "697 849 9347" for reading, and a +30 link for tapping. */
@@ -64,7 +75,7 @@ const firstName = (name: string) => clean(name).split(/\s+/)[0] || clean(name);
 const VOC_O = new Set(['στέλιος', 'μάριος']); // spoken two-syllable names that look like the -ε kind
 function greetName(name: string, lang: string): string {
   const n = firstName(name);
-  if (lang === 'en' || !n) return n;
+  if (lang !== 'el' || !n) return n;
   if (/[a-z]/i.test(n)) return /(os|is|as|es|us)$/i.test(n) ? '' : n;   // Latin "Nikos" can't be declined: leave it out
   if (!/^[Ͱ-Ͽἀ-῿-]+$/.test(n)) return n;
   const low = n.toLocaleLowerCase('el');
@@ -88,7 +99,10 @@ class Doc {
   lang: string;
   s: Settings;
   constructor(lang: string, s: Settings) { this.lang = lang; this.s = s; }
-  tr = (el: string, en: string) => (this.lang === 'en' ? en : el);
+  /** Greek and English are written at each call; Turkish and Bulgarian come from i18n.ts by the English text,
+   *  or are passed in directly where the line has a value in it. */
+  tr = (el: string, en: string, tk?: string, bg?: string) =>
+    this.lang === 'el' ? el : this.lang === 'tr' ? (tk ?? TR[en] ?? en) : this.lang === 'bg' ? (bg ?? BG[en] ?? en) : en;
   raw(html: string, text = '') { this.h.push(html); if (text) this.t.push(text); }
 
   greeting(name: string, intro: string) {
@@ -262,7 +276,7 @@ function page(lang: string, o: { title: string; preheader: string; eyebrow: stri
 <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
   <tr><td align="center" style="padding:30px 32px 22px 32px;background:#ffffff;">
     <div style="font-family:${SERIF};font-size:28px;line-height:32px;font-weight:600;color:${C.brand};letter-spacing:0.5px;">Life&#8217;s Moments</div>
-    <div style="font-family:${SANS};font-size:11px;letter-spacing:4px;color:${C.mute};padding-top:6px;">${lang === 'en' ? 'THASOS' : 'ΘΑΣΟΣ'}</div>
+    <div style="font-family:${SANS};font-size:11px;letter-spacing:4px;color:${C.mute};padding-top:6px;">${({ el: 'ΘΑΣΟΣ', tr: 'TAŞOZ', bg: 'ТАСОС' } as Record<string, string>)[lang] ?? 'THASOS'}</div>
   </td></tr>
 ${o.h1.length ? `  <tr><td align="center" class="px" style="padding:${o.small ? '30px 32px 30px 32px' : '56px 32px 52px 32px'};background-color:${C.brand};background-image:linear-gradient(160deg,#4a8fd6 0%,${C.brand} 55%,${C.deep} 100%);">
     <div style="font-family:${SANS};font-size:12px;letter-spacing:3px;color:#cfe3f7;padding-bottom:${o.small ? 8 : 14}px;">${esc(o.eyebrow)}</div>
@@ -282,7 +296,7 @@ function footerFor(d: Doc, g?: Guest): { html: string; text: string } {
   const addr = oneLine(d.s.address);
   const ref = g ? refText(g) : '';
   const l1 = 'Life&#8217;s Moments' + (addr ? ' · ' + esc(addr) : '');
-  const l2 = ref ? d.tr(`Αυτό το μήνυμα στάλθηκε αυτόματα για την κράτηση ${ref}.`, `This message was sent automatically for booking ${ref}.`) : d.tr('Αυτό το μήνυμα στάλθηκε αυτόματα.', 'This message was sent automatically.');
+  const l2 = ref ? d.tr(`Αυτό το μήνυμα στάλθηκε αυτόματα για την κράτηση ${ref}.`, `This message was sent automatically for booking ${ref}.`, `Bu mesaj ${ref} numaralı rezervasyon için otomatik olarak gönderilmiştir.`, `Това съобщение е изпратено автоматично за резервация ${ref}.`) : d.tr('Αυτό το μήνυμα στάλθηκε αυτόματα.', 'This message was sent automatically.');
   return { html: l1 + '<br>' + esc(l2), text: `\n--\nLife’s Moments${addr ? ' · ' + addr : ''}\n${l2}` };
 }
 function finish(d: Doc, o: { subject: string; title: string; preheader: string; eyebrow: string; h1: string[]; sub?: string; footerHtml?: string; footerText?: string; small?: boolean }, g?: Guest): Mail {
@@ -336,7 +350,7 @@ function parseTips(raw: string): { title: string; items: Tip[] }[] {
 
 // ---------- the emails about one booking request ----------
 export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
-  const lang = g.lang === 'en' ? 'en' : 'el';
+  const lang = langOf(g.lang);
   const d = new Doc(lang, s);
   const { tr } = d;
   const site = clean(s.site_url);
@@ -359,7 +373,7 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
     return finish(d, {
       subject: tr('Λάβαμε το αίτημά σου – θα σου απαντήσουμε εντός 24 ωρών', 'We received your request – we will reply within 24 hours'),
       title: tr('Λάβαμε το αίτημά σου – Life’s Moments', 'We received your request – Life’s Moments'),
-      preheader: tr(`Λάβαμε το αίτημά σου για ${range} και θα σου απαντήσουμε εντός 24 ωρών.`, `We received your request for ${range} and will reply within 24 hours.`),
+      preheader: tr(`Λάβαμε το αίτημά σου για ${range} και θα σου απαντήσουμε εντός 24 ωρών.`, `We received your request for ${range} and will reply within 24 hours.`, `${range} tarihleri için talebinizi aldık, 24 saat içinde yanıt vereceğiz.`, `Получихме запитването Ви за ${range} и ще отговорим до 24 часа.`),
       eyebrow: tr('ΛΑΒΑΜΕ ΤΟ ΑΙΤΗΜΑ ΣΟΥ', 'WE RECEIVED YOUR REQUEST'),
       h1: tr('Σου απαντάμε|εντός 24 ωρών', 'We will reply|within 24 hours').split('|'),
       sub: tr('Ευχαριστούμε που μας επέλεξες.', 'Thank you for choosing us.')
@@ -375,7 +389,7 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
       if (total - paid > 0.004) rows.push({ label: paid > 0 ? tr('Υπόλοιπο κατά την άφιξη', 'Balance on arrival') : tr('Πληρωμή κατά την άφιξη', 'To pay on arrival'), value: euro(total - paid, lang), strong: true } as any);
       d.rows(rows, tr('Πληρωμή', 'Payment'));
     }
-    const addr = clean(s.address), arrival = clean(lang === 'en' ? s.arrival_en || s.arrival_el : s.arrival_el), maps = clean(s.maps_url);
+    const addr = clean(s.address), arrival = clean(lang !== 'el' ? s.arrival_en || s.arrival_el : s.arrival_el), maps = clean(s.maps_url);
     if (addr || arrival || maps) {
       d.heading(tr('Πώς θα φτάσεις', 'How to get here'), 32);
       d.raw(
@@ -384,14 +398,14 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
       );
       if (maps) d.button(tr('Άνοιγμα στον χάρτη', 'Open in maps'), maps, { align: 'left', top: 20, textLine: tr('Χάρτης: ', 'Map: ') + maps });
     }
-    const extra = infoBullets(lang === 'en' ? s.extra_en || s.extra_el : s.extra_el);
+    const extra = infoBullets(lang !== 'el' ? s.extra_en || s.extra_el : s.extra_el);
     if (extra.length) { d.heading(tr('Καλό είναι να ξέρεις', 'Good to know'), 32); d.bullets(extra); }
     d.contact(tr('Χρειάζεσαι κάτι;', 'Need anything?'), tr('Είμαστε δίπλα σου πριν και κατά τη διάρκεια της διαμονής.', 'We are here for you before and during your stay.'));
     d.signoff(tr('Ήσυχα, δίπλα στη θάλασσα.', 'Quiet, by the sea.'), tr('Με αγάπη,', 'With love,'));
     return finish(d, {
       subject: tr('Η κράτησή σου επιβεβαιώθηκε – Life’s Moments', 'Your booking is confirmed – Life’s Moments'),
       title: tr('Η κράτησή σου επιβεβαιώθηκε – Life’s Moments', 'Your booking is confirmed – Life’s Moments'),
-      preheader: tr(`Άφιξη ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Αριθμός κράτησης ' + refText(g) : ''} — σε περιμένουμε!`, `Arrival ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Booking ' + refText(g) : ''} — we look forward to seeing you!`),
+      preheader: tr(`Άφιξη ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Αριθμός κράτησης ' + refText(g) : ''} — σε περιμένουμε!`, `Arrival ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Booking ' + refText(g) : ''} — we look forward to seeing you!`, `Giriş ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Rezervasyon ' + refText(g) : ''} — sizi bekliyoruz!`, `Пристигане ${fmtDay(g.check_in, lang)} · ${unitName(g, lang)}${refText(g) ? ' · Резервация ' + refText(g) : ''} — очакваме Ви!`),
       eyebrow: tr('ΕΠΙΒΕΒΑΙΩΣΗ ΚΡΑΤΗΣΗΣ', 'BOOKING CONFIRMED'),
       h1: tr('Σε περιμένουμε|δίπλα στη θάλασσα', 'We are waiting for you|by the sea').split('|'),
       sub: tr('Η κράτησή σου είναι επιβεβαιωμένη.', 'Your booking is confirmed.')
@@ -401,8 +415,10 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
   if (kind === 'prearrival') {
     d.greeting(g.name, tr('Σε λίγες μέρες είσαι εδώ και χαιρόμαστε πολύ! Για να αξιοποιήσεις τον χρόνο σου, μαζέψαμε μερικά από τα αγαπημένα μας μέρη. Άλλα είναι κοντά μας και άλλα αξίζουν μια μικρή διαδρομή.', 'You will be here in a few days and we are really looking forward to it! To help you make the most of your time, here are some of our favourite places. Some are close by and some are worth a short drive.'));
     d.strip([[tr('ΑΦΙΞΗ', 'ARRIVAL'), fmtShort(g.check_in, lang)], ...(clean(s.checkin_time) ? [['CHECK-IN', tr('από ', 'from ') + clean(s.checkin_time)] as [string, string]] : []), [tr('ΚΑΤΑΛΥΜΑ', 'ACCOMMODATION'), unitName(g, lang)]]);
-    const custom = clean(lang === 'en' ? s.tips_en || s.tips_el : s.tips_el);
-    const groups = parseTips(custom || (lang === 'en' ? DEFAULT_TIPS_EN : DEFAULT_TIPS_EL));
+    // The owners' own list (Settings) is in Greek and English; Turkish and Bulgarian guests get the built-in list
+    // in their language unless the owners wrote only an English one, which they then get instead.
+    const custom = clean(lang === 'el' ? s.tips_el : lang === 'en' ? s.tips_en || s.tips_el : s.tips_en);
+    const groups = parseTips(custom || ({ el: DEFAULT_TIPS_EL, en: DEFAULT_TIPS_EN, tr: TIPS_TR, bg: TIPS_BG } as Record<string, string>)[lang]);
     for (const grp of groups) {
       if (grp.title) d.heading(grp.title, 30);
       d.raw(
@@ -459,7 +475,7 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
     return finish(d, {
       subject: tr('Σχετικά με το αίτημά σου – Life’s Moments', 'About your request – Life’s Moments'),
       title: tr('Σχετικά με το αίτημά σου – Life’s Moments', 'About your request – Life’s Moments'),
-      preheader: tr(`Δυστυχώς δεν μπορούμε να δεχτούμε το αίτημά σου για ${range}.`, `Unfortunately we cannot accept your request for ${range}.`),
+      preheader: tr(`Δυστυχώς δεν μπορούμε να δεχτούμε το αίτημά σου για ${range}.`, `Unfortunately we cannot accept your request for ${range}.`, `Maalesef ${range} tarihleri için talebinizi kabul edemiyoruz.`, `За съжаление не можем да приемем запитването Ви за ${range}.`),
       eyebrow: tr('ΣΧΕΤΙΚΑ ΜΕ ΤΟ ΑΙΤΗΜΑ ΣΟΥ', 'ABOUT YOUR REQUEST'),
       h1: tr('Λυπούμαστε,|δεν μπορούμε αυτή τη φορά', 'We are sorry,|we cannot this time').split('|')
     }, g);
@@ -474,7 +490,7 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
   return finish(d, {
     subject: tr('Το αίτημά σου έληξε – Life’s Moments', 'Your request has expired – Life’s Moments'),
     title: tr('Το αίτημά σου έληξε – Life’s Moments', 'Your request has expired – Life’s Moments'),
-    preheader: tr(`Δεν προλάβαμε να επιβεβαιώσουμε το αίτημά σου για ${range}.`, `We could not confirm your request for ${range} in time.`),
+    preheader: tr(`Δεν προλάβαμε να επιβεβαιώσουμε το αίτημά σου για ${range}.`, `We could not confirm your request for ${range} in time.`, `${range} tarihleri için talebinizi zamanında onaylayamadık.`, `Не успяхме да потвърдим навреме запитването Ви за ${range}.`),
     eyebrow: tr('ΤΟ ΑΙΤΗΜΑ ΕΛΗΞΕ', 'REQUEST EXPIRED'),
     h1: tr('Δεν προλάβαμε|να σου απαντήσουμε', 'We did not manage|to reply in time').split('|')
   }, g);
@@ -484,7 +500,7 @@ export function buildGuestMail(kind: GuestKind, g: Guest, s: Settings): Mail {
 const QUIET = new Set([10, 11, 12, 1, 2, 3, 4]); // months when the island is quiet
 
 export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: Settings, unsubUrl: string): Mail {
-  const lang = to.lang === 'en' ? 'en' : 'el';
+  const lang = langOf(to.lang);
   const d = new Doc(lang, s);
   const { tr } = d;
   const pct = Math.round(Number(o.discount_pct));
@@ -498,13 +514,13 @@ export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: 
   d.greeting(to.name, tr('Πέρασε λίγος καιρός από την τελευταία φορά που μας επισκέφτηκες και θα χαρούμε να σε δούμε ξανά. Γι’ αυτό ετοιμάσαμε μια προσφορά μόνο για τους επισκέπτες μας.', 'It has been a little while since your last visit and we would love to see you again. So we have prepared an offer just for our guests.'));
   d.raw(
     `<tr><td class="px" style="padding:24px 40px 8px 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border:1px solid ${C.line};border-radius:14px;">` +
-    `<tr><td align="center" style="padding:30px 24px 10px 24px;"><div style="font-family:${SANS};font-size:11px;letter-spacing:2px;color:${C.mute};">${tr('Η ΕΚΠΤΩΣΗ ΣΟΥ', 'YOUR DISCOUNT')}</div><div class="big" style="font-family:${SERIF};font-size:72px;line-height:76px;color:${C.brand};font-weight:600;padding:8px 0 4px 0;">&minus;${pct}%</div><div style="font-family:${SANS};font-size:15px;line-height:22px;color:${C.body};">${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}</div></td></tr>` +
+    `<tr><td align="center" style="padding:30px 24px 10px 24px;"><div style="font-family:${SANS};font-size:11px;letter-spacing:2px;color:${C.mute};">${tr('Η ΕΚΠΤΩΣΗ ΣΟΥ', 'YOUR DISCOUNT')}</div><div class="big" style="font-family:${SERIF};font-size:72px;line-height:76px;color:${C.brand};font-weight:600;padding:8px 0 4px 0;">&minus;${lang === 'tr' ? '%' + pct : pct + '%'}</div><div style="font-family:${SANS};font-size:15px;line-height:22px;color:${C.body};">${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}</div></td></tr>` +
     `<tr><td style="padding:16px 24px 0 24px;"><div style="border-top:1px solid ${C.line};font-size:0;line-height:0;">&nbsp;</div></td></tr>` +
     `<tr><td style="padding:0 24px 24px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td width="${bookBy ? 50 : 100}%" align="center" valign="top" style="font-family:${SANS};text-align:center;"><div style="font-size:12px;color:${C.mute};">${tr('ΙΣΧΥΕΙ ΓΙΑ ΔΙΑΜΟΝΕΣ', 'VALID FOR STAYS')}</div><div style="font-size:15px;color:${C.ink};font-weight:600;padding-top:3px;">${esc(stays)}</div></td>` +
     (bookBy ? `<td width="50%" align="center" valign="top" style="font-family:${SANS};text-align:center;"><div style="font-size:12px;color:${C.mute};">${tr('ΚΡΑΤΗΣΕ ΕΩΣ', 'BOOK BY')}</div><div style="font-size:15px;color:${C.ink};font-weight:600;padding-top:3px;">${esc(bookBy)}</div></td>` : '') +
     `</tr></table></td></tr></table></td></tr>`,
-    `${tr('ΕΚΠΤΩΣΗ', 'DISCOUNT')} −${pct}% ${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}\n${tr('Ισχύει για διαμονές', 'Valid for stays')}: ${stays}${bookBy ? `\n${tr('Κράτησε έως', 'Book by')}: ${bookBy}` : ''}`
+    `${tr('ΕΚΠΤΩΣΗ', 'DISCOUNT')} −${lang === 'tr' ? '%' + pct : pct + '%'} ${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}\n${tr('Ισχύει για διαμονές', 'Valid for stays')}: ${stays}${bookBy ? `\n${tr('Κράτησε έως', 'Book by')}: ${bookBy}` : ''}`
   );
   if (code) {
     d.raw(
@@ -529,9 +545,9 @@ export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: 
   const reason = tr('Λαμβάνεις αυτό το μήνυμα επειδή έχεις μείνει σε εμάς και είχες δηλώσει ότι θέλεις να λαμβάνεις προσφορές. Αν δεν θες άλλες, ', 'You are receiving this because you stayed with us and said you would like to hear about offers. If you do not want more, ');
   const unsubLabel = tr('διαγράψου από τη λίστα', 'unsubscribe');
   return finish(d, {
-    subject: tr(`Σου λείπει η Θάσος; Ειδική προσφορά −${pct}% για σένα`, `Missing Thasos? A special −${pct}% offer for you`),
+    subject: tr(`Σου λείπει η Θάσος; Ειδική προσφορά −${pct}% για σένα`, `Missing Thasos? A special −${pct}% offer for you`, `Taşoz’u özlediniz mi? Size özel −%${pct} teklif`, `Липсва ли Ви Тасос? Специална оферта −${pct}% за Вас`),
     title: tr('Σου λείπει η Θάσος; – Life’s Moments', 'Missing Thasos? – Life’s Moments'),
-    preheader: tr(`Ειδική προσφορά −${pct}% για διαμονές στο Life’s Moments. Ισχύει για περιορισμένο χρονικό διάστημα.`, `A special −${pct}% offer for stays at Life’s Moments. Valid for a limited time.`),
+    preheader: tr(`Ειδική προσφορά −${pct}% για διαμονές στο Life’s Moments. Ισχύει για περιορισμένο χρονικό διάστημα.`, `A special −${pct}% offer for stays at Life’s Moments. Valid for a limited time.`, `Life’s Moments’ta konaklamalar için özel −%${pct} teklif. Sınırlı süre geçerli.`, `Специална оферта −${pct}% за престой в Life’s Moments. Валидна за ограничено време.`),
     eyebrow: tr('ΕΙΔΙΚΗ ΠΡΟΣΦΟΡΑ', 'SPECIAL OFFER'),
     h1: tr('Σου λείπει|η Θάσος;', 'Missing|Thasos?').split('|'),
     footerHtml: `Life&#8217;s Moments${addr ? ' · ' + esc(addr) : ''}<br>${esc(reason)}<a href="${esc(unsubUrl)}" style="color:${C.faint};text-decoration:underline;">${esc(unsubLabel)}</a>.`,
@@ -543,7 +559,7 @@ export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: 
 // Sent by the guest-message function. Same look as the other guest emails: the owner's words in a letter
 // block, a reply button (when there is a reply-to address), the booking card and the phone line.
 export function buildMessageMail(g: Guest, body: string, s: Settings): Mail {
-  const lang = g.lang === 'en' ? 'en' : 'el';
+  const lang = langOf(g.lang);
   const d = new Doc(lang, s);
   const { tr } = d;
   const text = String(body ?? '').replace(/\r/g, '').trim();
