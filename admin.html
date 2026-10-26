@@ -770,7 +770,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <div>
-<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">Επόμενες κρατήσεις</h3>
+<h3 style="margin: 0 0 8px; font-size: 14px; font-weight: 600">{{room.monthTitle}}</h3>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <sc-for list="{{room.upcoming}}" as="b" hint-placeholder-count="3">
 <button type="button" onClick="{{b.open}}" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; border-radius: 12px; border: 1px solid #E3EAEB; background: #FFFFFF; color: #18282B; font-size: 14px; text-align: left; cursor: pointer">
@@ -780,7 +780,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-for>
 </div>
 <sc-if value="{{room.noUpcoming}}" hint-placeholder-val="{{false}}">
-<div style="font-size: 13px; color: #4A5B5E">Καμία κράτηση από σήμερα και μετά.</div>
+<div style="font-size: 13px; color: #4A5B5E">Καμία κράτηση αυτόν τον μήνα.</div>
 </sc-if>
 </div>
 
@@ -1862,7 +1862,8 @@ class Component extends DCLogic {
         days.push({ dow: i === 0 ? 'Σήμ' : this.DAY[d.getUTCDay()], num: String(d.getUTCDate()), style: style, aria: aria, click: click });
       }
       const mine = confirmed.filter(b => b.unit === ru.id && b.kind !== 'test');
-      const upcoming = mine.filter(b => this.endOf(b) > T).sort((a, b) => a.start < b.start ? -1 : 1).slice(0, 5).map(b => ({
+      const mK = T.slice(0, 7), mFirst = mK + '-01', mNext = this.add(mK + '-28', 7).slice(0, 7) + '-01';
+      const upcoming = mine.filter(b => b.start < mNext && this.endOf(b) > mFirst).sort((a, b) => a.start < b.start ? -1 : 1).map(b => ({
         name: b.name,
         when: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + (b.source === 'booking' ? '' : ' · ' + this.money(b.total)),
         src: srcOf(b),
@@ -1910,7 +1911,7 @@ class Component extends DCLogic {
         occLabel: 'Νύχτες ' + this.MONG[mIdx], occText: mBooked + ' / ' + mDays,
         revLabel: 'Έσοδα σάιτ ' + this.MONG[mIdx], revText: this.money(mRev),
         days: days,
-        upcoming: upcoming, noUpcoming: upcoming.length === 0,
+        upcoming: upcoming, noUpcoming: upcoming.length === 0, monthTitle: 'Κρατήσεις ' + this.MONG[mIdx],
         shut: shutRows, hasShut: shutRows.length > 0,
         history: hist, noHistory: hist.length === 0,
         canCloseTonight: !tonight, canOpenTonight: tonight === 'block',
