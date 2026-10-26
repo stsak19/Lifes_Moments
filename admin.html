@@ -27,7 +27,7 @@
 .lm-cv:hover,.lm-cv:focus-visible{background:#18282B;border-color:#18282B}
 .lm-cv:active{background:#0B1517;border-color:#0B1517}
 .lm-cv:hover .lm-cv-arr,.lm-cv:focus-visible .lm-cv-arr{animation:lm-drop .9s ease .15s infinite}
-@keyframes lm-blink{0%,100%{background-color:transparent;box-shadow:0 0 0 0 rgba(247,212,106,0)}50%{background-color:#E9B949;box-shadow:0 0 0 4px rgba(233,185,73,.5)}}
+@keyframes lm-blink{0%,100%{background-color:transparent;box-shadow:0 0 0 0 rgba(247,212,106,0)}50%{background-color:#FF004F;color:#FFFFFF;box-shadow:0 0 0 4px rgba(255,0,79,.35)}}
 @keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
 html{overflow-y:scroll;scrollbar-gutter:stable}
@@ -168,7 +168,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <section style="{{stripStyle}}">
 <div style="flex: 0 1 260px">
 <div style="{{stripTitleStyle}}">{{stripTitle}}</div>
-<div style="font-size: 13px; color: #4A5B5E">{{stripSub}}</div>
+<div style="{{stripSubStyle}}">{{stripSub}}</div>
 </div>
 <sc-if value="{{hasStripItems}}" hint-placeholder-val="{{true}}">
 <div style="flex: 1 1 460px; display: flex; flex-wrap: wrap; gap: 10px">
@@ -1689,8 +1689,8 @@ class Component extends DCLogic {
       }));
       stripTitle = n === 0 ? 'Κανένα αίτημα σε αναμονή' : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
       stripSub = n === 0 ? 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.' : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες';
-      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #F7D46A');
-      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#3A2604');
+      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FF004F');
+      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#FFFFFF');
       if (n > 0) { hasStripBtn = true; stripBtn = () => this.openReq(pending[0].id); }
     } else {
       const n = feed.length;
@@ -2994,7 +2994,7 @@ class Component extends DCLogic {
       exportMonth: this.MONG[this.dt(T).getUTCMonth()],
       syncNow: this.REAL ? () => (bkLinked ? this.syncFeeds(null) : (this.go('settings'), this.setState({ bkOpen: true }))) : () => { this.setState({ syncAgo: 'μόλις τώρα' }); this.say('Έλεγχος Booking.com · καμία νέα κράτηση. Το Booking βλέπει τις δικές μας κρατήσεις μέσα σε 1–4 ώρες.'); },
       toast: s.toast, hasToast: !!s.toast,
-      stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, hasStripBtn: hasStripBtn, stripBtn: stripBtn,
+      stripItems: stripItems, hasStripItems: stripItems.length > 0, stripTitle: stripTitle, stripSub: stripSub, stripStyle: stripStyle, stripTitleStyle: stripTitleStyle, stripSubStyle: 'font-size: 13px; color: ' + (stripTitleStyle.indexOf('#FFFFFF') >= 0 ? 'rgba(255,255,255,0.88)' : '#4A5B5E'), hasStripBtn: hasStripBtn, stripBtn: stripBtn,
       page: (() => {
         const n = (k, one, many) => k + ' ' + (k === 1 ? one : many);
         const P = {
