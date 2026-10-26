@@ -245,7 +245,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #A9C7EA"></span>Booking.com</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #B9DCB0"></span>Από εμάς</span>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
-<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1.5px dashed #B7791F"></span>Αίτημα σε αναμονή</span></sc-if>
+<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1.5px dashed #FF004F"></span>Αίτημα σε αναμονή</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
 </div>
 </div>
@@ -2146,7 +2146,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
           segs.push({ label: (span > 1 ? 'Αίτημα · ' : '') + p.name, sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
-            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') + (s.calFlash === p.id && s.calReq !== p.id ? 'border: 2px solid #FF004F; color: #FF004F; animation: lm-blink 1.6s ease-out infinite;' : '') });
+            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #FF004F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') + (s.calReq !== p.id ? 'animation: lm-blink 1.6s ease-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2168,7 +2168,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === b.id && showReq) { segs.push(reqCard(b, span, null)); i = j + 1; continue; }
           segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name, aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
-            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (s.calFlash === b.id && s.calReq !== b.id ? 'border: 2px solid #FF004F; color: #FF004F; animation: lm-blink 1.6s ease-out infinite;' : '') });
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #FF004F; background: transparent; color: #7A4708; font-weight: 600;' + (s.calReq !== b.id ? 'animation: lm-blink 1.6s ease-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push({ label: '', aria: '', tap: () => {}, style: 'height: 34px; border-radius: 8px; background: transparent; border: 0; padding: 0; cursor: default' });
