@@ -8,6 +8,20 @@
 <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=GFS+Didot&family=Commissioner:wght@300;400;500;600&family=Piazzolla:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap">
 <style>
+.jmob { display: none; }
+@media (max-width: 760px) {
+  #journeys .jrow > .jph, #journeys .jrow > .jtx, #journeys .jcta { display: none !important; }
+  #journeys .jrow { display: none !important; }
+  #journeys .jrow.act { display: block !important; }
+  .jmob { display: grid; gap: 14px; }
+  .jmc { position: relative; margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 5; background: #c9d3dc; }
+  .jmc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .jmc figcaption { position: absolute; inset: auto 0 0 0; padding: 70px 20px 20px; color: #fff;
+    background: linear-gradient(to top, rgba(8,18,30,.82), rgba(8,18,30,.45) 55%, transparent); }
+  .jmc small { display: block; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; margin-bottom: 6px; }
+  .jmc b { display: block; font: 400 27px/1.15 var(--font-display); margin-bottom: 8px; }
+  .jmc span { display: block; font-size: 15px; line-height: 1.5; opacity: .95; }
+}
 /* Layout: fixed glass header; hero video; booking bar with the Google rating; a day at the house; rooms (switch + every unit sliding); the place; Thasos guide; reviews; footer.
    The palette follows the time on Thasos (data-mood on <html>), not the OS theme. */
 :root {
@@ -2864,7 +2878,19 @@ html.gs-lock { overflow: hidden; }
             }).join('')
           : j.ideas.map((d) => '<li data-shot="0"><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
         const imgs = shots.map((sh, k) => '<img class="jshot' + (k ? '' : ' on') + '" src="' + sh[0] + '" alt="' + esc(sh[2]) + '" loading="lazy" decoding="async" data-credit="' + esc(sh[1]) + '" data-place="' + esc(sh[2]) + '">').join('');
+        // phones: only the island's places, one photo each, the words laid over it
+        const NOT_PLACE = { 'Arrival': 1, 'A day off': 1, 'Departure': 1 };
+        const cards = (j.days
+          ? j.days.filter((d) => PLACE[d[0][0]] && !NOT_PLACE[d[0][0]]).map((d) => {
+              const m = DRIVE[d[0][0]];
+              const far = m === undefined ? '' : (m === 0 ? t('jrn.walk') : m + '′');
+              return [PLACE[d[0][0]][0], far, d[0][l], d[1][l]];
+            })
+          : j.ideas.map((d) => [j.img, '', d[0][l], d[1][l]]))
+          .map((c) => '<figure class="jmc"><img src="' + c[0] + '" alt="" loading="lazy" decoding="async"><figcaption>' +
+            (c[1] ? '<small>' + esc(c[1]) + '</small>' : '') + '<b>' + esc(c[2]) + '</b><span>' + esc(c[3]) + '</span></figcaption></figure>').join('');
         return '<article class="jrow' + (i === cur ? ' act' : '') + '" role="tabpanel" style="--n:' + shots.length + '">' +
+          '<div class="jmob">' + cards + '</div>' +
           '<figure class="jph"><div class="jstack">' + imgs + '</div>' +
             '<div class="jph-cap"><span class="jph-num">01 / ' + pad(shots.length) + '</span><span class="jph-place">' + esc(j.name[l]) + '</span></div>' +
             '<figcaption>' + esc(j.credit || '') + '</figcaption></figure>' +
