@@ -767,7 +767,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #B3261E"></span>Κλειστό</span>
 <span style="display: inline-flex; align-items: center; gap: 5px"><span style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 3px; border: 1px solid #A7B4B6; background: #FFFFFF"></span>Ελεύθερο</span>
 </div>
-<div style="font-size: 12px; color: #4A5B5E; margin-top: 6px">Πάτα ελεύθερη μέρα για να την κλείσεις, κόκκινη για να ανοίξει.</div>
 </div>
 
 <div>
@@ -792,7 +791,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-for list="{{room.shut}}" as="sh" hint-placeholder-count="1">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 48px; padding: 6px 6px 6px 12px; border-radius: 12px; background: #FCEBEA">
 <span><span style="display: block; font-weight: 600; color: #7A1B14">{{sh.when}}</span><span style="display: block; font-size: 12px; color: #7A1B14">{{sh.nights}}</span></span>
-<button type="button" onClick="{{sh.reopen}}" style="flex-shrink: 0; min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid #D9A39E; background: #FFFFFF; color: #7A1B14; font-size: 12px; font-weight: 600; cursor: pointer">Άνοιγμα</button>
 </div>
 </sc-for>
 </div>
@@ -815,13 +813,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <div style="display: flex; flex-wrap: wrap; gap: 8px">
-<sc-if value="{{room.canCloseTonight}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{room.closeTonight}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Κλείσιμο απόψε</button>
-</sc-if>
-<sc-if value="{{room.canOpenTonight}}" hint-placeholder-val="{{false}}">
-<button type="button" onClick="{{room.openTonight}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Άνοιγμα από απόψε</button>
-</sc-if>
-<button type="button" onClick="{{room.newBooking}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 1px solid #0F5257; background: #FFFFFF; color: #0F5257; font-size: 14px; font-weight: 600; cursor: pointer">Νέα κράτηση</button>
 <button type="button" onClick="{{room.toCal}}" style="flex: 1 1 140px; height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Στο ημερολόγιο</button>
 </div>
 </aside>
@@ -1804,7 +1795,7 @@ class Component extends DCLogic {
       if (st === 'arr') arrivals++;
       if (dep) departures++;
       let action = '', actionStyle = '', doAction = () => {};
-      if (dep) {
+      if (false) {
         const done = !!s.cleaned[dep.id];
         action = done ? '✓ Καθαρό' : 'Σημείωσε ως καθαρό';
         actionStyle = actBase + (done ? 'border: 1px solid #2F6B4F; background: #E1EFE7; color: #1F5039' : 'border: 1px solid #D9B86A; background: #FFFFFF; color: #7A4708');
@@ -1855,17 +1846,17 @@ class Component extends DCLogic {
         const label = DOWF[d.getUTCDay()] + ' ' + this.fmt(x);
         let style, aria, click;
         if (o === 'block') {
-          style = dayBase + 'border: 1px solid #B3261E; background: #B3261E; color: #FFFFFF';
-          aria = label + ', κλειστό. Πάτα για άνοιγμα.';
-          click = () => { this.unblockDay(ru.id, x); this.say(ru.name + ': άνοιξε η ' + this.fmt(x) + '.'); };
+          style = dayBase + 'cursor: default; border: 1px solid #B3261E; background: #B3261E; color: #FFFFFF';
+          aria = label + ', κλειστό.';
+          click = () => {};
         } else if (o) {
           style = dayBase + (o.source !== 'booking' ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #8DB3E2; background: #8DB3E2; color: #0A2540');
           aria = label + ', ' + o.name + '. Πάτα για την κράτηση.';
           click = () => this.open(o.id);
         } else {
-          style = dayBase + 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B';
-          aria = label + ', ελεύθερο. Πάτα για κλείσιμο.';
-          click = () => { this.block(ru.id, x); this.say(ru.name + ' κλειστό ' + this.fmt(x) + closedMsg); };
+          style = dayBase + 'cursor: default; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B';
+          aria = label + ', ελεύθερο.';
+          click = () => {};
         }
         if (i === 0) style += '; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #18282B';
         days.push({ dow: i === 0 ? 'Σήμ' : this.DAY[d.getUTCDay()], num: String(d.getUTCDate()), style: style, aria: aria, click: click });
