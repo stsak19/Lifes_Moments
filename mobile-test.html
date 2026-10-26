@@ -11,8 +11,7 @@
 .jmob { display: none; }
 @media (max-width: 760px) {
   #journeys .jrow > .jph, #journeys .jrow > .jtx, #journeys .jcta { display: none !important; }
-  #journeys .jrow { display: none !important; }
-  #journeys .jrow.act { display: block !important; }
+  #journeys #jTabs, #journeys #jList { display: none !important; }
   .jmob { display: grid; gap: 14px; }
   .jmc { position: relative; margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 5; background: #c9d3dc; }
   .jmc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -2878,19 +2877,8 @@ html.gs-lock { overflow: hidden; }
             }).join('')
           : j.ideas.map((d) => '<li data-shot="0"><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
         const imgs = shots.map((sh, k) => '<img class="jshot' + (k ? '' : ' on') + '" src="' + sh[0] + '" alt="' + esc(sh[2]) + '" loading="lazy" decoding="async" data-credit="' + esc(sh[1]) + '" data-place="' + esc(sh[2]) + '">').join('');
-        // phones: only the island's places, one photo each, the words laid over it
-        const NOT_PLACE = { 'Arrival': 1, 'A day off': 1, 'Departure': 1 };
-        const cards = (j.days
-          ? j.days.filter((d) => PLACE[d[0][0]] && !NOT_PLACE[d[0][0]]).map((d) => {
-              const m = DRIVE[d[0][0]];
-              const far = m === undefined ? '' : (m === 0 ? t('jrn.walk') : m + '′');
-              return [PLACE[d[0][0]][0], far, d[0][l], d[1][l]];
-            })
-          : j.ideas.map((d) => [j.img, '', d[0][l], d[1][l]]))
-          .map((c) => '<figure class="jmc"><img src="' + c[0] + '" alt="" loading="lazy" decoding="async"><figcaption>' +
-            (c[1] ? '<small>' + esc(c[1]) + '</small>' : '') + '<b>' + esc(c[2]) + '</b><span>' + esc(c[3]) + '</span></figcaption></figure>').join('');
         return '<article class="jrow' + (i === cur ? ' act' : '') + '" role="tabpanel" style="--n:' + shots.length + '">' +
-          '<div class="jmob">' + cards + '</div>' +
+
           '<figure class="jph"><div class="jstack">' + imgs + '</div>' +
             '<div class="jph-cap"><span class="jph-num">01 / ' + pad(shots.length) + '</span><span class="jph-place">' + esc(j.name[l]) + '</span></div>' +
             '<figcaption>' + esc(j.credit || '') + '</figcaption></figure>' +
@@ -2903,6 +2891,17 @@ html.gs-lock { overflow: hidden; }
             (j.tip ? '<blockquote class="jq jin"><span>' + esc(t('jrn.tip')) + '</span>' + esc(j.tip[l]) + '</blockquote>' : '') +
           '</div></article>';
       }).join('');
+      // phones: one list of the island's places from every journey, each place once, no tabs
+      const NOTP = { 'Arrival': 1, 'A day off': 1, 'Departure': 1 }, seenP = {}, all = [];
+      JOURNEYS.forEach((j) => (j.days || []).forEach((d) => {
+        const k = d[0][0]; if (NOTP[k] || seenP[k] || !PLACE[k]) return; seenP[k] = 1;
+        const m = DRIVE[k];
+        all.push([PLACE[k][0], m === undefined ? '' : (m === 0 ? t('jrn.walk') : m + '′'), d[0][l], d[1][l]]);
+      }));
+      let mob = $('#jMob');
+      if (!mob) { mob = document.createElement('div'); mob.id = 'jMob'; mob.className = 'jmob'; listEl.after(mob); }
+      mob.innerHTML = all.map((c) => '<figure class="jmc"><img src="' + c[0] + '" alt="" loading="lazy" decoding="async"><figcaption>' +
+        (c[1] ? '<small>' + esc(c[1]) + '</small>' : '') + '<b>' + esc(c[2]) + '</b><span>' + esc(c[3]) + '</span></figcaption></figure>').join('');
       const tabs = $('#jTabs');
       if (tabs) tabs.innerHTML = JOURNEYS.map((j, i) =>
         '<button type="button" role="tab" class="jtab' + (i === cur ? ' on' : '') + '" aria-selected="' + (i === cur) + '" data-jtab="' + i + '">' +
