@@ -767,6 +767,44 @@ html .intro .cap.hcenter { pointer-events: none; }
 .jcta-btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 26px; border-radius: 999px; background: var(--accent-2); color: #fff; text-decoration: none; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; transition: opacity .2s ease; }
 .jcta-btn:hover { opacity: .88; }
 @media (max-width: 760px) { .jcta { margin-top: 40px; } .jcta-btn { width: 100%; justify-content: center; } .jcard .jmoment { font-size: 14px; } }
+
+/* ---------- Journeys v4: big photos, a written route beside them ----------
+   One journey per row, photo about 60% wide and alternating sides; next to it the mood line,
+   a short story of the days (not a table), the owners' tip as a quote and the booking link. */
+#jList { display: flex !important; flex-direction: column; gap: clamp(72px, 9vw, 140px); overflow: visible; margin: 0; padding: 0; }
+.jrow { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(40px, 5vw, 80px); align-items: start; }
+.jrow:nth-child(even) .jph { order: 2; }
+.jph { margin: 0; position: sticky; top: 96px; aspect-ratio: 4 / 5; max-height: calc(100vh - 130px); width: 100%; border-radius: var(--r-img); overflow: hidden; background: var(--deep); }
+.jph img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.05); transition: transform 2.2s cubic-bezier(.2, .7, .2, 1); }
+.jrow:hover .jph img { transform: scale(1); }
+.jph figcaption { position: absolute; right: 12px; bottom: 10px; font-size: 10.5px; color: rgba(255, 255, 255, .8); text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+.jtx { padding-top: clamp(0px, 3vw, 40px); }
+.jmeta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 18px; font-size: 11.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+.jmeta span + span { color: var(--muted); }
+.jtx h3 { margin: 0 0 18px; font: 400 clamp(34px, 3.8vw, 56px)/1.02 var(--font-display); letter-spacing: -.01em; }
+.jlede { margin: 0 0 16px; font: italic 400 clamp(20px, 1.8vw, 24px)/1.35 var(--font-display); color: var(--accent-2); }
+.jline { margin: 0 0 30px; font-size: 16.5px; line-height: 1.65; color: var(--muted); max-width: 46ch; }
+.jsteps { list-style: none; margin: 0 0 30px; padding: 0 0 0 22px; border-left: 1px solid var(--line); }
+.jsteps li { position: relative; padding: 0 0 18px; }
+.jsteps li:last-child { padding-bottom: 0; }
+.jsteps li::before { content: ""; position: absolute; left: -26.5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--surface, #fff); border: 1px solid var(--accent); }
+.jsteps li:first-child::before, .jsteps li:last-child::before { background: var(--accent); }
+.jsd { display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.jsteps p { margin: 0; font-size: 15.5px; line-height: 1.55; color: var(--muted); }
+.jsteps p b { color: var(--ink); font-weight: 500; }
+.jq { margin: 0 0 30px; padding: 18px 20px; border-radius: var(--r-card); background: var(--deep); font: italic 400 17px/1.5 var(--font-display); color: var(--ink); }
+.jq span { display: block; margin-bottom: 8px; font: normal 500 11px/1 system-ui, -apple-system, 'Inter', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+.jgo { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--accent-2); color: #fff; font: inherit; font-size: 14px; letter-spacing: .08em; cursor: pointer; transition: opacity .2s ease; }
+.jgo:hover { opacity: .88; }
+.jgo svg { transition: transform .25s ease; }
+.jgo:hover svg { transform: translateX(3px); }
+@media (max-width: 900px) {
+  .jrow { grid-template-columns: 1fr; gap: 26px; }
+  .jrow:nth-child(even) .jph { order: 0; }
+  .jph { position: relative; top: auto; aspect-ratio: 4 / 5; max-height: 78vh; margin-inline: -16px; width: calc(100% + 32px); border-radius: 0; }
+  .jtx { padding-top: 0; }
+  .jgo { width: 100%; justify-content: center; }
+}
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2288,26 +2326,29 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 
     function render() {
       const l = L();
+      const arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
       listEl.innerHTML = JOURNEYS.map((j, i) => {
         const label = j.nights ? t('jrn.nights', { n: j.nights }) : t('jrn.own');
-        // the plan that opens next to the photo on hover (on phones: tap the photo).
-        // Ready journeys list their days; "your own" lists ideas to mix.
-        const rows = j.days
+        // the route told as short lines: day, place, how far, one sentence
+        const steps = j.days
           ? j.days.map((d, n) => {
               const m = DRIVE[d[0][0]];
-              const dr = m === undefined ? '' : '<span class="jdrv">' + (m === 0 ? esc(t('jrn.walk')) : m + '′') + '</span>';
-              return '<li><span class="jd">' + esc(t('jrn.day', { n: n + 1 })) + '</span><b>' + esc(d[0][l]) + '</b>' + dr + '</li>';
+              const far = m === undefined ? '' : ' · ' + (m === 0 ? esc(t('jrn.walk')) : m + '′');
+              return '<li><span class="jsd">' + esc(t('jrn.day', { n: n + 1 })) + far + '</span><p><b>' + esc(d[0][l]) + '.</b> ' + esc(d[1][l]) + '</p></li>';
             }).join('')
-          : j.ideas.map((d) => '<li><span class="jd">' + esc(d[0][l]) + '</span><b>' + esc(d[1][l]) + '</b></li>').join('');
-        const pop = '<div class="jpop" id="jp' + i + '"><p class="jpop-h">' + esc(j.nights ? t('jrn.inN', { n: j.nights }) : t('jrn.ownH')) + '</p><ol>' + rows + '</ol>' +
-          (j.tip ? '<p class="jtip"><span>' + esc(t('jrn.tip')) + '</span> ' + esc(j.tip[l]) + '</p>' : '') +
-          (j.best ? '<p class="jbest">' + esc(t('jrn.best')) + ' ' + esc(j.best[l]) + '</p>' : '') +
-          '<button type="button" class="jbook" data-jbook="' + i + '">' + esc(t('nav.book')) +
-          ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>';
-        return '<article class="jcard hasplan" aria-describedby="jp' + i + '"><div class="jmedia">' + pop +
-          '<figure class="jfig" data-jbook="' + i + '"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
-            '<span class="jtag">' + esc(label) + '</span>' + (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure></div>' +
-          '<h3>' + esc(j.name[l]) + '</h3>' + (j.moment ? '<p class="jmoment">' + esc(j.moment[l]) + '</p>' : '') + '</article>';
+          : j.ideas.map((d) => '<li><span class="jsd">' + esc(d[0][l]) + '</span><p>' + esc(d[1][l]) + '</p></li>').join('');
+        return '<article class="jrow">' +
+          '<figure class="jph"><img src="' + j.img + '" alt="' + esc(j.name[l]) + '" loading="lazy" decoding="async">' +
+            (j.credit ? '<figcaption>' + esc(j.credit) + '</figcaption>' : '') + '</figure>' +
+          '<div class="jtx">' +
+            '<p class="jmeta"><span>' + esc(label) + '</span>' + (j.best ? '<span>' + esc(t('jrn.best')) + ' ' + esc(j.best[l]) + '</span>' : '') + '</p>' +
+            '<h3>' + esc(j.name[l]) + '</h3>' +
+            (j.moment ? '<p class="jlede">' + esc(j.moment[l]) + '</p>' : '') +
+            '<p class="jline">' + esc(j.line[l]) + '</p>' +
+            '<ol class="jsteps">' + steps + '</ol>' +
+            (j.tip ? '<blockquote class="jq"><span>' + esc(t('jrn.tip')) + '</span>' + esc(j.tip[l]) + '</blockquote>' : '') +
+            '<button type="button" class="jgo" data-jbook="' + i + '">' + esc(j.nights ? t('jrn.book', { n: j.nights }) : t('jrn.pick')) + ' ' + arrow + '</button>' +
+          '</div></article>';
       }).join('');
     }
 
