@@ -27,6 +27,7 @@
 .lm-cv:hover,.lm-cv:focus-visible{background:#18282B;border-color:#18282B}
 .lm-cv:active{background:#0B1517;border-color:#0B1517}
 .lm-cv:hover .lm-cv-arr,.lm-cv:focus-visible .lm-cv-arr{animation:lm-drop .9s ease .15s infinite}
+@keyframes lm-blink{0%,100%{background-color:#FFF3C4;box-shadow:0 0 0 0 rgba(233,185,73,0)}50%{background-color:#F5C842;box-shadow:0 0 0 4px rgba(233,185,73,.45)}}
 @keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
 html{overflow-y:scroll;scrollbar-gutter:stable}
@@ -1394,7 +1395,7 @@ class Component extends DCLogic {
     return cur ? cur.bid : null;
   }
   go(tab) {
-    this.setState({ tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, room: null, calReq: null, sel: null, calSel: null, calEdit: false, newOpen: false });
+    this.setState({ calFlash: null, tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, room: null, calReq: null, sel: null, calSel: null, calEdit: false, newOpen: false });
   }
 
   openNew(pre) {
@@ -1569,7 +1570,7 @@ class Component extends DCLogic {
     const b = this.list().find(x => x.id === id && x.status === 'pending');
     if (!b) { this.go('today'); return; }
     const from = this.add(b.start, -2);
-    this.setState({ tab: 'cal', calStart: from < this.TODAY ? this.TODAY : from, calReq: b.id, req: null, detail: null, customer: null, room: null, newOpen: false, calSel: null, calEdit: false });
+    this.setState({ tab: 'cal', calStart: from < this.TODAY ? this.TODAY : from, calReq: null, calFlash: b.id, req: null, detail: null, customer: null, room: null, newOpen: false, calSel: null, calEdit: false });
   }
   /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
      the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
@@ -1688,8 +1689,8 @@ class Component extends DCLogic {
       }));
       stripTitle = n === 0 ? 'Κανένα αίτημα σε αναμονή' : (n === 1 ? '1 αίτημα περιμένει' : n + ' αιτήματα περιμένουν');
       stripSub = n === 0 ? 'Θα πάρεις ειδοποίηση μόλις έρθει νέο.' : 'Το πρώτο λήγει σε ' + (24 - pending[0].ago) + ' ώρες';
-      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #FBEFD9');
-      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#5C3606');
+      stripStyle = stripBase + (n === 0 ? 'background: #FFFFFF' : 'background: #F7D46A');
+      stripTitleStyle = 'font-family: Piazzolla, Georgia, serif; font-size: 22px; font-weight: 600; color: ' + (n === 0 ? '#18282B' : '#3A2604');
       if (n > 0) { hasStripBtn = true; stripBtn = () => this.openReq(pending[0].id); }
     } else {
       const n = feed.length;
@@ -2145,7 +2146,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
           segs.push({ label: (span > 1 ? 'Αίτημα · ' : '') + p.name, sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
-            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') });
+            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') + (s.calFlash === p.id && s.calReq !== p.id ? 'animation: lm-blink 1.1s ease-in-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2167,7 +2168,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === b.id && showReq) { segs.push(reqCard(b, span, null)); i = j + 1; continue; }
           segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name, aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
-            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600' });
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (s.calFlash === b.id && s.calReq !== b.id ? 'animation: lm-blink 1.1s ease-in-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push({ label: '', aria: '', tap: () => {}, style: 'height: 34px; border-radius: 8px; background: transparent; border: 0; padding: 0; cursor: default' });
