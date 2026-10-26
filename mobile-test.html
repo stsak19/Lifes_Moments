@@ -575,9 +575,12 @@ html .intro .shade { background: radial-gradient(70% 60% at 50% 50%, rgba(6, 10,
    the rest of the bar comes back around it, so the button never moves. */
 .top .brand, .top .nav, .top .lang, .top .menu-btn { transition: opacity .4s ease; }
 .top { transition: background-color .4s ease, box-shadow .4s ease, border-color .4s ease, backdrop-filter .4s ease; }
+@media (min-width: 761px) { /* phones keep the full bar over the hero too */
 .top.at-top:not(.solid) { background: transparent !important; box-shadow: none !important; border-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .top.at-top:not(.solid)::before { opacity: 0; }
 .top.at-top:not(.solid) .brand, .top.at-top:not(.solid) .nav, .top.at-top:not(.solid) .lang, .top.at-top:not(.solid) .menu-btn { opacity: 0; pointer-events: none; }
+}
+@media (max-width: 760px) { .top .book-btn { display: none !important; } } /* phones: no Book button in the bar */
 @media (max-width: 760px) {
   .top .brand-txt { display: none; }  /* only the logo mark on phones, so Book fits on the right */
   .top .book-btn { display: inline-flex; order: 3; min-height: 38px; padding: 0 14px; font-size: 11px; letter-spacing: .1em; }
