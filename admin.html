@@ -27,6 +27,9 @@
 .lm-cv:hover,.lm-cv:focus-visible{background:#18282B;border-color:#18282B}
 .lm-cv:active{background:#0B1517;border-color:#0B1517}
 .lm-cv:hover .lm-cv-arr,.lm-cv:focus-visible .lm-cv-arr{animation:lm-drop .9s ease .15s infinite}
+.req-chip{transition:background-color .15s,color .15s}
+.req-chip:hover,.req-chip:focus-visible{background:#FF004F!important;color:#FFFFFF!important}
+.req-chip:hover *,.req-chip:focus-visible *{color:#FFFFFF!important;background:transparent!important}
 @keyframes lm-blink{0%{box-shadow:0 0 0 0 rgba(176,0,54,.85)}70%{box-shadow:0 0 0 11px rgba(176,0,54,0)}100%{box-shadow:0 0 0 0 rgba(176,0,54,0)}}
 @keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
@@ -173,7 +176,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{hasStripItems}}" hint-placeholder-val="{{true}}">
 <div style="flex: 0 1 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
 <sc-for list="{{stripItems}}" as="it" hint-placeholder-count="3">
-<button type="button" onClick="{{it.open}}" style="flex: 0 1 auto; max-width: 240px; min-height: 60px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 10px 14px; border: 1.5px solid #FF004F; border-radius: 12px; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
+<button type="button" class="req-chip" onClick="{{it.open}}" style="flex: 0 1 auto; max-width: 240px; min-height: 60px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 10px 14px; border: 1.5px solid #FF004F; border-radius: 12px; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
 <span style="display: flex; justify-content: space-between; gap: 12px"><span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.name}}</span><span style="{{it.timerStyle}}">{{it.timer}}</span></span>
 <span style="font-size: 12px; color: #4A5B5E">{{it.meta}}</span>
 </button>
