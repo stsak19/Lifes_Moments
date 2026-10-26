@@ -246,7 +246,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1px solid #B9A6CF; background: #EFE9F6"></span>Χωρίς χρέωση</span>
 <sc-if value="{{isManual}}" hint-placeholder-val="{{true}}"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; box-sizing: border-box; border-radius: 4px; border: 1.5px dashed #B7791F"></span>Αίτημα σε αναμονή</span></sc-if>
 <span style="display: flex; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 4px; background: #C94A3F"></span>Κλειστό</span>
-<span style="display: flex; align-items: center; gap: 6px"><span style="font-weight: 700; color: #9A6B12">€</span>Τιμή δωματίου · χρυσή αν είναι ειδική</span>
 </div>
 </div>
 
@@ -255,7 +254,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="{{calRowStyle}}">
 <span></span>
 <sc-for list="{{head}}" as="h" hint-placeholder-count="14">
-<div style="{{h.style}}"><span style="display: block; font-size: 12px">{{h.dow}}</span><span style="display: block; font-size: 14px">{{h.num}}</span><span style="{{h.priceStyle}}">{{h.price}}</span></div>
+<div style="{{h.style}}"><span style="display: block; font-size: 12px">{{h.dow}}</span><span style="display: block; font-size: 14px">{{h.num}}</span></div>
 </sc-for>
 </div>
 <sc-if value="{{hasReqRows}}" hint-placeholder-val="{{true}}">
