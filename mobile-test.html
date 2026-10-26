@@ -1,4 +1,21 @@
-<!doctype html><html data-mood="noon"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html data-mood="noon"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* phones: clear bar with the logo in the middle over the hero; once past the hero, logo + name on the left */
+@media (max-width: 760px) {
+  html .top:not(.solid) { background: transparent !important; box-shadow: none !important; border-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; --top-ink: #fff; }
+  html .top:not(.solid)::before { opacity: 0 !important; }
+  html .top:not(.solid) .brand, html .top:not(.solid) .lang, html .top:not(.solid) .menu-btn { opacity: 1 !important; pointer-events: auto !important; color: #fff !important; }
+  html .top:not(.solid) .lang *, html .top:not(.solid) .menu-btn * { color: #fff !important; text-shadow: 0 1px 8px rgba(0,0,0,.4); }
+  html .top:not(.solid) .lang [aria-pressed="false"], html .top:not(.solid) .lang :not(.on):not([aria-current]) { opacity: .8; }
+  html .top:not(.solid) .menu-btn span, html .top:not(.solid) .menu-btn i { background: #fff !important; }
+  html .top:not(.solid) .mark { filter: drop-shadow(0 1px 8px rgba(0,0,0,.35)); }
+  html .top:not(.solid) .brand { position: absolute; left: 50%; transform: translateX(-50%); }
+  html .top:not(.solid) .brand-txt { display: none !important; }
+  html .top.solid .brand-txt { display: flex !important; }
+  html .top.solid .brand-sub { display: none; }
+  html .top.solid .brand-name { font-size: 21px; }
+  html .intro .hcenter .hlogo { display: none; }
+}
+</style></head><body>
 <title>Life's Moments Mobile Test</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
