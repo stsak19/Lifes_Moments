@@ -567,9 +567,19 @@ html .intro .hcenter h1 { margin: 0; white-space: nowrap; max-width: none; font:
 html .intro .hcenter .hplace { margin: 12px 0 0; font-size: 11px; letter-spacing: .5em; text-transform: uppercase; color: rgba(248, 244, 236, .9); padding-left: .5em; }
 html .intro .shade { background: radial-gradient(70% 60% at 50% 50%, rgba(6, 10, 18, .38), rgba(6, 10, 18, .12) 70%, transparent), linear-gradient(to bottom, rgba(6, 10, 18, .35), transparent 22%, transparent 78%, rgba(6, 10, 18, .3)); }
 
-/* Like Six Senses: no bar over the video. The header slides in once the video has scrolled away. */
-.top { transition: transform .45s ease, opacity .45s ease, background-color .45s ease; }
-.top:not(.solid) { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+/* Like Six Senses: at the very top only "Book" shows, top right. As soon as the guest scrolls,
+   the rest of the bar comes back around it, so the button never moves. */
+.top .brand, .top .nav, .top .lang, .top .menu-btn { transition: opacity .4s ease; }
+.top { transition: background-color .4s ease, box-shadow .4s ease, border-color .4s ease, backdrop-filter .4s ease; }
+.top.at-top:not(.solid) { background: transparent !important; box-shadow: none !important; border-color: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.top.at-top:not(.solid)::before { opacity: 0; }
+.top.at-top:not(.solid) .brand, .top.at-top:not(.solid) .nav, .top.at-top:not(.solid) .lang, .top.at-top:not(.solid) .menu-btn { opacity: 0; pointer-events: none; }
+@media (max-width: 760px) {
+  .top .brand-txt { display: none; }  /* only the logo mark on phones, so Book fits on the right */
+  .top .book-btn { display: inline-flex; order: 3; min-height: 38px; padding: 0 14px; font-size: 11px; letter-spacing: .1em; }
+}
+/* the Life's Moments logo above the name */
+html .intro .hcenter .hlogo { width: clamp(46px, 4.4vw, 64px); height: auto; margin-bottom: 18px; color: #F8F4EC; filter: drop-shadow(0 2px 14px rgba(0, 0, 0, .35)); }
 
 </style>
 <style id="redesign">
@@ -1179,6 +1189,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     <span class="scroll-cue" aria-hidden="true"></span>
 
     <div class="cap hero hcenter">
+      <svg class="hlogo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>
       <h1>Life's Moments</h1>
       <p class="hplace" data-i18n="brand.sub">Thasos</p>
     </div>
@@ -1769,6 +1780,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
     const limit = hero ? hero.offsetHeight - topBar.offsetHeight - 40 : 80;
     const solid = window.scrollY > Math.max(60, limit);
     topBar.classList.toggle('solid', solid);
+    topBar.classList.toggle('at-top', window.scrollY <= 8);
     if (solid) tintTop();
   }
   /* The solid bar takes on the tone of the section under it, but a step darker (or lighter on dark tones)
