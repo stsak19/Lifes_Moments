@@ -771,6 +771,8 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
 .gpanel.swap .gp-cap, .gpanel.swap .gp-body > * { animation: gpin .5s cubic-bezier(.2, .7, .2, 1) both; }
 @keyframes gpin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 html.gs-lock { overflow: hidden; }
+.gsheet { overscroll-behavior: contain; touch-action: none; }
+.gpanel { overscroll-behavior: contain; touch-action: pan-y; }
 @media (max-width: 760px) {
   .gsheet { place-items: end stretch; padding: 0; }
   .gpanel { grid-template-columns: 1fr; width: 100%; max-height: 92vh; overflow-y: auto; border-radius: 22px 22px 0 0; transform: translateY(100%); transition: transform .5s cubic-bezier(.2, .7, .2, 1), opacity .3s; }
@@ -2409,7 +2411,7 @@ html.gs-lock { overflow: hidden; }
     const tabsEl = $('#gTabs'), cardsEl = $('#gCards');
     const Li = () => (lang === 'el' ? 1 : 0);
     const esc = (x) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-    let shown = [], cur = -1, lastFocus = null, gmap = null, gmk = null;
+    let lockY = 0, shown = [], cur = -1, lastFocus = null, gmap = null, gmk = null;
     const keyOf = (g) => g.name[0];
     const ARROW = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="' + d + '"/></svg>';
     function render() {
@@ -2431,7 +2433,7 @@ html.gs-lock { overflow: hidden; }
     /* the sheet that opens over the page */
     const sheet = document.createElement('div');
     sheet.className = 'gsheet'; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true'); sheet.setAttribute('aria-hidden', 'true');
-    sheet.innerHTML = '<div class="gsheet-bg"></div><div class="gpanel" tabindex="-1">' +
+    sheet.innerHTML = '<div class="gsheet-bg"></div><div class="gpanel" tabindex="-1" data-lenis-prevent>' +
       '<button type="button" class="gp-x" aria-label="">' + ARROW('M6 6l12 12M18 6L6 18') + '</button>' +
       '<div class="gp-media gart"></div><div class="gp-body"></div></div>';
     document.body.appendChild(sheet);
@@ -2478,13 +2480,21 @@ html.gs-lock { overflow: hidden; }
       if (first) lastFocus = document.activeElement;
       fill(!first);
       sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false');
-      document.documentElement.classList.add('gs-lock');
+      if (first) {
+        lockY = window.scrollY;
+        document.documentElement.classList.add('gs-lock');
+        Object.assign(document.body.style, { position: 'fixed', top: -lockY + 'px', left: '0', right: '0', width: '100%' });
+        if (typeof lenis !== 'undefined' && lenis) lenis.stop();
+      }
       if (first) setTimeout(() => sheet.querySelector('.gp-x').focus({ preventScroll: true }), 50);
     }
     function closeSheet() {
       if (cur < 0) return;
       sheet.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true');
       document.documentElement.classList.remove('gs-lock');
+      Object.assign(document.body.style, { position: '', top: '', left: '', right: '', width: '' });
+      window.scrollTo(0, lockY);
+      if (typeof lenis !== 'undefined' && lenis) lenis.start();
       cur = -1;
       setTimeout(() => { if (gmap && cur < 0) { gmap.remove(); gmap = null; } }, 500);
       if (lastFocus) lastFocus.focus({ preventScroll: true });
