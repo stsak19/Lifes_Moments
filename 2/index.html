@@ -885,6 +885,9 @@ html .intro .cap.hcenter { pointer-events: none; }
 .jrow.act .jtx { animation: jswap .7s cubic-bezier(.2, .7, .2, 1); }
 @keyframes jswap { from { opacity: 0; transform: translateY(18px); } }
 @media (max-width: 760px) { .jtabs { margin: 0 -16px 28px; padding: 0 16px; } .jtab { min-width: 62vw; font-size: 17px; } }
+
+/* all journeys share the same layout and photo size (photo on the left) */
+.jrow:nth-child(even) .jph { order: 0; }
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2401,7 +2404,6 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         moment: ['Coffee on the terrace, the sea below, no plan at all.', 'Καφές στη βεράντα, η θάλασσα από κάτω, κανένα πρόγραμμα.'],
         tip: ['Ask us when you arrive; we are happy to tell you where to go each day.', 'Ρωτήστε μας στην άφιξη· σας λέμε με χαρά πού να πάτε κάθε μέρα.'],
         ideas: [
-          [['Sea', 'Θάλασσα'], ['Giola, Alyki, Golden Beach', 'Γκιόλα, Αλυκή, Χρυσή Αμμουδιά']],
           [['Mountain', 'Βουνό'], ['Theologos, Kastro, Maries', 'Θεολόγος, Κάστρο, Μαριές']],
           [['History', 'Ιστορία'], ['Ancient Thasos, Archangel Michael', 'Αρχαία Θάσος, Αρχάγγελος Μιχαήλ']],
           [['Tastes', 'Γεύσεις'], ['Pine honey, olives, spoon sweets', 'Πευκόμελο, ελιές, γλυκά του κουταλιού']],
