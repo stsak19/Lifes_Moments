@@ -353,6 +353,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="flex-shrink: 0; font-weight: 600">{{y.money}}</span>
 </button>
 <button type="button" onClick="{{y.csv}}" aria-label="{{y.csvLabel}}" title="{{y.csvLabel}}" style="flex-shrink: 0; height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">Excel</button>
+<button type="button" onClick="{{y.csvPlain}}" aria-label="{{y.csvPlainLabel}}" title="{{y.csvPlainLabel}}" style="flex-shrink: 0; margin-left: 6px; height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">CSV</button>
 </div>
 <sc-if value="{{y.open}}" hint-placeholder-val="{{true}}">
 <div style="border-top: 1px solid #E6ECED">
@@ -2352,7 +2353,7 @@ class Component extends DCLogic {
     const listSummary = listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + ' · ' + this.money(ownMoney(liveB)) + ' από σάιτ και απευθείας';
     const srcWord = b => b.kind === 'free' ? 'Χωρίς χρέωση' : (b.kind === 'test' ? 'Δοκιμή' : ({ site: 'Σάιτ', booking: 'Booking.com', direct: 'Από εμάς' })[b.source]);
     const statusWord = b => ({ pending: 'Αίτημα', confirmed: 'Επιβεβαιωμένη', cancelled: 'Ακυρώθηκε', rejected: b.expired ? 'Έληξε' : 'Απορρίφθηκε' })[b.status] || b.status;
-    const downloadCsv = (listB, yr) => {
+    const downloadCsv = (listB, yr, fmt) => {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
       const MN = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
       const head = ['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο'];
@@ -2373,6 +2374,11 @@ class Component extends DCLogic {
         rows.push(sum('ΣΥΝΟΛΟ ΕΤΟΥΣ ' + y, yAll, 'ysum'));
         rows.push([]);
       });
+      if (fmt === 'csv') {
+        this.csv(rows, 'kratiseis-' + yr + '.csv');
+        this.say('Κατέβηκε το ' + yr + ' σε CSV: ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '.');
+        return;
+      }
       this.xlsx(rows, 'Κρατήσεις ' + yr, 'kratiseis-' + yr + '.xlsx').then(() => {
         this.say('Κατέβηκε το ' + yr + ': ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Οι κρατήσεις από Booking είναι με μπλε.');
       }).catch(() => this.say('Δεν φορτώθηκε το Excel. Έλεγξε τη σύνδεση και ξαναδοκίμασε.'));
@@ -2414,7 +2420,7 @@ class Component extends DCLogic {
       const all = [].concat.apply([], Object.keys(gY[y]).map(m => gY[y][m]));
       const ct = countText(all);
       return Object.assign(ct, {
-        label: y, csv: () => downloadCsv(all, y), csvLabel: 'Λήψη Excel για το ' + y, open: open, exp: open ? 'true' : 'false', chev: chev(open, 2.2),
+        label: y, csv: () => downloadCsv(all, y), csvPlain: () => downloadCsv(all, y, 'csv'), csvLabel: 'Λήψη Excel για το ' + y, csvPlainLabel: 'Λήψη CSV για το ' + y, open: open, exp: open ? 'true' : 'false', chev: chev(open, 2.2),
         meta: ct.meta + (ct.pending ? ' · ' + ct.pending : ''),
         toggle: () => this.setState({ yOpen: Object.assign({}, this.state.yOpen, { [y]: !open }) }),
         months: Object.keys(gY[y]).sort().map(m => {
