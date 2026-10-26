@@ -195,7 +195,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <sc-if value="{{noTiles}}" hint-placeholder-val="{{false}}">
 <div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Κανένα δωμάτιο σε αυτή την κατάσταση σήμερα.</div>
 </sc-if>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px">
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 45%), 1fr)); gap: 14px">
 <sc-for list="{{tiles}}" as="t" hint-placeholder-count="12">
 <article onClick="{{t.openRoom}}" style="{{t.card}}">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
@@ -1820,7 +1820,7 @@ class Component extends DCLogic {
         roomAria: u.name + ': λεπτομέρειες δωματίου',
         roomBtnStyle: actBase + (roomOn ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         unit: u.name, status: ST[st].label, pill: ST[st].pill,
-        card: 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px 16px 20px; display: flex; flex-direction: column; cursor: pointer; background: #FFFFFF; transition: box-shadow 0.15s;' + (roomOn ? 'border: 1px solid #0F5257; box-shadow: inset 4px 0 0 ' + (ST[st].accent === 'transparent' ? '#0F5257' : ST[st].accent) + ', 0 0 0 1px #0F5257' : (st === 'free' ? 'border: 1px dashed #B5C3C5' : 'border: 1px solid #E1E8E9') + '; box-shadow: inset 4px 0 0 ' + ST[st].accent),
+        card: (u.id === 'apt' ? 'grid-column: span 2;' : '') + 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px 16px 20px; display: flex; flex-direction: column; cursor: pointer; background: #FFFFFF; transition: box-shadow 0.15s;' + (roomOn ? 'border: 1px solid #0F5257; box-shadow: inset 4px 0 0 ' + (ST[st].accent === 'transparent' ? '#0F5257' : ST[st].accent) + ', 0 0 0 1px #0F5257' : (st === 'free' ? 'border: 1px dashed #B5C3C5' : 'border: 1px solid #E1E8E9') + '; box-shadow: inset 4px 0 0 ' + ST[st].accent),
         guest: guest, sub: sub, hasLink: !!linkTo, noLink: !linkTo,
         openGuest: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (linkTo) this.open(linkTo); },
         action: action, actionStyle: actionStyle, hasAction: !!action, doAction: doAction
