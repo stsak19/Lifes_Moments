@@ -16,10 +16,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600&amp;family=GFS+Didot&amp;family=Piazzolla:wght@500;600&amp;display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-.lm-xl{flex-shrink:0;display:inline-flex;align-items:center;height:34px;padding:0 12px;border-radius:17px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:13px;font-weight:600;cursor:pointer;transition:background-color .25s ease,border-color .25s ease,color .25s ease,padding .3s ease}
+.lm-xl{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:86px;height:34px;padding:0;border-radius:17px;border:1px solid #C3D1D3;background:#FFFFFF;color:#18282B;font-size:13px;font-weight:600;cursor:pointer;transition:background-color .25s ease,border-color .25s ease,color .25s ease}
 .lm-xl-ic{display:inline-flex;width:0;margin-right:0;opacity:0;overflow:hidden;transform:scale(.4) rotate(-90deg);transition:width .3s ease,margin-right .3s ease,opacity .25s ease,transform .4s cubic-bezier(.34,1.56,.64,1)}
 .lm-xl-x{stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .45s ease .12s}
-.lm-xl:hover,.lm-xl:focus-visible{background:#217346;border-color:#217346;color:#FFFFFF;padding-left:10px}
+.lm-xl:hover,.lm-xl:focus-visible{background:#217346;border-color:#217346;color:#FFFFFF}
 .lm-xl:hover .lm-xl-ic,.lm-xl:focus-visible .lm-xl-ic{width:16px;margin-right:6px;opacity:1;transform:none}
 .lm-xl:hover .lm-xl-x,.lm-xl:focus-visible .lm-xl-x{stroke-dashoffset:0}
 .lm-xl:active{background:#185C37;border-color:#185C37}
@@ -336,10 +336,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-direction: column; gap: 14px">
 <div class="list-head" style="display: flex; flex-direction: column; gap: 10px">
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
-<div style="flex: 1 1 220px; max-width: 320px">
-<label for="search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση ονόματος</label>
-<input id="search" type="search" value="{{query}}" onChange="{{setQuery}}" placeholder="Αναζήτηση ονόματος" style="width: 100%; box-sizing: border-box; height: 42px; padding: 0 16px; border-radius: 21px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
-</div>
 <div role="group" aria-label="Πηγή κράτησης" style="display: flex; flex-wrap: wrap; gap: 6px">
 <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
 <button type="button" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
@@ -2408,8 +2404,8 @@ class Component extends DCLogic {
     const defM = mKeysAll.find(m => m >= nowM) || mKeysAll[mKeysAll.length - 1];
     const defY = defM ? defM.slice(0, 4) : '';
     const searching = !!q;
-    const yIsOpen = y => s.yOpen[y] != null ? s.yOpen[y] : (searching || y === defY || yKeys.length === 1);
-    const mIsOpen = m => s.mOpen[m] != null ? s.mOpen[m] : (searching || m === defM);
+    const yIsOpen = y => s.yOpen[y] != null ? s.yOpen[y] : false;
+    const mIsOpen = m => s.mOpen[m] != null ? s.mOpen[m] : false;
     const chev = (open, w) => 'flex-shrink: 0; stroke-width: ' + w + '; stroke-linecap: round; stroke-linejoin: round; color: #4A5B5E; transition: transform 0.15s; transform: rotate(' + (open ? 90 : 0) + 'deg)';
     const countText = list => {
       const n = list.length, p = list.filter(b => b.status === 'pending').length;
@@ -3077,7 +3073,7 @@ class Component extends DCLogic {
         const P = {
           today: { title: 'Σήμερα', sub: n(occupied, 'δωμάτιο με πελάτες', 'δωμάτια με πελάτες') + ' · ' + n(arrivals, 'άφιξη', 'αφίξεις') + ' · ' + n(departures, 'αναχώρηση', 'αναχωρήσεις') },
           reqs: { title: 'Αιτήματα', sub: pending.length ? n(pending.length, 'αίτημα περιμένει απάντηση', 'αιτήματα περιμένουν απάντηση') : 'Κανένα αίτημα σε αναμονή' },
-          list: { title: 'Κρατήσεις', sub: 'Όλες οι κρατήσεις, ανά χρονιά και μήνα', action: () => this.openNew(), actionLabel: 'Νέα κράτηση' },
+          list: { title: 'Κρατήσεις', sub: 'Όλες οι κρατήσεις, ανά χρονιά και μήνα' },
           msgs: { title: 'Μηνύματα', sub: 'Μόνο πελάτες που έκλεισαν από το σάιτ · οι πελάτες του Booking απαντώνται στο Booking' },
           guests: { title: 'Πελάτες', sub: '' },
           prices: { title: 'Τιμές', sub: 'Τιμές του σάιτ ανά νύχτα · οι τιμές του Booking αλλάζουν στο extranet' },
