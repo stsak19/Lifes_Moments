@@ -23,7 +23,12 @@
 .lm-xl:hover .lm-xl-ic,.lm-xl:focus-visible .lm-xl-ic{width:16px;margin-right:6px;opacity:1;transform:none}
 .lm-xl:hover .lm-xl-x,.lm-xl:focus-visible .lm-xl-x{stroke-dashoffset:0}
 .lm-xl:active{background:#185C37;border-color:#185C37}
-@media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}}
+.lm-cv{margin-left:6px}
+.lm-cv:hover,.lm-cv:focus-visible{background:#18282B;border-color:#18282B}
+.lm-cv:active{background:#0B1517;border-color:#0B1517}
+.lm-cv:hover .lm-cv-arr,.lm-cv:focus-visible .lm-cv-arr{animation:lm-drop .9s ease .15s infinite}
+@keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
 html{overflow-y:scroll;scrollbar-gutter:stable}
 body{margin:0;background:#EEF3F4}
 a{color:#0F5257}a:hover{color:#0A3A3E}
@@ -361,7 +366,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <span style="flex-shrink: 0; font-weight: 600">{{y.money}}</span>
 </button>
 <button type="button" class="lm-xl" onClick="{{y.csv}}" aria-label="{{y.csvLabel}}" title="{{y.csvLabel}}"><span class="lm-xl-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path class="lm-xl-x" d="M8.5 8l7 8M15.5 8l-7 8"></path></svg></span>Excel</button>
-<button type="button" onClick="{{y.csvPlain}}" aria-label="{{y.csvPlainLabel}}" title="{{y.csvPlainLabel}}" style="flex-shrink: 0; margin-left: 6px; height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer">CSV</button>
+<button type="button" class="lm-xl lm-cv" onClick="{{y.csvPlain}}" aria-label="{{y.csvPlainLabel}}" title="{{y.csvPlainLabel}}"><span class="lm-xl-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M5 20h14"></path><g class="lm-cv-arr"><path d="M12 4v11M7 10l5 5 5-5"></path></g></svg></span>CSV</button>
 </div>
 <sc-if value="{{y.open}}" hint-placeholder-val="{{true}}">
 <div style="border-top: 1px solid #E6ECED">
@@ -2384,11 +2389,11 @@ class Component extends DCLogic {
       });
       if (fmt === 'csv') {
         this.csv(rows, 'kratiseis-' + yr + '.csv');
-        this.say('Κατέβηκε το ' + yr + ' σε CSV: ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '.');
+        this.say('Έγινε λήψη του CSV');
         return;
       }
       this.xlsx(rows, 'Κρατήσεις ' + yr, 'kratiseis-' + yr + '.xlsx').then(() => {
-        this.say('Κατέβηκε το ' + yr + ': ' + listB.length + (listB.length === 1 ? ' κράτηση' : ' κρατήσεις') + '. Οι κρατήσεις από Booking είναι με μπλε.');
+        this.say('Έγινε λήψη του Excel');
       }).catch(() => this.say('Δεν φορτώθηκε το Excel. Έλεγξε τη σύνδεση και ξαναδοκίμασε.'));
     };
     /* Group by year, then month, of the chosen date (arrival by default). Open by default: the current year and the
