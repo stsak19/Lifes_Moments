@@ -868,6 +868,10 @@ html .intro .cap.hcenter { pointer-events: none; }
 .jrow.seen .jsteps li:not(.now) { opacity: 0; filter: blur(3px); transform: translateY(12px); }
 .jrow.seen .jsteps li.now { opacity: 1; filter: none; transform: none; }
 @media (prefers-reduced-motion: reduce) { .jrow.seen .jsteps li:not(.now) { opacity: .15; filter: none; transform: none; } }
+
+/* no line beside the days */
+.jsteps { border-left: 0; }
+.jsteps::before, .jfill { display: none; }
 </style>
 <style id="redesign">
 /* =====================================================================
