@@ -861,6 +861,13 @@ html .intro .cap.hcenter { pointer-events: none; }
 .jsteps li:last-child { min-height: 0; padding-bottom: 8px; }
 .jshot { transition: opacity .8s ease, transform 1.4s cubic-bezier(.2, .7, .2, 1); }
 @media (max-width: 900px) { .jsteps li { min-height: 30vh; } }
+
+/* ---------- Journeys: only the day being read stays ----------
+   The other days fade away while scrolling and come back as you reach them. */
+.jrow.seen .jsteps li { transition: opacity .6s ease, filter .6s ease, transform .6s cubic-bezier(.2, .7, .2, 1); transition-delay: 0s; }
+.jrow.seen .jsteps li:not(.now) { opacity: 0; filter: blur(3px); transform: translateY(12px); }
+.jrow.seen .jsteps li.now { opacity: 1; filter: none; transform: none; }
+@media (prefers-reduced-motion: reduce) { .jrow.seen .jsteps li:not(.now) { opacity: .15; filter: none; transform: none; } }
 </style>
 <style id="redesign">
 /* =====================================================================
@@ -2449,6 +2456,7 @@ em { font-family: var(--font-italic); font-style: italic; font-weight: 300; colo
         if (r.bottom < 0 || r.top > window.innerHeight) return;
         let best = null;
         $$('.jsteps li', row).forEach((li) => { if (li.getBoundingClientRect().top <= line) best = li; });
+        if (!best) best = row.querySelector('.jsteps li');
         $$('.jsteps li', row).forEach((x) => x.classList.toggle('now', x === best));
         show(row, best ? +best.dataset.shot : 0);
       });
