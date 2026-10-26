@@ -27,7 +27,7 @@
 .lm-cv:hover,.lm-cv:focus-visible{background:#18282B;border-color:#18282B}
 .lm-cv:active{background:#0B1517;border-color:#0B1517}
 .lm-cv:hover .lm-cv-arr,.lm-cv:focus-visible .lm-cv-arr{animation:lm-drop .9s ease .15s infinite}
-@keyframes lm-blink{0%,100%{background-color:transparent;box-shadow:0 0 0 0 rgba(247,212,106,0)}50%{background-color:#FF004F;color:#FFFFFF;box-shadow:0 0 0 4px rgba(255,0,79,.35)}}
+@keyframes lm-blink{0%{box-shadow:0 0 0 0 rgba(255,0,79,.55)}70%{box-shadow:0 0 0 10px rgba(255,0,79,0)}100%{box-shadow:0 0 0 0 rgba(255,0,79,0)}}
 @keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
 html{overflow-y:scroll;scrollbar-gutter:stable}
@@ -2146,7 +2146,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === p.id && showReq) { segs.push(reqCard(p, span, u.id)); i = j + 1; continue; }
           segs.push({ label: (span > 1 ? 'Αίτημα · ' : '') + p.name, sel: '', aria: 'Αίτημα ' + p.name + ' σε αναμονή, προτείνεται ' + u.name + ', ' + this.range(p.start, this.endOf(p)) + '. Πάτα για αποδοχή ή απόρριψη' + (p.type === 'room' ? ', ή σύρε πάνω ή κάτω για άλλο δωμάτιο.' : '.'), tap: guard(() => this.setState({ calReq: p.id, detail: null, customer: null, room: null, newOpen: false })), down: moveDown(p, u.id),
-            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') + (s.calFlash === p.id && s.calReq !== p.id ? 'animation: lm-blink 1.1s ease-in-out infinite;' : '') });
+            style: segBase + 'grid-column: span ' + span + ';' + (s.calReq === p.id ? 'border: 1px solid #D5E0E1; border-left: 4px solid #E9B949; background: #FFFFFF; color: #18282B;' : 'border: 1.5px dashed #B7791F; background: transparent;') + ' color: #7A4708; font-weight: 600;' + (p.type === 'room' ? 'cursor: grab;' : '') + (mv && mv.id === p.id && mvT ? 'opacity: 0.4;' : '') + (s.calFlash === p.id && s.calReq !== p.id ? 'border: 2px solid #FF004F; color: #FF004F; animation: lm-blink 1.6s ease-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push(emptyCell(u.name + ', ' + this.fmt(x) + ', ελεύθερο', x, () => { if (x < T) { this.say('Οι μέρες που πέρασαν δεν κλείνουν.'); return; } this.block(u.id, x); this.say(u.name + ' · ' + this.fmt(x) + ' κλειστό' + (auto ? ', και στο Booking αμέσως.' : '. Κλείνει και στο Booking στον επόμενο συγχρονισμό.')); }, u.id));
@@ -2168,7 +2168,7 @@ class Component extends DCLogic {
           const span = j - i + 1;
           if (s.calReq === b.id && showReq) { segs.push(reqCard(b, span, null)); i = j + 1; continue; }
           segs.push({ label: span > 1 ? b.name + ' · ' + b.guests + ' άτ.' : b.name, aria: 'Αίτημα ' + b.name + ', ' + this.range(b.start, end), tap: () => this.setState({ calReq: b.id, detail: null, customer: null, room: null, newOpen: false }),
-            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (s.calFlash === b.id && s.calReq !== b.id ? 'animation: lm-blink 1.1s ease-in-out infinite;' : '') });
+            style: segBase + 'grid-column: span ' + span + '; border: 1.5px dashed #B7791F; background: transparent; color: #7A4708; font-weight: 600;' + (s.calFlash === b.id && s.calReq !== b.id ? 'border: 2px solid #FF004F; color: #FF004F; animation: lm-blink 1.6s ease-out infinite;' : '') });
           i = j + 1;
         } else {
           segs.push({ label: '', aria: '', tap: () => {}, style: 'height: 34px; border-radius: 8px; background: transparent; border: 0; padding: 0; cursor: default' });
