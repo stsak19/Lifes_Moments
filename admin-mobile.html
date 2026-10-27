@@ -2,7 +2,7 @@
 <html lang="el">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>LM Διαχείριση</title>
 <link rel="manifest" href="admin-mobile.webmanifest">
@@ -24,6 +24,7 @@
   --tab-h:64px; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 body{overscroll-behavior-y:none}
 button{font:inherit;color:inherit}
@@ -37,6 +38,7 @@ input,select,textarea{font:inherit;font-size:16px}
 .top .sub{font-size:13px;color:var(--muted);font-weight:500}
 .iconbtn{width:40px;height:40px;border-radius:20px;border:0;background:var(--card);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(10,58,62,.08);cursor:pointer;flex-shrink:0}
 .iconbtn svg{width:20px;height:20px}
+.brandmark{width:34px;height:34px;color:var(--teal);flex-shrink:0;display:block}
 .av{width:36px;height:36px;border-radius:18px;background:var(--yellow);color:#3A2604;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* ---------- screens ---------- */
@@ -79,7 +81,8 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .room .dots i.b{background:var(--booking)} .room .dots i.d{background:var(--teal)} .room .dots i.p{background:var(--yellow)} .room .dots i.x{background:var(--red)} .room .dots i.f{background:var(--free)}
 
 /* segmented */
-.seg{display:flex;background:#DDE6E7;border-radius:12px;padding:3px;margin:6px 0 14px}
+.segbar{position:sticky;top:var(--top-h,64px);z-index:15;margin:0 -16px 12px;padding:6px 16px 10px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.seg{display:flex;background:#DDE6E7;border-radius:12px;padding:3px}
 .seg button{flex:1;border:0;background:none;padding:9px 0;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;position:relative}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .seg .n{display:inline-block;min-width:18px;height:18px;line-height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;margin-left:5px}
@@ -106,25 +109,34 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .dot{width:9px;height:9px;border-radius:5px;background:var(--teal);flex-shrink:0}
 
 /* ---------- calendar ---------- */
-.cal-wrap{margin:0 -16px;background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
-.cal{overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;overscroll-behavior-x:contain}
+body.calmode{overflow:hidden}
+body.calmode main{padding-bottom:0}
+.cal-wrap{margin:0 -16px;background:var(--card);border-top:1px solid var(--line);position:relative;height:calc(100dvh - var(--top-h,64px) - 52px - var(--tab-h) - var(--safe-b));overflow:hidden}
+.cal{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .cal table{border-collapse:separate;border-spacing:0}
 .cal th,.cal td{padding:0}
-.cal .rh{position:sticky;left:0;z-index:3;background:var(--card);width:68px;min-width:68px;border-right:1px solid var(--line);font-size:13px;font-weight:700;text-align:left;padding-left:12px;height:48px;box-shadow:4px 0 8px -6px rgba(0,0,0,.15)}
-.cal .rh small{display:block;font-weight:500;color:var(--muted);font-size:11px}
-.cal thead th{position:sticky;top:0;z-index:2;background:var(--card);height:52px;font-weight:600;font-size:12px;color:var(--muted);text-align:center;min-width:52px;width:52px;border-bottom:1px solid var(--line);scroll-snap-align:start}
+.cal .rh{position:sticky;left:0;z-index:3;background:var(--card);width:46px;min-width:46px;border-right:1px solid var(--line);text-align:center;box-shadow:3px 0 6px -4px rgba(0,0,0,.18)}
+.cal tbody .rh{height:46px;font-size:16px;font-weight:700;color:var(--ink);border-bottom:1px solid #EEF2F3}
+.cal tbody .rh small{display:block;font-size:10px;font-weight:600;color:var(--muted);margin-top:-2px}
+.cal tbody tr.apt .rh{font-size:12px}
+.cal thead th{position:sticky;top:0;z-index:2;background:var(--card);height:48px;font-weight:600;font-size:11px;color:var(--muted);text-align:center;min-width:44px;width:44px;border-bottom:1px solid var(--line)}
 .cal thead th.rh{z-index:4}
-.cal thead th b{display:block;font-size:17px;color:var(--ink);font-weight:700}
-.cal thead th.today b{background:var(--teal);color:#fff;width:30px;height:30px;line-height:30px;border-radius:15px;margin:2px auto 0}
-.cal thead th.we{color:#8A9A9C}
-.cal thead th.m1{box-shadow:inset 1px 0 0 var(--teal)}
-.cal td.c{height:48px;border-bottom:1px solid #EEF2F3;border-right:1px solid #F3F6F6;position:relative;cursor:pointer;min-width:52px}
-.cal tr.apt td{border-top:2px solid var(--line)}
+.cal thead th b{display:block;font-size:16px;color:var(--ink);font-weight:700;width:28px;height:28px;line-height:28px;border-radius:14px;margin:1px auto 0}
+.cal thead th.today{color:var(--teal)}
+.cal thead th.today b{background:var(--teal);color:#fff}
+.cal thead th.we b{color:#8A9A9C}
+.cal thead th.m1{box-shadow:inset 1.5px 0 0 var(--teal)}
+.cal td.c{height:46px;min-width:44px;border-bottom:1px solid #EEF2F3;position:relative;cursor:pointer}
+.cal td.c.we{background:#F7FAFA}
+.cal td.c.tc{background:#EAF4F4}
+.cal td.c.m1{box-shadow:inset 1.5px 0 0 rgba(15,82,87,.35)}
+.cal tr.apt td,.cal tr.apt th{border-top:2px solid var(--line)}
 .cal td.c.closed{background:var(--red)}
-.cal td.c.closed::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:600}
+.cal td.c.closed::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600}
 .cal td.c.sel{background:var(--teal-soft);box-shadow:inset 0 0 0 2px var(--teal)}
-.cal td.c.selA{background:var(--teal)}
-.bar{position:absolute;top:8px;bottom:8px;left:3px;z-index:1;border-radius:9px;color:#fff;font-size:12px;font-weight:600;padding:0 8px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;border:0;cursor:pointer;text-align:left}
+.bar{position:absolute;top:7px;bottom:7px;left:22px;z-index:1;border-radius:8px;color:#fff;font-size:11.5px;font-weight:600;padding:0 7px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;cursor:pointer;text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.bar.cont{left:0;border-top-left-radius:0;border-bottom-left-radius:0}
+.bar span{overflow:hidden;text-overflow:ellipsis}
 .bar.site,.bar.direct{background:var(--teal)}
 .bar.booking{background:var(--booking)}
 .bar.free{background:var(--free)}
@@ -132,6 +144,19 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .bar.lifted{outline:3px solid var(--ink);outline-offset:1px}
 @keyframes blink{50%{box-shadow:0 0 0 4px rgba(246,195,67,.45);opacity:.75}}
 @media (prefers-reduced-motion:reduce){.bar.pending{animation:none}}
+.cal-nav{display:flex;align-items:center;gap:6px;height:52px;margin:0}
+.cal-nav .mon{flex:1;font-weight:700;font-size:17px;white-space:nowrap}
+.cal-nav .pill{height:34px;padding:0 12px}
+.cal-nav .pill.sq{width:34px;padding:0;justify-content:center;font-size:18px}
+.pill{border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.pendrow{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;margin-top:-4px;scrollbar-width:none}
+.pendrow::-webkit-scrollbar{display:none}
+.pendrow .chip{flex-shrink:0;height:32px;font-size:13px;border-color:var(--yellow);background:var(--yellow-soft)}
+.move-hint{position:absolute;left:10px;right:10px;bottom:10px;z-index:6;background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.move-hint button{margin-left:auto;background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:14px;height:30px;padding:0 12px;font-weight:600}
+.cal td.c.target{background:#DDF0E3}
+.cal td.c.notarget{background:#F7EFEE}
+.cal-help{position:absolute;right:10px;bottom:10px;z-index:5}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .cal-nav{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
@@ -146,7 +171,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
 .actbar .what{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 .actbar .what b{display:block;font-size:15px}
-.actbar button{border:0;border-radius:12px;height:42px;padding:0 14px;font-weight:700;cursor:pointer}
+.actbar button{border:0;border-radius:12px;height:40px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:700;cursor:pointer}
 .actbar .x{background:transparent;color:#fff;width:36px;padding:0}
 @keyframes up{from{transform:translateY(20px);opacity:0}}
 
@@ -258,7 +283,7 @@ textarea.field{height:auto;min-height:80px;padding:10px 12px;resize:vertical}
 </head>
 <body>
 <div id="login" class="login" hidden>
-  <div class="logo">LM</div>
+  <div class="logo"><svg style="width:38px;height:38px" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg></div>
   <h1>Life's Moments</h1>
   <p>Διαχείριση για τους ιδιοκτήτες</p>
   <form id="lf" autocomplete="on">
@@ -307,6 +332,7 @@ for (let i = 1; i <= 11; i++) UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' 
 UNITS.push({ id: 'apt', name: 'Διαμέρισμα', short: 'Διαμ.', cap: 5 });
 const unitName = id => (UNITS.find(u => u.id === id) || {}).name || 'χωρίς δωμάτιο';
 
+const LOGO_MARK = '<svg class="brandmark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>';
 const ICON = {
   home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg>',
   inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13h4l2 3h4l2-3h4"/><path d="M5.5 5h13L21 13v6H3v-6z"/></svg>',
@@ -500,7 +526,7 @@ function renderTabs() {
   $('#tabs').innerHTML = TABS.map(t => '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '" aria-current="' + (S.tab === t[0] ? 'page' : 'false') + '">' + t[2] + '<span>' + t[1] + '</span>' + (t[0] === 'inbox' && np ? '<span class="badge">' + np + '</span>' : '') + '</button>').join('');
 }
 function topbar(title, sub, right) {
-  $('#top').innerHTML = '<div style="flex:1;min-width:0"><div class="sub">' + (sub || '') + '</div><h1>' + title + '</h1></div>' + (right || '') +
+  $('#top').innerHTML = LOGO_MARK + '<div style="flex:1;min-width:0"><div class="sub">' + (sub || '') + '</div><h1>' + title + '</h1></div>' + (right || '') +
     (DEMO ? '<span class="demo-flag">ΔΟΚΙΜΗ</span>' : '');
 }
 function render() {
@@ -508,7 +534,9 @@ function render() {
   renderTabs();
   const m = $('#main');
   if (!S.loaded) { topbar('Life\'s Moments', ''); m.innerHTML = '<div class="empty">Φόρτωση…</div>'; return; }
+  document.body.classList.toggle('calmode', S.tab === 'cal');
   ({ home: renderHome, inbox: renderInbox, cal: renderCal, book: renderBook, more: renderMore })[S.tab]();
+  document.documentElement.style.setProperty('--top-h', $('#top').offsetHeight + 'px');
   actbar();
 }
 function go(tab) { if (S.tab === tab) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } S.tab = tab; S.sel = null; S.move = null; render(); window.scrollTo(0, 0); }
@@ -553,7 +581,7 @@ function renderInbox() {
   const p = pending(), th = threads();
   const unread = th.reduce((s, t) => s + t.unread, 0);
   topbar(S.inboxSeg === 'req' ? 'Αιτήματα' : 'Μηνύματα', p.length ? p.length + ' περιμένουν απάντηση' : 'Όλα απαντημένα');
-  let h = '<div class="seg"><button data-act="seg" data-id="req" class="' + (S.inboxSeg === 'req' ? 'on' : '') + '">Αιτήματα' + (p.length ? '<span class="n">' + p.length + '</span>' : '') + '</button><button data-act="seg" data-id="msg" class="' + (S.inboxSeg === 'msg' ? 'on' : '') + '">Μηνύματα' + (unread ? '<span class="n">' + unread + '</span>' : '') + '</button></div>';
+  let h = '<div class="segbar"><div class="seg"><button data-act="seg" data-id="req" class="' + (S.inboxSeg === 'req' ? 'on' : '') + '">Αιτήματα' + (p.length ? '<span class="n">' + p.length + '</span>' : '') + '</button><button data-act="seg" data-id="msg" class="' + (S.inboxSeg === 'msg' ? 'on' : '') + '">Μηνύματα' + (unread ? '<span class="n">' + unread + '</span>' : '') + '</button></div></div>';
   if (S.inboxSeg === 'req') {
     if (!p.length) h += '<div class="card empty">Δεν υπάρχει αίτημα που να περιμένει.<br>Όταν έρθει νέο, θα σου έρθει ειδοποίηση.</div>';
     p.forEach(b => {
@@ -588,59 +616,66 @@ function agoText(ts) {
 }
 
 /* ================= calendar ================= */
-const CAL_DAYS = 42;
+const CAL_DAYS = 56;
 function renderCal() {
   if (!S.calStart) S.calStart = S.today;
-  const start = S.calStart, d0 = dt(start);
-  topbar('Ημερολόγιο', MONF[d0.getUTCMonth()] + ' ' + d0.getUTCFullYear(), '<button class="iconbtn" data-act="new" aria-label="Νέα κράτηση">' + ICON.plus + '</button>');
-  let h = '';
-  if (S.move) {
-    const b = all().find(x => x.id === S.move);
-    h += '<div class="move-hint">Πάτα το δωμάτιο όπου πάει ' + esc(b ? b.name : '') + '<button data-act="move-cancel">Άκυρο</button></div>';
-  }
-  h += '<div class="cal-nav"><button class="pill" data-act="cal-prev" aria-label="Προηγούμενες εβδομάδες">‹</button><span class="mon"></span><button class="pill" data-act="cal-today">Σήμερα</button><button class="pill" data-act="cal-next" aria-label="Επόμενες εβδομάδες">›</button></div>';
+  const start = S.calStart;
+  topbar('Ημερολόγιο', '', '<button class="iconbtn" data-act="cal-info" aria-label="Υπόμνημα">?</button><button class="iconbtn" data-act="new" aria-label="Νέα κράτηση">' + ICON.plus + '</button>');
+  let h = '<div class="cal-nav"><span class="mon"></span><button class="pill sq" data-act="cal-prev" aria-label="Πίσω">‹</button><button class="pill" data-act="cal-today">Σήμερα</button><button class="pill sq" data-act="cal-next" aria-label="Μπροστά">›</button></div>';
   const pendNoUnit = pending().filter(b => !b.unit);
-  if (pendNoUnit.length) h += '<div class="note" style="padding:0 2px 10px">' + pendNoUnit.map(b => '<button class="chip" style="border-color:var(--yellow);background:var(--yellow-soft)" data-act="open-req" data-id="' + b.id + '">Αίτημα ' + esc(b.name) + ' · ' + range(b.start, b.end) + '</button>').join(' ') + '</div>';
+  if (pendNoUnit.length) h += '<div class="pendrow">' + pendNoUnit.map(b => '<button class="chip" data-act="open-req" data-id="' + b.id + '">Αίτημα · ' + esc(b.name.split(' ')[0]) + ' · ' + range(b.start, b.end) + '</button>').join('') + '</div>';
   h += '<div class="cal-wrap"><div class="cal" id="calsc"><table><thead><tr><th class="rh"></th>';
   const days = [];
   for (let i = 0; i < CAL_DAYS; i++) days.push(add(start, i));
+  const dayCls = days.map((n, i) => { const d = dt(n), w = d.getUTCDay(); return (w === 0 || w === 6 ? 'we ' : '') + (n === S.today ? 'tc ' : '') + (d.getUTCDate() === 1 && i ? 'm1' : ''); });
   days.forEach((n, i) => {
     const d = dt(n), w = d.getUTCDay();
-    h += '<th class="' + (n === S.today ? 'today ' : '') + (w === 0 || w === 6 ? 'we ' : '') + (d.getUTCDate() === 1 && i ? 'm1' : '') + '" data-day="' + n + '">' + DAY[w] + '<b>' + d.getUTCDate() + '</b></th>';
+    h += '<th class="' + (n === S.today ? 'today ' : '') + dayCls[i].replace('tc ', '') + '">' + (d.getUTCDate() === 1 ? MON[d.getUTCMonth()] : DAY[w]) + '<b>' + d.getUTCDate() + '</b></th>';
   });
   h += '</tr></thead><tbody>';
   const moving = S.move ? all().find(x => x.id === S.move) : null;
   UNITS.forEach(u => {
-    h += '<tr class="' + (u.id === 'apt' ? 'apt' : '') + '"><th class="rh" scope="row">' + u.short + '<small>ως ' + u.cap + '</small></th>';
+    h += '<tr class="' + (u.id === 'apt' ? 'apt' : '') + '"><th class="rh" scope="row" aria-label="' + u.name + '">' + (u.id === 'apt' ? 'Διαμ.' : u.id.slice(1)) + '<small>' + u.cap + ' άτ.</small></th>';
     days.forEach((n, i) => {
       const b = onNight(u.id, n), cl = isClosed(u.id, n);
-      let cls = 'c';
+      let cls = 'c ' + dayCls[i];
       if (cl) cls += ' closed';
       if (S.sel && S.sel.unit === u.id) { const a = S.sel.a, z = S.sel.b || S.sel.a; if (n >= (a < z ? a : z) && n <= (a < z ? z : a)) cls += ' sel'; }
       if (moving && n >= moving.start && n < moving.end && u.id !== moving.unit) cls += okMove(moving, u.id) ? ' target' : ' notarget';
       let bar = '';
       if (b && (b.start === n || i === 0)) {
+        const cont = b.start < n;
         const len = Math.min(diff(n, b.end), CAL_DAYS - i);
-        bar = '<button class="bar ' + srcClass(b) + (S.move === b.id ? ' lifted' : '') + '" style="width:calc(' + len * 52 + 'px - 6px)" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '">' + esc(b.name) + '</button>';
+        /* a stay starts in the afternoon and ends in the morning, so the bar runs from mid-cell to mid-cell */
+        const w = len * 44 + (cont ? 22 : 0) - 4;
+        bar = '<button class="bar ' + srcClass(b) + (cont ? ' cont' : '') + (S.move === b.id ? ' lifted' : '') + '" style="width:' + w + 'px" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span>' + esc(b.name) + '</span></button>';
       }
       h += '<td class="' + cls + '" data-cell="' + u.id + '|' + n + '">' + bar + '</td>';
     });
     h += '</tr>';
   });
-  h += '</tbody></table></div></div>';
-  h += '<div class="legend"><span><i style="background:var(--teal)"></i>Σάιτ/απευθείας</span><span><i style="background:var(--booking)"></i>Booking</span><span><i style="background:var(--free)"></i>Δωρεάν</span><span><i style="background:var(--yellow)"></i>Αίτημα</span><span><i style="background:var(--red)"></i>Κλειστό</span></div>';
-  h += '<p class="note">Πάτα δύο μέρες σε ένα δωμάτιο για νέα κράτηση ή για να τις κλείσεις. Κράτα πατημένη μια κράτηση για να την πας σε άλλο δωμάτιο.</p>';
+  h += '</tbody></table></div>';
+  if (S.move) { const b = all().find(x => x.id === S.move); h += '<div class="move-hint">Πάτα το δωμάτιο όπου πάει ' + esc(b ? b.name : '') + '<button data-act="move-cancel">Άκυρο</button></div>'; }
+  h += '</div>';
   $('#main').innerHTML = h;
   const sc = $('#calsc');
   const updMon = () => {
-    const i = Math.max(0, Math.floor(sc.scrollLeft / 52));
+    const i = Math.max(0, Math.floor(sc.scrollLeft / 44));
     const d = dt(add(start, i + 1));
     $('.cal-nav .mon').textContent = MONF[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
   };
-  sc.addEventListener('scroll', updMon, { passive: true }); updMon();
-  if (S.calScroll) { sc.scrollLeft = S.calScroll; }
-  sc.addEventListener('scroll', () => { S.calScroll = sc.scrollLeft; }, { passive: true });
+  sc.addEventListener('scroll', () => { S.calScroll = sc.scrollLeft; S.calScrollY = sc.scrollTop; updMon(); }, { passive: true });
+  sc.scrollLeft = S.calScroll || 0; sc.scrollTop = S.calScrollY || 0; updMon();
+  const fit = () => { const wr = $('.cal-wrap'); if (!wr) return; wr.style.height = Math.max(260, window.innerHeight - wr.getBoundingClientRect().top - $('#tabs').offsetHeight) + 'px'; };
+  fit(); window.onresize = () => { if (S.tab === 'cal') fit(); };
   bindLongPress(sc);
+}
+function calInfo() {
+  sheet('<div class="hd"><div style="flex:1"><h2>Πώς δουλεύει</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd">' +
+    '<div class="legend" style="margin:0 0 14px;font-size:14px;gap:10px 16px"><span><i style="background:var(--teal)"></i>Σάιτ / απευθείας</span><span><i style="background:var(--booking)"></i>Booking.com</span><span><i style="background:var(--free)"></i>Δωρεάν</span><span><i style="background:var(--yellow)"></i>Αίτημα</span><span><i style="background:var(--red)"></i>Κλειστό</span></div>' +
+    '<p style="margin:0 0 10px"><b>Νέα κράτηση ή κλείσιμο:</b> πάτα την πρώτη και την τελευταία νύχτα σε ένα δωμάτιο.</p>' +
+    '<p style="margin:0 0 10px"><b>Αλλαγή δωματίου:</b> κράτα πατημένη μια κράτηση και μετά πάτα το νέο δωμάτιο.</p>' +
+    '<p style="margin:0"><b>Κίνηση:</b> σύρε δεξιά–αριστερά για τις μέρες, πάνω–κάτω για τα δωμάτια.</p></div>', 'info', null);
 }
 function okMove(b, unit) {
   if (unit === b.unit) return false;
@@ -700,7 +735,7 @@ function actbar() {
   const anyTaken = nightsList.some(n => onNight(unit, n));
   const el = document.createElement('div');
   el.className = 'actbar'; el.id = 'actbar';
-  el.innerHTML = '<div class="what"><b>' + unitName(unit) + '</b>' + (S.sel.b ? range(a, add(z, 1)) + ' · ' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες') : fmtD(a) + ' · πάτα και την τελευταία νύχτα') + '</div>' +
+  el.innerHTML = '<div class="what"><b>' + UNITS.find(x => x.id === unit).short + ' · ' + nights + 'ν.</b>' + (S.sel.b ? range(a, add(z, 1)) : 'πάτα την τελευταία') + '</div>' +
     (allClosed ? '<button style="background:#fff;color:var(--ink)" data-act="reopen">Άνοιγμα</button>' : '<button style="background:var(--red);color:#fff" data-act="close-days"' + (anyTaken ? ' disabled' : '') + '>Κλειστά</button>') +
     (!allClosed && !anyTaken ? '<button style="background:#fff;color:var(--teal)" data-act="new-sel">Νέα κράτηση</button>' : '') +
     '<button class="x" data-act="sel-clear" aria-label="Ακύρωση">' + ICON.x + '</button>';
@@ -1061,16 +1096,19 @@ document.addEventListener('click', e => {
     case 'new-sel': { const a1 = S.sel.b ? (S.sel.a < S.sel.b ? S.sel.a : S.sel.b) : S.sel.a, z = S.sel.b ? (S.sel.a < S.sel.b ? S.sel.b : S.sel.a) : S.sel.a; openNew({ unit: S.sel.unit, start: a1, end: add(z, 1) }); break; }
     case 'close-days': setClosed(true); break;
     case 'reopen': setClosed(false); break;
+    case 'cal-info': calInfo(); break;
     case 'sel-clear': S.sel = null; render(); break;
-    case 'cal-prev': S.calStart = add(S.calStart, -14); if (S.calStart < add(S.today, -60)) S.calStart = add(S.today, -60); S.calScroll = 0; render(); break;
-    case 'cal-next': S.calStart = add(S.calStart, 28); S.calScroll = 0; render(); break;
-    case 'cal-today': S.calStart = S.today; S.calScroll = 0; render(); break;
+    case 'cal-prev': S.calStart = add(S.calStart, -14); if (S.calStart < add(S.today, -60)) S.calStart = add(S.today, -60); S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
+    case 'cal-next': S.calStart = add(S.calStart, 28); S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
+    case 'cal-today': S.calStart = S.today; S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
     case 'tog': S.open[id] = !t.parentNode.classList.contains('open'); render(); break;
     case 'sort': S.sort = S.sort === 'date' ? 'name' : 'date'; render(); break;
     case 'push': PUSH.toggle(); break;
     case 'logout': if (confirm('Αποσύνδεση από αυτή τη συσκευή;')) logout(); break;
   }
 });
+['gesturestart', 'gesturechange'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
 window.addEventListener('scroll', () => { const tp = $('#top'); if (tp) tp.classList.toggle('scrolled', window.scrollY > 4); }, { passive: true });
 window.addEventListener('popstate', () => { if (overlay) closeOverlay(); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => {
