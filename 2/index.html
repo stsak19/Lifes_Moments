@@ -1492,6 +1492,13 @@ html.gs-lock { overflow: hidden; }
   .seg button { min-height: 30px; }
   .sb-go { height: 42px; margin-top: 4px; }
 }
+
+/* coupon opt-in, made to stand out */
+.form label.chk.chk-promo { align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px dashed var(--accent); border-radius: 14px; background: color-mix(in srgb, var(--accent) 9%, transparent); color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.form .chk-promo input { width: 20px; height: 20px; margin: 0; }
+.form .chk-promo span { flex: 1; }
+.chk-promo .promo-ic { width: 22px; height: 22px; flex: none; color: var(--accent); }
+.form label.chk.chk-promo:has(input:checked) { border-style: solid; background: color-mix(in srgb, var(--accent) 16%, transparent); }
 </style>
 
 <header class="top" id="top">
@@ -1828,7 +1835,7 @@ html.gs-lock { overflow: hidden; }
         <label for="fCode"><span data-i18n="m.code">Discount code (optional)</span><input id="fCode" name="promo" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" aria-describedby="fPromo"></label>
         <p class="fine" id="fPromo" role="status" hidden></p>
         <label for="fNote"><span data-i18n="m.note">Message to the hosts (optional)</span><textarea id="fNote" name="note" rows="3" maxlength="1000" data-i18n-ph="m.noteph" placeholder="Arrival time, questions, anything we should know"></textarea></label>
-        <label class="chk" for="fMkt"><input id="fMkt" name="marketing" type="checkbox"><span data-i18n="m.mkt">Get discount coupons</span></label>
+        <label class="chk chk-promo" for="fMkt"><input id="fMkt" name="marketing" type="checkbox"><span data-i18n="m.mkt">Get discount coupons</span><svg class="promo-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></label>
         <input id="fWeb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <div class="card-ph"><span data-i18n="m.card">Card details</span><span>Stripe field</span></div>
         <p class="fine" id="fErr" data-i18n="m.err" role="alert" hidden>Fill in your name, a valid email and your phone to continue.</p>
