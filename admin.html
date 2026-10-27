@@ -555,37 +555,20 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <sc-if value="{{show.coupons}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
-<section aria-label="Κουπόνια" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
-<sc-if value="{{cp.closedForm}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{cp.openNew}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">+ Νέο κουπόνι</button></div></sc-if>
-<sc-if value="{{cp.loading}}" hint-placeholder-val="{{false}}"><div style="padding: 18px; color: #4A5B5E">Φόρτωση…</div></sc-if>
-<sc-if value="{{cp.empty}}" hint-placeholder-val="{{false}}"><div style="background: #FFFFFF; border-radius: 18px; padding: 22px; color: #4A5B5E; border: 1px solid rgba(24, 40, 43, 0.18)">Δεν έχετε φτιάξει κουπόνι ακόμα.</div></sc-if>
-<sc-for list="{{cp.list}}" as="c" hint-placeholder-count="3">
-<div style="background: #FFFFFF; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
-<span style="font-family: ui-monospace, Menlo, monospace; font-size: 17px; font-weight: 700; letter-spacing: 0.04em; color: #18282B">{{c.code}}</span>
-<span style="font-size: 15px; font-weight: 700; color: #0F5257">{{c.pct}}</span>
-<span style="flex: 1 1 0"></span>
-<span style="{{c.stateStyle}}">{{c.stateText}}</span>
-</div>
-<div style="font-size: 13px; color: #2E4448">{{c.dates}}</div>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #4A5B5E"><span>{{c.who}}</span><span>{{c.mail}}</span><span>{{c.uses}}</span></div>
-<sc-if value="{{c.canOff}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{c.off}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer">Απενεργοποίηση</button></div></sc-if>
-</div>
-</sc-for>
-</section>
 <sc-if value="{{cp.newOpen}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Νέο κουπόνι" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
-<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Νέο κουπόνι</h2>
+<aside aria-label="Δημιουργία κουπονιού" style="flex: 1 1 100%; order: -1; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Δημιουργία κουπονιού</h2>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px 28px">
+<div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
 <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px">
 <div><label for="cp-code" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Κωδικός</label><input id="cp-code" type="text" maxlength="24" value="{{cp.f.code}}" onChange="{{cp.f.setCode}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: ui-monospace, Menlo, monospace; font-size: 16px; font-weight: 700; letter-spacing: 0.04em"></div>
 <div><label for="cp-pct" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Έκπτωση %</label><input id="cp-pct" type="number" inputmode="numeric" min="1" max="90" value="{{cp.f.pct}}" onChange="{{cp.f.setPct}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 </div>
 <button type="button" onClick="{{cp.f.newCode}}" style="align-self: flex-start; height: 28px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: -6px">Άλλος τυχαίος κωδικός</button>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
-<div><label for="cp-from" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμονή από</label><input id="cp-from" type="date" value="{{cp.f.from}}" onChange="{{cp.f.setFrom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
-<div><label for="cp-to" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">έως</label><input id="cp-to" type="date" value="{{cp.f.to}}" onChange="{{cp.f.setTo}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="cp-days" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Για πόσες μέρες να ισχύει το κουπόνι</label><input id="cp-days" type="number" inputmode="numeric" min="1" max="730" value="{{cp.f.days}}" onChange="{{cp.f.setDays}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div><label for="cp-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Να κλείσουν έως (προαιρετικό)</label><input id="cp-by" type="date" value="{{cp.f.by}}" onChange="{{cp.f.setBy}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
 </div>
-<div><label for="cp-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Να κλείσουν ως (προαιρετικό)</label><input id="cp-by" type="date" value="{{cp.f.by}}" onChange="{{cp.f.setBy}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 8px">
 <div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Για ποιους</div>
 <div style="display: flex; gap: 8px"><sc-for list="{{cp.f.aud}}" as="a" hint-placeholder-count="2"><button type="button" onClick="{{a.pick}}" aria-pressed="{{a.pressed}}" style="{{a.style}}">{{a.label}}</button></sc-for></div>
@@ -606,20 +589,43 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </sc-if>
 </div>
+</div>
+<div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Αποστολή με email</div>
+<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Αποστολή του κουπονιού με email</div>
 <div style="display: flex; gap: 8px"><sc-for list="{{cp.f.mail}}" as="m" hint-placeholder-count="2"><button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button></sc-for></div>
 <sc-if value="{{cp.f.sendsMail}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; gap: 8px"><sc-for list="{{cp.f.when}}" as="w" hint-placeholder-count="2"><button type="button" onClick="{{w.pick}}" aria-pressed="{{w.pressed}}" style="{{w.style}}">{{w.label}}</button></sc-for></div>
-<sc-if value="{{cp.f.isLater}}" hint-placeholder-val="{{false}}"><div><label for="cp-at" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πότε να φύγει</label><input id="cp-at" type="datetime-local" value="{{cp.f.at}}" onChange="{{cp.f.setAt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div></sc-if>
+<sc-if value="{{cp.f.isLater}}" hint-placeholder-val="{{false}}"><div><label for="cp-at" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πότε να σταλεί το κουπόνι</label><input id="cp-at" type="datetime-local" value="{{cp.f.at}}" onChange="{{cp.f.setAt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div></sc-if>
 </sc-if>
-<div style="font-size: 12px; color: #4A5B5E; line-height: 1.45">{{cp.f.mailNote}}</div>
+</div>
+</div>
 </div>
 <sc-if value="{{cp.f.hasError}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 13px; font-weight: 600; color: #8A3412">{{cp.f.error}}</div></sc-if>
-<button type="button" onClick="{{cp.f.save}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{cp.f.saveLabel}}</button>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<button type="button" onClick="{{cp.f.save}}" style="height: 46px; padding: 0 28px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{cp.f.saveLabel}}</button>
 <button type="button" onClick="{{cp.f.cancel}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Άκυρο</button>
+</div>
 </aside>
 </sc-if>
+<section aria-label="Κουπόνια" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{cp.closedForm}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{cp.openNew}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Δημιουργία κουπονιού</button></div></sc-if>
+<sc-if value="{{cp.loading}}" hint-placeholder-val="{{false}}"><div style="padding: 18px; color: #4A5B5E">Φόρτωση…</div></sc-if>
+<sc-if value="{{cp.empty}}" hint-placeholder-val="{{false}}"><div style="background: #FFFFFF; border-radius: 18px; padding: 22px; color: #4A5B5E; border: 1px solid rgba(24, 40, 43, 0.18)">Δεν έχετε φτιάξει κουπόνι ακόμα.</div></sc-if>
+<sc-for list="{{cp.list}}" as="c" hint-placeholder-count="3">
+<div style="background: #FFFFFF; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-family: ui-monospace, Menlo, monospace; font-size: 17px; font-weight: 700; letter-spacing: 0.04em; color: #18282B">{{c.code}}</span>
+<span style="font-size: 15px; font-weight: 700; color: #0F5257">{{c.pct}}</span>
+<span style="flex: 1 1 0"></span>
+<span style="{{c.stateStyle}}">{{c.stateText}}</span>
+</div>
+<div style="font-size: 13px; color: #2E4448">{{c.dates}}</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #4A5B5E"><span>{{c.who}}</span><span>{{c.mail}}</span><span>{{c.uses}}</span></div>
+<sc-if value="{{c.canOff}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{c.off}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer">Απενεργοποίηση</button></div></sc-if>
+</div>
+</sc-for>
+</section>
 </div>
 </sc-if>
 
@@ -1810,7 +1816,7 @@ class Component extends DCLogic {
   couponVals(chipOn, chipOff) {
     const s = this.state, cp = s.cp || { list: [], customers: [], uses: {} };
     const T = this.TODAY;
-    const blank = { open: false, code: '', pct: '10', from: T, to: this.add(T, 60), by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
+    const blank = { open: false, code: '', pct: '10', days: '30', by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
     const f = Object.assign({}, blank, s.cpf || {});
     const upd = p => this.setState({ cpf: Object.assign({}, f, { error: '' }, p) });
     const val = e => (e && e.target ? e.target.value : '');
@@ -1839,7 +1845,7 @@ class Component extends DCLogic {
         : 'Email σε ' + (o.sent_count || 0) + (o.failed_count ? ' · ' + o.failed_count + ' απέτυχαν' : '');
       return {
         code: o.code || '—', pct: '−' + o.discount_pct + '%', who: who, mail: mail,
-        dates: 'Διαμονές ' + this.range(o.stay_from, this.add(o.stay_to, 1)) + ' ' + o.stay_to.slice(0, 4) + (o.book_by ? ' · κράτηση ως ' + day(o.book_by) : ''),
+        dates: 'Ισχύει ως ' + day(o.stay_to) + (o.book_by ? ' · να κλείσουν έως ' + day(o.book_by) : ''),
         uses: uses ? uses + (uses === 1 ? ' κράτηση' : ' κρατήσεις') : 'Καμία κράτηση ακόμα',
         stateText: st.t, stateStyle: 'flex-shrink: 0; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: ' + st.c + '; background: ' + st.bg,
         canOff: o.status !== 'cancelled' && st.t !== 'Έληξε',
@@ -1858,9 +1864,11 @@ class Component extends DCLogic {
       const code = f.code.trim().toUpperCase(), pct = Number(f.pct);
       if (!/^[A-Z0-9_-]{3,24}$/.test(code)) return upd({ error: 'Ο κωδικός θέλει 3–24 λατινικά γράμματα ή αριθμούς, χωρίς κενά.' });
       if (!(pct >= 1 && pct <= 90)) return upd({ error: 'Η έκπτωση πρέπει να είναι από 1% έως 90%.' });
-      if (!f.from || !f.to || f.to < f.from) return upd({ error: 'Διάλεξε σωστές ημερομηνίες διαμονής (η λήξη μετά την έναρξη).' });
-      if (f.to < T) return upd({ error: 'Οι ημερομηνίες διαμονής έχουν ήδη περάσει.' });
-      if (f.by && (f.by > f.to || f.by < T)) return upd({ error: 'Το «κράτηση ως» πρέπει να είναι από σήμερα και όχι μετά τη λήξη.' });
+      const days = Math.round(Number(f.days));
+      if (!(days >= 1 && days <= 730)) return upd({ error: 'Γράψε για πόσες μέρες ισχύει το κουπόνι (1 έως 730).' });
+      const start = f.email && f.when === 'at' && f.at ? f.at.slice(0, 10) : T;
+      const from = start < T ? T : start, to = this.add(from, days - 1);
+      if (f.by && (f.by > to || f.by < T)) return upd({ error: 'Το «να κλείσουν έως» πρέπει να είναι από σήμερα και μέσα στις μέρες που ισχύει το κουπόνι (ως ' + day(to) + ').' });
       if (!target.length) return upd({ error: f.aud === 'all' ? 'Δεν υπάρχουν ακόμα πελάτες με email.' : 'Διάλεξε τουλάχιστον έναν πελάτη.' });
       if (f.email && f.when === 'at' && !f.at) return upd({ error: 'Διάλεξε πότε θα φύγει το email.' });
       const sendAt = f.email && f.when === 'at' ? new Date(f.at).toISOString() : null;
@@ -1869,11 +1877,11 @@ class Component extends DCLogic {
         this.say('Το κουπόνι ' + code + ' έγινε για ' + target.length + (target.length === 1 ? ' πελάτη' : ' πελάτες') + '.' + (f.email ? ' ' + (mailN ? 'Το email θα φύγει σε ' + mailN + (f.when === 'at' ? ' στην ώρα που όρισες.' : ' μέσα στα επόμενα 10 λεπτά.') : 'Κανείς τους δεν δέχεται email προσφορών, οπότε δεν θα σταλεί email.') : ''));
       };
       if (!this.REAL || !PUSH.client) {
-        this.setState({ cp: Object.assign({}, cp, { list: [{ id: 'c' + Date.now(), code: code, discount_pct: pct, stay_from: f.from, stay_to: f.to, book_by: f.by || null, audience: f.aud, send_email: f.email, status: f.email ? 'scheduled' : 'sent', sent_count: 0, n: target.length, send_at: sendAt }].concat(cp.list) }) });
+        this.setState({ cp: Object.assign({}, cp, { list: [{ id: 'c' + Date.now(), code: code, discount_pct: pct, stay_from: from, stay_to: to, book_by: f.by || null, audience: f.aud, send_email: f.email, status: f.email ? 'scheduled' : 'sent', sent_count: 0, n: target.length, send_at: sendAt }].concat(cp.list) }) });
         ok(); return;
       }
       upd({ busy: true });
-      PUSH.client.rpc('create_coupon', { p_code: code, p_pct: pct, p_stay_from: f.from, p_stay_to: f.to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
+      PUSH.client.rpc('create_coupon', { p_code: code, p_pct: pct, p_stay_from: from, p_stay_to: to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
         if (res.error) {
           const m = res.error.message || '';
           upd({ busy: false, error: m.indexOf('code_taken') >= 0 ? 'Υπάρχει ήδη ενεργό κουπόνι με αυτόν τον κωδικό.' : m.indexOf('no_recipients') >= 0 ? 'Δεν βρέθηκαν πελάτες με email.' : 'Δεν αποθηκεύτηκε: ' + m });
@@ -1888,10 +1896,10 @@ class Component extends DCLogic {
       newOpen: f.open, closedForm: !f.open,
       openNew: () => upd({ open: true, code: randCode() }),
       f: {
-        code: f.code, pct: f.pct, from: f.from, to: f.to, by: f.by, q: f.q, at: f.at, busy: f.busy,
+        code: f.code, pct: f.pct, days: f.days, by: f.by, q: f.q, at: f.at, busy: f.busy,
         hasError: !!f.error, error: f.error,
         setCode: e => upd({ code: val(e).toUpperCase().replace(/\s+/g, '') }), newCode: () => upd({ code: randCode() }),
-        setPct: e => upd({ pct: val(e) }), setFrom: e => upd({ from: val(e) }), setTo: e => upd({ to: val(e) }), setBy: e => upd({ by: val(e) }),
+        setPct: e => upd({ pct: val(e) }), setDays: e => upd({ days: val(e) }), setBy: e => upd({ by: val(e) }),
         setQ: e => upd({ q: val(e) }), setAt: e => upd({ at: val(e) }),
         aud: [['all', 'Όλοι · ' + custs.length], ['selected', 'Συγκεκριμένοι' + (picked.length ? ' · ' + picked.length : '')]].map(a => ({ label: a[1], pressed: f.aud === a[0] ? 'true' : 'false', style: (f.aud === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ aud: a[0] }) })),
         isSelected: f.aud === 'selected',
@@ -1907,12 +1915,9 @@ class Component extends DCLogic {
         pickAll: () => { const p = {}; custs.forEach(c => { p[c.email] = 1; }); upd({ picks: p }); }, pickNone: () => upd({ picks: {} }),
         mail: [[true, 'Ναι, με email'], [false, 'Όχι, το δίνω εγώ']].map(a => ({ label: a[1], pressed: f.email === a[0] ? 'true' : 'false', style: (f.email === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ email: a[0] }) })),
         sendsMail: f.email,
-        when: [['now', 'Τώρα'], ['at', 'Αργότερα']].map(a => ({ label: a[1], pressed: f.when === a[0] ? 'true' : 'false', style: (f.when === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ when: a[0] }) })),
+        when: [['now', 'Αποστολή τώρα'], ['at', 'Αποστολή αργότερα']].map(a => ({ label: a[1], pressed: f.when === a[0] ? 'true' : 'false', style: (f.when === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ when: a[0] }) })),
         isLater: f.when === 'at',
-        mailNote: !target.length ? '' : f.email
-          ? 'Θα σταλεί σε ' + mailN + ' από ' + target.length + '. ' + (mailN < target.length ? 'Όσοι δεν δέχτηκαν email προσφορών ή διαγράφηκαν δεν το παίρνουν, αλλά ο κωδικός δουλεύει και για αυτούς αν τους τον δώσετε.' : '') + ' Το email βγαίνει στη γλώσσα του κάθε πελάτη.'
-          : 'Δεν στέλνεται τίποτα. Δώστε τον κωδικό εσείς (τηλέφωνο, μήνυμα). Δουλεύει μόνο με το email του πελάτη.',
-        saveLabel: f.busy ? 'Αποθήκευση…' : 'Δημιουργία κουπονιού',
+        saveLabel: f.busy ? 'Αποθήκευση…' : 'Αποθήκευση κουπονιού',
         save: () => { if (!f.busy) create(); },
         cancel: () => this.setState({ cpf: null }),
         btnPrimary: btn + 'border: 0; background: #0F5257; color: #FFFFFF; font-weight: 600'
