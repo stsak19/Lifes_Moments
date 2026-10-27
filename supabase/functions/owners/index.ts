@@ -37,12 +37,13 @@ async function caller(req: Request): Promise<string | null> {
   return o ? email : null;
 }
 
-async function authUserId(email: string): Promise<string | null> {
+type AuthUser = { id: string; last_sign_in_at?: string | null };
+async function authUser(email: string): Promise<AuthUser | null> {
   for (let page = 1; page <= 10; page++) {
     const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 200 });
     if (error) throw new Error(error.message);
     const u = data.users.find(x => (x.email ?? '').toLowerCase() === email);
-    if (u) return u.id;
+    if (u) return u;
     if (data.users.length < 200) return null;
   }
   return null;
@@ -69,8 +70,11 @@ Deno.serve(async (req) => {
       if (exists) return json({ error: 'Αυτό το email είναι ήδη ιδιοκτήτης.' }, 409, h);
       const { error: insErr } = await admin.from('owners').insert({ email, name });
       if (insErr) throw new Error(insErr.message);
-      // Already has a login from before (e.g. removed and added back): no invitation, they sign in or use «Ξέχασες τον κωδικό;».
-      if (await authUserId(email)) { log('owner_readded', { by: me, email }); return json({ ok: true, invited: false }, 200, h); }
+      // Has signed in before (e.g. removed and added back): no invitation, they sign in or use «Ξέχασες τον κωδικό;».
+      // Invited but never got in (link expired or unused): drop that empty login and invite again.
+      const old = await authUser(email);
+      if (old?.last_sign_in_at) { log('owner_readded', { by: me, email }); return json({ ok: true, invited: false }, 200, h); }
+      if (old) await admin.auth.admin.deleteUser(old.id);
       const { error } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo: redirect });
       if (error) {
         await admin.from('owners').delete().eq('email', email); // keep the list honest if the email could not go out
@@ -88,7 +92,8 @@ Deno.serve(async (req) => {
       const { data: gone, error } = await admin.from('owners').delete().eq('email', email).select('email');
       if (error) throw new Error(error.message);
       if (!gone?.length) return json({ error: 'Δεν βρέθηκε αυτός ο ιδιοκτήτης.' }, 404, h);
-      const id = await authUserId(email);
+      const u = await authUser(email);
+      const id = u?.id;
       if (id) {
         await admin.from('push_subscriptions').delete().eq('user_id', id);
         const { error: delErr } = await admin.auth.admin.deleteUser(id);
