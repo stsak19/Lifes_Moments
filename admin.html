@@ -136,7 +136,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div class="err" id="login-err" role="alert"></div>
 <div class="info" id="login-info" role="status"></div>
 <button type="submit" class="go" id="login-go">Σύνδεση</button>
-<div class="first"><span id="login-first-q">Πρώτη φορά εδώ;</span> <button type="button" class="link" id="login-first">Φτιάξε κωδικό</button></div>
 <div class="demo" id="login-demo"><span>Προεπισκόπηση · δοκιμαστικοί λογαριασμοί μέχρι να φτιαχτούν τα προφίλ (κωδικός <b>demo1234</b>):</span><div id="login-demo-list"></div></div>
 </form>
 </div>
@@ -604,8 +603,31 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Χρήστες</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box; border-bottom: 1px solid #EEF2F2"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #0F5257">{{ow.you}}</span></div>
+<div style="border-bottom: 1px solid #EEF2F2">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span>
+<sc-if value="{{ow.you}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #0F5257">{{ow.you}}</span></sc-if>
+<sc-if value="{{ow.canRemove}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{ow.ask}}" style="flex-shrink: 0; padding: 0; border: 0; background: none; color: #8A3412; font-size: 13px; font-weight: 600; cursor: pointer">Αφαίρεση</button></sc-if>
+</div>
+<sc-if value="{{ow.confirm}}" hint-placeholder-val="{{false}}">
+<div role="alert" style="display: flex; flex-direction: column; gap: 10px; padding: 0 18px 14px">
+<span style="font-size: 13px; color: #18282B">Ο/Η {{ow.name}} δεν θα μπορεί πια να μπει στη Διαχείριση και οι ειδοποιήσεις του/της σταματούν. Οι κρατήσεις και τα μηνύματα μένουν.</span>
+<div style="display: flex; gap: 8px"><button type="button" onClick="{{ow.remove}}" disabled="{{ow.busy}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; background: #8A3412">{{ow.removeLabel}}</button><button type="button" onClick="{{ow.cancel}}" style="height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Άκυρο</button></div>
+</div>
+</sc-if>
+</div>
 </sc-for>
+<sc-if value="{{inv.open}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 18px 16px; background: #F7FAFA">
+<div><label for="inv-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Όνομα</label><input id="inv-name" type="text" autocomplete="off" maxlength="80" value="{{inv.name}}" onChange="{{inv.setName}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="inv-email" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Email</label><input id="inv-email" type="email" autocomplete="off" spellcheck="false" value="{{inv.email}}" onChange="{{inv.setEmail}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<span style="font-size: 12px; color: #4A5B5E">Θα του/της σταλεί email με σύνδεσμο για να διαλέξει μόνος/μόνη τον κωδικό του/της. Θα έχει πλήρη πρόσβαση, όπως εσύ.</span>
+<sc-if value="{{inv.err}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 12px; font-weight: 600; color: #8A3412">{{inv.err}}</div></sc-if>
+<div style="display: flex; gap: 8px"><button type="button" onClick="{{inv.send}}" disabled="{{inv.busy}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{inv.sendLabel}}</button><button type="button" onClick="{{inv.toggle}}" style="height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Άκυρο</button></div>
+</div>
+</sc-if>
+<sc-if value="{{inv.closed}}" hint-placeholder-val="{{true}}">
+<button type="button" onClick="{{inv.toggle}}" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 14px 18px; border: 0; background: transparent; color: #0F5257; font: inherit; font-weight: 600; text-align: left; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2.2; stroke-linecap: round"><path d="M12 5v14M5 12h14"></path></svg>Προσθήκη ιδιοκτήτη</button>
+</sc-if>
 </div>
 </section>
 </div>
@@ -988,7 +1010,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: false }, pfName: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '', pfErr: '', pfBusy: null, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
+      toggles: { push: false }, pfName: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '', pfErr: '', pfBusy: null, invOpen: false, invName: '', invEmail: '', invErr: '', invBusy: false, owAsk: null, owBusy: null, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
       extra: 15,
       priceMonth: '2026-07', sel: null, draft: { room: '', apt: '', min: '' },
       overrides: (() => {
@@ -2947,7 +2969,52 @@ class Component extends DCLogic {
           }
         };
       })(),
-      owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
+      owners: (this.props.owners || []).map(o => {
+        const mine = !!(s.user && s.user.id === o.id);
+        const A = this.props.auth;
+        return {
+          name: o.name, email: o.email, you: mine ? 'Εσύ' : '',
+          canRemove: !mine && (this.props.owners || []).length > 1 && !!(A && A.removeOwner),
+          confirm: s.owAsk === o.email, busy: s.owBusy === o.email,
+          removeLabel: s.owBusy === o.email ? 'Αφαίρεση…' : 'Ναι, αφαίρεση',
+          ask: () => this.setState({ owAsk: o.email }),
+          cancel: () => this.setState({ owAsk: null }),
+          remove: () => {
+            if (s.owBusy) return;
+            this.setState({ owBusy: o.email });
+            Promise.resolve(A.removeOwner(o.email)).then(list => {
+              this.props.owners = list;
+              this.setState({ owBusy: null, owAsk: null });
+              this.say('Ο/Η ' + o.name + ' αφαιρέθηκε από τους ιδιοκτήτες.');
+            }, e => { this.setState({ owBusy: null }); this.say((e && e.message) || 'Δεν έγινε η αφαίρεση.'); });
+          }
+        };
+      }),
+      inv: (() => {
+        const A = this.props.auth;
+        return {
+          open: s.invOpen, closed: !s.invOpen && !!(A && A.inviteOwner), busy: s.invBusy,
+          name: s.invName, email: s.invEmail, err: s.invErr,
+          sendLabel: s.invBusy ? 'Αποστολή…' : 'Αποστολή πρόσκλησης',
+          toggle: () => this.setState({ invOpen: !s.invOpen, invName: '', invEmail: '', invErr: '' }),
+          setName: e => this.setState({ invName: e.target.value, invErr: '' }),
+          setEmail: e => this.setState({ invEmail: e.target.value, invErr: '' }),
+          send: () => {
+            if (s.invBusy) return;
+            const name = s.invName.trim().replace(/\s+/g, ' '), email = s.invEmail.trim().toLowerCase();
+            const err = !name ? 'Γράψε όνομα.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Το email δεν φαίνεται σωστό.'
+              : (this.props.owners || []).some(o => o.email === email) ? 'Αυτό το email είναι ήδη ιδιοκτήτης.' : '';
+            if (err) { this.setState({ invErr: err }); return; }
+            this.setState({ invBusy: true, invErr: '' });
+            Promise.resolve(A.inviteOwner(email, name)).then(r => {
+              this.props.owners = r.owners;
+              this.setState({ invBusy: false, invOpen: false, invName: '', invEmail: '' });
+              this.say(r.invited ? 'Στάλθηκε πρόσκληση στο ' + email + '. Μόλις πατήσει τον σύνδεσμο, διαλέγει κωδικό και μπαίνει.'
+                : 'Ο/Η ' + name + ' είχε ήδη λογαριασμό: μπαίνει με τον παλιό κωδικό ή με «Ξέχασες τον κωδικό;».');
+            }, e => this.setState({ invBusy: false, invErr: (e && e.message) || 'Δεν στάλθηκε η πρόσκληση.' }));
+          }
+        };
+      })(),
       nb: nb, hasNew: !!s.newOpen && !!s.nb, openNew: () => this.openNew(),
       goMsgs: () => this.go('msgs'),
       msgBadge: String(unreadN), hasMsgBadge: unreadN > 0,
@@ -3169,6 +3236,8 @@ class Component extends DCLogic {
    * make an account, and Row Level Security lets only them read or answer requests.
    * admin.html?demo=1 opens the old preview accounts with fake data only.
    */
+  // An invitation or reset link lands here with #…type=invite / type=recovery; the owner then picks a password.
+  const LINK_TYPE = (/[#&]type=(invite|recovery)\b/.exec(location.hash) || [])[1] || null;
   const DEMO = params.has('demo') || !window.supabase;
   const NOLIB = !params.has('demo') && !window.supabase;
   let SB = null;
@@ -3212,13 +3281,6 @@ class Component extends DCLogic {
         return this.profile(r.data.user);
       });
     },
-    signUp: function (email, password) {
-      return SB.auth.signUp({ email: String(email).trim().toLowerCase(), password: password, options: { emailRedirectTo: location.origin + location.pathname } }).then(r => {
-        if (r.error) throw new Error(greek(r.error.message));
-        if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) throw new Error(greek('already registered'));
-        return r.data && r.data.session ? this.profile(r.data.user) : null; // null: confirm by email first
-      });
-    },
     signOut: function () { return PUSH.stopServer().then(() => SB.auth.signOut()); },
     updateName: function (email, name) {
       return SB.from('owners').update({ name: name }).eq('email', email).select('email').then(r => {
@@ -3228,6 +3290,21 @@ class Component extends DCLogic {
         return this.owners;
       });
     },
+    ownersCall: function (body) {
+      return SB.functions.invoke('owners', { body: body }).then(r => {
+        if (r.error) {
+          const ctx = r.error.context;
+          return (ctx && ctx.json ? ctx.json().catch(() => ({})) : Promise.resolve({})).then(j => { throw new Error(j.error || greek(r.error.message)); });
+        }
+        return SB.from('owners').select('email, name').order('name').then(res => {
+          if (!res.error) this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email }));
+          return Object.assign({ owners: this.owners }, r.data);
+        });
+      });
+    },
+    inviteOwner: function (email, name) { return this.ownersCall({ action: 'invite', email: email, name: name, redirect: location.origin + location.pathname }); },
+    removeOwner: function (email) { return this.ownersCall({ action: 'remove', email: email }).then(r => r.owners); },
+    setNewPassword: function (pw) { return SB.auth.updateUser({ password: pw }).then(r => { if (r.error) throw new Error(greek(r.error.message)); }); },
     changePassword: function (email, current, next) {
       // Check the current password first, so an open laptop is not enough to change it.
       return SB.auth.signInWithPassword({ email: email, password: current }).then(r => {
@@ -3276,6 +3353,15 @@ class Component extends DCLogic {
       updateName: function (email, name) {
         const u = PREVIEW_USERS.find(x => x.email === email);
         if (u) u.name = name;
+        return Promise.resolve(PREVIEW_USERS.map(pub));
+      },
+      inviteOwner: function (email, name) {
+        PREVIEW_USERS.push({ id: 'owner-' + Date.now(), name: name, email: email, password: 'demo1234' });
+        return Promise.resolve({ owners: PREVIEW_USERS.map(pub), invited: true });
+      },
+      removeOwner: function (email) {
+        const i = PREVIEW_USERS.findIndex(x => x.email === email);
+        if (i >= 0) PREVIEW_USERS.splice(i, 1);
         return Promise.resolve(PREVIEW_USERS.map(pub));
       },
       changePassword: function (email, current, next) {
@@ -3413,19 +3499,19 @@ class Component extends DCLogic {
   const fShow = document.getElementById('login-show');
   const demoList = document.getElementById('login-demo-list');
   const fInfo = document.getElementById('login-info');
-  const fFirst = document.getElementById('login-first'), fFirstQ = document.getElementById('login-first-q');
-  let firstTime = false;
-  function setFirst(on) {
-    firstTime = on;
-    fGo.textContent = on ? 'Δημιουργία κωδικού' : 'Σύνδεση';
-    fFirstQ.textContent = on ? 'Έχεις ήδη κωδικό;' : 'Πρώτη φορά εδώ;';
-    fFirst.textContent = on ? 'Σύνδεση' : 'Φτιάξε κωδικό';
-    fPass.setAttribute('autocomplete', on ? 'new-password' : 'current-password');
-    document.querySelector('#login .sub').textContent = on ? 'Πρώτη φορά · γράψε το email σου και διάλεξε κωδικό' : 'Διαχείριση · σύνδεση ιδιοκτήτη';
-    fErr.textContent = ''; fInfo.textContent = '';
+  const fSub = document.querySelector('#login .sub'), fRow = document.querySelector('#login .row');
+  let setPwUser = null; // signed in from an invitation or reset link, still has to choose a password
+  function askNewPassword(user) {
+    setPwUser = user;
+    login.hidden = false; root.hidden = true;
+    fSub.textContent = LINK_TYPE === 'invite' ? 'Καλώς ήρθες, ' + user.name + ' · διάλεξε τον κωδικό σου' : 'Διάλεξε νέο κωδικό';
+    fEmail.value = user.email; fEmail.readOnly = true;
+    fPass.value = ''; fPass.setAttribute('autocomplete', 'new-password');
+    fRow.hidden = true; fGo.textContent = 'Αποθήκευση κωδικού'; fErr.textContent = ''; fInfo.textContent = '';
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    setTimeout(function () { fPass.focus(); }, 0);
   }
-  fFirst.addEventListener('click', function () { setFirst(!firstTime); fEmail.focus(); });
-  if (!REAL_AUTH) { fFirst.parentNode.hidden = true; } else { document.getElementById('login-demo').hidden = true; }
+  if (REAL_AUTH) document.getElementById('login-demo').hidden = true;
   if (NOLIB) { document.getElementById('login-demo').hidden = true; fErr.textContent = 'Δεν φορτώθηκε η σύνδεση με τον server. Έλεγξε το ίντερνετ και ανανέωσε τη σελίδα.'; fGo.disabled = true; }
   PREVIEW_AUTH.users().forEach(function (u) {
     const b = document.createElement('button');
@@ -3452,17 +3538,21 @@ class Component extends DCLogic {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!fEmail.value.trim() || !fPass.value) { fErr.textContent = 'Συμπλήρωσε email και κωδικό.'; (fEmail.value.trim() ? fPass : fEmail).focus(); return; }
-    if (firstTime && fPass.value.length < 8) { fErr.textContent = 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.'; fPass.focus(); return; }
+    if (setPwUser) {
+      if (fPass.value.length < 8) { fErr.textContent = 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.'; fPass.focus(); return; }
+      fGo.disabled = true; fGo.textContent = 'Αποθήκευση…'; fErr.textContent = '';
+      REAL_AUTH.setNewPassword(fPass.value).then(function () {
+        const u = setPwUser; setPwUser = null;
+        fEmail.readOnly = false; fRow.hidden = false; fSub.textContent = 'Διαχείριση · σύνδεση ιδιοκτήτη';
+        fPass.setAttribute('autocomplete', 'current-password'); fGo.textContent = 'Σύνδεση';
+        enter(u);
+      }, function (err) { fErr.textContent = err.message; fGo.textContent = 'Αποθήκευση κωδικού'; fPass.focus(); }).then(function () { fGo.disabled = false; });
+      return;
+    }
     const label = fGo.textContent;
-    fGo.disabled = true; fGo.textContent = firstTime ? 'Δημιουργία…' : 'Σύνδεση…'; fErr.textContent = ''; fInfo.textContent = '';
-    const act = firstTime ? AUTH.signUp(fEmail.value, fPass.value) : AUTH.signIn(fEmail.value, fPass.value, fRemember.checked);
-    act.then(function (user) {
-      if (user) { setFirst(false); enter(user); return; }
-      setFirst(false);
-      fInfo.textContent = 'Σου στείλαμε email στο ' + fEmail.value.trim() + '. Πάτα τον σύνδεσμο για επιβεβαίωση και μετά συνδέσου εδώ με τον κωδικό σου.';
-      fPass.value = '';
-    }, function (err) {
-      fErr.textContent = err.message; if (!firstTime) fPass.value = ''; fPass.focus();
+    fGo.disabled = true; fGo.textContent = 'Σύνδεση…'; fErr.textContent = ''; fInfo.textContent = '';
+    AUTH.signIn(fEmail.value, fPass.value, fRemember.checked).then(function (user) { enter(user); }, function (err) {
+      fErr.textContent = err.message; fPass.value = ''; fPass.focus();
     }).then(function () { fGo.disabled = false; if (fGo.textContent.endsWith('…')) fGo.textContent = label; });
   });
   function showLogin() {
@@ -3506,12 +3596,6 @@ class Component extends DCLogic {
     // a request can expire while the page is open
     clearInterval(startLive.t); startLive.t = setInterval(loadRequests, 5 * 60000);
   }
-  if (SB) SB.auth.onAuthStateChange(function (ev) {
-    if (ev === 'PASSWORD_RECOVERY') {
-      const pw = prompt('Γράψε νέο κωδικό (τουλάχιστον 8 χαρακτήρες):');
-      if (pw && pw.length >= 8) SB.auth.updateUser({ password: pw }).then(function (r) { alert(r.error ? greek(r.error.message) : 'Ο κωδικός άλλαξε.'); });
-    }
-  });
   function enter(user) {
     comp.setState({ user: user });
     if (SB) startLive();
@@ -3526,7 +3610,7 @@ class Component extends DCLogic {
   });
 
   render();
-  Promise.resolve(AUTH.current()).then(function (who) { if (who) enter(who); else showLogin(); }, showLogin);
+  Promise.resolve(AUTH.current()).then(function (who) { if (who && LINK_TYPE && REAL_AUTH) askNewPassword(who); else if (who) enter(who); else showLogin(); }, showLogin);
 })();
 
 </script>
