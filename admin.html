@@ -559,7 +559,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Προφίλ</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #18282B; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <div style="display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
 <span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: #E3F0EF; color: #0A3A3E; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px">{{userInitials}}</span>
 <span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{userName}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{pf.email}}</span></span>
@@ -592,7 +592,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </section>
 <section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Σάιτ</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #18282B; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
 <span><span style="display: block; font-weight: 500">Δεχόμαστε αιτήματα</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{site.sub}}</span></span>
 <button type="button" role="switch" aria-checked="{{site.aria}}" aria-label="Δεχόμαστε αιτήματα" onClick="{{site.flip}}" style="{{site.track}}"><span style="{{site.knob}}"></span></button>
@@ -601,7 +601,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </section>
 <section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Χρήστες</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #18282B; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
 <div style="border-bottom: 1px solid #EEF2F2">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span>
@@ -635,7 +635,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Booking.com</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #18282B; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
 <button type="button" onClick="{{bk.toggle}}" aria-expanded="{{bk.aria}}" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: transparent; color: #18282B; font: inherit; text-align: left; cursor: pointer">
 <span style="min-width: 0"><span style="display: block; font-weight: 500">Συγχρονισμός ημερολογίων</span><span style="{{bk.sumStyle}}">{{bk.summary}}</span></span>
@@ -669,7 +669,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 </div>
 </section>
-<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #18282B; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
+<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
 </div>
