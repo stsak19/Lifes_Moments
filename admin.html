@@ -193,7 +193,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </div>
 <sc-if value="{{noTiles}}" hint-placeholder-val="{{false}}">
-<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Κανένα δωμάτιο σε αυτή την κατάσταση σήμερα.</div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">Κανένα δωμάτιο σε αυτή την κατάσταση σήμερα.</div>
 </sc-if>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 45%), 1fr)); gap: 14px">
 <sc-for list="{{tiles}}" as="t" hint-placeholder-count="12">
@@ -249,7 +249,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </div>
 
-<section aria-label="Ημερολόγιο δωματίων" onPointerMove="{{calDragMove}}" style="background: #FFFFFF; border-radius: 18px; padding: 16px; overflow-x: auto">
+<section aria-label="Ημερολόγιο δωματίων" onPointerMove="{{calDragMove}}" style="background: #FFFFFF; border-radius: 18px; padding: 16px; overflow-x: auto; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="min-width: 600px">
 <div style="{{calRowStyle}}">
 <span></span>
@@ -316,7 +316,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </sc-if>
 <sc-if value="{{calEditOpen}}" hint-placeholder-val="{{false}}">
-<section aria-label="Τιμή για τις μέρες που διάλεξες" style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<section aria-label="Τιμή για τις μέρες που διάλεξες" style="background: #FFFFFF; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div><div style="font-weight: 600">{{calEditTitle}}</div><div style="font-size: 13px; color: #4A5B5E">{{calEditSub}}</div></div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px">
 <sc-if value="{{calEditRoom}}" hint-placeholder-val="{{true}}"><div style="flex: 1 1 140px"><label for="ce-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο (€/νύχτα)</label><input id="ce-room" type="number" inputmode="numeric" min="0" value="{{calDraft.room}}" onChange="{{setCalRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
@@ -347,12 +347,12 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <sc-if value="{{noItems}}" hint-placeholder-val="{{false}}">
-<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E">Καμία κράτηση δεν ταιριάζει.</div>
+<div style="background: #FFFFFF; border-radius: 16px; padding: 18px; color: #4A5B5E; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">Καμία κράτηση δεν ταιριάζει.</div>
 </sc-if>
 
 <div style="display: flex; flex-direction: column; gap: 10px">
 <sc-for list="{{years}}" as="y" hint-placeholder-count="2">
-<section aria-label="{{y.label}}" style="background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<section aria-label="{{y.label}}" style="background: #FFFFFF; border-radius: 18px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; align-items: center; padding-right: 14px">
 <button type="button" onClick="{{y.toggle}}" aria-expanded="{{y.exp}}" style="flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; border: 0; background: #FFFFFF; color: #18282B; text-align: left; cursor: pointer">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{y.chev}}"><path d="M9 6l6 6-6 6"></path></svg>
@@ -406,7 +406,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
 <input id="gsearch" type="search" value="{{gQuery}}" onChange="{{setGQuery}}" placeholder="Όνομα, email ή τηλέφωνο" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
 </div>
-<div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto">
+<div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="min-width: 700px">
 <div style="display: grid; grid-template-columns: 1.6fr 1.8fr 1.2fr 0.8fr 0.8fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
 <span>Πελάτης</span><span>Email</span><span>Τηλέφωνο</span><span>Διαμονές</span><span style="text-align: right">Σύνολο</span>
@@ -430,7 +430,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <sc-if value="{{show.msgs}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<div id="inbox" style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border-radius: 18px; overflow: hidden">
+<div id="inbox" style="display: flex; flex-wrap: wrap; align-items: stretch; background: #FFFFFF; border-radius: 18px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div role="list" aria-label="Συζητήσεις" class="inbox-list" style="flex: 1 1 260px; min-width: 0; border-right: 1px solid #EEF2F2; display: flex; flex-direction: column">
 <sc-for list="{{threads}}" as="th" hint-placeholder-count="5">
 <button type="button" role="listitem" onClick="{{th.open}}" style="{{th.style}}">
@@ -482,7 +482,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-direction: column; gap: 16px">
 
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
-<section aria-label="Τιμές ανά μέρα" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border-radius: 18px; padding: 18px 20px">
+<section aria-label="Τιμές ανά μέρα" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px">
 <div style="display: flex; align-items: center; gap: 8px">
 <button type="button" onClick="{{pricePrev}}" aria-label="Προηγούμενος μήνας" style="width: 40px; height: 40px; border-radius: 20px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6 6 6"></path></svg></button>
@@ -517,7 +517,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="font-size: 12px; color: #4A5B5E; margin-top: 12px">{{priceNote}}</div>
 </section>
 
-<aside aria-label="Τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<aside aria-label="Τιμή" style="flex: 1 1 300px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Τιμή</h2>
 <sc-if value="{{noSel}}" hint-placeholder-val="{{true}}">
 <div style="font-size: 14px; color: #4A5B5E">Πάτα μια μέρα στο ημερολόγιο. Για διάστημα, σύρε πάνω από τις μέρες με πατημένο το κλικ, ή πάτα την πρώτη και μετά την τελευταία.</div>
@@ -678,7 +678,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 
 <sc-if value="{{hasNew}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Νέα κράτηση" style="flex: 1 1 360px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<aside aria-label="Νέα κράτηση" style="flex: 1 1 360px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
 <div><h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 24px; font-weight: 600">Νέα κράτηση</h2></div>
 <button type="button" onClick="{{nb.close}}" aria-label="Κλείσιμο" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="stroke-width: 2; stroke-linecap: round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
@@ -721,7 +721,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{hasDetail}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Λεπτομέρειες κράτησης" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+<aside aria-label="Λεπτομέρειες κράτησης" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <sc-part name="detail"></sc-part>
 </aside>
 </sc-if>
@@ -731,7 +731,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{hasGuest}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Καρτέλα πελάτη" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+<aside aria-label="Καρτέλα πελάτη" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
 <div>
 <div style="display: flex; flex-wrap: wrap; gap: 6px">
@@ -774,7 +774,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 
 <sc-if value="{{hasRoom}}" hint-placeholder-val="{{false}}">
-<aside aria-label="Λεπτομέρειες δωματίου" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px">
+<aside aria-label="Λεπτομέρειες δωματίου" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 18px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
 <div>
 <span style="{{room.pill}}">{{room.status}}</span>
@@ -1803,7 +1803,7 @@ class Component extends DCLogic {
         roomAria: u.name + ': λεπτομέρειες δωματίου',
         roomBtnStyle: actBase + (roomOn ? 'border: 1px solid #0F5257; background: #0F5257; color: #FFFFFF' : 'border: 1px solid #C3D1D3; background: #FFFFFF; color: #2E4448'),
         unit: u.name, status: ST[st].label, pill: ST[st].pill,
-        card: (u.id === 'apt' ? 'grid-column: span 2;' : '') + 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px 16px 20px; display: flex; flex-direction: column; cursor: pointer; background: #FFFFFF; transition: box-shadow 0.15s;' + (roomOn ? 'border: 1px solid #0F5257; box-shadow: inset 4px 0 0 ' + (ST[st].accent === 'transparent' ? '#0F5257' : ST[st].accent) + ', 0 0 0 1px #0F5257' : (st === 'free' ? 'border: 1px dashed #B5C3C5' : 'border: 1px solid #E1E8E9') + '; box-shadow: inset 4px 0 0 ' + ST[st].accent),
+        card: (u.id === 'apt' ? 'grid-column: span 2;' : '') + 'box-sizing: border-box; min-height: 150px; border-radius: 16px; padding: 16px 18px 16px 20px; display: flex; flex-direction: column; cursor: pointer; background: #FFFFFF; transition: box-shadow 0.15s;' + (roomOn ? 'border: 1px solid #0F5257; box-shadow: inset 4px 0 0 ' + (ST[st].accent === 'transparent' ? '#0F5257' : ST[st].accent) + ', 0 0 0 1px #0F5257' : (st === 'free' ? 'border: 1px dashed #B5C3C5' : 'border: 1px solid rgba(24, 40, 43, 0.18)') + '; box-shadow: inset 4px 0 0 ' + ST[st].accent + ', 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)'),
         guest: guest, sub: sub, hasLink: !!linkTo, noLink: !linkTo,
         openGuest: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (linkTo) this.open(linkTo); },
         action: action, actionStyle: actionStyle, hasAction: !!action, doAction: doAction
