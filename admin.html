@@ -559,23 +559,45 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
 <section>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Προφίλ</h2>
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
+<span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: #E3F0EF; color: #0A3A3E; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px">{{userInitials}}</span>
+<span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{userName}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{pf.email}}</span></span>
+</div>
+<div style="padding: 12px 18px; border-bottom: 1px solid #EEF2F2"><label for="pf-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Όνομα (έτσι φαίνεται στον άλλον ιδιοκτήτη και στα μηνύματα)</label>
+<div style="display: flex; gap: 8px"><input id="pf-name" type="text" autocomplete="name" maxlength="80" value="{{pf.name}}" onChange="{{pf.setName}}" style="flex: 1; min-width: 0; box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"><sc-if value="{{pf.nameDirty}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{pf.saveName}}" disabled="{{pf.busy}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{pf.nameLabel}}</button></sc-if></div></div>
+<div style="border-bottom: 1px solid #EEF2F2">
+<button type="button" onClick="{{pf.togglePw}}" aria-expanded="{{pf.pwAria}}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border: 0; background: transparent; color: #18282B; font: inherit; text-align: left; cursor: pointer"><span><span style="display: block; font-weight: 500">Κωδικός</span><span style="display: block; font-size: 12px; color: #4A5B5E">Αλλαγή του κωδικού σύνδεσης</span></span><span style="flex-shrink: 0; font-size: 13px; font-weight: 600; color: #0F5257">{{pf.pwAction}}</span></button>
+<sc-if value="{{pf.pwOpen}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 4px 18px 16px; background: #F7FAFA">
+<div><label for="pf-cur" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Τρέχων κωδικός</label><input id="pf-cur" type="password" autocomplete="current-password" value="{{pf.cur}}" onChange="{{pf.setCur}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="pf-new" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Νέος κωδικός (τουλάχιστον 8 χαρακτήρες)</label><input id="pf-new" type="password" autocomplete="new-password" value="{{pf.nw}}" onChange="{{pf.setNew}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="pf-new2" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Ξανά ο νέος κωδικός</label><input id="pf-new2" type="password" autocomplete="new-password" value="{{pf.nw2}}" onChange="{{pf.setNew2}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<sc-if value="{{pf.pwErr}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 12px; font-weight: 600; color: #8A3412">{{pf.pwErr}}</div></sc-if>
+<button type="button" onClick="{{pf.savePw}}" disabled="{{pf.busy}}" style="align-self: flex-start; flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{pf.pwLabel}}</button>
+</div>
+</sc-if>
+</div>
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="1">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
+<span><span style="display: block; font-weight: 500">{{t.label}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{t.sub}}</span></span>
+<button type="button" role="switch" aria-checked="{{t.aria}}" aria-label="{{t.label}}" onClick="{{t.flip}}" style="{{t.track}}"><span style="{{t.knob}}"></span></button>
+</div>
+</sc-for>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
+<span style="font-size: 12px; color: #4A5B5E">Η αποσύνδεση ισχύει μόνο για αυτή τη συσκευή.</span>
+<button type="button" onClick="{{logout}}" style="flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #8A3412">Αποσύνδεση</button>
+</div>
+</div>
+</section>
+<section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Σάιτ</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
 <span><span style="display: block; font-weight: 500">Δεχόμαστε αιτήματα</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{site.sub}}</span></span>
 <button type="button" role="switch" aria-checked="{{site.aria}}" aria-label="Δεχόμαστε αιτήματα" onClick="{{site.flip}}" style="{{site.track}}"><span style="{{site.knob}}"></span></button>
 </div>
-</div>
-</section>
-<section>
-<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Ειδοποιήσεις</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
-<sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
-<span><span style="display: block; font-weight: 500">{{t.label}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{t.sub}}</span></span>
-<button type="button" role="switch" aria-checked="{{t.aria}}" aria-label="{{t.label}}" onClick="{{t.flip}}" style="{{t.track}}"><span style="{{t.knob}}"></span></button>
-</div>
-</sc-for>
 </div>
 </section>
 <section>
@@ -966,7 +988,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: false }, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
+      toggles: { push: false }, pfName: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '', pfErr: '', pfBusy: null, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
       extra: 15,
       priceMonth: '2026-07', sel: null, draft: { room: '', apt: '', min: '' },
       overrides: (() => {
@@ -2884,6 +2906,47 @@ class Component extends DCLogic {
       show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: false, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
       hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
+      pf: (() => {
+        const u = s.user || {};
+        const draft = s.pfName == null ? (u.name || '') : s.pfName;
+        const clean = draft.trim().replace(/\s+/g, ' ');
+        const A = this.props.auth;
+        return {
+          email: u.email || '', name: draft, busy: !!s.pfBusy,
+          nameDirty: !!clean && clean !== u.name,
+          nameLabel: s.pfBusy === 'name' ? 'Αποθήκευση…' : 'Αποθήκευση',
+          setName: e => this.setState({ pfName: e && e.target ? e.target.value : '' }),
+          saveName: () => {
+            if (!clean || clean.length > 80 || s.pfBusy || !A || !A.updateName) return;
+            this.setState({ pfBusy: 'name' });
+            Promise.resolve(A.updateName(u.email, clean)).then(owners => {
+              this.props.owners = owners || this.props.owners;
+              this.setState({ user: Object.assign({}, u, { name: clean }), pfName: null, pfBusy: null });
+              this.say('Το όνομά σου άλλαξε σε «' + clean + '».');
+            }, err => { this.setState({ pfBusy: null }); this.say('Δεν αποθηκεύτηκε: ' + (err && err.message || err)); });
+          },
+          pwOpen: s.pfPw, pwAria: s.pfPw ? 'true' : 'false', pwAction: s.pfPw ? 'Άκυρο' : 'Αλλαγή',
+          togglePw: () => this.setState({ pfPw: !s.pfPw, pfCur: '', pfNew: '', pfNew2: '', pfErr: '' }),
+          cur: s.pfCur, nw: s.pfNew, nw2: s.pfNew2, pwErr: s.pfErr,
+          setCur: e => this.setState({ pfCur: e.target.value, pfErr: '' }),
+          setNew: e => this.setState({ pfNew: e.target.value, pfErr: '' }),
+          setNew2: e => this.setState({ pfNew2: e.target.value, pfErr: '' }),
+          pwLabel: s.pfBusy === 'pw' ? 'Αλλαγή…' : 'Αλλαγή κωδικού',
+          savePw: () => {
+            if (s.pfBusy || !A || !A.changePassword) return;
+            const err = !s.pfCur ? 'Γράψε τον τρέχοντα κωδικό.'
+              : s.pfNew.length < 8 ? 'Ο νέος κωδικός θέλει τουλάχιστον 8 χαρακτήρες.'
+              : s.pfNew !== s.pfNew2 ? 'Οι δύο νέοι κωδικοί δεν είναι ίδιοι.'
+              : s.pfNew === s.pfCur ? 'Ο νέος κωδικός είναι ίδιος με τον τρέχοντα.' : '';
+            if (err) { this.setState({ pfErr: err }); return; }
+            this.setState({ pfBusy: 'pw', pfErr: '' });
+            Promise.resolve(A.changePassword(u.email, s.pfCur, s.pfNew)).then(() => {
+              this.setState({ pfBusy: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '' });
+              this.say('Ο κωδικός άλλαξε. Την επόμενη φορά συνδέσου με τον νέο.');
+            }, e => this.setState({ pfBusy: null, pfErr: (e && e.message) || 'Κάτι πήγε στραβά. Δοκίμασε ξανά.' }));
+          }
+        };
+      })(),
       owners: (this.props.owners || []).map(o => ({ name: o.name, email: o.email, you: s.user && s.user.id === o.id ? 'Εσύ' : '' })),
       nb: nb, hasNew: !!s.newOpen && !!s.nb, openNew: () => this.openNew(),
       goMsgs: () => this.go('msgs'),
@@ -3157,6 +3220,21 @@ class Component extends DCLogic {
       });
     },
     signOut: function () { return PUSH.stopServer().then(() => SB.auth.signOut()); },
+    updateName: function (email, name) {
+      return SB.from('owners').update({ name: name }).eq('email', email).select('email').then(r => {
+        if (r.error) throw new Error(greek(r.error.message));
+        if (!r.data || !r.data.length) throw new Error('Δεν βρέθηκε το προφίλ σου.');
+        this.owners = this.owners.map(o => o.email === email ? Object.assign({}, o, { name: name }) : o);
+        return this.owners;
+      });
+    },
+    changePassword: function (email, current, next) {
+      // Check the current password first, so an open laptop is not enough to change it.
+      return SB.auth.signInWithPassword({ email: email, password: current }).then(r => {
+        if (r.error) throw new Error(/invalid login/i.test(r.error.message) ? 'Ο τρέχων κωδικός δεν είναι σωστός.' : greek(r.error.message));
+        return SB.auth.updateUser({ password: next });
+      }).then(r => { if (r.error) throw new Error(/different from the old/i.test(r.error.message) ? 'Ο νέος κωδικός είναι ίδιος με τον τρέχοντα.' : greek(r.error.message)); });
+    },
     resetPassword: function (email) {
       return SB.auth.resetPasswordForEmail(String(email).trim().toLowerCase(), { redirectTo: location.origin + location.pathname }).then(r => { if (r.error) throw new Error(greek(r.error.message)); });
     }
@@ -3195,12 +3273,23 @@ class Component extends DCLogic {
         });
       },
       signOut: function () { clear(); return Promise.resolve(); },
+      updateName: function (email, name) {
+        const u = PREVIEW_USERS.find(x => x.email === email);
+        if (u) u.name = name;
+        return Promise.resolve(PREVIEW_USERS.map(pub));
+      },
+      changePassword: function (email, current, next) {
+        const u = PREVIEW_USERS.find(x => x.email === email);
+        if (!u || u.password !== current) return Promise.reject(new Error('Ο τρέχων κωδικός δεν είναι σωστός.'));
+        u.password = next;
+        return Promise.resolve();
+      },
       resetPassword: function () { return Promise.resolve(); }
     };
   })();
   const AUTH = REAL_AUTH || PREVIEW_AUTH;
 
-  const comp = new Component({ mode: mode, owners: AUTH.users(), onLogout: function () { Promise.resolve(AUTH.signOut()).then(showLogin, showLogin); } });
+  const comp = new Component({ mode: mode, auth: AUTH, owners: AUTH.users(), onLogout: function () { Promise.resolve(AUTH.signOut()).then(showLogin, showLogin); } });
   let queued = false;
 
   window.scheduleRender = function () {
