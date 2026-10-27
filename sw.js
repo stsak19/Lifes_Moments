@@ -28,8 +28,11 @@ self.addEventListener('notificationclick', (e) => {
   e.notification.close();
   const url = new URL((e.notification.data && e.notification.data.url) || 'admin.html', self.registration.scope).href;
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((wins) => {
-    const open = wins.find((w) => new URL(w.url).pathname.endsWith('/admin.html'));
+    // the phone app (admin-mobile.html) and the desktop admin both handle ?req=<id>
+    const isAdmin = (w) => /\/admin(-mobile)?\.html$/.test(new URL(w.url).pathname);
+    const open = wins.find((w) => new URL(w.url).pathname.endsWith('/admin-mobile.html')) || wins.find(isAdmin);
     if (open) { open.postMessage({ open: url }); return open.focus(); }
-    return self.clients.openWindow(url);
+    const narrow = /Mobi|Android|iPhone/.test(self.navigator.userAgent);
+    return self.clients.openWindow(narrow ? url.replace('/admin.html', '/admin-mobile.html') : url);
   }));
 });
