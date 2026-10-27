@@ -164,7 +164,7 @@ async function runOffers() {
     const { data: got } = await claim.select('id');
     if (!got?.length) continue;
 
-    const { data: audience } = await admin.rpc('promo_audience');
+    const { data: audience } = await admin.rpc('promo_mail_list', { p_offer: o.id });
     const { data: done } = await admin.from('promo_sends').select('email, status, attempts').eq('offer_id', o.id);
     const state = new Map((done ?? []).map((d) => [d.email, d]));
     const todo = (audience ?? []).filter((a: any) => { const d = state.get(a.email); return !d || (d.status === 'failed' && d.attempts < 3); });

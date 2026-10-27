@@ -553,6 +553,76 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </sc-if>
 
+<sc-if value="{{show.coupons}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 18px">
+<section aria-label="Κουπόνια" style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<sc-if value="{{cp.closedForm}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{cp.openNew}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">+ Νέο κουπόνι</button></div></sc-if>
+<sc-if value="{{cp.loading}}" hint-placeholder-val="{{false}}"><div style="padding: 18px; color: #4A5B5E">Φόρτωση…</div></sc-if>
+<sc-if value="{{cp.empty}}" hint-placeholder-val="{{false}}"><div style="background: #FFFFFF; border-radius: 18px; padding: 22px; color: #4A5B5E; border: 1px solid rgba(24, 40, 43, 0.18)">Δεν έχετε φτιάξει κουπόνι ακόμα.</div></sc-if>
+<sc-for list="{{cp.list}}" as="c" hint-placeholder-count="3">
+<div style="background: #FFFFFF; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-family: ui-monospace, Menlo, monospace; font-size: 17px; font-weight: 700; letter-spacing: 0.04em; color: #18282B">{{c.code}}</span>
+<span style="font-size: 15px; font-weight: 700; color: #0F5257">{{c.pct}}</span>
+<span style="flex: 1 1 0"></span>
+<span style="{{c.stateStyle}}">{{c.stateText}}</span>
+</div>
+<div style="font-size: 13px; color: #2E4448">{{c.dates}}</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #4A5B5E"><span>{{c.who}}</span><span>{{c.mail}}</span><span>{{c.uses}}</span></div>
+<sc-if value="{{c.canOff}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{c.off}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer">Απενεργοποίηση</button></div></sc-if>
+</div>
+</sc-for>
+</section>
+<sc-if value="{{cp.newOpen}}" hint-placeholder-val="{{false}}">
+<aside aria-label="Νέο κουπόνι" style="flex: 1 1 340px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<h2 style="margin: 0; font-family: Piazzolla, Georgia, serif; font-size: 19px; font-weight: 600">Νέο κουπόνι</h2>
+<div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 10px">
+<div><label for="cp-code" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Κωδικός</label><input id="cp-code" type="text" maxlength="24" value="{{cp.f.code}}" onChange="{{cp.f.setCode}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-family: ui-monospace, Menlo, monospace; font-size: 16px; font-weight: 700; letter-spacing: 0.04em"></div>
+<div><label for="cp-pct" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Έκπτωση %</label><input id="cp-pct" type="number" inputmode="numeric" min="1" max="90" value="{{cp.f.pct}}" onChange="{{cp.f.setPct}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+</div>
+<button type="button" onClick="{{cp.f.newCode}}" style="align-self: flex-start; height: 28px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: -6px">Άλλος τυχαίος κωδικός</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div><label for="cp-from" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμονή από</label><input id="cp-from" type="date" value="{{cp.f.from}}" onChange="{{cp.f.setFrom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div><label for="cp-to" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">έως</label><input id="cp-to" type="date" value="{{cp.f.to}}" onChange="{{cp.f.setTo}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+</div>
+<div><label for="cp-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Να κλείσουν ως (προαιρετικό)</label><input id="cp-by" type="date" value="{{cp.f.by}}" onChange="{{cp.f.setBy}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Για ποιους</div>
+<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.aud}}" as="a" hint-placeholder-count="2"><button type="button" onClick="{{a.pick}}" aria-pressed="{{a.pressed}}" style="{{a.style}}">{{a.label}}</button></sc-for></div>
+<sc-if value="{{cp.f.isSelected}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 12px; background: #F4F7F7; border: 1px solid #E6ECED">
+<label for="cp-q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
+<input id="cp-q" type="search" value="{{cp.f.q}}" onChange="{{cp.f.setQ}}" placeholder="Όνομα ή email" style="width: 100%; box-sizing: border-box; height: 38px; padding: 0 14px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px">
+<div style="display: flex; gap: 14px"><button type="button" onClick="{{cp.f.pickAll}}" style="padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer">Όλοι</button><button type="button" onClick="{{cp.f.pickNone}}" style="padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer">Κανένας</button></div>
+<div role="list" style="max-height: 260px; overflow-y: auto; display: flex; flex-direction: column">
+<sc-for list="{{cp.f.people}}" as="p" hint-placeholder-count="4">
+<button type="button" role="listitem" onClick="{{p.toggle}}" aria-pressed="{{p.pressed}}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 4px; border: 0; border-bottom: 1px solid #E6ECED; background: transparent; text-align: left; cursor: pointer; color: #18282B">
+<span style="{{p.box}}"><sc-if value="{{p.on}}" hint-placeholder-val="{{false}}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="fill: none; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round"><path d="M2.5 6.2l2.3 2.3 4.7-5"></path></svg></sc-if></span>
+<span style="flex: 1; min-width: 0"><span style="display: block; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{p.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{p.email}}<sc-if value="{{p.hasNote}}" hint-placeholder-val="{{false}}"> · {{p.note}}</sc-if></span></span>
+</button>
+</sc-for>
+<sc-if value="{{cp.f.noPeople}}" hint-placeholder-val="{{false}}"><div style="font-size: 13px; color: #4A5B5E; padding: 6px 4px">Δεν υπάρχουν ακόμα πελάτες με email.</div></sc-if>
+</div>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Αποστολή με email</div>
+<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.mail}}" as="m" hint-placeholder-count="2"><button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button></sc-for></div>
+<sc-if value="{{cp.f.sendsMail}}" hint-placeholder-val="{{true}}">
+<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.when}}" as="w" hint-placeholder-count="2"><button type="button" onClick="{{w.pick}}" aria-pressed="{{w.pressed}}" style="{{w.style}}">{{w.label}}</button></sc-for></div>
+<sc-if value="{{cp.f.isLater}}" hint-placeholder-val="{{false}}"><div><label for="cp-at" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πότε να φύγει</label><input id="cp-at" type="datetime-local" value="{{cp.f.at}}" onChange="{{cp.f.setAt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div></sc-if>
+</sc-if>
+<div style="font-size: 12px; color: #4A5B5E; line-height: 1.45">{{cp.f.mailNote}}</div>
+</div>
+<sc-if value="{{cp.f.hasError}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 13px; font-weight: 600; color: #8A3412">{{cp.f.error}}</div></sc-if>
+<button type="button" onClick="{{cp.f.save}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{cp.f.saveLabel}}</button>
+<button type="button" onClick="{{cp.f.cancel}}" style="height: 36px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Άκυρο</button>
+</aside>
+</sc-if>
+</div>
+</sc-if>
+
 <sc-if value="{{show.settings}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 20px">
@@ -835,6 +905,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{goMsgs}}" style="{{nav.msgs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-bubble" d="M4 5h16v11H9l-5 4z"></path></svg><span style="flex: 1">Μηνύματα</span><sc-if value="{{hasMsgBadge}}" hint-placeholder-val="{{true}}"><span style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 11px; background: #E9B949; color: #3A2604; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center">{{msgBadge}}</span></sc-if></button>
 <button type="button" onClick="{{goGuests}}" style="{{nav.guests}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><g class="ic-person"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path></g><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14.2a6.5 6.5 0 0 1 3.5 5.8"></path></svg><span style="flex: 1">Πελάτες</span></button>
 <button type="button" onClick="{{goPrices}}" style="{{nav.prices}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path class="ic-arc" d="M17 6.5A6.5 6.5 0 1 0 17 17.5"></path><path class="ic-bar ic-b1" d="M5 10h8"></path><path class="ic-bar ic-b2" d="M5 14h8"></path></svg><span style="flex: 1">Τιμές</span></button>
+<button type="button" onClick="{{goCoupons}}" style="{{nav.coupons}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z"></path><path class="ic-line" d="M14 5v14" stroke-dasharray="2 2.2"></path></svg><span style="flex: 1">Κουπόνια</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle class="ic-knob ic-k1" cx="16" cy="6" r="2"></circle><circle class="ic-knob ic-k2" cx="10" cy="12" r="2"></circle><circle class="ic-knob ic-k3" cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
 </nav>
 <div style="margin-top: auto; padding: 14px; border-radius: 14px; background: #EEF3F4; display: flex; flex-direction: column; gap: 10px">
@@ -1709,6 +1780,145 @@ class Component extends DCLogic {
     return { badge: 'Σάιτ', badgeStyle: base + 'background: #0F5257; color: #FFFFFF' };
   }
 
+  /* ---------- Coupons: a discount code for all customers or chosen ones, sent by email or handed out by the owners.
+     The code always works only with the email of a customer it was made for. ---------- */
+  loadCoupons() {
+    if (!this.REAL || !PUSH.client) {
+      if (!this.state.cp) this.setState({ cp: { loaded: true, list: [
+        { id: 'c1', code: 'THASOS15', discount_pct: 15, stay_from: '2026-09-01', stay_to: '2026-10-15', book_by: '2026-08-31', audience: 'all', send_email: true, status: 'sent', sent_count: 42, n: 58, created_at: '2026-07-01' },
+        { id: 'c2', code: 'FILOI20', discount_pct: 20, stay_from: '2026-07-01', stay_to: '2026-08-31', book_by: null, audience: 'selected', send_email: false, status: 'sent', sent_count: 0, n: 3, created_at: '2026-06-20' }
+      ], customers: [
+        { email: 'nikos@example.com', name: 'Νίκος Παπαδόπουλος', mailable: true }, { email: 'sofia@example.com', name: 'Σοφία Ιωάννου', mailable: false },
+        { email: 'eleni@example.com', name: 'Ελένη Δημητρίου', mailable: true }, { email: 'markopoulos@example.com', name: 'Οικογένεια Μαρκοπούλου', mailable: true }
+      ], uses: { THASOS15: 3 } } });
+      return Promise.resolve();
+    }
+    const sb = PUSH.client;
+    return Promise.all([
+      sb.from('promo_offers').select('id, code, discount_pct, stay_from, stay_to, book_by, audience, send_email, status, sent_count, failed_count, send_at, created_at, created_by, promo_recipients(count)').order('created_at', { ascending: false }).limit(200),
+      sb.rpc('coupon_customers'),
+      sb.rpc('coupon_uses')
+    ]).then(rs => {
+      const bad = rs.find(r => r.error);
+      if (bad) { this.say('Δεν φορτώθηκαν τα κουπόνια: ' + bad.error.message); return; }
+      const uses = {};
+      (rs[2].data || []).forEach(u => { uses[u.code] = u.uses; });
+      const list = (rs[0].data || []).map(o => Object.assign({}, o, { n: o.promo_recipients && o.promo_recipients[0] ? o.promo_recipients[0].count : null }));
+      this.setState({ cp: { loaded: true, list: list, customers: rs[1].data || [], uses: uses } });
+    });
+  }
+  couponVals(chipOn, chipOff) {
+    const s = this.state, cp = s.cp || { list: [], customers: [], uses: {} };
+    const T = this.TODAY;
+    const blank = { open: false, code: '', pct: '10', from: T, to: this.add(T, 60), by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
+    const f = Object.assign({}, blank, s.cpf || {});
+    const upd = p => this.setState({ cpf: Object.assign({}, f, { error: '' }, p) });
+    const val = e => (e && e.target ? e.target.value : '');
+    const day = d => d ? this.fmt(d) + ' ' + d.slice(0, 4) : '';
+    const btn = 'height: 40px; padding: 0 16px; border-radius: 20px; font-size: 13px; cursor: pointer; ';
+    const custs = cp.customers || [];
+    const picked = custs.filter(c => f.picks[c.email]);
+    const target = f.aud === 'all' ? custs : picked;
+    const mailN = target.filter(c => c.mailable).length;
+    const q = f.q.trim().toLowerCase();
+    const randCode = () => { const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c = 'LM'; for (let i = 0; i < 6; i++) c += A[Math.floor(Math.random() * A.length)]; return c; };
+
+    const state = o => {
+      if (o.status === 'cancelled') return { t: 'Απενεργοποιημένο', c: '#8A3412', bg: '#FBEAE8' };
+      if (o.stay_to < T || (o.book_by && o.book_by < T)) return { t: 'Έληξε', c: '#4A5B5E', bg: '#EEF2F2' };
+      if (o.status === 'scheduled') return { t: 'Προγραμματισμένο', c: '#7A4708', bg: '#FBF1D9' };
+      if (o.status === 'sending') return { t: 'Στέλνεται', c: '#1E3A5F', bg: '#E4ECF6' };
+      return { t: 'Ενεργό', c: '#0F5257', bg: '#DCEBEA' };
+    };
+    const list = (cp.list || []).map(o => {
+      const st = state(o), uses = (cp.uses || {})[String(o.code || '').toUpperCase()] || 0;
+      const who = o.audience === 'selected' ? (o.n != null ? o.n + (o.n === 1 ? ' πελάτης' : ' πελάτες') : 'Επιλεγμένοι πελάτες') : 'Όλοι οι πελάτες' + (o.n != null ? ' (' + o.n + ')' : '');
+      const mail = !o.send_email ? 'Χωρίς email · το δίνετε εσείς'
+        : o.status === 'scheduled' ? 'Email ' + (o.send_at ? 'στις ' + this.fmt(String(o.send_at).slice(0, 10)) : 'σύντομα')
+        : o.status === 'cancelled' ? 'Email: ' + (o.sent_count || 0) + ' στάλθηκαν'
+        : 'Email σε ' + (o.sent_count || 0) + (o.failed_count ? ' · ' + o.failed_count + ' απέτυχαν' : '');
+      return {
+        code: o.code || '—', pct: '−' + o.discount_pct + '%', who: who, mail: mail,
+        dates: 'Διαμονές ' + this.range(o.stay_from, this.add(o.stay_to, 1)) + ' ' + o.stay_to.slice(0, 4) + (o.book_by ? ' · κράτηση ως ' + day(o.book_by) : ''),
+        uses: uses ? uses + (uses === 1 ? ' κράτηση' : ' κρατήσεις') : 'Καμία κράτηση ακόμα',
+        stateText: st.t, stateStyle: 'flex-shrink: 0; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: ' + st.c + '; background: ' + st.bg,
+        canOff: o.status !== 'cancelled' && st.t !== 'Έληξε',
+        off: () => {
+          if (!confirm('Απενεργοποίηση του κουπονιού ' + o.code + ';\n\nΔεν θα δέχεται πια νέες κρατήσεις.' + (o.status === 'scheduled' ? ' Το email δεν θα σταλεί.' : ' Όσα email στάλθηκαν δεν ανακαλούνται.'))) return;
+          if (!this.REAL || !PUSH.client) { this.setState({ cp: Object.assign({}, cp, { list: cp.list.map(x => x.id === o.id ? Object.assign({}, x, { status: 'cancelled' }) : x) }) }); this.say('Το ' + o.code + ' απενεργοποιήθηκε.'); return; }
+          PUSH.client.from('promo_offers').update({ status: 'cancelled' }).eq('id', o.id).select('id').then(res => {
+            if (res.error || !res.data || !res.data.length) { this.say('Δεν απενεργοποιήθηκε: ' + (res.error ? res.error.message : 'ξαναδοκίμασε')); return; }
+            this.say('Το ' + o.code + ' απενεργοποιήθηκε.'); this.loadCoupons();
+          });
+        }
+      };
+    });
+
+    const create = () => {
+      const code = f.code.trim().toUpperCase(), pct = Number(f.pct);
+      if (!/^[A-Z0-9_-]{3,24}$/.test(code)) return upd({ error: 'Ο κωδικός θέλει 3–24 λατινικά γράμματα ή αριθμούς, χωρίς κενά.' });
+      if (!(pct >= 1 && pct <= 90)) return upd({ error: 'Η έκπτωση πρέπει να είναι από 1% έως 90%.' });
+      if (!f.from || !f.to || f.to < f.from) return upd({ error: 'Διάλεξε σωστές ημερομηνίες διαμονής (η λήξη μετά την έναρξη).' });
+      if (f.to < T) return upd({ error: 'Οι ημερομηνίες διαμονής έχουν ήδη περάσει.' });
+      if (f.by && (f.by > f.to || f.by < T)) return upd({ error: 'Το «κράτηση ως» πρέπει να είναι από σήμερα και όχι μετά τη λήξη.' });
+      if (!target.length) return upd({ error: f.aud === 'all' ? 'Δεν υπάρχουν ακόμα πελάτες με email.' : 'Διάλεξε τουλάχιστον έναν πελάτη.' });
+      if (f.email && f.when === 'at' && !f.at) return upd({ error: 'Διάλεξε πότε θα φύγει το email.' });
+      const sendAt = f.email && f.when === 'at' ? new Date(f.at).toISOString() : null;
+      const ok = () => {
+        this.setState({ cpf: null });
+        this.say('Το κουπόνι ' + code + ' έγινε για ' + target.length + (target.length === 1 ? ' πελάτη' : ' πελάτες') + '.' + (f.email ? ' ' + (mailN ? 'Το email θα φύγει σε ' + mailN + (f.when === 'at' ? ' στην ώρα που όρισες.' : ' μέσα στα επόμενα 10 λεπτά.') : 'Κανείς τους δεν δέχεται email προσφορών, οπότε δεν θα σταλεί email.') : ''));
+      };
+      if (!this.REAL || !PUSH.client) {
+        this.setState({ cp: Object.assign({}, cp, { list: [{ id: 'c' + Date.now(), code: code, discount_pct: pct, stay_from: f.from, stay_to: f.to, book_by: f.by || null, audience: f.aud, send_email: f.email, status: f.email ? 'scheduled' : 'sent', sent_count: 0, n: target.length, send_at: sendAt }].concat(cp.list) }) });
+        ok(); return;
+      }
+      upd({ busy: true });
+      PUSH.client.rpc('create_coupon', { p_code: code, p_pct: pct, p_stay_from: f.from, p_stay_to: f.to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
+        if (res.error) {
+          const m = res.error.message || '';
+          upd({ busy: false, error: m.indexOf('code_taken') >= 0 ? 'Υπάρχει ήδη ενεργό κουπόνι με αυτόν τον κωδικό.' : m.indexOf('no_recipients') >= 0 ? 'Δεν βρέθηκαν πελάτες με email.' : 'Δεν αποθηκεύτηκε: ' + m });
+          return;
+        }
+        ok(); this.loadCoupons();
+      });
+    };
+
+    return {
+      list: list, empty: list.length === 0, loading: !s.cp,
+      newOpen: f.open, closedForm: !f.open,
+      openNew: () => upd({ open: true, code: randCode() }),
+      f: {
+        code: f.code, pct: f.pct, from: f.from, to: f.to, by: f.by, q: f.q, at: f.at, busy: f.busy,
+        hasError: !!f.error, error: f.error,
+        setCode: e => upd({ code: val(e).toUpperCase().replace(/\s+/g, '') }), newCode: () => upd({ code: randCode() }),
+        setPct: e => upd({ pct: val(e) }), setFrom: e => upd({ from: val(e) }), setTo: e => upd({ to: val(e) }), setBy: e => upd({ by: val(e) }),
+        setQ: e => upd({ q: val(e) }), setAt: e => upd({ at: val(e) }),
+        aud: [['all', 'Όλοι · ' + custs.length], ['selected', 'Συγκεκριμένοι' + (picked.length ? ' · ' + picked.length : '')]].map(a => ({ label: a[1], pressed: f.aud === a[0] ? 'true' : 'false', style: (f.aud === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ aud: a[0] }) })),
+        isSelected: f.aud === 'selected',
+        people: custs.filter(c => !q || ((c.name || '') + ' ' + c.email).toLowerCase().indexOf(q) !== -1).slice(0, 200).map(c => {
+          const on = !!f.picks[c.email];
+          return {
+            name: c.name || c.email, email: c.email, note: c.mailable ? '' : 'δεν δέχεται email', hasNote: !c.mailable, pressed: on ? 'true' : 'false',
+            box: 'flex-shrink: 0; width: 20px; height: 20px; box-sizing: border-box; border-radius: 6px; display: flex; align-items: center; justify-content: center; ' + (on ? 'background: #0F5257; border: 1px solid #0F5257' : 'background: #FFFFFF; border: 1px solid #8FA5A8'), on: on,
+            toggle: () => { const p = Object.assign({}, f.picks); if (p[c.email]) delete p[c.email]; else p[c.email] = 1; upd({ picks: p }); }
+          };
+        }),
+        noPeople: custs.length === 0,
+        pickAll: () => { const p = {}; custs.forEach(c => { p[c.email] = 1; }); upd({ picks: p }); }, pickNone: () => upd({ picks: {} }),
+        mail: [[true, 'Ναι, με email'], [false, 'Όχι, το δίνω εγώ']].map(a => ({ label: a[1], pressed: f.email === a[0] ? 'true' : 'false', style: (f.email === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ email: a[0] }) })),
+        sendsMail: f.email,
+        when: [['now', 'Τώρα'], ['at', 'Αργότερα']].map(a => ({ label: a[1], pressed: f.when === a[0] ? 'true' : 'false', style: (f.when === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ when: a[0] }) })),
+        isLater: f.when === 'at',
+        mailNote: !target.length ? '' : f.email
+          ? 'Θα σταλεί σε ' + mailN + ' από ' + target.length + '. ' + (mailN < target.length ? 'Όσοι δεν δέχτηκαν email προσφορών ή διαγράφηκαν δεν το παίρνουν, αλλά ο κωδικός δουλεύει και για αυτούς αν τους τον δώσετε.' : '') + ' Το email βγαίνει στη γλώσσα του κάθε πελάτη.'
+          : 'Δεν στέλνεται τίποτα. Δώστε τον κωδικό εσείς (τηλέφωνο, μήνυμα). Δουλεύει μόνο με το email του πελάτη.',
+        saveLabel: f.busy ? 'Αποθήκευση…' : 'Δημιουργία κουπονιού',
+        save: () => { if (!f.busy) create(); },
+        cancel: () => this.setState({ cpf: null }),
+        btnPrimary: btn + 'border: 0; background: #0F5257; color: #FFFFFF; font-weight: 600'
+      }
+    };
+  }
   renderVals() {
     const s = this.state;
     const B = this.list();
@@ -2929,8 +3139,10 @@ class Component extends DCLogic {
 
 
     return Object.assign(priceVals, calSelVals, {
-      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, reqs: s.tab === 'reqs' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
-      show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: false, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
+      cp: this.couponVals(chipOn, chipOff),
+      goCoupons: () => { this.go('coupons'); this.loadCoupons(); },
+      nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, reqs: s.tab === 'reqs' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, coupons: s.tab === 'coupons' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
+      show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: false, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', coupons: s.tab === 'coupons', settings: s.tab === 'settings' },
       hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? initialsOf(s.user.name) : '', userAvSm: ownerAv(s.user && s.user.color, 34), userAvLg: ownerAv(s.user && s.user.color, 44),
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
       pf: (() => {
@@ -3140,6 +3352,7 @@ class Component extends DCLogic {
           msgs: { title: 'Μηνύματα', sub: 'Μόνο πελάτες που έκλεισαν από το σάιτ · οι πελάτες του Booking απαντώνται στο Booking' },
           guests: { title: 'Πελάτες', sub: '' },
           prices: { title: 'Τιμές', sub: 'Τιμές του σάιτ ανά νύχτα · οι τιμές του Booking αλλάζουν στο extranet' },
+          coupons: { title: 'Κουπόνια', sub: 'Εκπτωτικοί κωδικοί για όλους τους πελάτες ή για συγκεκριμένους · κάθε κωδικός δουλεύει μόνο με το email του πελάτη' },
           settings: { title: 'Ρυθμίσεις', sub: '' }
         }[s.tab];
         if (!P) return { show: false, title: '', sub: '', hasSub: false, titleStyle: '', subStyle: '', hasAction: false, action: () => {}, actionLabel: '' };
@@ -3587,7 +3800,7 @@ class Component extends DCLogic {
     PUSH.client = SB;
     comp.reload = loadRequests;
     comp.props = Object.assign({}, comp.props, { owners: AUTH.users() });
-    loadRequests(); comp.loadFeeds(); comp.loadPrices();
+    loadRequests(); comp.loadFeeds(); comp.loadPrices(); comp.loadCoupons();
     if (channel) SB.removeChannel(channel);
     channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
       if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
@@ -3596,6 +3809,7 @@ class Component extends DCLogic {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'unit_blocks' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'request_messages' }, function () { loadRequests(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'ical_feeds' }, function () { comp.loadFeeds(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'promo_offers' }, function () { comp.loadCoupons(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'price_overrides' }, function () { comp.loadPrices(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function () { comp.loadFeeds(); comp.loadPrices(); }).subscribe();
     if (PUSH.on()) PUSH.syncServer().catch(function () { comp.setState({ toggles: Object.assign({}, comp.state.toggles, { push: false }) }); });
