@@ -9,7 +9,7 @@ export type Guest = {
   check_in: string; check_out: string; guests: number;
   ref_no?: number | null; price_total?: number | string | null; price_paid?: number | string | null;
 };
-export type Offer = { discount_pct: number; code?: string | null; stay_from: string; stay_to: string; book_by?: string | null };
+export type Offer = { discount_pct: number; code?: string | null; stay_from: string; stay_to: string; book_by?: string | null; max_nights?: number | null };
 export type Mail = { subject: string; html: string; text: string };
 export const GUEST_KINDS = ['received', 'confirmed', 'prearrival', 'cancelled', 'rejected', 'expired'] as const;
 export type GuestKind = typeof GUEST_KINDS[number];
@@ -507,20 +507,33 @@ export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: 
   const code = clean(o.code);
   const stays = fmtMonthDay(o.stay_from, lang) + ' – ' + fmtMonthDay(o.stay_to, lang);
   const bookBy = o.book_by ? fmtMonthDay(o.book_by, lang) : '';
+  const until = fmtMonthDay(o.stay_to, lang);
+  const days = Math.max(1, Math.round((dateOf(o.stay_to).getTime() - dateOf(o.stay_from).getTime()) / 86400000) + 1);
+  const mn = o.max_nights ? Math.round(Number(o.max_nights)) : 0;
+  const onNights = !mn ? tr('σε όλες τις διανυκτερεύσεις', 'on every night', 'tüm gecelerde', 'за всички нощувки')
+    : mn === 1 ? tr('για 1 διανυκτέρευση', 'on 1 night', '1 gece için', 'за 1 нощувка')
+    : tr(`στις πρώτες ${mn} διανυκτερεύσεις`, `on the first ${mn} nights`, `ilk ${mn} gece için`, `за първите ${mn} нощувки`);
+  const validFor = days === 1
+    ? tr('Το κουπόνι ισχύει μόνο για σήμερα', 'This coupon is valid for today only', 'Bu kupon yalnızca bugün geçerli', 'Купонът е валиден само днес')
+    : tr(`Το κουπόνι ισχύει για ${days} μέρες από σήμερα`, `This coupon is valid for ${days} days from today`, `Bu kupon bugünden itibaren ${days} gün geçerli`, `Купонът е валиден ${days} дни от днес`);
   let link = clean(s.site_url);
   if (link) { try { const u = new URL(link); if (code) u.searchParams.set('promo', code); link = u.toString(); } catch { /* keep as is */ } }
   const quiet = QUIET.has(dateOf(o.stay_from).getUTCMonth() + 1) && QUIET.has(dateOf(o.stay_to).getUTCMonth() + 1);
 
-  d.greeting(to.name, tr('Πέρασε λίγος καιρός από την τελευταία φορά που μας επισκέφτηκες και θα χαρούμε να σε δούμε ξανά. Γι’ αυτό ετοιμάσαμε μια προσφορά μόνο για τους επισκέπτες μας.', 'It has been a little while since your last visit and we would love to see you again. So we have prepared an offer just for our guests.'));
+  d.raw(
+    `<tr><td class="px" align="center" style="padding:4px 40px 8px 40px;"><div style="display:inline-block;background:${C.panel};border:1px solid ${C.brand};border-radius:999px;padding:9px 18px;font-family:${SANS};font-size:14px;line-height:20px;color:${C.deep};font-weight:700;">${esc(validFor)} · ${esc(tr('έως', 'until', 'son gün', 'до'))} ${esc(until)}</div></td></tr>`,
+    `${validFor} · ${tr('έως', 'until', 'son gün', 'до')} ${until}`
+  );  d.greeting(to.name, tr('Πέρασε λίγος καιρός από την τελευταία φορά που μας επισκέφτηκες και θα χαρούμε να σε δούμε ξανά. Γι’ αυτό ετοιμάσαμε μια προσφορά μόνο για τους επισκέπτες μας.', 'It has been a little while since your last visit and we would love to see you again. So we have prepared an offer just for our guests.'));
+
   d.raw(
     `<tr><td class="px" style="padding:24px 40px 8px 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border:1px solid ${C.line};border-radius:14px;">` +
-    `<tr><td align="center" style="padding:30px 24px 10px 24px;"><div style="font-family:${SANS};font-size:11px;letter-spacing:2px;color:${C.mute};">${tr('Η ΕΚΠΤΩΣΗ ΣΟΥ', 'YOUR DISCOUNT')}</div><div class="big" style="font-family:${SERIF};font-size:72px;line-height:76px;color:${C.brand};font-weight:600;padding:8px 0 4px 0;">&minus;${lang === 'tr' ? '%' + pct : pct + '%'}</div><div style="font-family:${SANS};font-size:15px;line-height:22px;color:${C.body};">${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}</div></td></tr>` +
+    `<tr><td align="center" style="padding:30px 24px 10px 24px;"><div style="font-family:${SANS};font-size:11px;letter-spacing:2px;color:${C.mute};">${tr('Η ΕΚΠΤΩΣΗ ΣΟΥ', 'YOUR DISCOUNT')}</div><div class="big" style="font-family:${SERIF};font-size:72px;line-height:76px;color:${C.brand};font-weight:600;padding:8px 0 4px 0;">&minus;${lang === 'tr' ? '%' + pct : pct + '%'}</div><div style="font-family:${SANS};font-size:15px;line-height:22px;color:${C.body};">${esc(onNights)}</div></td></tr>` +
     `<tr><td style="padding:16px 24px 0 24px;"><div style="border-top:1px solid ${C.line};font-size:0;line-height:0;">&nbsp;</div></td></tr>` +
     `<tr><td style="padding:0 24px 24px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>` +
     `<td width="${bookBy ? 50 : 100}%" align="center" valign="top" style="font-family:${SANS};text-align:center;"><div style="font-size:12px;color:${C.mute};">${tr('ΙΣΧΥΕΙ ΓΙΑ ΔΙΑΜΟΝΕΣ', 'VALID FOR STAYS')}</div><div style="font-size:15px;color:${C.ink};font-weight:600;padding-top:3px;">${esc(stays)}</div></td>` +
     (bookBy ? `<td width="50%" align="center" valign="top" style="font-family:${SANS};text-align:center;"><div style="font-size:12px;color:${C.mute};">${tr('ΚΡΑΤΗΣΕ ΕΩΣ', 'BOOK BY')}</div><div style="font-size:15px;color:${C.ink};font-weight:600;padding-top:3px;">${esc(bookBy)}</div></td>` : '') +
     `</tr></table></td></tr></table></td></tr>`,
-    `${tr('ΕΚΠΤΩΣΗ', 'DISCOUNT')} −${lang === 'tr' ? '%' + pct : pct + '%'} ${tr('σε όλες τις διανυκτερεύσεις', 'on every night')}\n${tr('Ισχύει για διαμονές', 'Valid for stays')}: ${stays}${bookBy ? `\n${tr('Κράτησε έως', 'Book by')}: ${bookBy}` : ''}`
+    `${tr('ΕΚΠΤΩΣΗ', 'DISCOUNT')} −${lang === 'tr' ? '%' + pct : pct + '%'} ${onNights}\n${tr('Ισχύει για διαμονές', 'Valid for stays')}: ${stays}${bookBy ? `\n${tr('Κράτησε έως', 'Book by')}: ${bookBy}` : ''}`
   );
   if (code) {
     d.raw(
