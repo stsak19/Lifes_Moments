@@ -1792,8 +1792,8 @@ class Component extends DCLogic {
     const sb = PUSH.client;
     return Promise.all([
       sb.from('promo_offers').select('id, code, discount_pct, stay_from, stay_to, book_by, audience, send_email, status, sent_count, failed_count, send_at, created_at, created_by, promo_recipients(count)').order('created_at', { ascending: false }).limit(200),
-      sb.rpc('coupon_customers'),
-      sb.rpc('coupon_uses')
+      sb.rpc('offer_customers'),
+      sb.rpc('offer_uses')
     ]).then(rs => {
       const bad = rs.find(r => r.error);
       if (bad) { this.say('Δεν φορτώθηκαν τα κουπόνια: ' + bad.error.message); return; }
@@ -1871,7 +1871,7 @@ class Component extends DCLogic {
         ok(); return;
       }
       upd({ busy: true });
-      PUSH.client.rpc('create_coupon', { p_code: code, p_pct: pct, p_stay_from: from, p_stay_to: to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
+      PUSH.client.rpc('save_offer', { p_code: code, p_pct: pct, p_stay_from: from, p_stay_to: to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
         if (res.error) {
           const m = res.error.message || '';
           upd({ busy: false, error: m.indexOf('code_taken') >= 0 ? 'Υπάρχει ήδη ενεργό κουπόνι με αυτόν τον κωδικό.' : m.indexOf('no_recipients') >= 0 ? 'Δεν βρέθηκαν πελάτες με email.' : 'Δεν αποθηκεύτηκε: ' + m });
