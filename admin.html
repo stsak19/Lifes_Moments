@@ -620,7 +620,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 18px 16px; background: #F7FAFA">
 <div><label for="inv-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Όνομα</label><input id="inv-name" type="text" autocomplete="off" maxlength="80" value="{{inv.name}}" onChange="{{inv.setName}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
 <div><label for="inv-email" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Email</label><input id="inv-email" type="email" autocomplete="off" spellcheck="false" value="{{inv.email}}" onChange="{{inv.setEmail}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
-<span style="font-size: 12px; color: #4A5B5E">Θα του/της σταλεί email με σύνδεσμο για να διαλέξει μόνος/μόνη τον κωδικό του/της. Θα έχει πλήρη πρόσβαση, όπως εσύ.</span>
+<div><label for="inv-pass" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Κωδικός (τουλάχιστον 8 χαρακτήρες)</label><input id="inv-pass" type="text" autocomplete="new-password" spellcheck="false" value="{{inv.pass}}" onChange="{{inv.setPass}}" style="box-sizing: border-box; width: 100%; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
+<span style="font-size: 12px; color: #4A5B5E">Ο λογαριασμός φτιάχνεται αμέσως, χωρίς email. Δώσε του/της τον κωδικό· μπορεί να τον αλλάξει μετά από το Προφίλ. Θα έχει πλήρη πρόσβαση, όπως εσύ.</span>
 <sc-if value="{{inv.err}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 12px; font-weight: 600; color: #8A3412">{{inv.err}}</div></sc-if>
 <div style="display: flex; gap: 8px"><button type="button" onClick="{{inv.send}}" disabled="{{inv.busy}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{inv.sendLabel}}</button><button type="button" onClick="{{inv.toggle}}" style="height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Άκυρο</button></div>
 </div>
@@ -1010,7 +1011,7 @@ class Component extends DCLogic {
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
-      toggles: { push: false }, pfName: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '', pfErr: '', pfBusy: null, invOpen: false, invName: '', invEmail: '', invErr: '', invBusy: false, owAsk: null, owBusy: null, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
+      toggles: { push: false }, pfName: null, pfPw: false, pfCur: '', pfNew: '', pfNew2: '', pfErr: '', pfBusy: null, invOpen: false, invName: '', invEmail: '', invPass: '', invErr: '', invBusy: false, owAsk: null, owBusy: null, accepting: true, siteBusy: false, feeds: null, bkOpen: false, bkUnit: null, bkDraft: '', bkBusy: null,
       extra: 15,
       priceMonth: '2026-07', sel: null, draft: { room: '', apt: '', min: '' },
       overrides: (() => {
@@ -2993,24 +2994,25 @@ class Component extends DCLogic {
       inv: (() => {
         const A = this.props.auth;
         return {
-          open: s.invOpen, closed: !s.invOpen && !!(A && A.inviteOwner), busy: s.invBusy,
-          name: s.invName, email: s.invEmail, err: s.invErr,
-          sendLabel: s.invBusy ? 'Αποστολή…' : 'Αποστολή πρόσκλησης',
-          toggle: () => this.setState({ invOpen: !s.invOpen, invName: '', invEmail: '', invErr: '' }),
+          open: s.invOpen, closed: !s.invOpen && !!(A && A.createOwner), busy: s.invBusy,
+          name: s.invName, email: s.invEmail, pass: s.invPass, err: s.invErr,
+          sendLabel: s.invBusy ? 'Δημιουργία…' : 'Δημιουργία λογαριασμού',
+          toggle: () => this.setState({ invOpen: !s.invOpen, invName: '', invEmail: '', invPass: '', invErr: '' }),
+          setPass: e => this.setState({ invPass: e.target.value, invErr: '' }),
           setName: e => this.setState({ invName: e.target.value, invErr: '' }),
           setEmail: e => this.setState({ invEmail: e.target.value, invErr: '' }),
           send: () => {
             if (s.invBusy) return;
             const name = s.invName.trim().replace(/\s+/g, ' '), email = s.invEmail.trim().toLowerCase();
             const err = !name ? 'Γράψε όνομα.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Το email δεν φαίνεται σωστό.'
-              : (this.props.owners || []).some(o => o.email === email) ? 'Αυτό το email είναι ήδη ιδιοκτήτης.' : '';
+              : (this.props.owners || []).some(o => o.email === email) ? 'Αυτό το email είναι ήδη ιδιοκτήτης.'
+              : s.invPass.length < 8 ? 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.' : '';
             if (err) { this.setState({ invErr: err }); return; }
             this.setState({ invBusy: true, invErr: '' });
-            Promise.resolve(A.inviteOwner(email, name)).then(r => {
+            Promise.resolve(A.createOwner(email, name, s.invPass)).then(r => {
               this.props.owners = r.owners;
-              this.setState({ invBusy: false, invOpen: false, invName: '', invEmail: '' });
-              this.say(r.invited ? 'Στάλθηκε πρόσκληση στο ' + email + '. Μόλις πατήσει τον σύνδεσμο, διαλέγει κωδικό και μπαίνει.'
-                : 'Ο/Η ' + name + ' είχε ήδη λογαριασμό: μπαίνει με τον παλιό κωδικό ή με «Ξέχασες τον κωδικό;».');
+              this.setState({ invBusy: false, invOpen: false, invName: '', invEmail: '', invPass: '' });
+              this.say('Ο λογαριασμός για ' + name + ' είναι έτοιμος. Μπαίνει με το ' + email + ' και τον κωδικό που έβαλες.');
             }, e => this.setState({ invBusy: false, invErr: (e && e.message) || 'Δεν στάλθηκε η πρόσκληση.' }));
           }
         };
@@ -3302,7 +3304,7 @@ class Component extends DCLogic {
         });
       });
     },
-    inviteOwner: function (email, name) { return this.ownersCall({ action: 'invite', email: email, name: name, redirect: location.origin + location.pathname }); },
+    createOwner: function (email, name, password) { return this.ownersCall({ action: 'create', email: email, name: name, password: password }); },
     removeOwner: function (email) { return this.ownersCall({ action: 'remove', email: email }).then(r => r.owners); },
     setNewPassword: function (pw) { return SB.auth.updateUser({ password: pw }).then(r => { if (r.error) throw new Error(greek(r.error.message)); }); },
     changePassword: function (email, current, next) {
@@ -3355,9 +3357,9 @@ class Component extends DCLogic {
         if (u) u.name = name;
         return Promise.resolve(PREVIEW_USERS.map(pub));
       },
-      inviteOwner: function (email, name) {
-        PREVIEW_USERS.push({ id: 'owner-' + Date.now(), name: name, email: email, password: 'demo1234' });
-        return Promise.resolve({ owners: PREVIEW_USERS.map(pub), invited: true });
+      createOwner: function (email, name, password) {
+        PREVIEW_USERS.push({ id: 'owner-' + Date.now(), name: name, email: email, password: password });
+        return Promise.resolve({ owners: PREVIEW_USERS.map(pub) });
       },
       removeOwner: function (email) {
         const i = PREVIEW_USERS.findIndex(x => x.email === email);

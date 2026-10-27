@@ -1,6 +1,6 @@
 // Owners of the admin, managed from Ρυθμίσεις → Χρήστες. Only a signed-in owner can call this.
-//   { action: 'invite', email, name, redirect }  adds the email to public.owners and emails a Supabase invitation;
-//                                                 the invited owner opens the link and picks their own password.
+//   { action: 'create', email, name, password }  adds the owner and makes their login right away (no email is sent);
+//                                                 they can change the password later from Ρυθμίσεις → Προφίλ.
 //   { action: 'remove', email }                  takes away access: removes the owner, their login and their devices.
 // Nobody can remove themselves, and the last owner can never be removed.
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -23,7 +23,6 @@ const json = (body: unknown, status: number, h: Record<string, string>) =>
   new Response(JSON.stringify(body), { status, headers: { ...h, 'Content-Type': 'application/json' } });
 const log = (event: string, f: Record<string, unknown> = {}) => console.log(JSON.stringify({ event, ...f }));
 
-const ALLOWED_REDIRECT = /^https:\/\/stsak19\.github\.io\/|^http:\/\/localhost:8765\//i;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 async function caller(req: Request): Promise<string | null> {
@@ -59,29 +58,28 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const action = String(body.action ?? '');
 
-    if (action === 'invite') {
+    if (action === 'create') {
       const email = String(body.email ?? '').trim().toLowerCase();
       const name = String(body.name ?? '').trim().replace(/\s+/g, ' ');
-      const redirect = String(body.redirect ?? '');
+      const password = String(body.password ?? '');
       if (!EMAIL.test(email)) return json({ error: 'Το email δεν φαίνεται σωστό.' }, 400, h);
       if (!name || name.length > 80) return json({ error: 'Γράψε όνομα (έως 80 χαρακτήρες).' }, 400, h);
-      if (!ALLOWED_REDIRECT.test(redirect)) return json({ error: 'bad redirect' }, 400, h);
+      if (password.length < 8) return json({ error: 'Ο κωδικός θέλει τουλάχιστον 8 χαρακτήρες.' }, 400, h);
       const { data: exists } = await admin.from('owners').select('email').eq('email', email).maybeSingle();
       if (exists) return json({ error: 'Αυτό το email είναι ήδη ιδιοκτήτης.' }, 409, h);
       const { error: insErr } = await admin.from('owners').insert({ email, name });
       if (insErr) throw new Error(insErr.message);
-      // Has signed in before (e.g. removed and added back): no invitation, they sign in or use «Ξέχασες τον κωδικό;».
-      // Invited but never got in (link expired or unused): drop that empty login and invite again.
+      // A login left over from before (an old invitation, or removed and added back) is replaced by the new one.
       const old = await authUser(email);
-      if (old?.last_sign_in_at) { log('owner_readded', { by: me, email }); return json({ ok: true, invited: false }, 200, h); }
       if (old) await admin.auth.admin.deleteUser(old.id);
-      const { error } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo: redirect });
+      const { error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
       if (error) {
-        await admin.from('owners').delete().eq('email', email); // keep the list honest if the email could not go out
+        await admin.from('owners').delete().eq('email', email);
+        if (/password/i.test(error.message)) return json({ error: 'Ο κωδικός είναι πολύ αδύναμος. Δοκίμασε άλλον.' }, 400, h);
         throw new Error(error.message);
       }
-      log('owner_invited', { by: me, email });
-      return json({ ok: true, invited: true }, 200, h);
+      log('owner_created', { by: me, email });
+      return json({ ok: true }, 200, h);
     }
 
     if (action === 'remove') {
