@@ -561,7 +561,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Προφίλ</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-bottom: 1px solid #EEF2F2">
-<span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; border-radius: 22px; background: #E3F0EF; color: #0A3A3E; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px">{{userInitials}}</span>
+<span aria-hidden="true" style="{{userAvLg}}">{{userInitials}}</span>
 <span style="min-width: 0"><span style="display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{userName}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{pf.email}}</span></span>
 </div>
 <div style="padding: 12px 18px; border-bottom: 1px solid #EEF2F2"><label for="pf-name" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">Όνομα (έτσι φαίνεται στον άλλον ιδιοκτήτη και στα μηνύματα)</label>
@@ -604,7 +604,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
 <div style="border-bottom: 1px solid #EEF2F2">
-<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span style="min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; min-height: 56px; box-sizing: border-box"><span aria-hidden="true" style="{{ow.av}}">{{ow.initials}}</span><span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 500">{{ow.name}}</span><span style="display: block; font-size: 12px; color: #4A5B5E; overflow: hidden; text-overflow: ellipsis">Ιδιοκτήτης · πλήρης πρόσβαση · {{ow.email}}</span></span>
 <sc-if value="{{ow.you}}" hint-placeholder-val="{{false}}"><span style="flex-shrink: 0; font-size: 12px; font-weight: 600; color: #0F5257">{{ow.you}}</span></sc-if>
 <sc-if value="{{ow.canRemove}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{ow.ask}}" style="flex-shrink: 0; padding: 0; border: 0; background: none; color: #8A3412; font-size: 13px; font-weight: 600; cursor: pointer">Αφαίρεση</button></sc-if>
 </div>
@@ -824,7 +824,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <sc-if value="{{hasUser}}" hint-placeholder-val="{{true}}">
 <div style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #F4F7F7">
-<span aria-hidden="true" style="flex-shrink: 0; width: 34px; height: 34px; border-radius: 17px; background: #E9B949; color: #3A2604; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">{{userInitials}}</span>
+<span aria-hidden="true" style="{{userAvSm}}">{{userInitials}}</span>
 <span style="flex: 1; min-width: 0"><span style="display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" title="{{userName}}">{{userName}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Συνδεδεμένος · <button type="button" onClick="{{logout}}" style="padding: 0; border: 0; background: none; color: #0F5257; font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer">Έξοδος</button></span></span>
 </div>
 </sc-if>
@@ -920,6 +920,10 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
  * then sends a Web Push when a guest sends a request and 4 hours before it expires.
  * iPhone: push works only once the admin is added to the Home Screen and opened from there (iOS 16.4+).
  */
+// Each owner's own colour (key stored in owners.color, picked by the database when the owner is created).
+const OWNER_COLORS = { amber: ['#E9B949', '#3A2604'], teal: ['#0F5257', '#FFFFFF'], coral: ['#E07A5F', '#FFFFFF'], violet: ['#7B61C9', '#FFFFFF'], sky: ['#3B8FD6', '#FFFFFF'], rose: ['#D6457A', '#FFFFFF'], olive: ['#7A8B2E', '#FFFFFF'], slate: ['#4A5B5E', '#FFFFFF'] };
+const ownerAv = (key, size) => { const c = OWNER_COLORS[key] || OWNER_COLORS.amber; return 'flex-shrink: 0; width: ' + size + 'px; height: ' + size + 'px; border-radius: ' + (size / 2) + 'px; background: ' + c[0] + '; color: ' + c[1] + '; font-size: ' + (size > 40 ? 15 : 13) + 'px; font-weight: 700; display: flex; align-items: center; justify-content: center'; };
+const initialsOf = n => String(n || '').trim().split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase();
 const LM_API = 'https://cwucmglctgklokxwbwqz.supabase.co', LM_KEY = 'sb_publishable_u-1Q2OU_vtTz70FAKJ71vA_3BiP0LaT';
 function lmB64(s) { const p = s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4); const b = atob(p); const o = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) o[i] = b.charCodeAt(i); return o; }
 const PUSH = {
@@ -2927,7 +2931,7 @@ class Component extends DCLogic {
     return Object.assign(priceVals, calSelVals, {
       nav: { msgs: s.tab === 'msgs' ? navOn : navOff, today: s.tab === 'today' ? navOn : navOff, reqs: s.tab === 'reqs' ? navOn : navOff, cal: s.tab === 'cal' ? navOn : navOff, list: s.tab === 'list' ? navOn : navOff, guests: s.tab === 'guests' ? navOn : navOff, prices: s.tab === 'prices' ? navOn : navOff, settings: s.tab === 'settings' ? navOn : navOff },
       show: { msgs: s.tab === 'msgs', today: s.tab === 'today', reqs: s.tab === 'reqs', req: false, cal: s.tab === 'cal', list: s.tab === 'list', guests: s.tab === 'guests', prices: s.tab === 'prices', settings: s.tab === 'settings' },
-      hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? s.user.name.split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase() : '',
+      hasUser: !!s.user, userName: s.user ? s.user.name : '', userInitials: s.user ? initialsOf(s.user.name) : '', userAvSm: ownerAv(s.user && s.user.color, 34), userAvLg: ownerAv(s.user && s.user.color, 44),
       logout: () => { if (this.props.onLogout) this.props.onLogout(); },
       pf: (() => {
         const u = s.user || {};
@@ -2974,7 +2978,7 @@ class Component extends DCLogic {
         const mine = !!(s.user && s.user.id === o.id);
         const A = this.props.auth;
         return {
-          name: o.name, email: o.email, you: mine ? 'Εσύ' : '',
+          name: o.name, email: o.email, you: mine ? 'Εσύ' : '', initials: initialsOf(o.name), av: ownerAv(o.color, 34),
           canRemove: !mine && (this.props.owners || []).length > 1 && !!(A && A.removeOwner),
           confirm: s.owAsk === o.email, busy: s.owBusy === o.email,
           removeLabel: s.owBusy === o.email ? 'Αφαίρεση…' : 'Ναι, αφαίρεση',
@@ -3267,12 +3271,12 @@ class Component extends DCLogic {
     owners: [],
     users: function () { return this.owners; },
     profile: function (user) {
-      return SB.from('owners').select('email, name').order('name').then(res => {
+      return SB.from('owners').select('email, name, color').order('name').then(res => {
         if (res.error) throw new Error(greek(res.error.message));
         const me = (res.data || []).find(o => o.email === String(user.email).toLowerCase());
         if (!me) return SB.auth.signOut().then(() => { throw new Error('Αυτός ο λογαριασμός δεν είναι ιδιοκτήτης.'); });
-        this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email }));
-        return { id: me.email, uid: user.id, name: me.name, email: me.email };
+        this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email, color: o.color }));
+        return { id: me.email, uid: user.id, name: me.name, email: me.email, color: me.color };
       });
     },
     current: function () { return SB.auth.getSession().then(r => r.data && r.data.session ? this.profile(r.data.session.user).catch(() => null) : null); },
@@ -3298,8 +3302,8 @@ class Component extends DCLogic {
           const ctx = r.error.context;
           return (ctx && ctx.json ? ctx.json().catch(() => ({})) : Promise.resolve({})).then(j => { throw new Error(j.error || greek(r.error.message)); });
         }
-        return SB.from('owners').select('email, name').order('name').then(res => {
-          if (!res.error) this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email }));
+        return SB.from('owners').select('email, name, color').order('name').then(res => {
+          if (!res.error) this.owners = res.data.map(o => ({ id: o.email, name: o.name, email: o.email, color: o.color }));
           return Object.assign({ owners: this.owners }, r.data);
         });
       });
@@ -3320,12 +3324,12 @@ class Component extends DCLogic {
   };
   const PREVIEW_AUTH = (function () {
     const PREVIEW_USERS = [
-      { id: 'owner-1', name: 'Ιδιοκτήτης Α', email: 'idioktitis.a@example.com', password: 'demo1234' },
-      { id: 'owner-2', name: 'Ιδιοκτήτης Β', email: 'idioktitis.b@example.com', password: 'demo1234' }
+      { id: 'owner-1', name: 'Ιδιοκτήτης Α', email: 'idioktitis.a@example.com', password: 'demo1234', color: 'amber' },
+      { id: 'owner-2', name: 'Ιδιοκτήτης Β', email: 'idioktitis.b@example.com', password: 'demo1234', color: 'teal' }
     ];
     const KEY = 'lm-admin-session';
     const DAYS = 30;
-    const pub = u => ({ id: u.id, name: u.name, email: u.email });
+    const pub = u => ({ id: u.id, name: u.name, email: u.email, color: u.color });
     const read = st => { try { return JSON.parse(st.getItem(KEY) || 'null'); } catch (e) { return null; } };
     const clear = () => { [localStorage, sessionStorage].forEach(st => { try { st.removeItem(KEY); } catch (e) {} }); };
     return {
