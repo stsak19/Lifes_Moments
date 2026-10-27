@@ -590,16 +590,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-if>
 </div>
 </div>
-<div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
-<div style="display: flex; flex-direction: column; gap: 8px">
-<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Αποστολή του κουπονιού με email</div>
-<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.mail}}" as="m" hint-placeholder-count="2"><button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="{{m.style}}">{{m.label}}</button></sc-for></div>
-<sc-if value="{{cp.f.sendsMail}}" hint-placeholder-val="{{true}}">
-<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.when}}" as="w" hint-placeholder-count="2"><button type="button" onClick="{{w.pick}}" aria-pressed="{{w.pressed}}" style="{{w.style}}">{{w.label}}</button></sc-for></div>
-<sc-if value="{{cp.f.isLater}}" hint-placeholder-val="{{false}}"><div><label for="cp-at" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Πότε να σταλεί το κουπόνι</label><input id="cp-at" type="datetime-local" value="{{cp.f.at}}" onChange="{{cp.f.setAt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div></sc-if>
-</sc-if>
-</div>
-</div>
 </div>
 <sc-if value="{{cp.f.hasError}}" hint-placeholder-val="{{false}}"><div role="alert" style="font-size: 13px; font-weight: 600; color: #8A3412">{{cp.f.error}}</div></sc-if>
 <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
@@ -1817,7 +1807,7 @@ class Component extends DCLogic {
     const s = this.state, cp = s.cp || { list: [], customers: [], uses: {} };
     const T = this.TODAY;
     const blank = { open: false, code: '', pct: '10', days: '30', by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
-    const f = Object.assign({}, blank, s.cpf || {});
+    const f = Object.assign({}, blank, s.cpf || {}, { email: true, when: 'now' });
     const upd = p => this.setState({ cpf: Object.assign({}, f, { error: '' }, p) });
     const val = e => (e && e.target ? e.target.value : '');
     const day = d => d ? this.fmt(d) + ' ' + d.slice(0, 4) : '';
