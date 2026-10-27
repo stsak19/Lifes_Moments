@@ -566,6 +566,11 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <button type="button" onClick="{{cp.f.newCode}}" style="align-self: flex-start; height: 28px; padding: 0; border: 0; background: transparent; color: #0F5257; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer; margin-top: -6px">Άλλος τυχαίος κωδικός</button>
 <div><label for="cp-days" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Για πόσες μέρες να ισχύει το κουπόνι</label><input id="cp-days" type="number" inputmode="numeric" min="1" max="730" value="{{cp.f.days}}" onChange="{{cp.f.setDays}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; font-weight: 600; color: #4A5B5E">Για πόσες διανυκτερεύσεις ισχύει η έκπτωση</div>
+<div style="display: flex; gap: 8px"><sc-for list="{{cp.f.nlim}}" as="n" hint-placeholder-count="2"><button type="button" onClick="{{n.pick}}" aria-pressed="{{n.pressed}}" style="{{n.style}}">{{n.label}}</button></sc-for></div>
+<sc-if value="{{cp.f.isMax}}" hint-placeholder-val="{{false}}"><div><label for="cp-nights" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Αριθμός νυχτών με έκπτωση (οι υπόλοιπες στην κανονική τιμή)</label><input id="cp-nights" type="number" inputmode="numeric" min="1" max="60" value="{{cp.f.nights}}" onChange="{{cp.f.setNights}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
+</div>
 <div><label for="cp-by" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Να κλείσουν έως (προαιρετικό)</label><input id="cp-by" type="date" value="{{cp.f.by}}" onChange="{{cp.f.setBy}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 14px"></div>
 </div>
 <div style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
@@ -1459,7 +1464,7 @@ class Component extends DCLogic {
     const status = r.status === 'expired' || late ? 'rejected' : r.status; // 'cancelled' passes through
     return {
       id: (this.ON['db-' + r.id] = athensISOof(r.created_at), 'db-' + r.id), dbId: r.id, real: true, name: r.name, type: r.unit_type, unit: r.unit, start: r.check_in, nights: nights, guests: r.guests,
-      total: price ? Math.round(price * (1 - (r.discount_pct || 0) / 100)) : 0, fullTotal: price || 0, promo: r.promo_code || '', discountPct: r.discount_pct || 0,
+      total: price ? Math.round(price - (r.discount_nights && r.discount_nights < nights ? (this.normalPrice(r.unit_type, r.check_in, r.discount_nights, r.guests) || 0) : price) * (r.discount_pct || 0) / 100) : 0, fullTotal: price || 0, promo: r.promo_code || '', discountPct: r.discount_pct || 0,
       priceless: price == null, source: 'site', status: status, expired: r.status === 'expired' || late,
       ago: status === 'pending' ? Math.min(23, 24 - left, ago) : ago,
       email: r.email, phone: r.phone, note: r.note || '', by: r.decided_by || ''
@@ -1791,7 +1796,7 @@ class Component extends DCLogic {
     }
     const sb = PUSH.client;
     return Promise.all([
-      sb.from('promo_offers').select('id, code, discount_pct, stay_from, stay_to, book_by, audience, send_email, status, sent_count, failed_count, send_at, created_at, created_by, promo_recipients(count)').order('created_at', { ascending: false }).limit(200),
+      sb.from('promo_offers').select('id, code, discount_pct, max_nights, stay_from, stay_to, book_by, audience, send_email, status, sent_count, failed_count, send_at, created_at, created_by, promo_recipients(count)').order('created_at', { ascending: false }).limit(200),
       sb.rpc('offer_customers'),
       sb.rpc('offer_uses')
     ]).then(rs => {
@@ -1806,7 +1811,7 @@ class Component extends DCLogic {
   couponVals(chipOn, chipOff) {
     const s = this.state, cp = s.cp || { list: [], customers: [], uses: {} };
     const T = this.TODAY;
-    const blank = { open: false, code: '', pct: '10', days: '30', by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
+    const blank = { open: false, code: '', pct: '10', days: '30', nlim: 'any', nights: '3', by: '', aud: 'all', picks: {}, q: '', email: true, when: 'now', at: '', error: '', busy: false };
     const f = Object.assign({}, blank, s.cpf || {}, { email: true, when: 'now' });
     const upd = p => this.setState({ cpf: Object.assign({}, f, { error: '' }, p) });
     const val = e => (e && e.target ? e.target.value : '');
@@ -1834,7 +1839,7 @@ class Component extends DCLogic {
         : o.status === 'cancelled' ? 'Email: ' + (o.sent_count || 0) + ' στάλθηκαν'
         : 'Email σε ' + (o.sent_count || 0) + (o.failed_count ? ' · ' + o.failed_count + ' απέτυχαν' : '');
       return {
-        code: o.code || '—', pct: '−' + o.discount_pct + '%', who: who, mail: mail,
+        code: o.code || '—', pct: '−' + o.discount_pct + '%' + (o.max_nights ? ' · ' + (o.max_nights === 1 ? '1 νύχτα' : 'έως ' + o.max_nights + ' νύχτες') : ''), who: who, mail: mail,
         dates: 'Ισχύει ως ' + day(o.stay_to) + (o.book_by ? ' · να κλείσουν έως ' + day(o.book_by) : ''),
         uses: uses ? uses + (uses === 1 ? ' κράτηση' : ' κρατήσεις') : 'Καμία κράτηση ακόμα',
         stateText: st.t, stateStyle: 'flex-shrink: 0; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: ' + st.c + '; background: ' + st.bg,
@@ -1856,6 +1861,8 @@ class Component extends DCLogic {
       if (!(pct >= 1 && pct <= 90)) return upd({ error: 'Η έκπτωση πρέπει να είναι από 1% έως 90%.' });
       const days = Math.round(Number(f.days));
       if (!(days >= 1 && days <= 730)) return upd({ error: 'Γράψε για πόσες μέρες ισχύει το κουπόνι (1 έως 730).' });
+      const maxN = f.nlim === 'max' ? Math.round(Number(f.nights)) : null;
+      if (f.nlim === 'max' && !(maxN >= 1 && maxN <= 60)) return upd({ error: 'Γράψε για πόσες νύχτες ισχύει η έκπτωση (1 έως 60).' });
       const start = f.email && f.when === 'at' && f.at ? f.at.slice(0, 10) : T;
       const from = start < T ? T : start, to = this.add(from, days - 1);
       if (f.by && (f.by > to || f.by < T)) return upd({ error: 'Το «να κλείσουν έως» πρέπει να είναι από σήμερα και μέσα στις μέρες που ισχύει το κουπόνι (ως ' + day(to) + ').' });
@@ -1867,11 +1874,11 @@ class Component extends DCLogic {
         this.say('Το κουπόνι ' + code + ' έγινε για ' + target.length + (target.length === 1 ? ' πελάτη' : ' πελάτες') + '.' + (f.email ? ' ' + (mailN ? 'Το email θα φύγει σε ' + mailN + (f.when === 'at' ? ' στην ώρα που όρισες.' : ' μέσα στα επόμενα 10 λεπτά.') : 'Κανείς τους δεν δέχεται email προσφορών, οπότε δεν θα σταλεί email.') : ''));
       };
       if (!this.REAL || !PUSH.client) {
-        this.setState({ cp: Object.assign({}, cp, { list: [{ id: 'c' + Date.now(), code: code, discount_pct: pct, stay_from: from, stay_to: to, book_by: f.by || null, audience: f.aud, send_email: f.email, status: f.email ? 'scheduled' : 'sent', sent_count: 0, n: target.length, send_at: sendAt }].concat(cp.list) }) });
+        this.setState({ cp: Object.assign({}, cp, { list: [{ id: 'c' + Date.now(), code: code, discount_pct: pct, stay_from: from, stay_to: to, book_by: f.by || null, audience: f.aud, max_nights: maxN, send_email: f.email, status: f.email ? 'scheduled' : 'sent', sent_count: 0, n: target.length, send_at: sendAt }].concat(cp.list) }) });
         ok(); return;
       }
       upd({ busy: true });
-      PUSH.client.rpc('save_offer', { p_code: code, p_pct: pct, p_stay_from: from, p_stay_to: to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null }).then(res => {
+      PUSH.client.rpc('save_offer', { p_code: code, p_pct: pct, p_stay_from: from, p_stay_to: to, p_book_by: f.by || null, p_emails: f.aud === 'all' ? null : picked.map(c => c.email), p_send_email: f.email, p_send_at: sendAt, p_by: s.user ? s.user.name : null, p_max_nights: maxN }).then(res => {
         if (res.error) {
           const m = res.error.message || '';
           upd({ busy: false, error: m.indexOf('code_taken') >= 0 ? 'Υπάρχει ήδη ενεργό κουπόνι με αυτόν τον κωδικό.' : m.indexOf('no_recipients') >= 0 ? 'Δεν βρέθηκαν πελάτες με email.' : 'Δεν αποθηκεύτηκε: ' + m });
@@ -1894,7 +1901,9 @@ class Component extends DCLogic {
       newOpen: f.open, closedForm: !f.open,
       openNew: () => upd({ open: true, code: randCode() }),
       f: {
-        code: f.code, pct: f.pct, days: f.days, by: f.by, q: f.q, at: f.at, busy: f.busy,
+        code: f.code, pct: f.pct, days: f.days, nights: f.nights, isMax: f.nlim === 'max', setNights: e => upd({ nights: val(e) }),
+        nlim: [['any', 'Όσες νύχτες θέλουν'], ['max', 'Συγκεκριμένες νύχτες']].map(a => ({ label: a[1], pressed: f.nlim === a[0] ? 'true' : 'false', style: (f.nlim === a[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ nlim: a[0] }) })),
+        by: f.by, q: f.q, at: f.at, busy: f.busy,
         hasError: !!f.error, error: f.error,
         setCode: e => upd({ code: val(e).toUpperCase().replace(/\s+/g, '') }), newCode: () => upd({ code: randCode() }),
         setPct: e => upd({ pct: val(e) }), setDays: e => upd({ days: val(e) }), setBy: e => upd({ by: val(e) }),

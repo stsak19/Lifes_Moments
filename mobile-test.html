@@ -3124,6 +3124,10 @@ html.gs-lock { overflow: hidden; }
     const el = $('#fPromo'), inp = $('#fCode');
     const key = { ok: 'm.codeok', dates: 'm.codedates', invalid: 'm.codebad', email: 'm.codeemail', needmail: 'm.codemail', check: 'm.codecheck' }[kind];
     el.hidden = !key; el.textContent = key ? t(key, vars || {}) : '';
+    if (kind === 'ok' && codeState && codeState.nights) {
+      const n = codeState.nights, L = { el: n === 1 ? '(για 1 νύχτα)' : '(για ' + n + ' νύχτες)', en: n === 1 ? '(for 1 night)' : '(for ' + n + ' nights)', tr: '(' + n + ' gece için)', bg: n === 1 ? '(за 1 нощувка)' : '(за ' + n + ' нощувки)' };
+      el.textContent = el.textContent.replace(/\.?\s*$/, ' ') + (L[lang] || L.en) + '.';
+    }
     const bad = kind === 'dates' || kind === 'invalid' || kind === 'email';
     el.className = 'fine' + (kind === 'ok' ? ' ok' : bad ? ' bad' : '');
     if (bad) inp.setAttribute('aria-invalid', 'true'); else inp.removeAttribute('aria-invalid');
@@ -3144,7 +3148,7 @@ html.gs-lock { overflow: hidden; }
       body: JSON.stringify({ p_code: c, p_email: mail, p_in: isoK(cal.ci), p_out: isoK(cal.co) })
     }).then((r) => (r.ok ? r.json() : Promise.reject(r.status))).then((j) => {
       if (seq !== codeSeq) return codeState;
-      codeState = { code: c, status: j && ['ok', 'dates', 'email'].includes(j.status) ? j.status : 'invalid', pct: (j && j.pct) || 0, at: at };
+      codeState = { code: c, status: j && ['ok', 'dates', 'email'].includes(j.status) ? j.status : 'invalid', pct: (j && j.pct) || 0, nights: (j && j.nights) || null, at: at };
       showCode(codeState.status, { c: c, p: codeState.pct });
       return codeState;
     }, () => {
