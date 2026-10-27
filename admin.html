@@ -1877,7 +1877,15 @@ class Component extends DCLogic {
           upd({ busy: false, error: m.indexOf('code_taken') >= 0 ? 'Υπάρχει ήδη ενεργό κουπόνι με αυτόν τον κωδικό.' : m.indexOf('no_recipients') >= 0 ? 'Δεν βρέθηκαν πελάτες με email.' : 'Δεν αποθηκεύτηκε: ' + m });
           return;
         }
-        ok(); this.loadCoupons();
+        if (!(f.email && f.when !== 'at' && mailN)) { ok(); this.loadCoupons(); return; }
+        // Send right away; the 10-minute run is only a fallback if this call fails.
+        PUSH.client.rpc('send_offers_now').then(r => {
+          this.setState({ cpf: null });
+          this.say('Το κουπόνι ' + code + ' έγινε για ' + target.length + (target.length === 1 ? ' πελάτη' : ' πελάτες') + '. ' +
+            (r && r.error ? 'Το email θα φύγει αυτόματα σε λίγα λεπτά.' : 'Το email στέλνεται τώρα σε ' + mailN + '.'));
+          setTimeout(() => this.loadCoupons(), 4000);
+          this.loadCoupons();
+        });
       });
     };
 
