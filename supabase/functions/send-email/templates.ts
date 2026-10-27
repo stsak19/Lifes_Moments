@@ -523,7 +523,8 @@ export function buildOfferMail(o: Offer, to: { name: string; lang: string }, s: 
   d.raw(
     `<tr><td class="px" align="center" style="padding:4px 40px 8px 40px;"><div style="display:inline-block;background:${C.panel};border:1px solid ${C.brand};border-radius:999px;padding:9px 18px;font-family:${SANS};font-size:14px;line-height:20px;color:${C.deep};font-weight:700;">${esc(validFor)} · ${esc(tr('έως', 'until', 'son gün', 'до'))} ${esc(until)}</div></td></tr>`,
     `${validFor} · ${tr('έως', 'until', 'son gün', 'до')} ${until}`
-  );  d.greeting(to.name, tr('Πέρασε λίγος καιρός από την τελευταία φορά που μας επισκέφτηκες και θα χαρούμε να σε δούμε ξανά. Γι’ αυτό ετοιμάσαμε μια προσφορά μόνο για τους επισκέπτες μας.', 'It has been a little while since your last visit and we would love to see you again. So we have prepared an offer just for our guests.'));
+  );
+  d.greeting(to.name, tr('Πέρασε λίγος καιρός από την τελευταία φορά που μας επισκέφτηκες και θα χαρούμε να σε δούμε ξανά. Γι’ αυτό ετοιμάσαμε μια προσφορά μόνο για τους επισκέπτες μας.', 'It has been a little while since your last visit and we would love to see you again. So we have prepared an offer just for our guests.'));
 
   d.raw(
     `<tr><td class="px" style="padding:24px 40px 8px 40px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.panel};border:1px solid ${C.line};border-radius:14px;">` +
