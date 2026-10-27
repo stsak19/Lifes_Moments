@@ -612,7 +612,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <div style="font-size: 13px; color: #2E4448">{{c.dates}}</div>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: #4A5B5E"><span>{{c.who}}</span><span>{{c.mail}}</span><span>{{c.uses}}</span></div>
-<sc-if value="{{c.canOff}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{c.off}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer">Απενεργοποίηση</button></div></sc-if>
+<sc-if value="{{c.canOff}}" hint-placeholder-val="{{true}}"><div><button type="button" onClick="{{c.off}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: 1px solid #C9A49A; background: #FFFFFF; color: #8A3412; font-size: 12px; font-weight: 600; cursor: pointer">Διαγραφή</button></div></sc-if>
 </div>
 </sc-for>
 </section>
@@ -1838,13 +1838,13 @@ class Component extends DCLogic {
         dates: 'Ισχύει ως ' + day(o.stay_to) + (o.book_by ? ' · να κλείσουν έως ' + day(o.book_by) : ''),
         uses: uses ? uses + (uses === 1 ? ' κράτηση' : ' κρατήσεις') : 'Καμία κράτηση ακόμα',
         stateText: st.t, stateStyle: 'flex-shrink: 0; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; color: ' + st.c + '; background: ' + st.bg,
-        canOff: o.status !== 'cancelled' && st.t !== 'Έληξε',
+        canOff: true,
         off: () => {
-          if (!confirm('Απενεργοποίηση του κουπονιού ' + o.code + ';\n\nΔεν θα δέχεται πια νέες κρατήσεις.' + (o.status === 'scheduled' ? ' Το email δεν θα σταλεί.' : ' Όσα email στάλθηκαν δεν ανακαλούνται.'))) return;
-          if (!this.REAL || !PUSH.client) { this.setState({ cp: Object.assign({}, cp, { list: cp.list.map(x => x.id === o.id ? Object.assign({}, x, { status: 'cancelled' }) : x) }) }); this.say('Το ' + o.code + ' απενεργοποιήθηκε.'); return; }
-          PUSH.client.from('promo_offers').update({ status: 'cancelled' }).eq('id', o.id).select('id').then(res => {
-            if (res.error || !res.data || !res.data.length) { this.say('Δεν απενεργοποιήθηκε: ' + (res.error ? res.error.message : 'ξαναδοκίμασε')); return; }
-            this.say('Το ' + o.code + ' απενεργοποιήθηκε.'); this.loadCoupons();
+          if (!confirm('Διαγραφή του κουπονιού ' + o.code + ';\n\nΣβήνεται οριστικά και ο κωδικός δεν θα δουλεύει πια.' + (o.status === 'scheduled' ? ' Το email δεν θα σταλεί.' : ''))) return;
+          if (!this.REAL || !PUSH.client) { this.setState({ cp: Object.assign({}, cp, { list: cp.list.filter(x => x.id !== o.id) }) }); this.say('Το ' + o.code + ' διαγράφηκε.'); return; }
+          PUSH.client.from('promo_offers').delete().eq('id', o.id).select('id').then(res => {
+            if (res.error || !res.data || !res.data.length) { this.say('Δεν διαγράφηκε: ' + (res.error ? res.error.message : 'ξαναδοκίμασε')); return; }
+            this.say('Το ' + o.code + ' διαγράφηκε.'); this.loadCoupons();
           });
         }
       };
