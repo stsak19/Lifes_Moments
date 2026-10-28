@@ -214,6 +214,8 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .dts .dt input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
 .dts .dtn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;font-size:11px;color:var(--muted);font-weight:600;border-left:1px dashed var(--line);border-right:1px dashed var(--line)}
 .dts .dtn b{font-size:18px;color:var(--teal)}
+.ag-none{background:var(--card);border-radius:14px;padding:14px 16px;color:var(--muted);font-size:14px;margin-bottom:6px}
+.agmore{display:block;width:100%;margin:14px 0 4px;height:46px;border-radius:14px;border:1px solid var(--line);background:var(--card);font:inherit;font-weight:600;font-size:15px;color:var(--teal);cursor:pointer}
 .today{background:var(--card);border-radius:16px;padding:12px 12px 10px;margin:0 0 10px;box-shadow:0 1px 3px rgba(10,58,62,.07),0 6px 18px rgba(10,58,62,.06)}
 .today .tg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .today .tg button{border:0;background:var(--soft);border-radius:12px;padding:9px 2px 8px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px}
@@ -731,11 +733,15 @@ function renderCal() {
   h += todayHTML();
   h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
   const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
-  let shown = 0;
+  let shown = 0, later = 0;
   for (let i = 0; i < S.agDays; i++) {
     const n = add(S.today, i), d = dt(n);
     const arr = live.filter(b => b.start === n), dep = live.filter(b => b.end === n && b.status === 'confirmed');
-    if (!arr.length && !dep.length) continue;
+    if (i >= 2 && !S.agAll) { if (arr.length || dep.length) later++; continue; }
+    if (!arr.length && !dep.length) {
+      if (i < 2) h += '<div class="ag-h"><b>' + (i === 0 ? 'Σήμερα' : 'Αύριο') + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span></div><div class="ag-none">Καμία άφιξη ή αναχώρηση</div>';
+      continue;
+    }
     shown++;
     const title = i === 0 ? 'Σήμερα' : i === 1 ? 'Αύριο' : DAYF[d.getUTCDay()];
     h += '<div class="ag-h"><b>' + title + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span>' + '</div><div class="ag-list">';
@@ -743,7 +749,8 @@ function renderCal() {
     arr.forEach(b => h += agRow(b, 'in', U));
     h += '</div>';
   }
-  if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>';
+  if (S.agAll) { if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>'; h += '<button class="agmore" data-act="ag-toggle">Λιγότερα ▴</button>'; }
+  else h += '<button class="agmore" data-act="ag-toggle">' + (later ? 'Επόμενες μέρες · ' + later + ' ▾' : 'Επόμενες μέρες ▾') + '</button>';
   $('#main').innerHTML = h;
   const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
@@ -1454,6 +1461,7 @@ document.addEventListener('click', e => {
     case 'ag-more': S.agDays += 60; render(); break;
     case 'ag-unit': closeOverlay(); S.agUnit = id; render(); break;
     case 'tonight': daySheet(S.today); break;
+    case 'ag-toggle': S.agAll = !S.agAll; render(); if (!S.agAll) window.scrollTo(0, 0); break;
     case 'guest': openGuest(id); break;
     case 'gsort': S.gsort = S.gsort === 'name' ? 'date' : 'name'; render(); break;
     case 'clean': cleanSheet(); break;
