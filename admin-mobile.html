@@ -190,7 +190,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .uc.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
-.alert + .today{margin-top:12px}
+.alert + .quickrow{margin-top:12px}
 .dts{display:flex;align-items:stretch;gap:0;background:#F4F7F7;border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
 .dts .dt{flex:1;position:relative;padding:10px 14px;display:flex;flex-direction:column;cursor:pointer;min-width:0}
 .dts .dt small{font-size:12px;font-weight:600;color:var(--muted)}
@@ -857,13 +857,8 @@ function todayHTML() {
   const arr = live.filter(b => b.start === T), dep = live.filter(b => b.end === T);
   const empty = UNITS.filter(u => !onNight(u.id, T) && !isClosed(u.id, T));
   const clean = dep.filter(b => b.unit).sort((a, b) => UNITS.findIndex(u => u.id === a.unit) - UNITS.findIndex(u => u.id === b.unit));
-  let h = '<div class="today"><div class="tg">' +
-    '<button data-act="tonight"><b>' + arr.length + '</b><small>Αφίξεις</small></button>' +
-    '<button data-act="tonight"><b>' + dep.length + '</b><small>Αναχωρήσεις</small></button>' +
-    '<button class="cl" data-act="clean"><b>' + clean.length + '</b><small>Καθάρισμα</small></button>' +
-    '<button data-act="tonight"><b>' + empty.length + '</b><small>Άδεια απόψε</small></button></div>';
-  if (clean.length) h += '<div class="cln"><span style="background:none;color:var(--muted);padding:0;font-weight:600">Καθάρισμα:</span>' + clean.map(b => '<span class="' + (arr.some(x => x.unit === b.unit) ? 'hot' : '') + '">' + UNITS.find(u => u.id === b.unit).short + '</span>').join('') + '</div>';
-  h += '</div><div class="quickrow"><button data-act="price">' + ICON.euro + 'Τιμή</button></div>';
+  let h = '';
+  h += '<div class="quickrow"><button data-act="price">' + ICON.euro + 'Τιμή</button></div>';
   return h;
 }
 function cleanSheet() {
