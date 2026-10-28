@@ -293,6 +293,13 @@ textarea.field{height:auto;min-height:80px;padding:10px 12px;resize:vertical}
 .m.g{align-self:flex-start;background:#fff;border-bottom-left-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:6px}
 .m small{display:block;font-size:11px;opacity:.65;margin-top:3px}
+.qk{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 10px;padding:6px 16px 2px;scrollbar-width:none}
+.qk::-webkit-scrollbar{display:none}
+.qk button{flex-shrink:0;position:relative;height:34px;padding:0 13px;border-radius:17px;border:1px solid var(--line);background:#F4F7F7;color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.qk.ed button.q{border:1px dashed #B7791F;background:#FBEFD9;color:#5C3606}
+.qk button.q i{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font-style:normal;font-size:13px;line-height:17px;border:2px solid #fff}
+.qk button.add{border:1px dashed var(--teal);background:#fff;color:var(--teal)}
+.qk button.lnk{border:0;background:none;color:var(--teal);text-decoration:underline;padding:0 6px}
 .compose{display:flex;gap:8px;align-items:flex-end;width:100%}
 .compose textarea{flex:1;min-height:44px;max-height:120px;border-radius:22px;border:1px solid var(--line);padding:11px 16px;resize:none;background:#fff}
 .send{width:44px;height:44px;border-radius:22px;background:var(--teal);color:#fff;border:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -908,6 +915,43 @@ function refreshOverlay() {
   if (k === 'booking') { const b = all().find(x => x.id === id); if (!b) { closeOverlay(); return; } const keep = overlay.el; keep.querySelector('.content').innerHTML = bookingHTML(b); return; }
 }
 
+/* ---- quick replies (same list & storage as the desktop admin) ---- */
+const QKEY = 'lm-admin-quick-replies';
+const QDEF = [
+  ['Ώρα check-in', 'Check-in is from 14:00 and check-out until 11:00. If you arrive earlier, you can leave your bags with us.'],
+  ['Οδηγίες άφιξης', 'We are in Limenaria, 2 minutes from the beach. Send us a message when you leave the ferry and we will wait for you at the entrance.'],
+  ['Πάρκινγκ', 'There is free parking right in front of the building.'],
+  ['Ευχαριστώ', 'Thank you for your message, we will get back to you shortly!']
+];
+let qEdit = false;
+function loadQuick() {
+  try { const v = JSON.parse(localStorage.getItem(QKEY) || 'null'); if (Array.isArray(v)) return v.filter(q => q && q.label && q.text); } catch (e) {}
+  return QDEF.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1] }));
+}
+function saveQuick(l) { try { localStorage.setItem(QKEY, JSON.stringify(l)); } catch (e) {} }
+function quickHTML() {
+  const l = loadQuick();
+  return l.map(q => '<button class="q" data-act="qk" data-id="' + q.id + '">' + esc(q.label) + (qEdit ? '<i data-act="qk-del" data-id="' + q.id + '">×</i>' : '') + '</button>').join('') +
+    '<button class="add" data-act="qk-new">+ Νέο</button>' + (l.length ? '<button class="lnk" data-act="qk-edit">' + (qEdit ? 'Τέλος' : 'Επεξεργασία') + '</button>' : '');
+}
+function quickRefresh() { const el = document.getElementById('qk'); if (el) { el.innerHTML = quickHTML(); el.classList.toggle('ed', qEdit); } }
+function quickForm(q) {
+  const label = prompt('Όνομα κουμπιού', q ? q.label : ''); if (label == null || !label.trim()) return;
+  const cur = document.getElementById('cmp');
+  const text = prompt('Κείμενο μηνύματος', q ? q.text : (cur && cur.value.trim()) || ''); if (text == null || !text.trim()) return;
+  const l = loadQuick();
+  if (l.some(x => (!q || x.id !== q.id) && x.label.toLowerCase() === label.trim().toLowerCase())) { toast('Υπάρχει ήδη κουμπί με αυτό το όνομα.'); return; }
+  saveQuick(q ? l.map(x => x.id === q.id ? Object.assign({}, x, { label: label.trim(), text: text.trim() }) : x) : l.concat([{ id: 'q' + Date.now(), label: label.trim(), text: text.trim() }]));
+  quickRefresh();
+}
+function quickTap(id) {
+  const q = loadQuick().find(x => x.id === id); if (!q) return;
+  if (qEdit) { quickForm(q); return; }
+  const ta = document.getElementById('cmp'); if (!ta) return;
+  const cur = ta.value.trim(); ta.value = cur ? cur + '\n\n' + q.text : q.text;
+  ta.dispatchEvent(new Event('input')); ta.focus();
+}
+
 /* ---- request (full screen) ---- */
 let pickUnit = null;
 function openReq(id) {
@@ -1008,10 +1052,11 @@ function chatHTML(rid) {
   return S.msgs.filter(m => m.request_id === rid).map(m => '<div class="m ' + (m.sender === 'guest' ? 'g' : 'o') + '">' + esc(m.body) + '<small>' + (m.sender === 'owner' && m.created_by ? esc(m.created_by) + ' · ' : '') + agoText(m.created_at) + (m.email_status === 'failed' ? ' · δεν στάλθηκε' : '') + '</small></div>').join('');
 }
 function openThread(rid) {
+  qEdit = false;
   const r = S.reqs.find(x => x.dbId === rid); if (!r) return;
   const el = full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1;min-width:0"><div class="sub">' + range(r.start, r.end) + ' · ' + (r.unit ? unitName(r.unit) : (r.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + '</div><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.name) + '</h1></div><button class="pill" data-act="' + (r.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + r.id + '">Κράτηση</button></header>' +
     '<div class="bd"><div class="chat">' + chatHTML(rid) + '</div></div>' +
-    '<div class="ft"><div class="compose"><textarea id="cmp" rows="1" placeholder="Μήνυμα στον πελάτη (πάει με email)"></textarea><button class="send" data-act="send" data-id="' + rid + '" aria-label="Αποστολή">' + ICON.send + '</button></div></div>', 'thread', rid);
+    '<div class="ft" style="flex-direction:column;gap:0"><div class="qk" id="qk">' + quickHTML() + '</div><div class="compose"><textarea id="cmp" rows="1" placeholder="Μήνυμα στον πελάτη (πάει με email)"></textarea><button class="send" data-act="send" data-id="' + rid + '" aria-label="Αποστολή">' + ICON.send + '</button></div></div>', 'thread', rid);
   const bd = el.querySelector('.bd'); bd.scrollTop = bd.scrollHeight;
   const ta = el.querySelector('#cmp');
   ta.addEventListener('input', () => { ta.style.height = 'auto'; ta.style.height = Math.min(120, ta.scrollHeight) + 'px'; });
@@ -1189,6 +1234,10 @@ document.addEventListener('click', e => {
     case 'delete': delBooking(id); break;
     case 'del-req': delReq(id); break;
     case 'del-thr': delThread(id); break;
+    case 'qk': quickTap(id); break;
+    case 'qk-del': { const q = loadQuick().find(x => x.id === id); if (q && confirm('Διαγραφή του κουμπιού «' + q.label + '»;')) { saveQuick(loadQuick().filter(x => x.id !== id)); quickRefresh(); } break; }
+    case 'qk-new': quickForm(null); break;
+    case 'qk-edit': qEdit = !qEdit; quickRefresh(); break;
     case 'move': { const b = all().find(x => x.id === id); if (b) moveSheet(b); break; }
     case 'move-to': { const b = all().find(x => x.id === id); if (b) moveTo(b, t.dataset.unit); break; }
     case 'avail': availSheet(); break;
