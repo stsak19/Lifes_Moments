@@ -205,8 +205,10 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 .alert + .quickrow{margin-top:12px}
-.calhead{position:sticky;top:var(--top-h,64px);z-index:14;margin:0 -16px;padding:4px 16px 0;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.calhead{position:sticky;top:var(--top-h,64px);z-index:14;margin:0 -16px 14px;padding:4px 16px 12px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 html.dark .calhead{background:rgba(14,23,25,.94)}
+.calhead::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:linear-gradient(var(--bg),transparent);pointer-events:none}
+.calhead .ucs{margin-bottom:0}
 .dts{display:flex;align-items:stretch;gap:0;background:var(--soft);border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
 .dts .dt{flex:1;position:relative;padding:10px 14px;display:flex;flex-direction:column;cursor:pointer;min-width:0}
 .dts .dt small{font-size:12px;font-weight:600;color:var(--muted)}
@@ -621,7 +623,7 @@ const by = () => S.user ? S.user.name : '';
 
 /* ================= render: shell ================= */
 const TABS = [
-  ['inbox', 'Αιτήματα', ICON.inbox], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['guests', 'Πελάτες', ICON.people], ['more', 'Ρυθμίσεις', ICON.gear]
+  ['inbox', 'Αιτήματα', ICON.inbox], ['guests', 'Πελάτες', ICON.people], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['more', 'Ρυθμίσεις', ICON.gear]
 ];
 function renderTabs() {
   const np = pending().length + threads().reduce((s, t) => s + (t.req.status === 'pending' ? 0 : t.unread), 0);
@@ -733,8 +735,9 @@ function renderCal() {
   h += '<div class="calhead">';
   if (p.length) h += '<button class="alert" data-act="go-reqs"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
   const occ = UNITS.filter(u => onNight(u.id, T) && onNight(u.id, T).status === 'confirmed').length;
-  h += todayHTML() + '</div>';
+  h += todayHTML();
   h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
+  h += '</div>';
   const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
   let shown = 0, later = 0;
   for (let i = 0; i < S.agDays; i++) {
