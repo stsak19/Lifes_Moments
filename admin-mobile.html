@@ -595,7 +595,7 @@ const by = () => S.user ? S.user.name : '';
 
 /* ================= render: shell ================= */
 const TABS = [
-  ['inbox', 'Αιτήματα', ICON.inbox], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['more', 'Περισσότερα', ICON.more]
+  ['inbox', 'Αιτήματα', ICON.inbox], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['guests', 'Πελάτες', ICON.people], ['more', 'Περισσότερα', ICON.more]
 ];
 function renderTabs() {
   const np = pending().length + threads().reduce((s, t) => s + (t.req.status === 'pending' ? 0 : t.unread), 0);
@@ -612,7 +612,7 @@ function render() {
   const m = $('#main');
   if (!S.loaded) { topbar('Life\'s Moments', ''); m.innerHTML = '<div class="empty">Φόρτωση…</div>'; return; }
   document.body.classList.toggle('calmode', S.tab === 'cal');
-  ({ home: renderCal, inbox: renderInbox, cal: renderCal, book: renderBook, more: renderMore })[S.tab]();
+  ({ home: renderCal, inbox: renderInbox, cal: renderCal, book: renderBook, guests: renderGuests, more: renderMore })[S.tab]();
   document.documentElement.style.setProperty('--top-h', $('#top').offsetHeight + 'px');
   actbar();
 }
@@ -863,7 +863,7 @@ function todayHTML() {
     '<button class="cl" data-act="clean"><b>' + clean.length + '</b><small>Καθάρισμα</small></button>' +
     '<button data-act="tonight"><b>' + empty.length + '</b><small>Άδεια απόψε</small></button></div>';
   if (clean.length) h += '<div class="cln"><span style="background:none;color:var(--muted);padding:0;font-weight:600">Καθάρισμα:</span>' + clean.map(b => '<span class="' + (arr.some(x => x.unit === b.unit) ? 'hot' : '') + '">' + UNITS.find(u => u.id === b.unit).short + '</span>').join('') + '</div>';
-  h += '</div><div class="quickrow"><button data-act="tonight">Απόψε · ποιος μένει πού</button><button data-act="price" style="flex:0 0 auto;padding:0 14px">' + ICON.euro + 'Τιμή</button></div>';
+  h += '</div><div class="quickrow"><button data-act="price">' + ICON.euro + 'Τιμή</button></div>';
   return h;
 }
 function cleanSheet() {
@@ -960,6 +960,51 @@ function renderBook() {
   $('#main').innerHTML = h;
   const qi = $('#q');
   qi.addEventListener('input', () => { S.query = qi.value; const pos = qi.selectionStart; renderBook(); const n = $('#q'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} });
+}
+
+/* ================= guests: everyone who has stayed ================= */
+function guestList() {
+  const by = {};
+  all().filter(b => b.status === 'confirmed' && b.start <= S.today && b.name && b.name !== 'Booking.com').forEach(b => {
+    const k = (b.email || '').trim().toLowerCase() || String(b.phone || '').replace(/\D/g, '').slice(-10) || b.name.trim().toLowerCase();
+    (by[k] = by[k] || []).push(b);
+  });
+  return Object.keys(by).map(k => {
+    const st = by[k].sort((a, b) => a.start < b.start ? 1 : -1), last = st[0];
+    return { id: k, name: last.name, email: (st.find(b => b.email) || {}).email || '', phone: (st.find(b => b.phone) || {}).phone || '', stays: st, last: last,
+      nights: st.reduce((s, b) => s + b.nights, 0), spent: st.filter(b => b.source !== 'booking').reduce((s, b) => s + (b.total || 0), 0) };
+  });
+}
+function renderGuests() {
+  const q = (S.gq || '').trim().toLowerCase();
+  let list = guestList();
+  topbar('Πελάτες', list.length + (list.length === 1 ? ' πελάτης έχει μείνει' : ' πελάτες έχουν μείνει'));
+  if (q) list = list.filter(g => (g.name + ' ' + g.email + ' ' + g.phone).toLowerCase().includes(q));
+  list.sort((a, b) => S.gsort === 'name' ? a.name.localeCompare(b.name, 'el') : (a.last.start < b.last.start ? 1 : -1));
+  let h = '<div class="search"><input id="gq" type="search" placeholder="Όνομα, τηλέφωνο, email…" value="' + esc(S.gq || '') + '" enterkeyhint="search"><button class="pill" data-act="gsort" style="height:44px">' + (S.gsort === 'name' ? 'Α→Ω' : 'Πρόσφατοι') + '</button></div>';
+  if (!list.length) h += '<div class="card empty">' + (q ? 'Δεν βρέθηκε πελάτης.' : 'Δεν έχει μείνει κανείς ακόμα.') + '</div>';
+  else {
+    h += '<div class="card">';
+    list.forEach(g => {
+      h += '<button class="thr" data-act="guest" data-id="' + esc(g.id) + '"><div class="ini">' + esc(initials(g.name)) + '</div><div class="main"><b><span>' + esc(g.name) + '</span><small>' + (g.stays.length > 1 ? g.stays.length + ' φορές' : '') + '</small></b><div class="prev">' + fmt(g.last.start) + ' ' + g.last.start.slice(0, 4) + ' · ' + esc(g.phone || g.email || unitName(g.last.unit)) + '</div></div>' + ICON.chev + '</button>';
+    });
+    h += '</div>';
+  }
+  $('#main').innerHTML = h;
+  const qi = $('#gq');
+  qi.addEventListener('input', () => { S.gq = qi.value; const pos = qi.selectionStart; renderGuests(); const n = $('#gq'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} });
+}
+function openGuest(id) {
+  const g = guestList().find(x => x.id === id); if (!g) return;
+  sheet('<div class="hd"><div style="flex:1;min-width:0"><h2>' + esc(g.name) + '</h2><p>' + g.stays.length + (g.stays.length === 1 ? ' διαμονή' : ' διαμονές') + ' · ' + g.nights + (g.nights === 1 ? ' νύχτα' : ' νύχτες') + (g.spent ? ' · ' + money(g.spent) : '') + '</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+    '<div class="bd" style="padding:0 0 16px"><div style="padding:0 20px"><dl class="kv">' +
+      (g.phone ? '<dt>Τηλέφωνο</dt><dd><a href="tel:' + esc(g.phone) + '">' + esc(g.phone) + '</a></dd>' : '') +
+      (g.email ? '<dt>Email</dt><dd><a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a></dd>' : '') +
+      (!g.phone && !g.email ? '<dt>Επικοινωνία</dt><dd style="color:var(--muted);font-weight:500">δεν υπάρχει</dd>' : '') +
+    '</dl>' + contactHTML(g.phone) + '</div>' +
+    '<div class="sec" style="margin:16px 20px 4px">Διαμονές</div>' +
+    g.stays.map(b => '<button class="urow" data-act="booking" data-id="' + b.id + '"><span class="n">' + (b.unit ? UNITS.find(u => u.id === b.unit).short : '—') + '</span><div class="main"><b>' + range(b.start, b.end) + ' ' + b.start.slice(0, 4) + '</b><small>' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα' + (b.total && b.source !== 'booking' ? ' · ' + money(b.total) : '') + '</small></div>' + srcTag(b) + '</button>').join('') +
+    '</div>', 'guest', id);
 }
 
 /* ================= more ================= */
@@ -1381,6 +1426,8 @@ document.addEventListener('click', e => {
     case 'ag-more': S.agDays += 60; render(); break;
     case 'ag-unit': closeOverlay(); S.agUnit = id; render(); break;
     case 'tonight': daySheet(S.today); break;
+    case 'guest': openGuest(id); break;
+    case 'gsort': S.gsort = S.gsort === 'name' ? 'date' : 'name'; render(); break;
     case 'clean': cleanSheet(); break;
     case 'price': priceSheet(); break;
     case 'pq-type': S.pq.type = id; priceRes(); break;
