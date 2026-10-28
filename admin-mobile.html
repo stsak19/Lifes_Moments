@@ -635,6 +635,8 @@ function renderTabs() {
   const np = pending().length + threads().reduce((s, t) => s + (t.req.status === 'pending' ? 0 : t.unread), 0);
   $('#tabs').innerHTML = TABS.map(t => '<button data-tab="' + t[0] + '" class="' + (S.tab === t[0] ? 'on' : '') + '" aria-current="' + (S.tab === t[0] ? 'page' : 'false') + '">' + t[2] + '<span>' + t[1] + '</span>' + (t[0] === 'inbox' && np ? '<span class="badge">' + np + '</span>' : '') + '</button>').join('');
 }
+/* Greek vocative for a first name: Γιάννης→Γιάννη, Κώστας→Κώστα, Νίκος→Νίκο */
+function voc(n) { return /[ηα]ς$/.test(n) ? n.slice(0, -1) : /ος$/.test(n) ? n.slice(0, -1).replace(/ο$/, 'ο') : n; }
 function topbar(title, sub, right) {
   $('#top').innerHTML = LOGO_MARK + '<div style="flex:1;min-width:0"><div class="sub">' + (sub || '') + '</div><h1>' + title + '</h1></div>' + (right || '') +
     (DEMO ? '<span class="demo-flag">ΔΟΚΙΜΗ</span>' : '');
@@ -655,7 +657,7 @@ function go(tab) { if (S.tab === tab) { window.scrollTo({ top: 0, behavior: 'smo
 /* ================= home ================= */
 function renderHome() {
   const T = S.today, d = dt(T);
-  topbar('Καλημέρα' + (S.user.name ? ', ' + esc(S.user.name.split(' ')[0]) : ''), DAY[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MONF[d.getUTCMonth()], '<div class="av">' + esc(initials(S.user.name)) + '</div>');
+  topbar('Καλημέρα' + (S.user.name ? ', ' + esc(voc(S.user.name.split(' ')[0])) : ''), DAY[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MONF[d.getUTCMonth()], '<div class="av">' + esc(initials(S.user.name)) + '</div>');
   const p = pending();
   let h = '';
   if (p.length) {
@@ -735,7 +737,7 @@ function renderCal() {
   if (!S.agUnit) S.agUnit = 'all';
   const U = S.agUnit;
   const T = S.today, td = dt(T);
-  topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(S.user.name.split(' ')[0]) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
+  topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(voc(S.user.name.split(' ')[0])) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
   let h = '';
   const p = pending();
   h += '<div class="calhead">';
