@@ -1031,7 +1031,7 @@ function openGuest(id) {
 
 function gnoteInfo(id) {
   const n = (S.gnotes || {})[id];
-  return n && n.note ? 'Τελευταία αλλαγή: ' + (n.updated_by ? esc(n.updated_by) + ' · ' : '') + agoText(n.updated_at) + '. Τις βλέπετε μόνο εσείς.' : 'Τις βλέπετε μόνο εσείς, όχι ο πελάτης.';
+  return n && n.note ? 'Τελευταία αλλαγή: ' + (n.updated_by ? esc(n.updated_by) + ' · ' : '') + agoText(n.updated_at) + '.' : '';
 }
 function saveGNote(id, text) {
   const v = text.trim().slice(0, 5000), st = $('#gnst');
