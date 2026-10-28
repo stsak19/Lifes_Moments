@@ -1066,7 +1066,7 @@ function chatHTML(rid) {
 function openThread(rid) {
   qEdit = false;
   const r = S.reqs.find(x => x.dbId === rid); if (!r) return;
-  const el = full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1;min-width:0"><div class="sub">' + range(r.start, r.end) + ' · ' + (r.unit ? unitName(r.unit) : (r.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + '</div><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.name) + '</h1></div><button class="pill" data-act="' + (r.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + r.id + '">Κράτηση</button></header>' +
+  const el = full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1;min-width:0"><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.name) + '</h1><button class="pill" data-act="' + (r.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + r.id + '" style="margin-top:6px;height:32px;font-size:13px;background:#1E8E5A;border-color:#1E8E5A;color:#fff">Στοιχεία κράτησης</button></div></header>' +
     '<div class="bd"><div class="chat">' + chatHTML(rid) + '</div></div>' +
     '<div class="ft" style="flex-direction:column;gap:0"><div class="qk" id="qk">' + quickHTML() + '</div><div class="compose"><textarea id="cmp" rows="1" placeholder="Μήνυμα στον πελάτη (πάει με email)"></textarea><button class="send" data-act="send" data-id="' + rid + '" aria-label="Αποστολή">' + ICON.send + '</button></div></div>', 'thread', rid);
   const bd = el.querySelector('.bd'); bd.scrollTop = bd.scrollHeight;
