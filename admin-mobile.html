@@ -181,6 +181,8 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .tonight{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--card);border-radius:14px;padding:12px 14px;margin:0 0 10px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 1px 3px rgba(10,58,62,.07)}
 .tonight .tbar{flex:1;height:6px;border-radius:3px;background:#E7EEEF;overflow:hidden}.tonight .tbar u{display:block;height:100%;background:var(--teal)}
 .tonight > span:not(.tbar){font-size:14px;font-weight:600;color:var(--muted)}
+.agn{min-width:40px;height:40px;padding:0 8px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;flex-shrink:0}
+.agr.in .agn{color:#2E9E57}.agr.out .agn{color:#D2443A}
 /* action bar above tabs */
 .actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
 .actbar .what{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
@@ -640,7 +642,7 @@ function renderCal() {
   const p = pending();
   if (p.length) h += '<button class="alert" data-act="open-req" data-id="' + p[0].id + '"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
   const occ = UNITS.filter(u => onNight(u.id, T) && onNight(u.id, T).status === 'confirmed').length;
-  h += '<button class="tonight" data-act="tonight"><b>Απόψε</b><span class="tbar"><u style="width:' + Math.round(occ / UNITS.length * 100) + '%"></u></span><span>' + occ + '/' + UNITS.length + ' πιασμένα</span>' + ICON.chev + '</button>';
+  h += '<button class="tonight" data-act="tonight"><b>Απόψε</b><span style="flex:1;text-align:left">Ποιος μένει πού</span>' + ICON.chev + '</button>';
   h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
   const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
   let shown = 0;
@@ -650,7 +652,7 @@ function renderCal() {
     if (!arr.length && !dep.length) continue;
     shown++;
     const title = i === 0 ? 'Σήμερα' : i === 1 ? 'Αύριο' : DAYF[d.getUTCDay()];
-    h += '<div class="ag-h"><b>' + title + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span>' + (U === 'all' && i ? '<small>' + UNITS.filter(u => onNight(u.id, n) && onNight(u.id, n).status === 'confirmed').length + '/' + UNITS.length + ' πιασμένα</small>' : '') + '</div><div class="ag-list">';
+    h += '<div class="ag-h"><b>' + title + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span>' + '</div><div class="ag-list">';
     dep.forEach(b => h += agRow(b, 'out', U));
     arr.forEach(b => h += agRow(b, 'in', U));
     h += '</div>';
@@ -661,8 +663,8 @@ function renderCal() {
 }
 const DAYF = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
 function agRow(b, kind, U) {
-  const lab = kind === 'in' ? 'Άφιξη' : 'Αναχώρηση';
-  return '<button class="agr ' + kind + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="agk">' + ICON[kind] + '</div><div class="main"><b>' + esc(b.name) + '</b><small>' + lab + (U === 'all' ? ' · ' + (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') : '') + ' · ' + b.guests + ' άτ. · ' + b.nights + 'ν.</small></div>' + (b.status === 'pending' ? srcTag(b) : '') + '</button>';
+  const num = b.unit ? (b.unit === 'apt' ? 'Δ' : b.unit.slice(1)) : '–';
+  return '<button class="agr ' + kind + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="agk">' + ICON[kind] + '</div><div class="main"><b>' + esc(b.name) + '</b><small>' + (kind === 'in' ? 'Άφιξη' : 'Αναχώρηση') + (b.status === 'pending' ? ' · αίτημα' : '') + '</small></div><span class="agn" aria-label="' + (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') + '">' + num + '</span></button>';
 }
 function availSheet() {
   if (!S.av || S.av.a < S.today) S.av = { a: S.today, z: add(S.today, 3) };
