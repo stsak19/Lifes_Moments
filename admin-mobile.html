@@ -168,7 +168,14 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .ag-quiet{color:var(--muted);font-size:14px;padding:0 4px}
 .agk{width:38px;height:38px;border-radius:19px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .agk svg{width:18px;height:18px}
-.agk.in{background:var(--teal-soft);color:var(--teal)}.agk.out{background:#F4ECE6;color:#9A5B2E}.agk.stay{background:#EEF2F3;color:var(--muted)}
+.ag-list{display:flex;flex-direction:column;gap:8px}
+.agr{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;border-radius:14px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink);border-left:5px solid}
+.agr .main{flex:1;min-width:0}.agr .main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agr .main small{font-size:13px}
+.agr.in{background:#E3F4E8;border-left-color:#2E9E57}.agr.in .agk{background:#fff;color:#2E9E57}.agr.in small{color:#2C6B42}
+.agr.out{background:#FBE7E5;border-left-color:#D2443A}.agr.out .agk{background:#fff;color:#D2443A}.agr.out small{color:#8F3530}
+.ucs{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none}.ucs::-webkit-scrollbar{display:none}
+.uc{flex-shrink:0;border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink)}
+.uc.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 /* action bar above tabs */
@@ -621,29 +628,34 @@ function agoText(ts) {
 
 /* ================= schedule (phone: day list + availability, no grid) ================= */
 function renderCal() {
-  if (!S.agDays) S.agDays = 14;
+  if (!S.agDays || S.agDays < 60) S.agDays = 60;
+  if (!S.agUnit) S.agUnit = 'all';
+  const U = S.agUnit;
   topbar('Πρόγραμμα', '', '<button class="iconbtn" data-act="new" aria-label="Νέα κράτηση">' + ICON.plus + '</button>');
   let h = '<button class="avbtn" data-act="avail"><span>' + ICON.cal + '</span><div><b>Διαθεσιμότητα</b><small>Ποια δωμάτια είναι ελεύθερα για κάποιες μέρες</small></div>' + ICON.chev + '</button>';
-  const live = all().filter(b => b.status === 'confirmed' || b.status === 'pending');
+  h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
+  const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
+  let shown = 0;
   for (let i = 0; i < S.agDays; i++) {
     const n = add(S.today, i), d = dt(n);
-    const arr = live.filter(b => b.start === n), dep = live.filter(b => b.end === n && b.status === 'confirmed'), stay = live.filter(b => b.start < n && n < b.end && b.status === 'confirmed');
+    const arr = live.filter(b => b.start === n), dep = live.filter(b => b.end === n && b.status === 'confirmed');
+    if (!arr.length && !dep.length) continue;
+    shown++;
     const title = i === 0 ? 'Σήμερα' : i === 1 ? 'Αύριο' : DAYF[d.getUTCDay()];
-    h += '<div class="ag-h"><b>' + title + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span><small>' + (stay.length + arr.filter(b => b.status === 'confirmed').length) + '/' + UNITS.length + ' πιασμένα</small></div>';
-    if (!arr.length && !dep.length && !(i === 0 && stay.length)) { h += '<div class="ag-quiet">Χωρίς αφίξεις ή αναχωρήσεις</div>'; continue; }
-    h += '<div class="card">';
-    arr.forEach(b => h += agRow(b, 'in'));
-    dep.forEach(b => h += agRow(b, 'out'));
-    if (i === 0) stay.forEach(b => h += agRow(b, 'stay'));
+    h += '<div class="ag-h"><b>' + title + '</b><span>' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + '</span>' + (U === 'all' ? '<small>' + UNITS.filter(u => onNight(u.id, n) && onNight(u.id, n).status === 'confirmed').length + '/' + UNITS.length + ' πιασμένα</small>' : '') + '</div><div class="ag-list">';
+    dep.forEach(b => h += agRow(b, 'out', U));
+    arr.forEach(b => h += agRow(b, 'in', U));
     h += '</div>';
   }
-  h += '<button class="pill" data-act="ag-more" style="width:100%;justify-content:center;height:44px;margin:18px 0 0">Περισσότερες μέρες</button>';
+  if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>';
+  h += '<button class="pill" data-act="ag-more" style="width:100%;justify-content:center;height:44px;margin:18px 0 0">Δείξε πιο μακριά</button>';
   $('#main').innerHTML = h;
+  const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 const DAYF = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
-function agRow(b, kind) {
-  const lab = { in: ['Άφιξη', 'in'], out: ['Αναχώρηση', 'out'], stay: ['Μένει', 'stay'] }[kind];
-  return '<button class="bk" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="agk ' + lab[1] + '">' + (kind === 'stay' ? ICON.user : ICON[lab[1]]) + '</div><div class="main"><b>' + esc(b.name) + '</b><small>' + lab[0] + ' · ' + (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') + ' · ' + b.guests + ' άτ. · ' + b.nights + 'ν.</small></div>' + (b.status === 'pending' ? srcTag(b) : '') + '</button>';
+function agRow(b, kind, U) {
+  const lab = kind === 'in' ? 'Άφιξη' : 'Αναχώρηση';
+  return '<button class="agr ' + kind + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="agk">' + ICON[kind] + '</div><div class="main"><b>' + esc(b.name) + '</b><small>' + lab + (U === 'all' ? ' · ' + (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') : '') + ' · ' + b.guests + ' άτ. · ' + b.nights + 'ν.</small></div>' + (b.status === 'pending' ? srcTag(b) : '') + '</button>';
 }
 function availSheet() {
   if (!S.av || S.av.a < S.today) S.av = { a: S.today, z: add(S.today, 3) };
@@ -1107,7 +1119,8 @@ document.addEventListener('click', e => {
     case 'move': { const b = all().find(x => x.id === id); if (b) moveSheet(b); break; }
     case 'move-to': { const b = all().find(x => x.id === id); if (b) moveTo(b, t.dataset.unit); break; }
     case 'avail': availSheet(); break;
-    case 'ag-more': S.agDays += 14; render(); break;
+    case 'ag-more': S.agDays += 60; render(); break;
+    case 'ag-unit': S.agUnit = id; render(); break;
     case 'av-new': { const a0 = S.av.a, z0 = S.av.z; closeOverlay(); openNew({ unit: id, start: a0, end: z0 }); break; }
     case 'av-close': { S.sel = { unit: id, a: S.av.a, b: add(S.av.z, -1) }; setClosed(true); setTimeout(availRes, 50); break; }
     case 'move-cancel': S.move = null; render(); break;
