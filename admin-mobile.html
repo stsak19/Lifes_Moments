@@ -1248,7 +1248,7 @@ document.addEventListener('click', e => {
     case 'del-thr': delThread(id); break;
     case 'qk': quickTap(id); break;
     case 'qk-del': { const q = loadQuick().find(x => x.id === id); if (q && confirm('Διαγραφή του κουμπιού «' + q.label + '»;')) { saveQuick(loadQuick().filter(x => x.id !== id)); quickRefresh(); } break; }
-    case 'qk-lang': qLang = qLang === 'el' ? 'en' : 'el'; try { localStorage.setItem(QLANG, qLang); } catch (e) {} quickRefresh(); toast('Γρήγορα μηνύματα στα ' + (qLang === 'el' ? 'Ελληνικά' : 'Αγγλικά') + '.'); break;
+    case 'qk-lang': qLang = qLang === 'el' ? 'en' : 'el'; try { localStorage.setItem(QLANG, qLang); } catch (e) {} quickRefresh(); break;
     case 'qk-new': quickForm(null); break;
     case 'qk-edit': qEdit = !qEdit; quickRefresh(); break;
     case 'move': { const b = all().find(x => x.id === id); if (b) moveSheet(b); break; }
