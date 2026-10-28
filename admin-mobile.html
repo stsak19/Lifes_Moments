@@ -108,64 +108,57 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .thr.unread .prev{color:var(--ink);font-weight:600}
 .dot{width:9px;height:9px;border-radius:5px;background:var(--teal);flex-shrink:0}
 
-/* ---------- calendar ---------- */
-body.calmode{overflow:hidden}
-body.calmode main{padding-bottom:0}
-.cal-wrap{margin:0 -16px;background:var(--card);border-top:1px solid var(--line);position:relative;height:calc(100dvh - var(--top-h,64px) - 52px - var(--tab-h) - var(--safe-b));overflow:hidden}
-.cal{height:100%;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.cal table{border-collapse:separate;border-spacing:0}
-.cal th,.cal td{padding:0}
-.cal .rh{position:sticky;left:0;z-index:3;background:var(--card);width:46px;min-width:46px;border-right:1px solid var(--line);text-align:center;box-shadow:3px 0 6px -4px rgba(0,0,0,.18)}
-.cal tbody .rh{height:46px;font-size:16px;font-weight:700;color:var(--ink);border-bottom:1px solid #EEF2F3}
-.cal tbody .rh small{display:block;font-size:10px;font-weight:600;color:var(--muted);margin-top:-2px}
-.cal tbody tr.apt .rh{font-size:12px}
-.cal thead th{position:sticky;top:0;z-index:2;background:var(--card);height:48px;font-weight:600;font-size:11px;color:var(--muted);text-align:center;min-width:44px;width:44px;border-bottom:1px solid var(--line)}
-.cal thead th.rh{z-index:4}
-.cal thead th b{display:block;font-size:16px;color:var(--ink);font-weight:700;width:28px;height:28px;line-height:28px;border-radius:14px;margin:1px auto 0}
-.cal thead th.today{color:var(--teal)}
-.cal thead th.today b{background:var(--teal);color:#fff}
-.cal thead th.we b{color:#8A9A9C}
-.cal thead th.m1{box-shadow:inset 1.5px 0 0 var(--teal)}
-.cal td.c{height:46px;min-width:44px;border-bottom:1px solid #EEF2F3;position:relative;cursor:pointer}
-.cal td.c.we{background:#F7FAFA}
-.cal td.c.tc{background:#EAF4F4}
-.cal td.c.m1{box-shadow:inset 1.5px 0 0 rgba(15,82,87,.35)}
-.cal tr.apt td,.cal tr.apt th{border-top:2px solid var(--line)}
-.cal td.c.closed{background:var(--red)}
-.cal td.c.closed::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:600}
-.cal td.c.sel{background:var(--teal-soft);box-shadow:inset 0 0 0 2px var(--teal)}
-.bar{position:absolute;top:7px;bottom:7px;left:22px;z-index:1;border-radius:8px;color:#fff;font-size:11.5px;font-weight:600;padding:0 7px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0;cursor:pointer;text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.12)}
-.bar.cont{left:0;border-top-left-radius:0;border-bottom-left-radius:0}
-.bar span{overflow:hidden;text-overflow:ellipsis}
-.bar.site,.bar.direct{background:var(--teal)}
-.bar.booking{background:var(--booking)}
-.bar.free{background:var(--free)}
-.bar.pending{background:var(--yellow);color:#3A2604;animation:blink 1.4s ease-in-out infinite}
-.bar.lifted{outline:3px solid var(--ink);outline-offset:1px}
-@keyframes blink{50%{box-shadow:0 0 0 4px rgba(246,195,67,.45);opacity:.75}}
-@media (prefers-reduced-motion:reduce){.bar.pending{animation:none}}
-.cal-nav{display:flex;align-items:center;gap:6px;height:52px;margin:0}
-.cal-nav .mon{flex:1;font-weight:700;font-size:17px;white-space:nowrap}
-.cal-nav .pill{height:34px;padding:0 12px}
-.cal-nav .pill.sq{width:34px;padding:0;justify-content:center;font-size:18px}
+/* ---------- calendar (month view) ---------- */
+.cal-nav{display:flex;align-items:center;gap:6px;margin:2px 0 10px}
+.cal-nav .mon{flex:1;font-weight:700;font-size:19px;white-space:nowrap}
 .pill{border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.pendrow{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;margin-top:-4px;scrollbar-width:none}
+.pill.sq{width:36px;padding:0;justify-content:center;font-size:20px}
+.ucs{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 10px;padding:0 16px 2px;scrollbar-width:none}
+.ucs::-webkit-scrollbar{display:none}
+.uc{flex-shrink:0;border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;min-width:40px;padding:0 12px;font-weight:600;font-size:14px;cursor:pointer;position:relative}
+.uc.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.uc i{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:4px;background:var(--yellow);border:1.5px solid var(--card)}
+.pendrow{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
 .pendrow::-webkit-scrollbar{display:none}
 .pendrow .chip{flex-shrink:0;height:32px;font-size:13px;border-color:var(--yellow);background:var(--yellow-soft)}
-.move-hint{position:absolute;left:10px;right:10px;bottom:10px;z-index:6;background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;font-size:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-.move-hint button{margin-left:auto;background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:14px;height:30px;padding:0 12px;font-weight:600}
-.cal td.c.target{background:#DDF0E3}
-.cal td.c.notarget{background:#F7EFEE}
-.cal-help{position:absolute;right:10px;bottom:10px;z-index:5}
+.mcal{padding:8px 6px 6px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.mcal .wd{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:0 0 6px}
+.mcal .wk{position:relative;display:grid;grid-template-columns:repeat(7,1fr)}
+.mcal .wk + .wk{border-top:1px solid #EEF2F3}
+.mcal .d{height:58px;border:0;background:none;padding:5px 0 0;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;font:inherit;color:var(--ink)}
+.mcal .d > b{font-size:15px;font-weight:600;width:28px;height:28px;line-height:28px;border-radius:14px;text-align:center}
+.mcal .d.out{color:#B5C2C4}
+.mcal .d.past > b{color:#9AA9AB}
+.mcal .d.today > b{background:var(--teal);color:#fff}
+.mcal .d.closed{background:var(--red);color:#fff}
+.mcal .d.closed::after{content:"×";position:absolute;left:0;right:0;bottom:4px;text-align:center;font-size:17px;font-weight:600;color:#fff}
+.mcal .d.sel{background:var(--teal-soft);box-shadow:inset 0 0 0 2px var(--teal);border-radius:10px}
+.mcal .d small{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:3px}
+.mcal .d small.full{color:var(--red)}
+.mcal .d .occ{width:60%;height:4px;border-radius:2px;background:#E7EEEF;margin-top:4px;overflow:hidden}
+.mcal .d .occ u{display:block;height:100%;background:var(--teal)}
+.mcal .d .pd{position:absolute;top:5px;right:calc(50% - 20px);width:7px;height:7px;border-radius:4px;background:var(--yellow)}
+.band{position:absolute;top:36px;height:19px;z-index:1;color:#fff;font-size:11px;font-weight:700;padding:0 6px;display:flex;align-items:center;border:0;cursor:pointer;overflow:hidden;white-space:nowrap;text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.band span{overflow:hidden;text-overflow:ellipsis}
+.band.s{border-top-left-radius:10px;border-bottom-left-radius:10px}
+.band.e{border-top-right-radius:10px;border-bottom-right-radius:10px}
+.band.site,.band.direct{background:var(--teal)}
+.band.booking{background:var(--booking)}
+.band.free{background:var(--free)}
+.band.pending{background:var(--yellow);color:#3A2604;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{50%{box-shadow:0 0 0 4px rgba(246,195,67,.45);opacity:.75}}
+@media (prefers-reduced-motion:reduce){.band.pending{animation:none}}
+.cal-sub{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:18px 4px 8px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.cal-nav{display:flex;align-items:center;gap:8px;margin:2px 0 12px}
-.cal-nav .mon{flex:1;font-weight:700;font-size:17px}
-.pill{border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.move-hint{position:sticky;top:calc(var(--safe-t) + 64px);z-index:6;background:var(--ink);color:#fff;border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 10px;display:flex;align-items:center;gap:10px}
-.move-hint button{margin-left:auto;background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:14px;height:30px;padding:0 12px;font-weight:600}
-.cal td.c.target{background:#E5F3EA}
-.cal td.c.notarget{background:#F7EFEE}
+.urow{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:11px 20px;cursor:pointer;min-height:54px;font:inherit;color:var(--ink)}
+.urow + .urow{border-top:1px solid #E7EEEF}
+.urow .n{width:52px;font-weight:700;flex-shrink:0}
+.urow .main{flex:1;min-width:0}
+.urow .main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urow .main small{color:var(--muted);font-size:13px}
+.urow.free .main{color:var(--teal);font-weight:600}
+.urow.no{opacity:.45}
 
 /* action bar above tabs */
 .actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
@@ -361,7 +354,7 @@ const S = {
   tab: 'home', inboxSeg: 'req',
   reqs: [], stays: [], blocks: {}, msgs: [], prices: {}, extra: 0,
   open: {}, query: '', sort: 'date',
-  calStart: null, sel: null, move: null,
+  calMonth: null, calUnit: 'all', sel: null, move: null,
   loaded: false
 };
 let SB = null;
@@ -615,67 +608,104 @@ function agoText(ts) {
   return fmt(athensISO(ts));
 }
 
-/* ================= calendar ================= */
-const CAL_DAYS = 56;
+/* ================= calendar (month view) ================= */
+const WD = ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'];
 function renderCal() {
-  if (!S.calStart) S.calStart = S.today;
-  const start = S.calStart;
+  if (!S.calMonth) S.calMonth = S.today.slice(0, 7);
+  if (!S.calUnit) S.calUnit = 'all';
+  const ym = S.calMonth, Y = +ym.slice(0, 4), M = +ym.slice(5, 7);
+  const first = ym + '-01', dim = new Date(Date.UTC(Y, M, 0)).getUTCDate(), last = ym + '-' + String(dim).padStart(2, '0');
+  const lead = (dt(first).getUTCDay() + 6) % 7;
+  const gStart = add(first, -lead), weeks = Math.ceil((lead + dim) / 7);
+  const unit = S.calUnit, isAll = unit === 'all';
   topbar('Ημερολόγιο', '', '<button class="iconbtn" data-act="cal-info" aria-label="Υπόμνημα">?</button><button class="iconbtn" data-act="new" aria-label="Νέα κράτηση">' + ICON.plus + '</button>');
-  let h = '<div class="cal-nav"><span class="mon"></span><button class="pill sq" data-act="cal-prev" aria-label="Πίσω">‹</button><button class="pill" data-act="cal-today">Σήμερα</button><button class="pill sq" data-act="cal-next" aria-label="Μπροστά">›</button></div>';
-  const pendNoUnit = pending().filter(b => !b.unit);
+  let h = '<div class="cal-nav"><span class="mon">' + MONF[M - 1] + ' ' + Y + '</span>' + (ym !== S.today.slice(0, 7) ? '<button class="pill" data-act="cal-today">Σήμερα</button>' : '') + '<button class="pill sq" data-act="cal-prev" aria-label="Προηγούμενος μήνας">‹</button><button class="pill sq" data-act="cal-next" aria-label="Επόμενος μήνας">›</button></div>';
+  const pend = pending();
+  h += '<div class="ucs" id="ucs"><button class="uc' + (isAll ? ' on' : '') + '" data-act="cal-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (unit === u.id ? ' on' : '') + '" data-act="cal-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : u.id.slice(1)) + (pend.some(b => b.unit === u.id) ? '<i></i>' : '') + '</button>').join('') + '</div>';
+  const pendNoUnit = pend.filter(b => !b.unit);
   if (pendNoUnit.length) h += '<div class="pendrow">' + pendNoUnit.map(b => '<button class="chip" data-act="open-req" data-id="' + b.id + '">Αίτημα · ' + esc(b.name.split(' ')[0]) + ' · ' + range(b.start, b.end) + '</button>').join('') + '</div>';
-  h += '<div class="cal-wrap"><div class="cal" id="calsc"><table><thead><tr><th class="rh"></th>';
-  const days = [];
-  for (let i = 0; i < CAL_DAYS; i++) days.push(add(start, i));
-  const dayCls = days.map((n, i) => { const d = dt(n), w = d.getUTCDay(); return (w === 0 || w === 6 ? 'we ' : '') + (n === S.today ? 'tc ' : '') + (d.getUTCDate() === 1 && i ? 'm1' : ''); });
-  days.forEach((n, i) => {
-    const d = dt(n), w = d.getUTCDay();
-    h += '<th class="' + (n === S.today ? 'today ' : '') + dayCls[i].replace('tc ', '') + '">' + (d.getUTCDate() === 1 ? MON[d.getUTCMonth()] : DAY[w]) + '<b>' + d.getUTCDate() + '</b></th>';
-  });
-  h += '</tr></thead><tbody>';
-  const moving = S.move ? all().find(x => x.id === S.move) : null;
-  UNITS.forEach(u => {
-    h += '<tr class="' + (u.id === 'apt' ? 'apt' : '') + '"><th class="rh" scope="row" aria-label="' + u.name + '">' + (u.id === 'apt' ? 'Διαμ.' : u.id.slice(1)) + '<small>' + u.cap + ' άτ.</small></th>';
-    days.forEach((n, i) => {
-      const b = onNight(u.id, n), cl = isClosed(u.id, n);
-      let cls = 'c ' + dayCls[i];
-      if (cl) cls += ' closed';
-      if (S.sel && S.sel.unit === u.id) { const a = S.sel.a, z = S.sel.b || S.sel.a; if (n >= (a < z ? a : z) && n <= (a < z ? z : a)) cls += ' sel'; }
-      if (moving && n >= moving.start && n < moving.end && u.id !== moving.unit) cls += okMove(moving, u.id) ? ' target' : ' notarget';
-      let bar = '';
-      if (b && (b.start === n || i === 0)) {
-        const cont = b.start < n;
-        const len = Math.min(diff(n, b.end), CAL_DAYS - i);
-        /* a stay starts in the afternoon and ends in the morning, so the bar runs from mid-cell to mid-cell */
-        const w = len * 44 + (cont ? 22 : 0) - 4;
-        bar = '<button class="bar ' + srcClass(b) + (cont ? ' cont' : '') + (S.move === b.id ? ' lifted' : '') + '" style="width:' + w + 'px" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span>' + esc(b.name) + '</span></button>';
+  h += '<div class="card mcal" id="mcal"><div class="wd">' + WD.map(w => '<span>' + w + '</span>').join('') + '</div>';
+  const nUnits = UNITS.length;
+  for (let w = 0; w < weeks; w++) {
+    const ws = add(gStart, w * 7);
+    h += '<div class="wk">';
+    for (let i = 0; i < 7; i++) {
+      const n = add(ws, i), d = dt(n);
+      let cls = 'd' + (n.slice(0, 7) !== ym ? ' out' : '') + (n === S.today ? ' today' : '') + (n < S.today ? ' past' : '');
+      let inner = '<b>' + d.getUTCDate() + '</b>';
+      if (isAll) {
+        let taken = 0, pd = false;
+        UNITS.forEach(u => { const b = onNight(u.id, n); if (b || isClosed(u.id, n)) taken++; if (b && b.status === 'pending') pd = true; });
+        const free = nUnits - taken;
+        inner += '<small class="' + (free ? '' : 'full') + '">' + (free ? free + ' ελ.' : 'γεμάτο') + '</small><span class="occ"><u style="width:' + Math.round(taken / nUnits * 100) + '%"></u></span>' + (pd ? '<span class="pd"></span>' : '');
+        h += '<button class="' + cls + '" data-act="cal-day" data-id="' + n + '" aria-label="' + fmtD(n) + ', ' + free + ' ελεύθερα">' + inner + '</button>';
+      } else {
+        if (isClosed(unit, n)) cls += ' closed';
+        if (S.sel && S.sel.unit === unit) { const a = S.sel.a, z = S.sel.b || S.sel.a; if (n >= (a < z ? a : z) && n <= (a < z ? z : a)) cls += ' sel'; }
+        h += '<button class="' + cls + '" data-cell="' + unit + '|' + n + '" aria-label="' + fmtD(n) + '">' + inner + '</button>';
       }
-      h += '<td class="' + cls + '" data-cell="' + u.id + '|' + n + '">' + bar + '</td>';
-    });
-    h += '</tr>';
-  });
-  h += '</tbody></table></div>';
-  if (S.move) { const b = all().find(x => x.id === S.move); h += '<div class="move-hint">Πάτα το δωμάτιο όπου πάει ' + esc(b ? b.name : '') + '<button data-act="move-cancel">Άκυρο</button></div>'; }
+    }
+    if (!isAll) {
+      const we = add(ws, 7);
+      const seen = {};
+      for (let i = 0; i < 7; i++) {
+        const b = onNight(unit, add(ws, i));
+        if (!b || seen[b.id]) continue; seen[b.id] = 1;
+        const s0 = b.start >= ws, e0 = b.end <= we;
+        /* a stay starts in the afternoon and ends in the morning: the band runs from mid-day to mid-day */
+        const L = s0 ? diff(ws, b.start) + .5 : 0, R = e0 ? diff(ws, b.end) + .5 : 7;
+        h += '<button class="band ' + srcClass(b) + (s0 ? ' s' : '') + (e0 && b.end < we ? ' e' : '') + '" style="left:' + (L / 7 * 100).toFixed(3) + '%;width:' + (((Math.min(R, 7)) - L) / 7 * 100).toFixed(3) + '%" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span>' + (s0 || i === 0 ? esc(b.name.split(' ')[0]) : '') + '</span></button>';
+      }
+    }
+    h += '</div>';
+  }
   h += '</div>';
+  /* this month's stays under the calendar */
+  const list = all().filter(b => b.status !== 'rejected' && b.status !== 'expired' && b.status !== 'cancelled' && b.start <= last && b.end > first && (isAll || b.unit === unit)).sort((x, y) => x.start < y.start ? -1 : 1);
+  h += '<div class="cal-sub">' + (isAll ? 'Κρατήσεις ' : unitName(unit) + ' · ') + MONF[M - 1].toLowerCase() + '</div><div class="card">' +
+    (list.length ? list.map(b => { const d = dt(b.start); return '<button class="bk" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="d"><b>' + d.getUTCDate() + '</b><small>' + MON[d.getUTCMonth()] + '</small></div><div class="main"><b>' + esc(b.name) + '</b><small>' + (isAll ? (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') + ' · ' : '') + range(b.start, b.end) + ' · ' + b.nights + 'ν.</small></div>' + srcTag(b) + '</button>'; }).join('') : '<div class="empty">Καμία κράτηση αυτόν τον μήνα.</div>') + '</div>';
+  if (!isAll) h += '<p style="font-size:13px;color:var(--muted);margin:12px 4px 0">Πάτα πρώτη και τελευταία νύχτα για νέα κράτηση ή κλείσιμο. Κράτα πατημένη μια κράτηση για αλλαγή δωματίου.</p>';
   $('#main').innerHTML = h;
-  const sc = $('#calsc');
-  const updMon = () => {
-    const i = Math.max(0, Math.floor(sc.scrollLeft / 44));
-    const d = dt(add(start, i + 1));
-    $('.cal-nav .mon').textContent = MONF[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
-  };
-  sc.addEventListener('scroll', () => { S.calScroll = sc.scrollLeft; S.calScrollY = sc.scrollTop; updMon(); }, { passive: true });
-  sc.scrollLeft = S.calScroll || 0; sc.scrollTop = S.calScrollY || 0; updMon();
-  const fit = () => { const wr = $('.cal-wrap'); if (!wr) return; wr.style.height = Math.max(260, window.innerHeight - wr.getBoundingClientRect().top - $('#tabs').offsetHeight) + 'px'; };
-  fit(); window.onresize = () => { if (S.tab === 'cal') fit(); };
-  bindLongPress(sc);
+  const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  const mc = $('#mcal');
+  let sx = 0, sy = 0;
+  mc.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  mc.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) calMonthStep(dx < 0 ? 1 : -1);
+  });
+  if (!isAll) bindLongPress(mc);
+}
+function calMonthStep(k) {
+  const Y = +S.calMonth.slice(0, 4), M = +S.calMonth.slice(5, 7) - 1 + k;
+  const d = new Date(Date.UTC(Y, M, 1));
+  S.calMonth = d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
+  render();
+}
+function daySheet(n) {
+  sheet('<div class="hd"><div style="flex:1"><h2>' + fmtD(n) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
+    UNITS.map(u => {
+      const b = onNight(u.id, n), lbl = u.id === 'apt' ? 'Διαμ.' : 'Δωμ. ' + u.id.slice(1);
+      if (b) return '<button class="urow" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span class="n">' + lbl + '</span><div class="main"><b>' + esc(b.name) + '</b><small>' + range(b.start, b.end) + '</small></div>' + srcTag(b) + '</button>';
+      if (isClosed(u.id, n)) return '<button class="urow" data-act="cal-unit" data-id="' + u.id + '"><span class="n">' + lbl + '</span><div class="main" style="color:var(--red);font-weight:600">Κλειστό</div></button>';
+      return '<button class="urow free" data-act="cal-unit" data-id="' + u.id + '"><span class="n" style="color:var(--ink)">' + lbl + '</span><div class="main">Ελεύθερο</div>' + ICON.chev + '</button>';
+    }).join('') + '</div>', 'day', n);
+}
+function moveSheet(b) {
+  S.sel = null;
+  sheet('<div class="hd"><div style="flex:1"><h2>Αλλαγή δωματίου</h2><div class="sub" style="color:var(--muted);font-size:14px">' + esc(b.name) + ' · ' + range(b.start, b.end) + ' · ίδιες ημερομηνίες</div></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
+    UNITS.filter(u => (u.id === 'apt') === (b.type === 'apt')).map(u => {
+      if (u.id === b.unit) return '<div class="urow no"><span class="n">' + u.short + '</span><div class="main">Είναι εδώ τώρα</div></div>';
+      const ok = okMove(b, u.id);
+      return '<button class="urow' + (ok ? ' free' : ' no') + '"' + (ok ? ' data-act="move-to" data-id="' + b.id + '" data-unit="' + u.id + '"' : ' disabled') + '><span class="n" style="color:var(--ink)">' + u.short + '</span><div class="main">' + (ok ? 'Μετακίνηση εδώ' : whyNot(b, u.id)) + '</div></button>';
+    }).join('') + '</div>', 'move', b.id);
 }
 function calInfo() {
   sheet('<div class="hd"><div style="flex:1"><h2>Πώς δουλεύει</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd">' +
     '<div class="legend" style="margin:0 0 14px;font-size:14px;gap:10px 16px"><span><i style="background:var(--teal)"></i>Σάιτ / απευθείας</span><span><i style="background:var(--booking)"></i>Booking.com</span><span><i style="background:var(--free)"></i>Δωρεάν</span><span><i style="background:var(--yellow)"></i>Αίτημα</span><span><i style="background:var(--red)"></i>Κλειστό</span></div>' +
     '<p style="margin:0 0 10px"><b>Νέα κράτηση ή κλείσιμο:</b> πάτα την πρώτη και την τελευταία νύχτα σε ένα δωμάτιο.</p>' +
-    '<p style="margin:0 0 10px"><b>Αλλαγή δωματίου:</b> κράτα πατημένη μια κράτηση και μετά πάτα το νέο δωμάτιο.</p>' +
-    '<p style="margin:0"><b>Κίνηση:</b> σύρε δεξιά–αριστερά για τις μέρες, πάνω–κάτω για τα δωμάτια.</p></div>', 'info', null);
+    '<p style="margin:0 0 10px"><b>Αλλαγή δωματίου:</b> κράτα πατημένη μια κράτηση και διάλεξε το νέο δωμάτιο.</p>' +
+    '<p style="margin:0"><b>Μήνες:</b> σύρε το ημερολόγιο δεξιά–αριστερά. Στο «Όλα» πάτα μια μέρα για να δεις όλα τα δωμάτια.</p></div>', 'info', null);
 }
 function okMove(b, unit) {
   if (unit === b.unit) return false;
@@ -705,25 +735,24 @@ function whyNot(b, unit) {
 function moveTo(b, unit) {
   const from = b.unit;
   const q = () => b.stayId ? SB.from('owner_stays').update({ unit: unit }).eq('id', b.stayId).select('id') : SB.from('booking_requests').update({ unit: unit }).eq('id', b.dbId).select('id');
-  write(q, () => { b.unit = unit; S.move = null; toast(b.name + ': από ' + unitName(from) + ' στο ' + unitName(unit) + ', ίδιες ημερομηνίες.'); }, 'Δεν μετακινήθηκε');
+  write(q, () => { b.unit = unit; S.move = null; closeOverlay(); toast(b.name + ': από ' + unitName(from) + ' στο ' + unitName(unit) + ', ίδιες ημερομηνίες.'); }, 'Δεν μετακινήθηκε');
 }
 function canMove(b) { return b && !b.synced && b.source !== 'booking' && (b.status === 'confirmed' || b.status === 'pending') && b.end > S.today; }
 function bindLongPress(sc) {
   let t = null, sx = 0, sy = 0, fired = false;
   sc.addEventListener('touchstart', e => {
-    const bar = e.target.closest('.bar'); if (!bar) return;
+    const bar = e.target.closest('.band'); if (!bar) return;
     fired = false; sx = e.touches[0].clientX; sy = e.touches[0].clientY;
     t = setTimeout(() => {
       const b = all().find(x => x.id === bar.dataset.id);
       if (!canMove(b)) { toast(b && b.source === 'booking' ? 'Οι κρατήσεις του Booking αλλάζουν μόνο στο Booking.' : 'Αυτή η κράτηση δεν μετακινείται.'); return; }
       fired = true; if (navigator.vibrate) navigator.vibrate(12);
-      S.move = b.id; S.sel = null; render();
+      moveSheet(b);
     }, 450);
   }, { passive: true });
-  const cancel = e => { if (!t) return; if (e && e.touches && (Math.abs(e.touches[0].clientX - sx) > 8 || Math.abs(e.touches[0].clientY - sy) > 8)) { clearTimeout(t); t = null; } };
-  sc.addEventListener('touchmove', cancel, { passive: true });
+  sc.addEventListener('touchmove', e => { if (t && (Math.abs(e.touches[0].clientX - sx) > 8 || Math.abs(e.touches[0].clientY - sy) > 8)) { clearTimeout(t); t = null; } }, { passive: true });
   sc.addEventListener('touchend', e => { clearTimeout(t); t = null; if (fired) { e.preventDefault(); fired = false; } });
-  sc.addEventListener('contextmenu', e => { if (e.target.closest('.bar')) e.preventDefault(); });
+  sc.addEventListener('contextmenu', e => { if (e.target.closest('.band')) e.preventDefault(); });
 }
 function actbar() {
   const old = $('#actbar'); if (old) old.remove();
@@ -1078,7 +1107,6 @@ document.addEventListener('click', e => {
   if (t.dataset.tab) { go(t.dataset.tab); return; }
   if (t.dataset.cell && !t.dataset.act) { const p = t.dataset.cell.split('|'); cellTap(p[0], p[1]); return; }
   const a = t.dataset.act, id = t.dataset.id;
-  if (S.move && t.classList.contains('bar')) { const cell = t.closest('td'); if (cell) { const p = cell.dataset.cell.split('|'); cellTap(p[0], p[1]); } return; }
   switch (a) {
     case 'open-req': openReq(id); break;
     case 'booking': openBooking(id); break;
@@ -1089,7 +1117,10 @@ document.addEventListener('click', e => {
     case 'accept': decide(id, 'confirmed'); break;
     case 'reject': decide(id, 'rejected'); break;
     case 'delete': delBooking(id); break;
-    case 'move': closeOverlay(); S.tab = 'cal'; S.move = id; S.sel = null; { const b = all().find(x => x.id === id); if (b && (b.start < S.calStart || b.start >= add(S.calStart, CAL_DAYS))) { S.calStart = b.start < S.today ? S.today : b.start; S.calScroll = 0; } } render(); toast('Πάτα το δωμάτιο όπου πάει η κράτηση.'); break;
+    case 'move': { const b = all().find(x => x.id === id); if (!b) break; closeOverlay(); S.tab = 'cal'; S.sel = null; if (b.unit) S.calUnit = b.unit; S.calMonth = (b.start < S.today ? S.today : b.start).slice(0, 7); render(); setTimeout(() => moveSheet(b), 320); break; }
+    case 'move-to': { const b = all().find(x => x.id === id); if (b) moveTo(b, t.dataset.unit); break; }
+    case 'cal-unit': closeOverlay(); S.calUnit = id; S.sel = null; render(); break;
+    case 'cal-day': daySheet(id); break;
     case 'move-cancel': S.move = null; render(); break;
     case 'send': sendMsg(id); break;
     case 'new': openNew({}); break;
@@ -1098,9 +1129,9 @@ document.addEventListener('click', e => {
     case 'reopen': setClosed(false); break;
     case 'cal-info': calInfo(); break;
     case 'sel-clear': S.sel = null; render(); break;
-    case 'cal-prev': S.calStart = add(S.calStart, -14); if (S.calStart < add(S.today, -60)) S.calStart = add(S.today, -60); S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
-    case 'cal-next': S.calStart = add(S.calStart, 28); S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
-    case 'cal-today': S.calStart = S.today; S.calScroll = 0; S.calScrollY = S.calScrollY || 0; render(); break;
+    case 'cal-prev': calMonthStep(-1); break;
+    case 'cal-next': calMonthStep(1); break;
+    case 'cal-today': S.calMonth = S.today.slice(0, 7); render(); break;
     case 'tog': S.open[id] = !t.parentNode.classList.contains('open'); render(); break;
     case 'sort': S.sort = S.sort === 'date' ? 'name' : 'date'; render(); break;
     case 'push': PUSH.toggle(); break;
