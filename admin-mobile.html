@@ -569,9 +569,9 @@ function demoData() {
     { id: 'm1', request_id: 'd1', sender: 'guest', body: S.reqs[0].note, created_at: new Date(Date.now() - 5 * 36e5).toISOString(), read_at: null },
     { id: 'm2', request_id: 'd2', sender: 'guest', body: 'Do you have a baby cot available?', created_at: new Date(Date.now() - 21 * 36e5).toISOString(), read_at: null },
     { id: 'm3', request_id: 'd3', sender: 'guest', body: 'Θα φτάσουμε γύρω στις 11 το βράδυ, είναι εντάξει;', created_at: new Date(Date.now() - 4 * 864e5).toISOString(), read_at: '2026-01-01' },
-    { id: 'm4', request_id: 'd3', sender: 'owner', body: 'Κανένα πρόβλημα! Θα σας περιμένουμε, το κλειδί θα είναι στην είσοδο.', created_at: new Date(Date.now() - 4 * 864e5 + 36e5).toISOString(), created_by: 'Στάθης' }
+    { id: 'm4', request_id: 'd3', sender: 'owner', body: 'Κανένα πρόβλημα! Θα σας περιμένουμε, το κλειδί θα είναι στην είσοδο.', created_at: new Date(Date.now() - 4 * 864e5 + 36e5).toISOString(), created_by: 'Γιάννης' }
   ];
-  S.owners = [{ email: 'demo@example.com', name: 'Στάθης' }];
+  S.owners = [{ email: 'demo@example.com', name: 'Γιάννης' }];
   S.loaded = true;
 }
 function load() {
@@ -1578,7 +1578,7 @@ $('#lf').addEventListener('submit', e => {
   }).then(enter, err => { er.textContent = err.message; $('#lp').value = ''; }).then(() => { go.disabled = false; go.textContent = 'Σύνδεση'; });
 });
 
-if (DEMO) enter({ email: 'demo@example.com', name: 'Στάθης' });
+if (DEMO) enter({ email: 'demo@example.com', name: 'Γιάννης' });
 else {
   // same saved sign-in as the desktop admin, so an owner already signed in there is signed in here too
   const store = {
