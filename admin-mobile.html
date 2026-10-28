@@ -1001,7 +1001,7 @@ function renderBook() {
 /* ================= guests: everyone who has stayed ================= */
 function guestList() {
   const by = {};
-  all().filter(b => b.status === 'confirmed' && b.start <= S.today && b.name && b.name !== 'Booking.com').forEach(b => {
+  all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && b.name && b.name !== 'Booking.com').forEach(b => {
     const k = (b.email || '').trim().toLowerCase() || String(b.phone || '').replace(/\D/g, '').slice(-10) || b.name.trim().toLowerCase();
     (by[k] = by[k] || []).push(b);
   });
@@ -1014,13 +1014,13 @@ function guestList() {
 function renderGuests() {
   const q = (S.gq || '').trim().toLowerCase();
   const seg = S.gseg || 'all', allG = guestList(), T = S.today;
-  const isNow = g => g.stays.some(b => b.start <= T && b.end > T);
+  const isNow = g => g.stays.some(b => b.status === 'confirmed' && b.start <= T && b.end > T);
   const nowN = allG.filter(isNow).length;
   let list = seg === 'now' ? allG.filter(isNow) : allG;
   topbar('Πελάτες', '');
   if (q) list = list.filter(g => (g.name + ' ' + g.email + ' ' + g.phone).toLowerCase().includes(q));
   list.sort((a, b) => S.gsort === 'name' ? a.name.localeCompare(b.name, 'el') : (a.last.start < b.last.start ? 1 : -1));
-  let h = '<div class="segbar"><div class="seg"><button data-act="gseg" data-id="all" class="' + (seg === 'all' ? 'on' : '') + '">Όλοι<span class="n">' + allG.length + '</span></button><button data-act="gseg" data-id="now" class="' + (seg === 'now' ? 'on' : '') + '">Μένουν τώρα<span class="n">' + nowN + '</span></button></div></div>';
+  let h = '<div class="segbar"><div class="seg"><button data-act="gseg" data-id="all" class="' + (seg === 'all' ? 'on' : '') + '">Όλοι</button><button data-act="gseg" data-id="now" class="' + (seg === 'now' ? 'on' : '') + '">Μένουν τώρα</button></div></div>';
   h += '<div class="search"><input id="gq" type="search" placeholder="Όνομα, τηλέφωνο, email…" value="' + esc(S.gq || '') + '" enterkeyhint="search"><button class="pill" data-act="gsort" style="height:44px">' + (S.gsort === 'name' ? 'Α→Ω' : 'Πρόσφατοι') + '</button></div>';
   if (!list.length) h += '<div class="card empty">' + (q ? 'Δεν βρέθηκε πελάτης.' : seg === 'now' ? 'Δεν μένει κανείς αυτή τη στιγμή.' : 'Δεν έχει μείνει κανείς ακόμα.') + '</div>';
   else {
