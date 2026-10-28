@@ -95,7 +95,9 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .room .dots i.b{background:var(--booking)} .room .dots i.d{background:var(--teal)} .room .dots i.p{background:var(--yellow)} .room .dots i.x{background:var(--red)} .room .dots i.f{background:var(--free)}
 
 /* segmented */
-.segbar{position:sticky;top:var(--top-h,64px);z-index:15;margin:0 -16px 12px;padding:6px 16px 10px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.segbar{position:sticky;top:calc(var(--top-h,64px) - 1px);z-index:15;margin:0 -16px 14px;padding:7px 16px 10px;background:var(--bg)}
+.segbar::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:linear-gradient(var(--bg),transparent);pointer-events:none}
+body:has(.segbar) .top{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
 .seg{display:flex;background:var(--seg);border-radius:12px;padding:3px}
 .seg button{flex:1;border:0;background:none;padding:9px 0;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;position:relative}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
@@ -205,7 +207,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 .alert + .quickrow{margin-top:12px}
-.calhead{position:sticky;top:var(--top-h,64px);z-index:14;margin:0 -16px 14px;padding:4px 16px 12px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.calhead{position:sticky;top:calc(var(--top-h,64px) - 1px);z-index:14;margin:0 -16px 14px;padding:4px 16px 12px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 html.dark .calhead{background:rgba(14,23,25,.94)}
 .calhead::after{content:'';position:absolute;left:0;right:0;top:100%;height:14px;background:linear-gradient(var(--bg),transparent);pointer-events:none}
 .calhead .ucs{margin-bottom:0}
