@@ -205,6 +205,8 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 .alert + .quickrow{margin-top:12px}
+.calhead{position:sticky;top:var(--top-h,64px);z-index:14;margin:0 -16px;padding:4px 16px 0;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+html.dark .calhead{background:rgba(14,23,25,.94)}
 .dts{display:flex;align-items:stretch;gap:0;background:var(--soft);border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
 .dts .dt{flex:1;position:relative;padding:10px 14px;display:flex;flex-direction:column;cursor:pointer;min-width:0}
 .dts .dt small{font-size:12px;font-weight:600;color:var(--muted)}
@@ -728,9 +730,10 @@ function renderCal() {
   topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(S.user.name.split(' ')[0]) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
   let h = '';
   const p = pending();
-  if (p.length) h += '<button class="alert" data-act="open-req" data-id="' + p[0].id + '"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
+  h += '<div class="calhead">';
+  if (p.length) h += '<button class="alert" data-act="go-reqs"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
   const occ = UNITS.filter(u => onNight(u.id, T) && onNight(u.id, T).status === 'confirmed').length;
-  h += todayHTML();
+  h += todayHTML() + '</div>';
   h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
   const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
   let shown = 0, later = 0;
@@ -1061,10 +1064,28 @@ function renderMore() {
   const on = PUSH.on(), dark = document.documentElement.classList.contains('dark');
   let h = '<div class="list" style="margin-top:8px"><div class="li" style="min-height:72px"><div class="av" style="width:44px;height:44px;border-radius:22px;font-size:15px">' + esc(initials(S.user.name)) + '</div><span><b style="display:block">' + esc(S.user.name) + '</b><small>' + esc(S.user.email) + '</small></span></div></div>';
   h += '<div class="sec">Αυτή η συσκευή</div><div class="list"><button class="li" data-act="push"><span class="ic">' + ICON.bell + '</span><span>Ειδοποιήσεις για νέα αιτήματα</span><span class="sw' + (on ? ' on' : '') + '"></span></button>' +
+    '<button class="li" data-act="remind"><span class="ic">' + ICON.bell + '</span><span>Υπενθυμίσεις πριν λήξει αίτημα<small style="display:block">' + remindLabel(S.remind) + '</small></span><span class="chev" style="flex:0;color:var(--muted)">' + ICON.chev + '</span></button>' +
     '<button class="li" data-act="dark"><span class="ic">' + ICON.moon + '</span><span>Σκούρα εμφάνιση</span><span class="sw' + (dark ? ' on' : '') + '"></span></button></div>';
   if (PUSH.perm() === 'denied') h += '<p class="note">Οι ειδοποιήσεις είναι μπλοκαρισμένες στις ρυθμίσεις του κινητού για αυτή την εφαρμογή.</p>';
   h += '<div class="list" style="margin-top:22px"><button class="li" data-act="logout" style="color:var(--red)"><span class="ic" style="background:var(--red-soft);color:var(--red)">' + ICON.logout + '</span><span>Αποσύνδεση</span></button></div>';
   $('#main').innerHTML = h;
+}
+
+/* ================= request reminders (per owner) ================= */
+// 0 = never, -1 = once (4 hours before expiry), N = every N hours until the request expires
+const REMIND_OPTS = [[-1, 'Μία φορά, 4 ώρες πριν τη λήξη'], [6, 'Κάθε 6 ώρες'], [3, 'Κάθε 3 ώρες'], [2, 'Κάθε 2 ώρες'], [1, 'Κάθε ώρα'], [0, 'Καμία υπενθύμιση']];
+function remindLabel(v) { const o = REMIND_OPTS.find(x => x[0] === v); return o ? o[1] : REMIND_OPTS[0][1]; }
+function remindSheet() {
+  const cur = S.remind == null ? -1 : S.remind;
+  sheet('<div class="hd"><b>Υπενθυμίσεις αιτημάτων</b></div><div class="bd" style="padding:0 0 16px"><p class="note" style="padding:0 20px 8px">Πόσο συχνά να σου έρχεται ειδοποίηση για ένα αίτημα που δεν έχει απαντηθεί, μέχρι να λήξει (24 ώρες).</p><div class="list" style="margin:0 16px">' +
+    REMIND_OPTS.map(o => '<button class="li" data-act="remind-set" data-id="' + o[0] + '"><span>' + o[1] + '</span>' + (o[0] === cur ? '<span style="flex:0;color:var(--teal);font-weight:700">✓</span>' : '') + '</button>').join('') + '</div></div>', 'remind');
+}
+function setRemind(v) {
+  const prev = S.remind; S.remind = v; closeOverlay(); render();
+  if (DEMO) { toast('Αποθηκεύτηκε.'); return; }
+  SB.from('owners').update({ remind_every: v }).eq('email', S.user.email).then(r => {
+    if (r.error) { S.remind = prev; render(); toast('Δεν αποθηκεύτηκε. Δοκίμασε ξανά.'); } else toast('Αποθηκεύτηκε.');
+  });
 }
 
 /* ================= overlays ================= */
@@ -1446,6 +1467,9 @@ document.addEventListener('click', e => {
   const a = t.dataset.act, id = t.dataset.id;
   switch (a) {
     case 'open-req': openReq(id); break;
+    case 'go-reqs': S.inboxSeg = 'req'; go('inbox'); break;
+    case 'remind': remindSheet(); break;
+    case 'remind-set': setRemind(+id); break;
     case 'thr-booking': { const b = all().find(x => x.id === id); stackNext = true; if (b && b.status === 'pending') openReq(id); else openBooking(id); break; }
     case 'booking': openBooking(id); break;
     case 'room': openRoom(id); break;
@@ -1520,8 +1544,9 @@ function enter(user) {
   if (DEMO && params.get('req')) setTimeout(() => openFromPush(params.get('req')), 50);
 }
 function profile(u) {
-  return SB.from('owners').select('email, name').eq('email', u.email).maybeSingle().then(r => {
+  return SB.from('owners').select('email, name, remind_every').eq('email', u.email).maybeSingle().then(r => {
     if (r.error || !r.data) throw new Error('Αυτό το email δεν είναι στους ιδιοκτήτες.');
+    S.remind = r.data.remind_every;
     return { email: r.data.email, name: r.data.name || r.data.email };
   });
 }
