@@ -557,6 +557,10 @@ function demoData() {
     req('d9', { name: 'Anna Petrova', type: 'room', unit: 'r5', start: day(8), end: day(14), nights: 6, total: 720 }),
     st('d10', { name: 'Booking.com', source: 'booking', type: 'room', unit: 'r6', start: day(-4), end: day(0), nights: 4, synced: true }),
     req('d11', { name: 'Δημήτρης Παππάς', type: 'room', unit: 'r8', start: day(-40), end: day(-35), nights: 5, total: 510 }),
+    req('d13', { name: 'Μαρία Κωνσταντίνου', type: 'room', unit: 'r5', start: day(-320), end: day(-314), nights: 6, total: 540 }),
+    req('d14', { name: 'Thomas Müller', type: 'apt', unit: 'apt', start: day(-300), end: day(-293), nights: 7, guests: 4, total: 1190 }),
+    req('d15', { name: 'Κώστας Αλεξίου', type: 'room', unit: 'r10', start: day(-70), end: day(-66), nights: 4, total: 400 }),
+    req('d16', { name: 'Μαρία Κωνσταντίνου', type: 'room', unit: 'r3', start: day(-20), end: day(-15), nights: 5, total: 525 }),
     req('d12', { name: 'Lukas Weber', type: 'room', unit: 'r2', start: day(20), end: day(25), nights: 5, total: 600 })
   ];
   S.reqs = list.filter(b => b.kind === 'req'); S.stays = list.filter(b => b.kind === 'stay');
@@ -574,8 +578,8 @@ function load() {
   if (DEMO) return Promise.resolve();
   const from = add(athensISO(), -400);
   return Promise.all([
-    SB.from('booking_requests').select('*').eq('is_test', false).gte('check_out', from).order('created_at', { ascending: false }).limit(1000),
-    SB.from('owner_stays').select('*').gte('check_out', from).neq('kind', 'test').order('check_in').limit(2000),
+    SB.from('booking_requests').select('*').eq('is_test', false).order('created_at', { ascending: false }).limit(5000),
+    SB.from('owner_stays').select('*').neq('kind', 'test').order('check_in').limit(5000),
     SB.from('unit_blocks').select('unit, night').gte('night', add(athensISO(), -60)).limit(5000),
     SB.from('request_messages').select('id, request_id, sender, body, created_at, created_by, read_at, email_status').order('created_at').limit(5000),
     SB.from('price_overrides').select('night, room, apt, closed').order('night').limit(20000),
@@ -1009,12 +1013,16 @@ function guestList() {
 }
 function renderGuests() {
   const q = (S.gq || '').trim().toLowerCase();
-  let list = guestList();
-  topbar('Πελάτες', list.length + (list.length === 1 ? ' πελάτης έχει μείνει' : ' πελάτες έχουν μείνει'));
+  const seg = S.gseg || 'all', allG = guestList(), T = S.today;
+  const isNow = g => g.stays.some(b => b.start <= T && b.end > T);
+  const nowN = allG.filter(isNow).length;
+  let list = seg === 'now' ? allG.filter(isNow) : allG;
+  topbar('Πελάτες', '');
   if (q) list = list.filter(g => (g.name + ' ' + g.email + ' ' + g.phone).toLowerCase().includes(q));
   list.sort((a, b) => S.gsort === 'name' ? a.name.localeCompare(b.name, 'el') : (a.last.start < b.last.start ? 1 : -1));
-  let h = '<div class="search"><input id="gq" type="search" placeholder="Όνομα, τηλέφωνο, email…" value="' + esc(S.gq || '') + '" enterkeyhint="search"><button class="pill" data-act="gsort" style="height:44px">' + (S.gsort === 'name' ? 'Α→Ω' : 'Πρόσφατοι') + '</button></div>';
-  if (!list.length) h += '<div class="card empty">' + (q ? 'Δεν βρέθηκε πελάτης.' : 'Δεν έχει μείνει κανείς ακόμα.') + '</div>';
+  let h = '<div class="segbar"><div class="seg"><button data-act="gseg" data-id="all" class="' + (seg === 'all' ? 'on' : '') + '">Όλοι<span class="n">' + allG.length + '</span></button><button data-act="gseg" data-id="now" class="' + (seg === 'now' ? 'on' : '') + '">Μένουν τώρα<span class="n">' + nowN + '</span></button></div></div>';
+  h += '<div class="search"><input id="gq" type="search" placeholder="Όνομα, τηλέφωνο, email…" value="' + esc(S.gq || '') + '" enterkeyhint="search"><button class="pill" data-act="gsort" style="height:44px">' + (S.gsort === 'name' ? 'Α→Ω' : 'Πρόσφατοι') + '</button></div>';
+  if (!list.length) h += '<div class="card empty">' + (q ? 'Δεν βρέθηκε πελάτης.' : seg === 'now' ? 'Δεν μένει κανείς αυτή τη στιγμή.' : 'Δεν έχει μείνει κανείς ακόμα.') + '</div>';
   else {
     h += '<div class="card">';
     list.forEach(g => {
@@ -1481,6 +1489,7 @@ document.addEventListener('click', e => {
     case 'thread': openThread(id); break;
     case 'close': closeOverlay(); break;
     case 'seg': S.inboxSeg = id; render(); break;
+    case 'gseg': S.gseg = id; render(); break;
     case 'accept': decide(id, 'confirmed'); break;
     case 'reject': decide(id, 'rejected'); break;
     case 'delete': delBooking(id); break;
