@@ -1252,7 +1252,7 @@ function bookingHTML(b) {
       (b.by ? '<dt>Από</dt><dd style="font-weight:500">' + esc(b.by) + '</dd>' : '') +
     '</dl>' + contactHTML(b.phone) + (b.note ? '<div class="bubble">' + esc(b.note) + '</div>' : '') +
     (isB ? '<p class="note">Ήρθε αυτόματα από το ημερολόγιο του Booking.com. Αλλάζει ή ακυρώνεται μόνο στο Booking.</p>' : '') + '</div>' +
-    (isB ? '' : '<div class="ft">' + (canMove(b) ? '<button class="btn out" data-act="move" data-id="' + b.id + '">Αλλαγή δωματίου</button>' : '') + '<button class="btn danger" data-act="delete" data-id="' + b.id + '" style="flex:0 0 auto;padding:0 18px">Διαγραφή</button></div>');
+    (isB ? '' : '<div class="ft"' + (canMove(b) ? '' : ' style="justify-content:center"') + '>' + (canMove(b) ? '<button class="btn out" data-act="move" data-id="' + b.id + '">Αλλαγή δωματίου</button>' : '') + '<button class="btn danger" data-act="delete" data-id="' + b.id + '" style="flex:0 0 auto;padding:0 18px">Διαγραφή</button></div>');
 }
 function openBooking(id) {
   const b = all().find(x => x.id === id); if (!b) return;
