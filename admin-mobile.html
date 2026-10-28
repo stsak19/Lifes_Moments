@@ -875,10 +875,11 @@ function closeOverlay() {
   const o = overlay; overlay = null;
   o.el.classList.remove('show'); if (o.scrim) o.scrim.classList.remove('show');
   setTimeout(() => { o.el.remove(); if (o.scrim) o.scrim.remove(); }, 300);
+  if (under) { overlay = under; under = null; refreshOverlay(); return; } // back to the conversation underneath
   document.body.style.overflow = '';
 }
 function sheet(html, kind, id) {
-  closeOverlayNow();
+  openOver();
   const scrim = document.createElement('div'); scrim.className = 'scrim';
   const el = document.createElement('div'); el.className = 'sheet'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
   el.innerHTML = '<div class="grab"><i></i></div>' + html;
@@ -891,7 +892,7 @@ function sheet(html, kind, id) {
   return el;
 }
 function full(html, kind, id) {
-  closeOverlayNow();
+  openOver();
   const el = document.createElement('div'); el.className = 'full'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
   el.innerHTML = html;
   $('#layer').append(el);
@@ -900,7 +901,10 @@ function full(html, kind, id) {
   requestAnimationFrame(() => el.classList.add('show'));
   return el;
 }
-function closeOverlayNow() { if (!overlay) return; overlay.el.remove(); if (overlay.scrim) overlay.scrim.remove(); overlay = null; document.body.style.overflow = ''; }
+function closeOverlayNow() { if (!overlay) return; overlay.el.remove(); if (overlay.scrim) overlay.scrim.remove(); overlay = null; if (under) { under.el.remove(); under = null; } document.body.style.overflow = ''; }
+// open the next sheet/screen on top of the current one (used from a conversation), instead of replacing it
+var under = null, stackNext = false;
+function openOver() { if (stackNext && overlay && !under) { under = overlay; overlay = null; } else closeOverlayNow(); stackNext = false; }
 function dragToClose(el) {
   const g = el.querySelector('.grab'); let y0 = null, dy = 0;
   g.addEventListener('touchstart', e => { y0 = e.touches[0].clientY; dy = 0; el.style.transition = 'none'; }, { passive: true });
@@ -1066,7 +1070,7 @@ function chatHTML(rid) {
 function openThread(rid) {
   qEdit = false;
   const r = S.reqs.find(x => x.dbId === rid); if (!r) return;
-  const el = full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1;min-width:0"><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.name) + '</h1><button class="pill" data-act="' + (r.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + r.id + '" style="margin-top:6px;height:32px;font-size:13px;background:#1E8E5A;border-color:#1E8E5A;color:#fff">Στοιχεία κράτησης</button></div></header>' +
+  const el = full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1;min-width:0"><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.name) + '</h1><button class="pill" data-act="thr-booking" data-id="' + r.id + '" style="margin-top:6px;height:32px;font-size:13px;background:#1E8E5A;border-color:#1E8E5A;color:#fff">Στοιχεία κράτησης</button></div></header>' +
     '<div class="bd"><div class="chat">' + chatHTML(rid) + '</div></div>' +
     '<div class="ft" style="flex-direction:column;gap:0"><div class="qk" id="qk">' + quickHTML() + '</div><div class="compose"><textarea id="cmp" rows="1" placeholder="Μήνυμα στον πελάτη (πάει με email)"></textarea><button class="send" data-act="send" data-id="' + rid + '" aria-label="Αποστολή">' + ICON.send + '</button></div></div>', 'thread', rid);
   const bd = el.querySelector('.bd'); bd.scrollTop = bd.scrollHeight;
@@ -1236,6 +1240,7 @@ document.addEventListener('click', e => {
   const a = t.dataset.act, id = t.dataset.id;
   switch (a) {
     case 'open-req': openReq(id); break;
+    case 'thr-booking': { const b = all().find(x => x.id === id); stackNext = true; if (b && b.status === 'pending') openReq(id); else openBooking(id); break; }
     case 'booking': openBooking(id); break;
     case 'room': openRoom(id); break;
     case 'thread': openThread(id); break;
