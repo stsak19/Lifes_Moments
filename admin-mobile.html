@@ -571,7 +571,8 @@ function load() {
     SB.from('unit_blocks').select('unit, night').gte('night', add(athensISO(), -60)).limit(5000),
     SB.from('request_messages').select('id, request_id, sender, body, created_at, created_by, read_at, email_status').order('created_at').limit(5000),
     SB.from('price_overrides').select('night, room, apt, closed').order('night').limit(20000),
-    SB.from('site_settings').select('extra_guest').limit(1)
+    SB.from('site_settings').select('extra_guest').limit(1),
+    SB.from('guest_notes').select('guest_key, note, updated_at, updated_by').limit(5000)
   ]).then(rs => {
     const bad = rs.find(r => r.error);
     if (bad) { toast('Δεν φορτώθηκαν τα δεδομένα: ' + bad.error.message); return; }
@@ -581,6 +582,7 @@ function load() {
     S.stays = (rs[1].data || []).map(fromStay);
     const bl = {}; (rs[2].data || []).forEach(x => { bl[x.unit + '|' + x.night] = true; }); S.blocks = bl;
     S.msgs = rs[3].data || [];
+    const gn = {}; (rs[6].data || []).forEach(x => { gn[x.guest_key] = x; }); S.gnotes = gn;
     S.today = athensISO();
     S.loaded = true;
     render(); refreshOverlay();
@@ -1016,8 +1018,27 @@ function openGuest(id) {
       (g.phone ? '<dt>Τηλέφωνο</dt><dd><a href="tel:' + esc(g.phone) + '">' + esc(g.phone) + '</a></dd>' : '') +
       (g.email ? '<dt>Email</dt><dd><a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a></dd>' : '') +
       (!g.phone && !g.email ? '<dt>Επικοινωνία</dt><dd style="color:var(--muted);font-weight:500">δεν υπάρχει</dd>' : '') +
-    '</dl>' + contactHTML(g.phone) + '</div>' +
-    '</div>', 'guest', id);
+    '</dl>' + contactHTML(g.phone) +
+    '<div class="sec" style="margin:18px 0 6px">Σημειώσεις</div>' +
+    '<textarea class="field" id="gnote" rows="4" placeholder="Ό,τι θες να θυμάσαι για αυτόν τον πελάτη (π.χ. προτιμά ισόγειο, έρχεται κάθε Αύγουστο)">' + esc(((S.gnotes || {})[id] || {}).note || '') + '</textarea>' +
+    '<p class="note" id="gnst" style="margin:6px 0 0;font-size:12px;color:var(--muted)">' + gnoteInfo(id) + '</p>' +
+    '</div></div>', 'guest', id);
+  const ta = $('#gnote'); let t = null;
+  const save = () => { clearTimeout(t); t = null; saveGNote(id, ta.value); };
+  ta.addEventListener('input', () => { $('#gnst').textContent = 'Αποθήκευση…'; clearTimeout(t); t = setTimeout(save, 900); });
+  ta.addEventListener('blur', () => { if (t) save(); });
+}
+
+function gnoteInfo(id) {
+  const n = (S.gnotes || {})[id];
+  return n && n.note ? 'Τελευταία αλλαγή: ' + (n.updated_by ? esc(n.updated_by) + ' · ' : '') + agoText(n.updated_at) + '. Τις βλέπετε μόνο εσείς.' : 'Τις βλέπετε μόνο εσείς, όχι ο πελάτης.';
+}
+function saveGNote(id, text) {
+  const v = text.trim().slice(0, 5000), st = $('#gnst');
+  const done = () => { S.gnotes = S.gnotes || {}; S.gnotes[id] = { guest_key: id, note: v, updated_at: new Date().toISOString(), updated_by: by() }; if (st) st.innerHTML = 'Αποθηκεύτηκε. ' + gnoteInfo(id); };
+  if (DEMO) { done(); return; }
+  const q = v ? SB.from('guest_notes').upsert({ guest_key: id, note: v, updated_at: new Date().toISOString(), updated_by: by() }, { onConflict: 'guest_key' }) : SB.from('guest_notes').delete().eq('guest_key', id);
+  q.then(res => { if (res.error) { if (st) st.textContent = 'Δεν αποθηκεύτηκε: ' + res.error.message; return; } done(); }, () => { if (st) st.textContent = 'Δεν υπάρχει σύνδεση, δεν αποθηκεύτηκε.'; });
 }
 
 /* ================= more ================= */
