@@ -191,6 +191,15 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 .alert + .today{margin-top:12px}
+.dts{display:flex;align-items:stretch;gap:0;background:#F4F7F7;border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
+.dts .dt{flex:1;position:relative;padding:10px 14px;display:flex;flex-direction:column;cursor:pointer;min-width:0}
+.dts .dt small{font-size:12px;font-weight:600;color:var(--muted)}
+.dts .dt b{font-size:20px;line-height:1.25}
+.dts .dt span{font-size:13px;color:var(--muted)}
+.dts .dt + .dtn + .dt{text-align:right}
+.dts .dt input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+.dts .dtn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;font-size:11px;color:var(--muted);font-weight:600;border-left:1px dashed var(--line);border-right:1px dashed var(--line)}
+.dts .dtn b{font-size:18px;color:var(--teal)}
 .today{background:var(--card);border-radius:16px;padding:12px 12px 10px;margin:0 0 10px;box-shadow:0 1px 3px rgba(10,58,62,.07),0 6px 18px rgba(10,58,62,.06)}
 .today .tg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .today .tg button{border:0;background:#F4F7F7;border-radius:12px;padding:9px 2px 8px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px}
@@ -1208,9 +1217,11 @@ function openNew(pre) {
   const u = UNITS.find(x => x.id === unit);
   const h = '<div class="hd"><div style="flex:1"><h2>Νέα κράτηση</h2><p>Τηλέφωνο, απευθείας ή φίλοι</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
     '<div class="bd"><form id="nf">' +
-      '<label class="lbl">Δωμάτιο</label><select class="field" name="unit">' + UNITS.map(x => '<option value="' + x.id + '"' + (x.id === unit ? ' selected' : '') + '>' + x.name + ' (ως ' + x.cap + ')</option>').join('') + '</select>' +
-      '<div style="display:flex;gap:10px"><div style="flex:1"><label class="lbl">Άφιξη</label><input class="field" type="date" name="start" value="' + start + '" min="' + S.today + '"></div><div style="flex:1"><label class="lbl">Αναχώρηση</label><input class="field" type="date" name="end" value="' + end + '"></div></div>' +
       '<label class="lbl">Ονοματεπώνυμο</label><input class="field" name="name" autocomplete="off" required>' +
+      '<div class="dts"><label class="dt"><small>Άφιξη</small><b id="dtA"></b><span id="dwA"></span><input type="date" name="start" value="' + start + '" min="' + S.today + '"></label>' +
+      '<div class="dtn" id="dtN"></div>' +
+      '<label class="dt"><small>Αναχώρηση</small><b id="dtZ"></b><span id="dwZ"></span><input type="date" name="end" value="' + end + '"></label></div>' +
+      '<label class="lbl">Δωμάτιο</label><select class="field" name="unit">' + UNITS.map(x => '<option value="' + x.id + '"' + (x.id === unit ? ' selected' : '') + '>' + x.name + '</option>').join('') + '</select>' +
       '<div style="display:flex;gap:10px"><div style="flex:0 0 96px"><label class="lbl">Άτομα</label><input class="field" type="number" name="guests" min="1" max="' + u.cap + '" value="' + Math.min(2, u.cap) + '" inputmode="numeric"></div><div style="flex:1"><label class="lbl">Τηλέφωνο</label><input class="field" type="tel" name="phone" inputmode="tel"></div></div>' +
       '<label class="lbl">Είδος</label><div class="chips" id="kinds"><button type="button" class="chip on" data-k="paid">Πληρωμένη</button><button type="button" class="chip" data-k="free">Δωρεάν (φίλοι)</button></div>' +
       '<div id="paybox"><div style="display:flex;gap:10px"><div style="flex:1"><label class="lbl">Ποσό (€)</label><input class="field" type="number" name="total" min="0" step="1" inputmode="decimal" placeholder="—"></div><div style="flex:1"><label class="lbl">Πληρωμή</label><select class="field" name="pay"><option value="cash">Μετρητά</option><option value="card">Κάρτα</option><option value="bank">Τράπεζα</option></select></div></div><p class="note" id="psug"></p></div>' +
@@ -1222,6 +1233,11 @@ function openNew(pre) {
   const f = el.querySelector('#nf');
   const sug = () => {
     const un = f.unit.value, n = diff(f.start.value, f.end.value);
+    const show = (v, b, w) => { if (!v) { el.querySelector(b).textContent = '—'; el.querySelector(w).textContent = ''; return; } const d = dt(v); el.querySelector(b).textContent = d.getUTCDate() + ' ' + MON[d.getUTCMonth()]; el.querySelector(w).textContent = DAYF[d.getUTCDay()]; };
+    show(f.start.value, '#dtA', '#dwA'); show(f.end.value, '#dtZ', '#dwZ');
+    el.querySelector('#dtN').innerHTML = n > 0 ? '<b>' + n + '</b>' + (n === 1 ? 'νύχτα' : 'νύχτες') : '<b style="color:var(--red)">!</b>';
+    if (f.start.value && (!f.end.value || f.end.value <= f.start.value)) { f.end.value = add(f.start.value, 1); return sug(); }
+    f.end.min = f.start.value ? add(f.start.value, 1) : '';
     const p = n > 0 ? stayPrice(un === 'apt' ? 'apt' : 'room', f.start.value, n, Number(f.guests.value) || 1) : null;
     el.querySelector('#psug').textContent = p != null ? 'Τιμή σάιτ για ' + n + ' νύχτες: ' + money(p) : '';
     f.guests.max = UNITS.find(x => x.id === un).cap;
