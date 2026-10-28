@@ -541,7 +541,7 @@ function threads() {
 
 /* ================= data ================= */
 function demoData() {
-  const T = S.today, mk = (o) => Object.assign({ guests: 2, email: 'guest@example.com', phone: '+30 69xx xxx xxx', note: '', status: 'confirmed', created: new Date(Date.now() - 864e5 * 5).toISOString() }, o);
+  const T = S.today, mk = (o) => { const r = Object.assign({ guests: 2, phone: '+30 69xx xxx xxx', note: '', status: 'confirmed', created: new Date(Date.now() - 864e5 * 5).toISOString() }, o); if (!r.email) r.email = 'guest' + (r.name || '').length + (r.name || '').charCodeAt(0) + '@example.com'; return r; };
   const req = (id, o) => mk(Object.assign({ id: 'q' + id, dbId: id, kind: 'req', source: 'site' }, o));
   const st = (id, o) => mk(Object.assign({ id: 's' + id, stayId: id, kind: 'stay', source: 'direct', stayKind: 'paid' }, o));
   const day = n => add(T, n);
