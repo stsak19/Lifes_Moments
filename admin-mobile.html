@@ -690,7 +690,7 @@ function sw(inner, act, id, solo) {
 function renderInbox() {
   const p = pending(), th = threads();
   const unread = th.reduce((s, t) => s + t.unread, 0);
-  topbar(S.inboxSeg === 'req' ? 'Αιτήματα' : 'Μηνύματα', p.length ? p.length + ' περιμένουν απάντηση' : 'Όλα απαντημένα');
+  topbar(S.inboxSeg === 'req' ? 'Αιτήματα' : 'Μηνύματα', '');
   let h = '<div class="segbar"><div class="seg"><button data-act="seg" data-id="req" class="' + (S.inboxSeg === 'req' ? 'on' : '') + '">Αιτήματα' + (p.length ? '<span class="n">' + p.length + '</span>' : '') + '</button><button data-act="seg" data-id="msg" class="' + (S.inboxSeg === 'msg' ? 'on' : '') + '">Μηνύματα' + (unread ? '<span class="n">' + unread + '</span>' : '') + '</button></div></div>';
   if (S.inboxSeg === 'req') {
     if (!p.length) h += '<div class="card empty">Δεν υπάρχει αίτημα που να περιμένει.<br>Όταν έρθει νέο, θα σου έρθει ειδοποίηση.</div>';
