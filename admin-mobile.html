@@ -631,7 +631,7 @@ function agoText(ts) {
 
 /* ================= schedule (phone: day list + availability, no grid) ================= */
 function renderCal() {
-  if (!S.agDays || S.agDays < 60) S.agDays = 60;
+  S.agDays = 365;
   if (!S.agUnit) S.agUnit = 'all';
   const U = S.agUnit;
   const T = S.today, td = dt(T);
@@ -641,7 +641,6 @@ function renderCal() {
   if (p.length) h += '<button class="alert" data-act="open-req" data-id="' + p[0].id + '"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
   const occ = UNITS.filter(u => onNight(u.id, T) && onNight(u.id, T).status === 'confirmed').length;
   h += '<button class="tonight" data-act="tonight"><b>Απόψε</b><span class="tbar"><u style="width:' + Math.round(occ / UNITS.length * 100) + '%"></u></span><span>' + occ + '/' + UNITS.length + ' πιασμένα</span>' + ICON.chev + '</button>';
-  h += '<button class="avbtn" data-act="avail"><span>' + ICON.cal + '</span><div><b>Διαθεσιμότητα</b><small>Ποια δωμάτια είναι ελεύθερα για κάποιες μέρες</small></div>' + ICON.chev + '</button>';
   h += '<div class="ucs" id="ucs"><button class="uc' + (U === 'all' ? ' on' : '') + '" data-act="ag-unit" data-id="all">Όλα</button>' + UNITS.map(u => '<button class="uc' + (U === u.id ? ' on' : '') + '" data-act="ag-unit" data-id="' + u.id + '">' + (u.id === 'apt' ? 'Διαμέρισμα' : 'Δωμ. ' + u.id.slice(1)) + '</button>').join('') + '</div>';
   const live = all().filter(b => (b.status === 'confirmed' || b.status === 'pending') && (U === 'all' || b.unit === U));
   let shown = 0;
@@ -657,7 +656,6 @@ function renderCal() {
     h += '</div>';
   }
   if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>';
-  h += '<button class="pill" data-act="ag-more" style="width:100%;justify-content:center;height:44px;margin:18px 0 0">Δείξε πιο μακριά</button>';
   $('#main').innerHTML = h;
   const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
