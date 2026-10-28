@@ -1490,8 +1490,8 @@ document.addEventListener('click', e => {
     case 'room': openRoom(id); break;
     case 'thread': openThread(id); break;
     case 'close': closeOverlay(); break;
-    case 'seg': S.inboxSeg = id; render(); break;
-    case 'gseg': S.gseg = id; render(); break;
+    case 'seg': S.inboxSeg = id; render(); window.scrollTo(0, 0); break;
+    case 'gseg': S.gseg = id; render(); window.scrollTo(0, 0); break;
     case 'accept': decide(id, 'confirmed'); break;
     case 'reject': decide(id, 'rejected'); break;
     case 'delete': delBooking(id); break;
