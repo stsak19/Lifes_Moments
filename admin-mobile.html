@@ -298,6 +298,7 @@ textarea.field{height:auto;min-height:80px;padding:10px 12px;resize:vertical}
 .qk button{flex-shrink:0;position:relative;height:34px;padding:0 13px;border-radius:17px;border:1px solid var(--line);background:#F4F7F7;color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
 .qk.ed button.q{border:1px dashed #B7791F;background:#FBEFD9;color:#5C3606}
 .qk button.q i{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font-style:normal;font-size:13px;line-height:17px;border:2px solid #fff}
+.qk button.lang{background:var(--ink);border-color:var(--ink);color:#fff}
 .qk button.add{border:1px dashed var(--teal);background:#fff;color:var(--teal)}
 .qk button.lnk{border:0;background:none;color:var(--teal);text-decoration:underline;padding:0 6px}
 .compose{display:flex;gap:8px;align-items:flex-end;width:100%}
@@ -923,32 +924,43 @@ const QDEF = [
   ['Πάρκινγκ', 'There is free parking right in front of the building.'],
   ['Ευχαριστώ', 'Thank you for your message, we will get back to you shortly!']
 ];
+// Greek wording for the default buttons (matched by label, so older saved lists get it too)
+const QDEF_EL = {
+  'Ώρα check-in': 'Το check-in είναι από τις 14:00 και το check-out έως τις 11:00. Αν φτάσετε νωρίτερα, μπορείτε να αφήσετε τις αποσκευές σας σε εμάς.',
+  'Οδηγίες άφιξης': 'Βρισκόμαστε στα Λιμενάρια, 2 λεπτά από την παραλία. Στείλτε μας μήνυμα όταν βγείτε από το πλοίο και θα σας περιμένουμε στην είσοδο.',
+  'Πάρκινγκ': 'Υπάρχει δωρεάν πάρκινγκ ακριβώς μπροστά από το κτίριο.',
+  'Ευχαριστώ': 'Ευχαριστούμε για το μήνυμά σας, θα σας απαντήσουμε σύντομα!'
+};
+const QLANG = 'lm-admin-quick-lang';
+let qLang = (() => { try { return localStorage.getItem(QLANG) === 'el' ? 'el' : 'en'; } catch (e) { return 'en'; } })();
+function qText(q) { return qLang === 'el' ? (q.text_el || QDEF_EL[q.label] || q.text) : (q.text || q.text_el); }
 let qEdit = false;
 function loadQuick() {
   try { const v = JSON.parse(localStorage.getItem(QKEY) || 'null'); if (Array.isArray(v)) return v.filter(q => q && q.label && q.text); } catch (e) {}
-  return QDEF.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1] }));
+  return QDEF.map((q, i) => ({ id: 'q' + i, label: q[0], text: q[1], text_el: QDEF_EL[q[0]] }));
 }
 function saveQuick(l) { try { localStorage.setItem(QKEY, JSON.stringify(l)); } catch (e) {} }
 function quickHTML() {
   const l = loadQuick();
-  return l.map(q => '<button class="q" data-act="qk" data-id="' + q.id + '">' + esc(q.label) + (qEdit ? '<i data-act="qk-del" data-id="' + q.id + '">×</i>' : '') + '</button>').join('') +
+  return '<button class="lang" data-act="qk-lang" aria-label="Γλώσσα απάντησης">' + (qLang === 'el' ? '🇬🇷 ΕΛ' : '🇬🇧 EN') + '</button>' + l.map(q => '<button class="q" data-act="qk" data-id="' + q.id + '">' + esc(q.label) + (qEdit ? '<i data-act="qk-del" data-id="' + q.id + '">×</i>' : '') + '</button>').join('') +
     '<button class="add" data-act="qk-new">+ Νέο</button>' + (l.length ? '<button class="lnk" data-act="qk-edit">' + (qEdit ? 'Τέλος' : 'Επεξεργασία') + '</button>' : '');
 }
 function quickRefresh() { const el = document.getElementById('qk'); if (el) { el.innerHTML = quickHTML(); el.classList.toggle('ed', qEdit); } }
 function quickForm(q) {
   const label = prompt('Όνομα κουμπιού', q ? q.label : ''); if (label == null || !label.trim()) return;
   const cur = document.getElementById('cmp');
-  const text = prompt('Κείμενο μηνύματος', q ? q.text : (cur && cur.value.trim()) || ''); if (text == null || !text.trim()) return;
+  const text = prompt('Κείμενο μηνύματος (' + (qLang === 'el' ? 'Ελληνικά' : 'Αγγλικά') + ')', q ? qText(q) : (cur && cur.value.trim()) || ''); if (text == null || !text.trim()) return;
+  const k = qLang === 'el' ? 'text_el' : 'text';
   const l = loadQuick();
   if (l.some(x => (!q || x.id !== q.id) && x.label.toLowerCase() === label.trim().toLowerCase())) { toast('Υπάρχει ήδη κουμπί με αυτό το όνομα.'); return; }
-  saveQuick(q ? l.map(x => x.id === q.id ? Object.assign({}, x, { label: label.trim(), text: text.trim() }) : x) : l.concat([{ id: 'q' + Date.now(), label: label.trim(), text: text.trim() }]));
+  saveQuick(q ? l.map(x => x.id === q.id ? Object.assign({}, x, { label: label.trim(), [k]: text.trim() }) : x) : l.concat([{ id: 'q' + Date.now(), label: label.trim(), text: text.trim(), text_el: text.trim() }]));
   quickRefresh();
 }
 function quickTap(id) {
   const q = loadQuick().find(x => x.id === id); if (!q) return;
   if (qEdit) { quickForm(q); return; }
   const ta = document.getElementById('cmp'); if (!ta) return;
-  const cur = ta.value.trim(); ta.value = cur ? cur + '\n\n' + q.text : q.text;
+  const cur = ta.value.trim(); const t = qText(q); ta.value = cur ? cur + '\n\n' + t : t;
   ta.dispatchEvent(new Event('input')); ta.focus();
 }
 
@@ -1236,6 +1248,7 @@ document.addEventListener('click', e => {
     case 'del-thr': delThread(id); break;
     case 'qk': quickTap(id); break;
     case 'qk-del': { const q = loadQuick().find(x => x.id === id); if (q && confirm('Διαγραφή του κουμπιού «' + q.label + '»;')) { saveQuick(loadQuick().filter(x => x.id !== id)); quickRefresh(); } break; }
+    case 'qk-lang': qLang = qLang === 'el' ? 'en' : 'el'; try { localStorage.setItem(QLANG, qLang); } catch (e) {} quickRefresh(); toast('Γρήγορα μηνύματα στα ' + (qLang === 'el' ? 'Ελληνικά' : 'Αγγλικά') + '.'); break;
     case 'qk-new': quickForm(null); break;
     case 'qk-edit': qEdit = !qEdit; quickRefresh(); break;
     case 'move': { const b = all().find(x => x.id === id); if (b) moveSheet(b); break; }
