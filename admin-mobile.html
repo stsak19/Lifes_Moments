@@ -21,8 +21,22 @@
   --red:#C2412D; --red-soft:#FBE7E3;
   --booking:#2E5EAA; --booking-soft:#DCE6F6;
   --direct:#0F5257; --free:#7A8B2E;
+  --soft:#F4F7F7; --soft2:#F0F4F4; --hair:#E7EEEF; --seg:#DDE6E7; --solid:#18282B; --bar:rgba(255,255,255,.94);
   --tab-h:64px; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
 }
+/* dark appearance (Ρυθμίσεις → Σκούρα εμφάνιση) */
+html.dark{
+  --bg:#0E1719; --card:#182427; --ink:#E6EEEF; --muted:#93A6A9; --line:#2C3C3F;
+  --teal:#3FA3A9; --teal-2:#5BB9BF; --teal-soft:#1B3A3D;
+  --yellow-soft:#3A3014; --yellow-ink:#F4D27A; --red:#EF6B57; --red-soft:#3D1F1B;
+  --booking:#7FA6E6; --booking-soft:#1D2B44;
+  --soft:#1F2D30; --soft2:#22312F; --hair:#26363A; --seg:#22302F; --solid:#2E4447; --bar:rgba(20,30,32,.94);
+  color-scheme:dark;
+}
+html.dark .agr.in{background:#16301F}html.dark .agr.in small{color:#8FD3A6}
+html.dark .agr.out{background:#3A1E1C}html.dark .agr.out small{color:#F0A49B}
+html.dark .mcal .d.out{color:#4A5B5E}
+html.dark .shadowless,html.dark .card,html.dark .today{box-shadow:none}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
@@ -57,7 +71,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 /* today list */
 .rows{display:flex;flex-direction:column}
 .row{display:flex;align-items:center;gap:12px;padding:13px 16px;border:0;background:none;width:100%;text-align:left;cursor:pointer;min-height:56px}
-.row + .row{border-top:1px solid #E7EEEF}
+.row + .row{border-top:1px solid var(--hair)}
 .row .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .row .main{flex:1;min-width:0}
 .row .main b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -82,7 +96,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 
 /* segmented */
 .segbar{position:sticky;top:var(--top-h,64px);z-index:15;margin:0 -16px 12px;padding:6px 16px 10px;background:rgba(238,243,244,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.seg{display:flex;background:#DDE6E7;border-radius:12px;padding:3px}
+.seg{display:flex;background:var(--seg);border-radius:12px;padding:3px}
 .seg button{flex:1;border:0;background:none;padding:9px 0;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;position:relative}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .seg .n{display:inline-block;min-width:18px;height:18px;line-height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;margin-left:5px}
@@ -94,13 +108,13 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .timer{font-size:12px;font-weight:700;color:var(--yellow-ink);background:var(--yellow-soft);padding:3px 8px;border-radius:10px;white-space:nowrap}
 .timer.hot{background:var(--red-soft);color:var(--red)}
 .req .l2{font-size:14px;color:var(--muted);margin-top:3px}
-.req .msg{margin-top:8px;font-size:14px;color:var(--ink);background:#F4F7F7;border-radius:10px;padding:8px 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.req .msg{margin-top:8px;font-size:14px;color:var(--ink);background:var(--soft);border-radius:10px;padding:8px 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* swipe-left to delete (requests + threads) */
 .swr{position:relative;overflow:hidden;touch-action:pan-y}
 .swr.solo{border-radius:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(10,58,62,.08)}
 .swr.solo .req{margin-bottom:0;border-radius:16px}
-.card .swr + .swr{border-top:1px solid #E7EEEF}
+.card .swr + .swr{border-top:1px solid var(--hair)}
 .card.swl{overflow:hidden}
 .swdel{position:absolute;top:0;right:0;bottom:0;width:88px;border:0;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:600;font-size:12px;cursor:pointer}
 .swdel svg{width:22px;height:22px}
@@ -110,7 +124,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 
 /* thread list */
 .thr{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:12px 16px;cursor:pointer;min-height:64px}
-.thr + .thr{border-top:1px solid #E7EEEF}
+.thr + .thr{border-top:1px solid var(--hair)}
 .thr .ini{width:42px;height:42px;border-radius:21px;background:var(--teal-soft);color:var(--teal);font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .thr .main{flex:1;min-width:0}
 .thr .main b{display:flex;gap:8px;align-items:baseline}
@@ -128,7 +142,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .ucs{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 10px;padding:0 16px 2px;scrollbar-width:none}
 .ucs::-webkit-scrollbar{display:none}
 .uc{flex-shrink:0;border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;min-width:40px;padding:0 12px;font-weight:600;font-size:14px;cursor:pointer;position:relative}
-.uc.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.uc.on{background:var(--solid);border-color:var(--solid);color:#fff}
 .uc i{position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:4px;background:var(--yellow);border:1.5px solid var(--card)}
 .pendrow{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
 .pendrow::-webkit-scrollbar{display:none}
@@ -136,7 +150,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .mcal{padding:8px 6px 6px;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .mcal .wd{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:0 0 6px}
 .mcal .wk{position:relative;display:grid;grid-template-columns:repeat(7,1fr)}
-.mcal .wk + .wk{border-top:1px solid #EEF2F3}
+.mcal .wk + .wk{border-top:1px solid var(--hair)}
 .mcal .d{height:58px;border:0;background:none;padding:5px 0 0;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;font:inherit;color:var(--ink)}
 .mcal .d > b{font-size:15px;font-weight:600;width:28px;height:28px;line-height:28px;border-radius:14px;text-align:center}
 .mcal .d.out{color:#B5C2C4}
@@ -147,7 +161,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .mcal .d.sel{background:var(--teal-soft);box-shadow:inset 0 0 0 2px var(--teal);border-radius:10px}
 .mcal .d small{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:3px}
 .mcal .d small.full{color:var(--red)}
-.mcal .d .occ{width:60%;height:4px;border-radius:2px;background:#E7EEEF;margin-top:4px;overflow:hidden}
+.mcal .d .occ{width:60%;height:4px;border-radius:2px;background:var(--hair);margin-top:4px;overflow:hidden}
 .mcal .d .occ u{display:block;height:100%;background:var(--teal)}
 .mcal .d .pd{position:absolute;top:5px;right:calc(50% - 20px);width:7px;height:7px;border-radius:4px;background:var(--yellow)}
 .band{position:absolute;top:36px;height:19px;z-index:1;color:#fff;font-size:11px;font-weight:700;padding:0 6px;display:flex;align-items:center;border:0;cursor:pointer;overflow:hidden;white-space:nowrap;text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.12)}
@@ -164,7 +178,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .urow{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:11px 20px;cursor:pointer;min-height:54px;font:inherit;color:var(--ink)}
-.urow + .urow{border-top:1px solid #E7EEEF}
+.urow + .urow{border-top:1px solid var(--hair)}
 .urow .n{width:66px;font-weight:700;flex-shrink:0;white-space:nowrap}
 .urow .main{flex:1;min-width:0}
 .urow .main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -172,7 +186,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .urow.free .main{color:var(--teal);font-weight:600}
 .urow.no{opacity:.45}
 
-.avbtn{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:var(--ink);color:#fff;border-radius:16px;padding:14px 16px;cursor:pointer;margin:2px 0 6px;font:inherit}
+.avbtn{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:var(--solid);color:#fff;border-radius:16px;padding:14px 16px;cursor:pointer;margin:2px 0 6px;font:inherit}
 .avbtn > span svg{width:24px;height:24px}
 .avbtn div{flex:1}.avbtn b{display:block;font-size:16px}.avbtn small{opacity:.75;font-size:13px}
 .ag-h{display:flex;align-items:baseline;gap:8px;margin:20px 4px 8px}
@@ -183,15 +197,15 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .ag-list{display:flex;flex-direction:column;gap:8px}
 .agr{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;border-radius:14px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink);border-left:5px solid}
 .agr .main{flex:1;min-width:0}.agr .main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.agr .main small{font-size:13px}
-.agr.in{background:#E3F4E8;border-left-color:#2E9E57}.agr.in .agk{background:#fff;color:#2E9E57}.agr.in small{color:#2C6B42}
-.agr.out{background:#FBE7E5;border-left-color:#D2443A}.agr.out .agk{background:#fff;color:#D2443A}.agr.out small{color:#8F3530}
+.agr.in{background:#E3F4E8;border-left-color:#2E9E57}.agr.in .agk{background:var(--card);color:#2E9E57}.agr.in small{color:#2C6B42}
+.agr.out{background:#FBE7E5;border-left-color:#D2443A}.agr.out .agk{background:var(--card);color:#D2443A}.agr.out small{color:#8F3530}
 .ucs{display:flex;gap:6px;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none}.ucs::-webkit-scrollbar{display:none}
 .uc{flex-shrink:0;border:1px solid var(--line);background:var(--card);border-radius:18px;height:36px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink)}
-.uc.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.uc.on{background:var(--solid);border-color:var(--solid);color:#fff}
 .avd{display:flex;gap:10px;padding:0 20px 6px}.avd label{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--muted)}.avd .field{margin-top:4px;min-width:0;-webkit-appearance:none;appearance:none;font-size:16px;color:var(--ink)}
 .urow .pill + .pill{margin-left:-4px}
 .alert + .quickrow{margin-top:12px}
-.dts{display:flex;align-items:stretch;gap:0;background:#F4F7F7;border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
+.dts{display:flex;align-items:stretch;gap:0;background:var(--soft);border:1px solid var(--line);border-radius:14px;margin:14px 0 4px;overflow:hidden}
 .dts .dt{flex:1;position:relative;padding:10px 14px;display:flex;flex-direction:column;cursor:pointer;min-width:0}
 .dts .dt small{font-size:12px;font-weight:600;color:var(--muted)}
 .dts .dt b{font-size:20px;line-height:1.25}
@@ -202,7 +216,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .dts .dtn b{font-size:18px;color:var(--teal)}
 .today{background:var(--card);border-radius:16px;padding:12px 12px 10px;margin:0 0 10px;box-shadow:0 1px 3px rgba(10,58,62,.07),0 6px 18px rgba(10,58,62,.06)}
 .today .tg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.today .tg button{border:0;background:#F4F7F7;border-radius:12px;padding:9px 2px 8px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px}
+.today .tg button{border:0;background:var(--soft);border-radius:12px;padding:9px 2px 8px;cursor:pointer;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px}
 .today .tg b{font-size:22px;line-height:1.1}
 .today .tg small{font-size:11px;font-weight:600;color:var(--muted)}
 .today .tg .cl{background:var(--yellow-soft)}
@@ -219,21 +233,21 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .contact .call{background:var(--teal);color:#fff}
 .contact .wa{background:#25D366;color:#fff}
 .pnl{padding:0 20px}
-.pnl .typ{display:flex;background:#DDE6E7;border-radius:12px;padding:3px;margin:4px 0 12px}
+.pnl .typ{display:flex;background:var(--seg);border-radius:12px;padding:3px;margin:4px 0 12px}
 .pnl .typ button{flex:1;border:0;background:none;padding:9px 0;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
 .pnl .typ button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .pnl .now{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
-.pnl .now span{font-size:12px;background:#F4F7F7;border-radius:8px;padding:4px 7px;color:var(--muted)}
+.pnl .now span{font-size:12px;background:var(--soft);border-radius:8px;padding:4px 7px;color:var(--muted)}
 .pnl .now span b{color:var(--ink)}
 .pnl .np{display:flex;gap:10px;align-items:center}
 .pnl .np input{flex:1;font-size:22px;font-weight:700;height:52px}
 .tonight{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--card);border-radius:14px;padding:12px 14px;margin:0 0 10px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 1px 3px rgba(10,58,62,.07)}
-.tonight .tbar{flex:1;height:6px;border-radius:3px;background:#E7EEEF;overflow:hidden}.tonight .tbar u{display:block;height:100%;background:var(--teal)}
+.tonight .tbar{flex:1;height:6px;border-radius:3px;background:var(--hair);overflow:hidden}.tonight .tbar u{display:block;height:100%;background:var(--teal)}
 .tonight > span:not(.tbar){font-size:14px;font-weight:600;color:var(--muted)}
-.agn{min-width:40px;height:40px;padding:0 8px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;flex-shrink:0}
+.agn{min-width:40px;height:40px;padding:0 8px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;flex-shrink:0}
 .agr.in .agn{color:#2E9E57}.agr.out .agn{color:#D2443A}
 /* action bar above tabs */
-.actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
+.actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--solid);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
 .actbar .what{flex:1;min-width:0;font-size:12.5px;line-height:1.3}
 .actbar .what b{display:block;font-size:15px}
 .actbar button{border:0;border-radius:12px;height:40px;padding:0 12px;font-size:14px;white-space:nowrap;font-weight:700;cursor:pointer}
@@ -252,7 +266,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .mgrp > button{padding:10px 4px 8px}
 .mgrp > button b{font-size:15px}
 .bk{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:12px 16px;cursor:pointer;min-height:60px}
-.bk + .bk{border-top:1px solid #E7EEEF}
+.bk + .bk{border-top:1px solid var(--hair)}
 .bk .d{width:44px;text-align:center;flex-shrink:0}
 .bk .d b{display:block;font-size:19px;line-height:1.1}
 .bk .d small{font-size:11px;color:var(--muted);text-transform:uppercase}
@@ -264,10 +278,12 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 /* ---------- more ---------- */
 .list{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(10,58,62,.07)}
 .li{display:flex;align-items:center;gap:12px;padding:0 16px;min-height:54px;width:100%;border:0;background:none;text-align:left;cursor:pointer;text-decoration:none;color:inherit}
-.li + .li{border-top:1px solid #E7EEEF}
+.li + .li{border-top:1px solid var(--hair)}
 .li .ic{width:32px;height:32px;border-radius:9px;background:var(--teal-soft);color:var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .li .ic svg{width:18px;height:18px}
 .li span{flex:1}
+.li .ic,.li .sw{flex:0 0 auto}
+html.dark .top{background:rgba(14,23,25,.92)}html.dark .full .top{background:var(--bg)}html.dark .sw{background:#3A4B4E}html.dark .sw.on{background:#34A853}
 .li small{color:var(--muted);font-size:13px}
 .sw{width:50px;height:30px;border-radius:15px;background:#C9D4D5;position:relative;flex-shrink:0;transition:background .2s}
 .sw::after{content:"";position:absolute;top:2px;left:2px;width:26px;height:26px;border-radius:13px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
@@ -275,7 +291,7 @@ main{padding:4px 16px calc(var(--tab-h) + var(--safe-b) + 24px)}
 .note{font-size:13px;color:var(--muted);padding:8px 4px 0}
 
 /* ---------- tab bar ---------- */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;height:calc(var(--tab-h) + var(--safe-b));padding-bottom:var(--safe-b);background:rgba(255,255,255,.94);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-top:1px solid var(--line);display:flex}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;height:calc(var(--tab-h) + var(--safe-b));padding-bottom:var(--safe-b);background:var(--bar);backdrop-filter:saturate(1.4) blur(16px);-webkit-backdrop-filter:saturate(1.4) blur(16px);border-top:1px solid var(--line);display:flex}
 nav.tabs button{flex:1;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;color:#7E8F91;cursor:pointer;position:relative;padding-top:4px}
 nav.tabs button svg{width:24px;height:24px}
 nav.tabs button.on{color:var(--teal)}
@@ -296,7 +312,7 @@ nav.tabs .badge{position:absolute;top:6px;left:calc(50% + 6px);min-width:18px;he
 .sheet .hd h2{margin:0;font-size:21px;flex:1;letter-spacing:-.01em}
 .sheet .hd p{margin:2px 0 0;color:var(--muted);font-size:14px}
 .sheet .bd{overflow-y:auto;padding:0 20px 16px;-webkit-overflow-scrolling:touch}
-.sheet .ft{padding:12px 20px calc(12px + var(--safe-b));border-top:1px solid #E7EEEF;display:flex;gap:10px}
+.sheet .ft{padding:12px 20px calc(12px + var(--safe-b));border-top:1px solid var(--hair);display:flex;gap:10px}
 .full{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .full.show{transform:none}
 .full .top{background:var(--bg)}
@@ -307,43 +323,43 @@ nav.tabs .badge{position:absolute;top:6px;left:calc(50% + 6px);min-width:18px;he
 .kv dt{color:var(--muted)}
 .kv dd{margin:0;text-align:right;font-weight:600;overflow-wrap:anywhere}
 .kv dd a{color:var(--teal);text-decoration:none}
-.bubble{background:#F4F7F7;border-radius:14px;padding:12px 14px;font-size:15px;white-space:pre-wrap;margin:8px 0}
+.bubble{background:var(--soft);border-radius:14px;padding:12px 14px;font-size:15px;white-space:pre-wrap;margin:8px 0}
 .lbl{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px}
-.field{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:0 12px}
+.field{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--card);padding:0 12px}
 textarea.field{height:auto;min-height:80px;padding:10px 12px;resize:vertical}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:18px;height:38px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:18px;height:38px;padding:0 14px;font-weight:600;font-size:14px;cursor:pointer}
 .chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
 .chip:disabled{opacity:.4;cursor:not-allowed}
 
 .btn{flex:1;height:52px;border-radius:14px;border:0;font-weight:700;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn.pri{background:var(--teal);color:#fff}
 .btn.ok{background:#1E8A4C;color:#fff}
-.btn.out{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
-.btn.danger{background:#fff;color:var(--red);border:1.5px solid #EBC4BD}
+.btn.out{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn.danger{background:var(--card);color:var(--red);border:1.5px solid #EBC4BD}
 .btn.yel{background:var(--yellow);color:#3A2604}
 .btn:disabled{opacity:.5}
 
 /* chat */
 .chat{display:flex;flex-direction:column;gap:6px;padding:8px 0}
 .m{max-width:82%;padding:9px 13px;border-radius:18px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
-.m.g{align-self:flex-start;background:#fff;border-bottom-left-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.m.g{align-self:flex-start;background:var(--card);border-bottom-left-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:6px}
 .m small{display:block;font-size:11px;opacity:.65;margin-top:3px}
 .qk{display:flex;gap:6px;overflow-x:auto;margin:0 -16px 10px;padding:6px 16px 2px;scrollbar-width:none}
 .qk::-webkit-scrollbar{display:none}
-.qk button{flex-shrink:0;position:relative;height:34px;padding:0 13px;border-radius:17px;border:1px solid var(--line);background:#F4F7F7;color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
+.qk button{flex-shrink:0;position:relative;height:34px;padding:0 13px;border-radius:17px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
 .qk.ed button.q{border:1px dashed #B7791F;background:#FBEFD9;color:#5C3606}
 .qk button.q i{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font-style:normal;font-size:13px;line-height:17px;border:2px solid #fff}
-.qk button.lang{background:var(--ink);border-color:var(--ink);color:#fff}
-.qk button.add{border:1px dashed var(--teal);background:#fff;color:var(--teal)}
+.qk button.lang{background:var(--solid);border-color:var(--solid);color:#fff}
+.qk button.add{border:1px dashed var(--teal);background:var(--card);color:var(--teal)}
 .qk button.lnk{border:0;background:none;color:var(--teal);text-decoration:underline;padding:0 6px}
 .compose{display:flex;gap:8px;align-items:flex-end;width:100%}
-.compose textarea{flex:1;min-height:44px;max-height:120px;border-radius:22px;border:1px solid var(--line);padding:11px 16px;resize:none;background:#fff}
+.compose textarea{flex:1;min-height:44px;max-height:120px;border-radius:22px;border:1px solid var(--line);padding:11px 16px;resize:none;background:var(--card)}
 .send{width:44px;height:44px;border-radius:22px;background:var(--teal);color:#fff;border:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
 /* toast */
-.toast{position:fixed;left:16px;right:16px;bottom:calc(var(--tab-h) + var(--safe-b) + 14px);z-index:90;background:var(--ink);color:#fff;padding:13px 16px;border-radius:14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(var(--tab-h) + var(--safe-b) + 14px);z-index:90;background:var(--solid);color:#fff;padding:13px 16px;border-radius:14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
 
 /* login */
 .login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px 24px calc(24px + var(--safe-b))}
@@ -406,7 +422,11 @@ UNITS.push({ id: 'apt', name: 'Διαμέρισμα', short: 'Διαμ.', cap: 5
 const unitName = id => (UNITS.find(u => u.id === id) || {}).name || 'χωρίς δωμάτιο';
 
 const LOGO_MARK = '<svg class="brandmark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>';
+function setDark(d) { document.documentElement.classList.toggle('dark', d); const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = d ? '#0E1719' : '#0F5257'; }
+try { if (localStorage.getItem('lm-admin-dark') === '1') setDark(true); } catch (e) {}
 const ICON = {
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
   wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.8-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>',
   trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
@@ -595,7 +615,7 @@ const by = () => S.user ? S.user.name : '';
 
 /* ================= render: shell ================= */
 const TABS = [
-  ['inbox', 'Αιτήματα', ICON.inbox], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['guests', 'Πελάτες', ICON.people], ['more', 'Περισσότερα', ICON.more]
+  ['inbox', 'Αιτήματα', ICON.inbox], ['cal', 'Πρόγραμμα', ICON.cal], ['book', 'Κρατήσεις', ICON.list], ['guests', 'Πελάτες', ICON.people], ['more', 'Ρυθμίσεις', ICON.gear]
 ];
 function renderTabs() {
   const np = pending().length + threads().reduce((s, t) => s + (t.req.status === 'pending' ? 0 : t.unread), 0);
@@ -616,7 +636,7 @@ function render() {
   document.documentElement.style.setProperty('--top-h', $('#top').offsetHeight + 'px');
   actbar();
 }
-function go(tab) { if (S.tab === tab) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } S.tab = tab; S.sel = null; S.move = null; render(); window.scrollTo(0, 0); }
+function go(tab) { if (S.tab === tab) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (tab === 'book') S.open = {}; S.tab = tab; S.sel = null; S.move = null; render(); window.scrollTo(0, 0); }
 
 /* ================= home ================= */
 function renderHome() {
@@ -732,7 +752,7 @@ function agRow(b, kind, U) {
 }
 function availSheet() {
   if (!S.av || S.av.a < S.today) S.av = { a: S.today, z: add(S.today, 3) };
-  sheet('<div class="hd"><div style="flex:1"><h2>Διαθεσιμότητα</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  sheet('<div class="hd"><div style="flex:1"><h2>Διαθεσιμότητα</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd" style="padding:0 0 16px"><div class="avd"><label>Άφιξη<input class="field" type="date" id="avA" min="' + S.today + '" value="' + S.av.a + '"></label><label>Αναχώρηση<input class="field" type="date" id="avZ" min="' + add(S.today, 1) + '" value="' + S.av.z + '"></label></div><div id="avRes"></div></div>', 'avail', null);
   availRes();
 }
@@ -755,7 +775,7 @@ document.addEventListener('change', e => {
   if (e.target.id === 'avZ') { S.av.z = e.target.value; availRes(); }
 });
 function daySheet(n) {
-  sheet('<div class="hd"><div style="flex:1"><h2>' + (n === S.today ? 'Απόψε' : fmtD(n)) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
+  sheet('<div class="hd"><div style="flex:1"><h2>' + (n === S.today ? 'Απόψε' : fmtD(n)) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
     UNITS.map(u => {
       const b = onNight(u.id, n), lbl = u.id === 'apt' ? 'Διαμ.' : 'Δωμ. ' + u.id.slice(1);
       if (b) return '<button class="urow" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span class="n">' + lbl + '</span><div class="main"><b>' + esc(b.name) + '</b><small>' + range(b.start, b.end) + '</small></div>' + srcTag(b) + '</button>';
@@ -765,7 +785,7 @@ function daySheet(n) {
 }
 function moveSheet(b) {
   S.sel = null;
-  sheet('<div class="hd"><div style="flex:1"><h2>Αλλαγή δωματίου</h2><div class="sub" style="color:var(--muted);font-size:14px">' + esc(b.name) + ' · ' + range(b.start, b.end) + ' · ίδιες ημερομηνίες</div></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
+  sheet('<div class="hd"><div style="flex:1"><h2>Αλλαγή δωματίου</h2><div class="sub" style="color:var(--muted);font-size:14px">' + esc(b.name) + ' · ' + range(b.start, b.end) + ' · ίδιες ημερομηνίες</div></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
     UNITS.filter(u => (u.id === 'apt') === (b.type === 'apt')).map(u => {
       if (u.id === b.unit) return '<div class="urow no"><span class="n">' + u.short + '</span><div class="main">Είναι εδώ τώρα</div></div>';
       const ok = okMove(b, u.id);
@@ -773,7 +793,7 @@ function moveSheet(b) {
     }).join('') + '</div>', 'move', b.id);
 }
 function calInfo() {
-  sheet('<div class="hd"><div style="flex:1"><h2>Πώς δουλεύει</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd">' +
+  sheet('<div class="hd"><div style="flex:1"><h2>Πώς δουλεύει</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div><div class="bd">' +
     '<div class="legend" style="margin:0 0 14px;font-size:14px;gap:10px 16px"><span><i style="background:var(--teal)"></i>Σάιτ / απευθείας</span><span><i style="background:var(--booking)"></i>Booking.com</span><span><i style="background:var(--free)"></i>Δωρεάν</span><span><i style="background:var(--yellow)"></i>Αίτημα</span><span><i style="background:var(--red)"></i>Κλειστό</span></div>' +
     '<p style="margin:0 0 10px"><b>Νέα κράτηση ή κλείσιμο:</b> πάτα την πρώτη και την τελευταία νύχτα σε ένα δωμάτιο.</p>' +
     '<p style="margin:0 0 10px"><b>Αλλαγή δωματίου:</b> κράτα πατημένη μια κράτηση και διάλεξε το νέο δωμάτιο.</p>' +
@@ -864,7 +884,7 @@ function todayHTML() {
 function cleanSheet() {
   const T = S.today, live = all().filter(b => b.status === 'confirmed');
   const dep = live.filter(b => b.end === T && b.unit);
-  sheet('<div class="hd"><div style="flex:1"><h2>Καθάρισμα σήμερα</h2><p>Δωμάτια που αδειάζουν σήμερα</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
+  sheet('<div class="hd"><div style="flex:1"><h2>Καθάρισμα σήμερα</h2><p>Δωμάτια που αδειάζουν σήμερα</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
     (dep.length ? UNITS.filter(u => dep.some(b => b.unit === u.id)).map(u => {
       const out = dep.find(b => b.unit === u.id), inn = live.find(b => b.unit === u.id && b.start === T);
       return '<button class="urow" data-act="booking" data-id="' + out.id + '"><span class="n">' + u.short + '</span><div class="main"><b>' + (inn ? 'Έρχεται ' + esc(inn.name) + ' σήμερα' : 'Άδειο απόψε') + '</b><small>Φεύγει ' + esc(out.name) + '</small></div>' + (inn ? '<span class="timer hot">Πρώτο</span>' : '') + '</button>';
@@ -874,7 +894,7 @@ function cleanSheet() {
 /* ---- price for a few nights (same night prices as the desktop «Τιμές») ---- */
 function priceSheet() {
   if (!S.pq || S.pq.a < S.today) S.pq = { a: S.today, z: add(S.today, 2), type: 'room' };
-  sheet('<div class="hd"><div style="flex:1"><h2>Τιμή για λίγες μέρες</h2><p>Ίδια τιμή σε όλα τα δωμάτια του τύπου</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  sheet('<div class="hd"><div style="flex:1"><h2>Τιμή για λίγες μέρες</h2><p>Ίδια τιμή σε όλα τα δωμάτια του τύπου</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd" style="padding:0 0 16px"><div class="avd"><label>Πρώτη νύχτα<input class="field" type="date" id="pqA" min="' + S.today + '" value="' + S.pq.a + '"></label><label>Τελευταία νύχτα<input class="field" type="date" id="pqZ" min="' + S.today + '" value="' + add(S.pq.z, -1) + '"></label></div><div id="pqRes" class="pnl"></div></div>', 'price', null);
   priceRes();
 }
@@ -921,7 +941,7 @@ function contactHTML(phone) {
 
 /* ================= bookings ================= */
 function renderBook() {
-  topbar('Κρατήσεις', '', '<button class="iconbtn" data-act="new" aria-label="Νέα κράτηση">' + ICON.plus + '</button>');
+  topbar('Κρατήσεις', '');
   const q = S.query.trim().toLowerCase();
   let list = all().filter(b => b.status !== 'rejected' && b.status !== 'expired');
   if (q) list = list.filter(b => (b.name + ' ' + b.email + ' ' + b.phone + ' ' + unitName(b.unit) + ' ' + (b.ref ? 'LM-' + b.ref : '')).toLowerCase().includes(q));
@@ -932,11 +952,11 @@ function renderBook() {
   list.forEach(b => { const y = b.start.slice(0, 4), m = b.start.slice(5, 7); ((years[y] = years[y] || {})[m] = years[y][m] || []).push(b); });
   const curY = S.today.slice(0, 4), curM = S.today.slice(5, 7);
   Object.keys(years).sort().reverse().forEach(y => {
-    const yk = 'y' + y, yo = q ? true : (S.open[yk] != null ? S.open[yk] : y === curY);
+    const yk = 'y' + y, yo = q ? true : !!S.open[yk];
     const cnt = Object.values(years[y]).reduce((s, a) => s + a.length, 0);
     h += '<div class="grp' + (yo ? ' open' : '') + '"><button data-act="tog" data-id="' + yk + '">' + ICON.chev + '<b>' + y + '</b><small>' + cnt + ' κρατήσεις</small></button>';
     if (yo) Object.keys(years[y]).sort().forEach(m => {
-      const mk = 'm' + y + m, mo = q ? true : (S.open[mk] != null ? S.open[mk] : (y === curY && m >= curM && m <= String(Number(curM) + 1).padStart(2, '0')));
+      const mk = 'm' + y + m, mo = q ? true : !!S.open[mk];
       const arr = years[y][m];
       const rev = arr.filter(b => b.status === 'confirmed' && b.source !== 'booking').reduce((s, b) => s + (b.total || 0), 0);
       h += '<div class="grp mgrp' + (mo ? ' open' : '') + '" style="margin-left:6px"><button data-act="tog" data-id="' + mk + '">' + ICON.chev + '<b>' + MONF[Number(m) - 1] + '</b><small>' + arr.length + (rev ? ' · ' + money(rev) : '') + '</small></button>';
@@ -991,7 +1011,7 @@ function renderGuests() {
 }
 function openGuest(id) {
   const g = guestList().find(x => x.id === id); if (!g) return;
-  sheet('<div class="hd"><div style="flex:1;min-width:0"><h2>' + esc(g.name) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  sheet('<div class="hd"><div style="flex:1;min-width:0"><h2>' + esc(g.name) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd" style="padding:0 0 16px"><div style="padding:0 20px"><dl class="kv">' +
       (g.phone ? '<dt>Τηλέφωνο</dt><dd><a href="tel:' + esc(g.phone) + '">' + esc(g.phone) + '</a></dd>' : '') +
       (g.email ? '<dt>Email</dt><dd><a href="mailto:' + esc(g.email) + '">' + esc(g.email) + '</a></dd>' : '') +
@@ -1002,18 +1022,12 @@ function openGuest(id) {
 
 /* ================= more ================= */
 function renderMore() {
-  topbar('Περισσότερα', '');
-  const on = PUSH.on();
+  topbar('Ρυθμίσεις', '');
+  const on = PUSH.on(), dark = document.documentElement.classList.contains('dark');
   let h = '<div class="list" style="margin-top:8px"><div class="li" style="min-height:72px"><div class="av" style="width:44px;height:44px;border-radius:22px;font-size:15px">' + esc(initials(S.user.name)) + '</div><span><b style="display:block">' + esc(S.user.name) + '</b><small>' + esc(S.user.email) + '</small></span></div></div>';
-  h += '<div class="sec">Αυτή η συσκευή</div><div class="list"><button class="li" data-act="push"><span class="ic">' + ICON.bell + '</span><span>Ειδοποιήσεις για νέα αιτήματα</span><span class="sw' + (on ? ' on' : '') + '"></span></button></div>';
-  if (PUSH.ios && !PUSH.standalone) h += '<p class="note">Στο iPhone οι ειδοποιήσεις δουλεύουν μόνο από την εφαρμογή: πάτα <b>Κοινή χρήση</b> στο Safari → <b>Προσθήκη στην οθόνη Αφετηρίας</b> και άνοιξέ την από το εικονίδιο.</p>';
-  else if (PUSH.perm() === 'denied') h += '<p class="note">Οι ειδοποιήσεις είναι μπλοκαρισμένες στις ρυθμίσεις του κινητού για αυτή την εφαρμογή.</p>';
-  h += '<div class="sec">Στην πλήρη έκδοση</div><div class="list">' +
-    '<a class="li" href="admin.html?tab=prices"><span class="ic">' + ICON.euro + '</span><span>Τιμές</span>' + ICON.chev + '</a>' +
-    '<a class="li" href="admin.html?tab=coupons"><span class="ic">' + ICON.tag + '</span><span>Κουπόνια</span>' + ICON.chev + '</a>' +
-    '<a class="li" href="admin.html?tab=customers"><span class="ic">' + ICON.people + '</span><span>Πελάτες</span>' + ICON.chev + '</a>' +
-    '<a class="li" href="admin.html"><span class="ic">' + ICON.desk + '</span><span>Όλο το admin</span>' + ICON.chev + '</a></div>' +
-    '<p class="note">Αυτά θα έρθουν και εδώ αφού δοκιμάσετε τις βασικές οθόνες.</p>';
+  h += '<div class="sec">Αυτή η συσκευή</div><div class="list"><button class="li" data-act="push"><span class="ic">' + ICON.bell + '</span><span>Ειδοποιήσεις για νέα αιτήματα</span><span class="sw' + (on ? ' on' : '') + '"></span></button>' +
+    '<button class="li" data-act="dark"><span class="ic">' + ICON.moon + '</span><span>Σκούρα εμφάνιση</span><span class="sw' + (dark ? ' on' : '') + '"></span></button></div>';
+  if (PUSH.perm() === 'denied') h += '<p class="note">Οι ειδοποιήσεις είναι μπλοκαρισμένες στις ρυθμίσεις του κινητού για αυτή την εφαρμογή.</p>';
   h += '<div class="list" style="margin-top:22px"><button class="li" data-act="logout" style="color:var(--red)"><span class="ic" style="background:var(--red-soft);color:var(--red)">' + ICON.logout + '</span><span>Αποσύνδεση</span></button></div>';
   $('#main').innerHTML = h;
 }
@@ -1140,7 +1154,7 @@ function openReq(id) {
         '<dt>Τηλέφωνο</dt><dd><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></dd>' +
         '<dt>Email</dt><dd><a href="mailto:' + esc(b.email) + '">' + esc(b.email) + '</a></dd>' +
       '</dl>' + contactHTML(b.phone) + '</div>' +
-      (b.note ? '<div class="sec">Μήνυμα πελάτη</div><div class="bubble" style="background:#fff">' + esc(b.note) + '</div>' : '') +
+      (b.note ? '<div class="sec">Μήνυμα πελάτη</div><div class="bubble" style="background:var(--card)">' + esc(b.note) + '</div>' : '') +
       '<div class="sec">Δωμάτιο</div>' +
       (free.length ? '<div class="chips" id="units">' + fits.map(u => '<button class="chip' + (u.id === pickUnit ? ' on' : '') + '" data-unit="' + u.id + '"' + (free.some(f => f.id === u.id) ? '' : ' disabled') + '>' + u.short + '</button>').join('') + '</div><p class="note">Τα γκρι είναι πιασμένα εκείνες τις μέρες ή δεν χωράνε ' + b.guests + ' άτομα.</p>'
                    : '<div class="card empty" style="color:var(--red)">Δεν υπάρχει ελεύθερο ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο') + ' για αυτές τις μέρες.</div>') +
@@ -1167,7 +1181,7 @@ function decide(id, status) {
 /* ---- booking (sheet) ---- */
 function bookingHTML(b) {
   const isB = b.source === 'booking';
-  return '<div class="hd"><div style="flex:1;min-width:0"><h2>' + esc(b.name) + '</h2><p>' + unitName(b.unit) + ' · ' + srcTag(b) + (b.status === 'cancelled' ? ' <span class="tag" style="background:var(--red-soft);color:var(--red)">Ακυρωμένη</span>' : '') + '</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  return '<div class="hd"><div style="flex:1;min-width:0"><h2>' + esc(b.name) + '</h2><p>' + unitName(b.unit) + ' · ' + srcTag(b) + (b.status === 'cancelled' ? ' <span class="tag" style="background:var(--red-soft);color:var(--red)">Ακυρωμένη</span>' : '') + '</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd"><dl class="kv">' +
       '<dt>Άφιξη</dt><dd>' + fmtD(b.start) + '</dd><dt>Αναχώρηση</dt><dd>' + fmtD(b.end) + '</dd>' +
       '<dt>Νύχτες</dt><dd>' + b.nights + '</dd>' + (isB ? '' : '<dt>Άτομα</dt><dd>' + b.guests + '</dd>') +
@@ -1208,7 +1222,7 @@ function openRoom(unit) {
   d.setUTCMonth(d.getUTCMonth() + 1); const next = iso(d);
   const list = all().filter(b => b.unit === unit && (b.status === 'confirmed' || b.status === 'pending') && b.start < next && b.end > ms).sort((a, b) => a.start < b.start ? -1 : 1);
   const t = dt(T);
-  const h = '<div class="hd"><div style="flex:1"><h2>' + unitName(unit) + '</h2><p>' + MONF[t.getUTCMonth()] + ' ' + t.getUTCFullYear() + '</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  const h = '<div class="hd"><div style="flex:1"><h2>' + unitName(unit) + '</h2><p>' + MONF[t.getUTCMonth()] + ' ' + t.getUTCFullYear() + '</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd" style="padding:0 0 16px">' + (list.length ? list.map(b => '<button class="bk" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '" style="padding:12px 20px"><div class="main"><b>' + esc(b.name) + '</b><small>' + range(b.start, b.end) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + '</small></div>' + srcTag(b) + '</button>').join('') : '<div class="empty">Καμία κράτηση αυτόν τον μήνα.</div>') + '</div>';
   sheet(h, 'room', unit);
 }
@@ -1253,7 +1267,7 @@ function openNew(pre) {
   pre = pre || {};
   const unit = pre.unit || 'r1', start = pre.start || S.today, end = pre.end || add(start, 2);
   const u = UNITS.find(x => x.id === unit);
-  const h = '<div class="hd"><div style="flex:1"><h2>Νέα κράτηση</h2><p>Τηλέφωνο, απευθείας ή φίλοι</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:#F0F4F4">' + ICON.x + '</button></div>' +
+  const h = '<div class="hd"><div style="flex:1"><h2>Νέα κράτηση</h2><p>Τηλέφωνο, απευθείας ή φίλοι</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
     '<div class="bd"><form id="nf">' +
       '<label class="lbl">Ονοματεπώνυμο</label><input class="field" name="name" autocomplete="off" required>' +
       '<div class="dts"><label class="dt"><small>Άφιξη</small><b id="dtA"></b><span id="dwA"></span><input type="date" name="start" value="' + start + '" min="' + S.today + '"></label>' +
@@ -1441,6 +1455,7 @@ document.addEventListener('click', e => {
     case 'tog': S.open[id] = !t.parentNode.classList.contains('open'); render(); break;
     case 'sort': S.sort = S.sort === 'date' ? 'name' : 'date'; render(); break;
     case 'push': PUSH.toggle(); break;
+    case 'dark': { const d = !document.documentElement.classList.contains('dark'); setDark(d); try { localStorage.setItem('lm-admin-dark', d ? '1' : '0'); } catch (e) {} render(); break; }
     case 'logout': if (confirm('Αποσύνδεση από αυτή τη συσκευή;')) logout(); break;
   }
 });
