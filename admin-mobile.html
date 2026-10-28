@@ -574,7 +574,7 @@ function load() {
     SB.from('request_messages').select('id, request_id, sender, body, created_at, created_by, read_at, email_status').order('created_at').limit(5000),
     SB.from('price_overrides').select('night, room, apt, closed').order('night').limit(20000),
     SB.from('site_settings').select('extra_guest').limit(1),
-    SB.from('guest_notes').select('guest_key, note, updated_at, updated_by').limit(5000)
+    SB.from('guest_notes').select('guest_key, note, hidden, updated_at, updated_by').limit(5000)
   ]).then(rs => {
     const bad = rs.find(r => r.error);
     if (bad) { toast('Δεν φορτώθηκαν τα δεδομένα: ' + bad.error.message); return; }
@@ -993,7 +993,7 @@ function guestList() {
     const k = (b.email || '').trim().toLowerCase() || String(b.phone || '').replace(/\D/g, '').slice(-10) || b.name.trim().toLowerCase();
     (by[k] = by[k] || []).push(b);
   });
-  return Object.keys(by).map(k => {
+  return Object.keys(by).filter(k => !((S.gnotes || {})[k] || {}).hidden).map(k => {
     const st = by[k].sort((a, b) => a.start < b.start ? 1 : -1), last = st[0];
     return { id: k, name: last.name, email: (st.find(b => b.email) || {}).email || '', phone: (st.find(b => b.phone) || {}).phone || '', stays: st, last: last,
       nights: st.reduce((s, b) => s + b.nights, 0), spent: st.filter(b => b.source !== 'booking').reduce((s, b) => s + (b.total || 0), 0) };
@@ -1029,6 +1029,7 @@ function openGuest(id) {
     '<div class="sec" style="margin:18px 0 6px">Σημειώσεις</div>' +
     '<textarea class="field" id="gnote" rows="4" placeholder="Ό,τι θες να θυμάσαι για αυτόν τον πελάτη (π.χ. προτιμά ισόγειο, έρχεται κάθε Αύγουστο)">' + esc(((S.gnotes || {})[id] || {}).note || '') + '</textarea>' +
     '<p class="note" id="gnst" style="margin:6px 0 0;font-size:12px;color:var(--muted)">' + gnoteInfo(id) + '</p>' +
+    '<button class="btn danger" data-act="guest-del" data-id="' + esc(id) + '" style="width:100%;margin-top:18px">Διαγραφή πελάτη</button>' +
     '</div></div>', 'guest', id);
   const ta = $('#gnote'); let t = null;
   const save = () => { clearTimeout(t); t = null; saveGNote(id, ta.value); };
@@ -1036,6 +1037,12 @@ function openGuest(id) {
   ta.addEventListener('blur', () => { if (t) save(); });
 }
 
+function delGuest(id) {
+  const g = guestList().find(x => x.id === id); if (!g) return;
+  if (!confirm('Διαγραφή του/της ' + g.name + ' από τους πελάτες;\nΣβήνονται και οι σημειώσεις. Οι κρατήσεις μένουν ως έχουν.')) return;
+  const row = { guest_key: id, note: '', hidden: true, updated_at: new Date().toISOString(), updated_by: by() };
+  write(() => SB.from('guest_notes').upsert(row, { onConflict: 'guest_key' }).select('guest_key'), () => { S.gnotes = S.gnotes || {}; S.gnotes[id] = row; closeOverlay(); toast('Διαγράφηκε: ' + g.name + '.'); }, 'Δεν διαγράφηκε');
+}
 function gnoteInfo(id) {
   const n = (S.gnotes || {})[id];
   return n && n.note ? 'Τελευταία αλλαγή: ' + (n.updated_by ? esc(n.updated_by) + ' · ' : '') + agoText(n.updated_at) + '.' : '';
@@ -1463,6 +1470,7 @@ document.addEventListener('click', e => {
     case 'tonight': daySheet(S.today); break;
     case 'ag-toggle': S.agAll = !S.agAll; render(); if (!S.agAll) window.scrollTo(0, 0); break;
     case 'guest': openGuest(id); break;
+    case 'guest-del': delGuest(id); break;
     case 'gsort': S.gsort = S.gsort === 'name' ? 'date' : 'name'; render(); break;
     case 'clean': cleanSheet(); break;
     case 'price': priceSheet(); break;
