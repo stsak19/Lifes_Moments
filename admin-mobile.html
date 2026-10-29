@@ -2,6 +2,16 @@
 <html lang="el">
 <head>
 <meta charset="utf-8">
+<script>
+/* One address for every device: phones get the phone page, everything else the desktop page.
+   ?view=mobile or ?view=desktop overrides it and is remembered on this device. */
+(function () {
+  var v = new URLSearchParams(location.search).get('view');
+  try { if (v === 'mobile' || v === 'desktop') localStorage.setItem('lm-view', v); else v = localStorage.getItem('lm-view'); } catch (e) {}
+  var phone = v === 'mobile' || v === 'desktop' ? v === 'mobile' : /Mobi|iPhone|iPod|Android.+Mobile/i.test(navigator.userAgent);
+  if (!phone) location.replace('admin.html' + location.search + location.hash);
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>LM Διαχείριση</title>
