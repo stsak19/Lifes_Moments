@@ -784,7 +784,7 @@ function renderCal() {
   topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(voc(S.user.name.split(' ')[0])) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
   const cs = S.calSeg || 'moves';
   let h = '<div class="segbar"><div class="seg"><button data-act="cseg" data-id="moves" class="' + (cs === 'moves' ? 'on' : '') + '">Κινήσεις</button><button data-act="cseg" data-id="cals" class="' + (cs === 'cals' ? 'on' : '') + '">Ημερολόγια</button></div></div>';
-  if (cs === 'cals') { h += occHTML(); $('#main').innerHTML = h; const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0; document.querySelectorAll('.oscr').forEach((e, i) => { e.scrollLeft = S.occX && S.occX.m === S.calMonth + '' ? S.occX.x[i] : Math.max(0, ti) * 30; e.addEventListener('scroll', () => { S.occX = { m: S.calMonth + '', x: [...document.querySelectorAll('.oscr')].map(o => o.scrollLeft) }; }, { passive: true }); }); occDrag($('#main .occ3')); return; }
+  if (cs === 'cals') { h += occHTML(); $('#main').innerHTML = h; const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0; document.querySelectorAll('.oscr').forEach((e, i) => { e.scrollLeft = S.occX && S.occX.m === S.calMonth + '' ? S.occX.x[i] : Math.max(0, ti) * 30; e.addEventListener('scroll', () => { S.occX = { m: S.calMonth + '', x: [...document.querySelectorAll('.oscr')].map(o => o.scrollLeft) }; }, { passive: true }); }); return; }
   const p = pending();
   h += '<div class="calhead">';
   if (p.length) h += '<button class="alert" data-act="go-reqs"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
@@ -818,29 +818,6 @@ function inSel(unit, n) {
   if (!S.sel || S.sel.unit !== unit) return false;
   const a = S.sel.b && S.sel.b < S.sel.a ? S.sel.b : S.sel.a, z = S.sel.b ? (S.sel.b < S.sel.a ? S.sel.a : S.sel.b) : S.sel.a;
   return n >= a && n <= z;
-}
-/* drag over the empty cells of one room to select many nights (touch: hold briefly, then drag) */
-function occDrag(box) {
-  let st = null, timer = null, x0 = 0, y0 = 0;
-  const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); const c = el && el.closest('[data-cell]'); return c ? c.dataset.cell.split('|') : null; };
-  const paint = () => box.querySelectorAll('[data-cell]').forEach(c => { const p = c.dataset.cell.split('|'); c.classList.toggle('sl', inSel(p[0], p[1])); });
-  const begin = () => { st.on = true; S.move = null; S.sel = { unit: st.u, a: st.n, b: st.n }; paint(); if (navigator.vibrate) navigator.vibrate(15); };
-  box.addEventListener('pointerdown', e => {
-    const c = cellAt(e.clientX, e.clientY); if (!c || c[1] < S.today) return;
-    st = { u: c[0], n: c[1], on: false, moved: false }; x0 = e.clientX; y0 = e.clientY;
-    if (e.pointerType === 'mouse') begin(); else timer = setTimeout(begin, 280);
-  });
-  box.addEventListener('pointermove', e => {
-    if (!st) return;
-    if (!st.on) { if (Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) > 8) { clearTimeout(timer); st = null; } return; }
-    const c = cellAt(e.clientX, e.clientY);
-    if (c && c[0] === st.u && c[1] >= S.today && c[1] !== S.sel.b) { S.sel.b = c[1]; st.moved = true; paint(); }
-  });
-  box.addEventListener('touchmove', e => { if (st && st.on) e.preventDefault(); }, { passive: false });
-  const end = () => { clearTimeout(timer); if (st && st.on) { box.dataset.dragged = '1'; setTimeout(() => { delete box.dataset.dragged; }, 50); render(); } st = null; };
-  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', () => { if (st && st.on) return end(); clearTimeout(timer); st = null; });
-  box.addEventListener('click', e => { if (box.dataset.dragged) { e.stopPropagation(); e.preventDefault(); } }, true);
-  box.addEventListener('contextmenu', e => { if (st) e.preventDefault(); });
 }
 function calMonthStep(k) { const m = S.calMonth || S.today.slice(0, 7); const d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1 + k, 1)); S.calMonth = d.toISOString().slice(0, 7); render(); }
 function occHTML() {
