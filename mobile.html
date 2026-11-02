@@ -2622,10 +2622,10 @@ html.gs-lock { overflow: hidden; }
   const minNights = () => (cal.ci && prices[cal.ci] ? prices[cal.ci].min : 1);
   const tooShort = () => !!(cal.ci && cal.co && dayNum(cal.co) - dayNum(cal.ci) < minNights());
   const eur = (v) => fmtEur.format(v);
-  [['en', { 'pr.from': 'from {p} / night', 'pr.stay': '{n} · {p} total', 'note.min': 'These dates need a stay of at least {n} nights. Pick a later check-out.', 'pr.off': 'Discount −{p}%', 'pr.total': 'Total', 'pr.ask': 'We will tell you the price when we reply to your request.', 'pr.extra': 'Includes {p} per night for each guest after the second.' }],
-   ['el', { 'pr.from': 'από {p} / βράδυ', 'pr.stay': '{n} · {p} σύνολο', 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
-   ['tr', { 'pr.from': 'gecelik {p}\'den', 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
-   ['bg', { 'pr.from': 'от {p} / нощувка', 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
+  [['en', { 'pr.stay': '{n} · {p} total', 'note.min': 'These dates need a stay of at least {n} nights. Pick a later check-out.', 'pr.off': 'Discount −{p}%', 'pr.total': 'Total', 'pr.ask': 'We will tell you the price when we reply to your request.', 'pr.extra': 'Includes {p} per night for each guest after the second.' }],
+   ['el', { 'pr.stay': '{n} · {p} σύνολο', 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
+   ['tr', { 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
+   ['bg', { 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
   function loadAvailability() {
     loadOpen();
@@ -2690,20 +2690,15 @@ html.gs-lock { overflow: hidden; }
     renderTabPrices();
     const nOut = $('#nOut'); if (nOut) nOut.innerHTML = h; // the line under the bar was removed
   }
-  // The price on the Room / Athos tabs: the lowest nightly price ahead, or the stay's total once dates are picked.
+  // The price on the Room / Athos tabs: the stay's total once dates are picked.
   function renderTabPrices() {
     const el = document.getElementById('units'); if (!el) return;
     el.querySelectorAll('button[data-u]').forEach((b, i) => {
       const u = UNITS[i]; if (!u) return;
-      const apt = typeOf(i) === 'apt';
       let txt = '';
       if (cal.ci && cal.co) {
         const keep = cal.unit; cal.unit = i; const q = quote(); cal.unit = keep;
         if (q) txt = t('pr.stay', { n: plural(q.nights, 'night', 'nights'), p: eur(q.total) });
-      } else {
-        let lo = null;
-        Object.keys(prices).forEach((k) => { if (k >= todayKey) { const v = apt ? prices[k].apt : prices[k].room; if (v != null && (lo == null || v < lo)) lo = v; } });
-        if (lo != null) txt = t('pr.from', { p: eur(lo) });
       }
       b.textContent = t(i === 0 ? 'u.room' : 'u.apt');
       if (txt) { const sp = document.createElement('span'); sp.className = 'tp'; sp.textContent = txt; b.appendChild(sp); }
