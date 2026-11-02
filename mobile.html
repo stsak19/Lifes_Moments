@@ -3228,7 +3228,10 @@ html.gs-lock { overflow: hidden; }
     const GEO = { 'Metalia & the Palataki': [24.574, 40.627], 'Kastro & Pefkari': [24.612, 40.640], 'Giola & Archangel Michael': [24.680, 40.583],
       'Alyki & Psili Ammos': [24.742, 40.602], 'Theologos': [24.700, 40.662], 'Limenas': [24.712, 40.779], 'Golden Beach & Maries': [24.770, 40.745] };
     // short silent clips can replace a day's photo: 'Place name': 'photos/clip.mp4'
-    const CLIP = {};
+    // sample clips (Mixkit free licence), stand-ins until there are real ones from Thasos
+    const CLIP = { 'Arrival': 'clips/4004.mp4', 'Metalia & the Palataki': 'clips/51506.mp4', 'Kastro & Pefkari': 'clips/1954.mp4',
+      'Giola & Archangel Michael': 'clips/51502.mp4', 'Alyki & Psili Ammos': 'clips/5008.mp4', 'Theologos': 'clips/25078.mp4',
+      'Limenas': 'clips/40077.mp4', 'Golden Beach & Maries': 'clips/5016.mp4', 'Departure': 'clips/4999.mp4' };
     const ISLE = [[24.712,40.784],[24.672,40.792],[24.640,40.782],[24.600,40.758],[24.565,40.733],[24.548,40.700],[24.530,40.664],[24.545,40.632],[24.575,40.618],[24.610,40.600],[24.650,40.578],[24.700,40.570],[24.742,40.592],[24.770,40.625],[24.785,40.668],[24.778,40.712],[24.765,40.748],[24.740,40.775]];
     const XY = (p) => [((p[0] - 24.52) * 758).toFixed(1), ((40.80 - p[1]) * 1000).toFixed(1)];
     function mapSvg(keys) {
@@ -3273,6 +3276,15 @@ html.gs-lock { overflow: hidden; }
         });
       });
     }
+    function clipFor(img) {
+      const k = Object.keys(CLIP).find((c) => PLACE[c] && PLACE[c][0] === img.getAttribute('src')); if (!k) return;
+      const v = document.createElement('video');
+      v.className = img.className; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.preload = 'metadata';
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+      v.src = CLIP[k]; v.poster = img.src; v.style.objectFit = 'cover';
+      Object.assign(v.dataset, img.dataset); v.dataset.credit = 'Mixkit'; img.replaceWith(v);
+      v.play && v.play().catch(() => {});
+    }
     function plus() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       $$('.jrow', listEl).forEach((row, i) => {
@@ -3282,18 +3294,13 @@ html.gs-lock { overflow: hidden; }
         ph.insertAdjacentHTML('beforeend', '<span class="jtod" aria-hidden="true"></span>' +
           (j.days ? '<button type="button" class="jnext">' + esc(jx('next')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>' : ''));
         // clips in place of photos
-        if (!reduce) $$('.jshot', row).forEach((img) => {
-          const k = Object.keys(CLIP).find((c) => PLACE[c] && PLACE[c][0] === img.getAttribute('src')); if (!k) return;
-          const v = document.createElement('video');
-          v.className = img.className; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.preload = 'metadata';
-          v.src = CLIP[k]; v.poster = img.src; v.setAttribute('aria-hidden', 'true');
-          Object.assign(v.dataset, img.dataset); img.replaceWith(v);
-        });
+        if (!reduce) $$('.jshot', row).forEach((img) => clipFor(img));
       });
       plusDates();
       // phones: the pinned place-by-place stage gets the map too, and a tap moves on
       const mob = $('#jMob'), stage = mob && mob.querySelector('.jstage');
       if (stage && !stage.querySelector('.jmap')) {
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) $$('.jmi', stage).forEach((img) => clipFor(img));
         stage.insertAdjacentHTML('beforeend', mapSvg(Object.keys(GEO)));
         const names = {}; JOURNEYS.forEach((j) => (j.days || []).forEach((d) => { names[d[0][L()]] = d[0][0]; }));
         const sync = () => { const on = stage.querySelector('.jmt.on b'); mapOn(stage.querySelector('.jmap'), on && names[on.textContent]);
