@@ -10,7 +10,6 @@
 </script>
 <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style id="journeys-plus-css">
 /* ===== Journeys, immersive layer: map, light of the day, next day ===== */
-#journeys { --tod: 0; background-color: color-mix(in srgb, var(--bg), #E9B77A calc(sin(var(--tod) * 3.1416) * 9%)); transition: background-color 1.2s ease; }
 .jph::before, .jstage::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; transition: opacity 1.2s ease;
   background: linear-gradient(180deg, rgba(255, 176, 92, .55), rgba(255, 120, 60, .15) 60%, transparent), linear-gradient(0deg, rgba(20, 30, 70, .7), transparent 70%);
   opacity: calc(sin(var(--tod, 0) * 3.1416) * .32 + max(0, var(--tod, 0) - .7) * 1.2); mix-blend-mode: soft-light; }
