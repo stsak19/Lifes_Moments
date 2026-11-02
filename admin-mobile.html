@@ -186,7 +186,7 @@ body:has(.segbar) .top{background:var(--bg);backdrop-filter:none;-webkit-backdro
 .band.pending{background:var(--yellow);color:#3A2604;animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{50%{box-shadow:0 0 0 4px rgba(246,195,67,.45);opacity:.75}}
 @media (prefers-reduced-motion:reduce){.band.pending{animation:none}}
-.occ3{margin:22px 0 0}
+.occ3{margin:6px 0 0}
 .occ3 .cal-nav{margin:0 0 6px}
 .ogrp{padding:10px 0 8px;margin:0 0 12px;overflow:hidden}
 .ogrp h3{margin:0 12px 8px;font-size:15px}
@@ -763,7 +763,9 @@ function renderCal() {
   const U = S.agUnit;
   const T = S.today, td = dt(T);
   topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(voc(S.user.name.split(' ')[0])) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
-  let h = '';
+  const cs = S.calSeg || 'moves';
+  let h = '<div class="segbar"><div class="seg"><button data-act="cseg" data-id="moves" class="' + (cs === 'moves' ? 'on' : '') + '">Κινήσεις</button><button data-act="cseg" data-id="cals" class="' + (cs === 'cals' ? 'on' : '') + '">Ημερολόγια</button></div></div>';
+  if (cs === 'cals') { h += occHTML(); $('#main').innerHTML = h; const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0; document.querySelectorAll('.oscr').forEach(e => e.scrollLeft = Math.max(0, ti) * 30); return; }
   const p = pending();
   h += '<div class="calhead">';
   if (p.length) h += '<button class="alert" data-act="go-reqs"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
@@ -790,10 +792,7 @@ function renderCal() {
   }
   if (S.agAll) { if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>'; h += '<button class="agmore" data-act="ag-toggle">Λιγότερα ▴</button>'; }
   else h += '<button class="agmore" data-act="ag-toggle">' + (later ? 'Επόμενες μέρες · ' + later + ' ▾' : 'Επόμενες μέρες ▾') + '</button>';
-  h += occHTML();
   $('#main').innerHTML = h;
-  const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0;
-  document.querySelectorAll('.oscr').forEach(e => e.scrollLeft = Math.max(0, ti) * 30);
   const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 function calMonthStep(k) { const m = S.calMonth || S.today.slice(0, 7); const d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1 + k, 1)); S.calMonth = d.toISOString().slice(0, 7); render(); }
@@ -1566,6 +1565,7 @@ document.addEventListener('click', e => {
     case 'ag-more': S.agDays += 60; render(); break;
     case 'ag-unit': closeOverlay(); S.agUnit = id; render(); break;
     case 'tonight': daySheet(S.today); break;
+    case 'cseg': S.calSeg = id; render(); window.scrollTo(0, 0); break;
     case 'ag-toggle': S.agAll = !S.agAll; render(); if (!S.agAll) window.scrollTo(0, 0); break;
     case 'guest': openGuest(id); break;
     case 'guest-del': delGuest(id); break;
