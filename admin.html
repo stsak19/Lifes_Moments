@@ -337,7 +337,11 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </section>
 </sc-if>
-<details class="cal-help" style="font-size: 13px; color: #4A5B5E"><summary style="cursor: pointer; font-weight: 600; color: #0F5257; width: max-content">Πώς δουλεύει το ημερολόγιο;</summary><p style="margin: 8px 0 0; max-width: 820px">{{calNote}}</p></details>
+<div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 18px; padding: 12px 18px; border: 1px solid rgba(24, 40, 43, 0.18)">
+<span style="font-size: 13px; font-weight: 600; color: #4A5B5E; white-space: nowrap">Σήμερα</span>
+<input type="range" aria-label="Μετακίνηση στο ημερολόγιο" min="0" max="365" step="1" value="{{calSlide.value}}" onInput="{{calSlide.move}}" onChange="{{calSlide.move}}" style="flex: 1; accent-color: #0F5257; cursor: pointer">
+<span style="font-size: 13px; font-weight: 600; color: #0F5257; white-space: nowrap; min-width: 120px; text-align: right">{{calSlide.label}}</span>
+</div>
 </div>
 </sc-if>
 
@@ -3458,6 +3462,7 @@ class Component extends DCLogic {
       calPrev: () => { const p = this.add(s.calStart, -7); this.setState({ calStart: p < T ? T : p }); },
       calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
       calToday: () => this.setState({ calStart: T }),
+      calSlide: (() => { const v = Math.max(0, Math.round((this.dt(s.calStart) - this.dt(T)) / 864e5)); const d = this.dt(s.calStart); return { value: String(Math.min(365, v)), label: d.getUTCDate() + ' ' + this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(), move: (e) => { const n = Number(e && e.target ? e.target.value : 0); this.setState({ calStart: this.add(T, n) }); } }; })(),
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
         : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους: μεγαλώνουν και από κάτω βγαίνουν τα κουμπιά Αποδοχή και Απόρριψη. Κλικ σε κράτηση για λεπτομέρειες.',
