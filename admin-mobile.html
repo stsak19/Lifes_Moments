@@ -1147,7 +1147,8 @@ function newGuestSheet() {
     '<input class="field" id="ngPhone" type="tel" inputmode="tel" placeholder="Τηλέφωνο">' +
     '<input class="field" id="ngEmail" type="email" inputmode="email" placeholder="Email">' +
     '<textarea class="field" id="ngNote" rows="3" placeholder="Σημειώσεις (προαιρετικά)"></textarea>' +
-    '<button class="btn" data-act="gnew-save" style="width:100%;background:var(--teal);color:#fff">Αποθήκευση</button></div>', 'gnew', null);
+    '<button class="btn" data-act="gnew-save" style="width:100%;flex:0 0 auto;margin-top:auto;background:var(--teal);color:#fff">Αποθήκευση</button></div>', 'gnew', null);
+  const gs = overlay && overlay.el; if (gs) { gs.style.height = '88vh'; const bd = gs.querySelector('.bd'); if (bd) { bd.style.flex = '1'; bd.style.overflowY = 'auto'; } const ta = $('#ngNote'); if (ta) ta.rows = 6; }
   setTimeout(() => { const n = $('#ngName'); if (n) n.focus(); }, 300);
 }
 function saveNewGuest() {
