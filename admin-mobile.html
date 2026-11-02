@@ -186,6 +186,20 @@ body:has(.segbar) .top{background:var(--bg);backdrop-filter:none;-webkit-backdro
 .band.pending{background:var(--yellow);color:#3A2604;animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{50%{box-shadow:0 0 0 4px rgba(246,195,67,.45);opacity:.75}}
 @media (prefers-reduced-motion:reduce){.band.pending{animation:none}}
+.occ3{margin:22px 0 0}
+.occ3 .cal-nav{margin:0 0 6px}
+.ogrp{padding:10px 0 8px;margin:0 0 12px;overflow:hidden}
+.ogrp h3{margin:0 12px 8px;font-size:15px}
+.oscr{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ogr{display:grid;grid-template-columns:44px repeat(var(--nd),30px);grid-auto-rows:30px;grid-template-rows:30px;row-gap:4px;align-items:center;min-width:max-content;padding:0 10px 2px 0}
+.ogr .rn{position:sticky;left:0;z-index:3;background:var(--card);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;height:28px}
+.ogr .dh{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;line-height:1.15;padding-bottom:2px}
+.ogr .dh.t{color:var(--teal)}
+.ogr .ce{height:28px;border-left:1px solid var(--hair)}
+.ogr .ce.we{background:var(--hair)}
+.ogr .bk{height:26px;min-height:0;max-height:26px;box-sizing:border-box;position:relative;z-index:1;margin:0 1px;border-radius:7px;color:#fff;font-size:11px;font-weight:700;padding:0 5px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;border:0;font-family:inherit;cursor:pointer;text-align:left}
+.ogr .bk span{overflow:hidden;text-overflow:ellipsis}
+.ogr .bk.site,.ogr .bk.direct{background:var(--teal)}.ogr .bk.booking{background:var(--booking)}.ogr .bk.free{background:var(--free)}.ogr .bk.pending{background:var(--yellow);color:#3A2604}.ogr .bk.cl{background:var(--red)}
 .cal-sub{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:18px 4px 8px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:12px 0 0}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
@@ -776,8 +790,41 @@ function renderCal() {
   }
   if (S.agAll) { if (!shown) h += '<div class="card empty">Καμία άφιξη ή αναχώρηση τις επόμενες ' + S.agDays + ' μέρες.</div>'; h += '<button class="agmore" data-act="ag-toggle">Λιγότερα ▴</button>'; }
   else h += '<button class="agmore" data-act="ag-toggle">' + (later ? 'Επόμενες μέρες · ' + later + ' ▾' : 'Επόμενες μέρες ▾') + '</button>';
+  h += occHTML();
   $('#main').innerHTML = h;
+  const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0;
+  document.querySelectorAll('.oscr').forEach(e => e.scrollLeft = Math.max(0, ti) * 30);
   const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+function calMonthStep(k) { const m = S.calMonth || S.today.slice(0, 7); const d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1 + k, 1)); S.calMonth = d.toISOString().slice(0, 7); render(); }
+function occHTML() {
+  const m = S.calMonth || S.today.slice(0, 7), y = +m.slice(0, 4), mo = +m.slice(5, 7) - 1;
+  const nd = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate(), first = m + '-01';
+  const days = []; for (let i = 0; i < nd; i++) days.push(add(first, i));
+  let h = '<div class="occ3"><div class="cal-nav"><button class="pill sq" data-act="cal-prev" aria-label="Προηγούμενος μήνας">‹</button><span class="mon">' + MONF[mo] + ' ' + y + '</span>' + (m !== S.today.slice(0, 7) ? '<button class="pill" data-act="cal-today">Σήμερα</button>' : '') + '<button class="pill sq" data-act="cal-next" aria-label="Επόμενος μήνας">›</button></div>';
+  const groups = [['Δωμάτια 100', UNITS.slice(0, 5)], ['Δωμάτια 200', UNITS.slice(5, 10)], ['Άθος', UNITS.filter(u => u.id === 'apt')]];
+  groups.forEach(([title, us]) => {
+    h += '<div class="card ogrp"><h3>' + title + '</h3><div class="oscr"><div class="ogr" style="--nd:' + nd + '"><div class="rn"></div>';
+    days.forEach(n => { const d = dt(n), wd = d.getUTCDay(); h += '<div class="dh' + (n === S.today ? ' t' : '') + '">' + DAY[wd].slice(0, 2) + '<br>' + d.getUTCDate() + '</div>'; });
+    us.forEach(u => {
+      h += '<div class="rn">' + (u.id === 'apt' ? 'Άθος' : u.short) + '</div>';
+      for (let i = 0; i < nd;) {
+        const n = days[i], b = onNight(u.id, n);
+        if (b && (b.status === 'confirmed' || b.status === 'pending')) {
+          let k = 1; while (i + k < nd && onNight(u.id, days[i + k]) === b) k++;
+          h += '<button class="bk ' + srcClass(b) + '" style="grid-column:span ' + k + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span>' + esc(b.name) + '</span></button>'; i += k; continue;
+        }
+        if (isClosed(u.id, n)) {
+          let k = 1; while (i + k < nd && !onNight(u.id, days[i + k]) && isClosed(u.id, days[i + k])) k++;
+          h += '<div class="bk cl" style="grid-column:span ' + k + '"><span>Κλειστό</span></div>'; i += k; continue;
+        }
+        const wd = dt(n).getUTCDay();
+        h += '<div class="ce' + (wd === 0 || wd === 6 ? ' we' : '') + '"></div>'; i++;
+      }
+    });
+    h += '</div></div></div>';
+  });
+  return h + '</div>';
 }
 const DAYF = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
 function agRow(b, kind, U) {
