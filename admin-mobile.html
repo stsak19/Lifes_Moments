@@ -275,7 +275,7 @@ html.dark .calhead{background:rgba(14,23,25,.94)}
 .contact .wa{background:#25D366;color:#fff}
 .pnl{padding:0 20px}
 .pqq{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;scrollbar-width:none}.pqq .chip{flex-shrink:0;height:32px;font-size:13px}
-.pqc{padding:8px 6px}.pqg{touch-action:none;user-select:none;-webkit-user-select:none}.pqw,.pqg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.pqc{padding:8px 6px}.pqw,.pqg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .pqw span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:0 0 4px}
 .pqd{height:54px;border:0;border-radius:10px;background:var(--soft);font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:0}
 .pqd b{font-size:14px}.pqd small{font-size:11.5px;font-weight:700;color:var(--teal)}
@@ -995,7 +995,6 @@ function priceSheet() {
   if (!S.pq || !S.pq.m) S.pq = { type: 'room', m: S.today.slice(0, 7), sel: [], anchor: null };
   full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1"><h1 style="font-size:20px">Τιμές</h1></div></header><div class="bd" id="pqBody"></div><div class="ft pqft" id="pqFt"></div>', 'price', null);
   priceRes();
-  pqDrag($("#pqBody"));
 }
 function pqNights() { return S.pq.sel.slice().sort(); }
 function priceRes() {
@@ -1012,7 +1011,7 @@ function priceRes() {
     const n = add(first, i), v = val(n), past = n < S.today, wd = dt(n).getUTCDay();
     h += '<button class="pqd' + (past ? ' past' : '') + (q.sel.includes(n) ? ' on' : '') + (n === q.anchor ? ' an' : '') + (wd === 5 || wd === 6 ? ' we' : '') + (n === S.today ? ' td' : '') + '"' + (past ? ' disabled' : ' data-act="pq-day" data-id="' + n + '"') + '><b>' + (i + 1) + '</b><small>' + (v === 'x' ? 'κλειστό' : v == null ? '—' : v + '€') + '</small></button>';
   }
-  h += '</div></div><p class="note" style="font-size:13px;color:var(--muted);margin:10px 4px 0">Σύρε το δάχτυλο πάνω στις μέρες, ή πάτα την πρώτη και την τελευταία νύχτα. Τιμή ανά νύχτα για 2 άτομα· αλλάζει αμέσως στο σάιτ, όχι στο Booking.com.</p>';
+  h += '</div></div><p class="note" style="font-size:13px;color:var(--muted);margin:10px 4px 0">Πάτα την πρώτη και την τελευταία νύχτα (ή μία μέρα). Τιμή ανά νύχτα για 2 άτομα· αλλάζει αμέσως στο σάιτ, όχι στο Booking.com.</p>';
   body.innerHTML = h;
   const ft = $('#pqFt'), ns = pqNights();
   if (!ns.length) { ft.innerHTML = '<div style="flex:1;text-align:center;color:var(--muted);font-weight:600;padding:12px 0">Διάλεξε μέρες για να αλλάξεις τιμή</div>'; return; }
@@ -1020,20 +1019,6 @@ function priceRes() {
   ft.innerHTML = '<div style="width:100%"><div class="pqinfo"><b>' + ns.length + (ns.length === 1 ? ' νύχτα' : ' νύχτες') + '</b> · ' + (ns.length === 1 ? fmt(ns[0]) : fmt(ns[0]) + ' – ' + fmt(ns[ns.length - 1])) + (vs.length ? ' · τώρα ' + (lo === hi ? lo + '€' : lo + '–' + hi + '€') : '') + '</div>' +
     '<div class="pqrow"><button class="pill" data-act="pq-delta" data-id="-10">−10€</button><button class="pill" data-act="pq-delta" data-id="-5">−5€</button><button class="pill" data-act="pq-delta" data-id="5">+5€</button><button class="pill" data-act="pq-delta" data-id="10">+10€</button></div>' +
     '<div class="pqrow"><input class="field" id="pqV" type="number" inputmode="numeric" min="0" placeholder="Νέα τιμή €"><button class="btn" data-act="pq-save" style="background:var(--teal);color:#fff;flex:0 0 auto;padding:0 20px">Αποθήκευση</button></div></div>';
-}
-/* drag across the days to select many at once */
-function pqDrag(box) {
-  let st = null, moved = false;
-  const dayAt = (x, y) => { const el = document.elementFromPoint(x, y); const d = el && el.closest('.pqd[data-id]'); return d ? d.dataset.id : null; };
-  const paint = (a, z) => { const lo = a < z ? a : z, hi = a < z ? z : a; S.pq.sel = []; for (let d = lo; d <= hi; d = add(d, 1)) if (d >= S.today) S.pq.sel.push(d); box.querySelectorAll('.pqd[data-id]').forEach(b => b.classList.toggle('on', S.pq.sel.includes(b.dataset.id))); };
-  box.addEventListener('pointerdown', e => { const n = dayAt(e.clientX, e.clientY); if (!n) return; st = { n: n, cur: n }; moved = false; });
-  box.addEventListener('pointermove', e => {
-    if (!st) return; const n = dayAt(e.clientX, e.clientY);
-    if (n && n !== st.cur) { st.cur = n; moved = true; S.pq.anchor = null; paint(st.n, n); }
-  });
-  const end = () => { if (st && moved) setTimeout(priceRes, 0); st = null; };
-  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
-  box.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
 }
 function pqDay(n) {
   const q = S.pq;
