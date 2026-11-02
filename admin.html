@@ -1094,7 +1094,7 @@ class Component extends DCLogic {
         { id: 't1', bid: 'b8', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 09:12', text: 'Καλημέρα! Φτάνουμε με το πλοίο των 15:30 από την Κεραμωτή. Γύρω στις 16:00 θα είμαστε εκεί, είναι εντάξει;' }] },
         { id: 't2', bid: 'p1', unread: true, msgs: [{ from: 'guest', t: '14 Ιουλ 08:40', text: 'Καλημέρα! Έστειλα αίτημα για 15–19 Ιουλίου. Είναι η επέτειός μας, μήπως υπάρχει δωμάτιο με θέα;' }] },
         { id: 't3', bid: 'b13', unread: false, msgs: [{ from: 'guest', t: '12 Ιουλ 18:05', text: 'Γεια σας! Υπάρχει πάρκινγκ κοντά; Ερχόμαστε με αυτοκίνητο.' }, { from: 'host', t: '12 Ιουλ 19:20', text: 'Γεια σας! Ναι, υπάρχει δωρεάν πάρκινγκ ακριβώς μπροστά στο κτίριο. Σας περιμένουμε στις 20!' }] },
-        { id: 't4', bid: 'b4', unread: false, msgs: [{ from: 'host', t: '10 Ιουλ 12:00', text: 'Καλώς ήρθατε ξανά! Το διαμέρισμα είναι έτοιμο από τις 14:00.' }, { from: 'guest', t: '11 Ιουλ 16:32', text: 'Φτάσαμε, όλα τέλεια όπως κάθε χρόνο. Ευχαριστούμε!' }] },
+        { id: 't4', bid: 'b4', unread: false, msgs: [{ from: 'host', t: '10 Ιουλ 12:00', text: 'Καλώς ήρθατε ξανά! Το δωμάτιο είναι έτοιμο από τις 14:00.' }, { from: 'guest', t: '11 Ιουλ 16:32', text: 'Φτάσαμε, όλα τέλεια όπως κάθε χρόνο. Ευχαριστούμε!' }] },
         { id: 't5', bid: 'b6', unread: false, msgs: [{ from: 'guest', t: '9 Ιουλ 10:44', text: 'Μπορούμε να αφήσουμε τις βαλίτσες μετά το check-out; Το πλοίο μας φεύγει το απόγευμα.' }, { from: 'host', t: '9 Ιουλ 11:02', text: 'Φυσικά, θα σας τις φυλάξουμε στη ρεσεψιόν.' }] }
       ],
       blocks: blocks,
@@ -1582,7 +1582,7 @@ class Component extends DCLogic {
   moveCheck(b, unit, from) {
     const u = this.UNITS.find(x => x.id === unit);
     if (!u || unit === (from || b.unit)) return { ok: false, same: true, why: '' };
-    if (unit === 'apt') return { ok: false, why: 'το διαμέρισμα είναι ξεχωριστή κατηγορία' };
+    if (unit === 'apt') return { ok: false, why: 'το Άθος είναι ξεχωριστή κατηγορία' };
     if (u.cap < b.guests) return { ok: false, why: 'χωράει ως ' + u.cap + ' άτομα' };
     const c = this.firstClash(unit, b.start, b.nights, b.id);
     if (c) return { ok: false, why: c === 'block' ? 'έχει κλειστές μέρες' : 'πιασμένο από ' + c.name };
@@ -2127,7 +2127,7 @@ class Component extends DCLogic {
       const tonight = this.occ(ru.id, T);
       room = {
         name: ru.name, status: tile.status, pill: tile.pill,
-        capText: (ru.id === 'apt' ? 'Ξεχωριστό διαμέρισμα' : 'Δωμάτιο') + ' · ως ' + ru.cap + ' άτομα',
+        capText: (ru.id === 'apt' ? 'Ξεχωριστό κατάλυμα' : 'Δωμάτιο') + ' · ως ' + ru.cap + ' άτομα',
         nowTitle: tile.guest, nowSub: tile.sub, nowHasLink: tile.hasLink, nowNoLink: tile.noLink, nowOpen: tile.openGuest,
         occLabel: 'Νύχτες ' + this.MONG[mIdx], occText: mBooked + ' / ' + mDays,
         revLabel: 'Έσοδα σάιτ ' + this.MONG[mIdx], revText: this.money(mRev),
@@ -2281,7 +2281,7 @@ class Component extends DCLogic {
         const left = 24 - b.ago, on = false;
         return {
           name: b.name, current: on ? 'true' : 'false',
-          meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο') + (b.priceless ? '' : ' · ' + this.money(b.total)),
+          meta: this.range(b.start, this.endOf(b)) + ' · ' + b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'Άθος' : 'δωμάτιο') + (b.priceless ? '' : ' · ' + this.money(b.total)),
           note: b.note || '', hasNote: !!b.note,
           timer: left + (left === 1 ? ' ώρα' : ' ώρες'), timerStyle: 'flex-shrink: 0; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px;' + (left <= 6 ? 'background: #FBE4DF; color: #8A3412' : 'background: #FBEFD9; color: #7A4708'),
           style: rowBase + (on ? 'background: #F0F6F6; box-shadow: inset 3px 0 0 #0F5257' : 'background: #FFFFFF'),
@@ -2436,7 +2436,7 @@ class Component extends DCLogic {
         }
       }
       segs.forEach(g => { if (!g.expanded) g.plain = true; });
-      const group = ({ r1: 'Δωμάτια 100–104', r6: 'Δωμάτια 200–204', apt: 'Άθος · ξεχωριστό διαμέρισμα' })[u.id] || '';
+      const group = ({ r1: 'Δωμάτια 100–104', r6: 'Δωμάτια 200–204', apt: 'Άθος · ξεχωριστό κατάλυμα' })[u.id] || '';
       return { id: u.id, label: u.name, group: group, hasGroup: !!group, groupStyle: 'font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #0F5257; margin: ' + (u.id === 'r1' ? '14px' : '18px') + ' 0 6px;' + (u.id === 'r1' ? '' : ' padding-top: 12px; border-top: 2px solid #C3D1D3'), segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
     const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
@@ -2524,7 +2524,7 @@ class Component extends DCLogic {
         },
         calEditOpen: !!s.calEdit && fut.length > 0,
         calEditTitle: 'Τιμή και ελάχιστες νύχτες · ' + futLabel,
-        calEditSub: (selRooms ? 'Η τιμή δωματίου ισχύει για όλα τα δωμάτια αυτές τις μέρες, όχι μόνο για όσα διάλεξες.' : 'Ισχύει για το διαμέρισμα αυτές τις μέρες.') + (fut.length < ds.length ? ' Οι μέρες που πέρασαν δεν αλλάζουν.' : '') + (noBase ? ' Κάποιες μέρες δεν έχουν τιμή ή είναι κλειστές, γι’ αυτό ζητάμε και τις δύο τιμές (ανοίγουν με την εφαρμογή).' : ''),
+        calEditSub: (selRooms ? 'Η τιμή δωματίου ισχύει για όλα τα δωμάτια αυτές τις μέρες, όχι μόνο για όσα διάλεξες.' : 'Ισχύει για το Άθος αυτές τις μέρες.') + (fut.length < ds.length ? ' Οι μέρες που πέρασαν δεν αλλάζουν.' : '') + (noBase ? ' Κάποιες μέρες δεν έχουν τιμή ή είναι κλειστές, γι’ αυτό ζητάμε και τις δύο τιμές (ανοίγουν με την εφαρμογή).' : ''),
         calEditRoom: showRoom, calEditApt: showApt, calDraft: cd,
         setCalRoom: setCD('room'), setCalApt: setCD('apt'), setCalMin: setCD('min'),
         calHasOver: fut.some(x => !!s.overrides[x] && this.hasPrevYear(x)),
@@ -2537,7 +2537,7 @@ class Component extends DCLogic {
           this.setState({ overrides: no, calSel: null, calEdit: false });
           const what = [];
           if (showRoom) what.push('δωμάτιο ' + this.money(r));
-          if (showApt) what.push('διαμέρισμα ' + this.money(a));
+          if (showApt) what.push('Άθος ' + this.money(a));
           this.say(futLabel + ': ' + what.join(', ') + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.'));
         },
         calResetPrice: () => {
@@ -2932,7 +2932,7 @@ class Component extends DCLogic {
         aptStyle: 'display: block; font-size: 14px; font-weight: 600; white-space: nowrap; color: ' + (pr.own ? '#18282B' : '#4A5B5E'),
         hasSub: pr.none && !pr.closed, sub: 'χωρίς τιμή',
         disabled: past, pressed: on ? 'true' : 'false',
-        aria: this.fmt(x) + (pr.closed ? ', κλειστά' : (pr.none ? ', χωρίς τιμή' : ', δωμάτιο ' + this.money(pr.room) + ', διαμέρισμα ' + this.money(pr.apt))) + (tag ? ', όπως το ' + pr.from : ''),
+        aria: this.fmt(x) + (pr.closed ? ', κλειστά' : (pr.none ? ', χωρίς τιμή' : ', δωμάτιο ' + this.money(pr.room) + ', Άθος ' + this.money(pr.apt))) + (tag ? ', όπως το ' + pr.from : ''),
         style: 'touch-action: none; user-select: none; -webkit-user-select: none; width: 100%; min-height: 62px; box-sizing: border-box; display: flex; flex-direction: column; align-items: stretch; padding: 7px 8px; border-radius: 10px; text-align: left; color: #18282B;' + look + (past ? 'opacity: 0.45; cursor: default;' : 'cursor: pointer;') + (x === T ? 'box-shadow: inset 0 0 0 2px #E9B949;' : ''),
         date: x,
         down: (e) => {
@@ -2958,7 +2958,7 @@ class Component extends DCLogic {
       priceNext: () => { const d = new Date(Date.UTC(pm[0], pm[1], 1)); this.setState({ priceMonth: d.toISOString().slice(0, 7) }); },
       priceDow: ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'],
       priceCells: priceCells,
-      priceNote: 'Σε κάθε μέρα: αριστερά η τιμή δωματίου ανά νύχτα, δεξιά του διαμερίσματος. Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
+      priceNote: 'Σε κάθε μέρα: αριστερά η τιμή δωματίου ανά νύχτα, δεξιά του Άθος. Μέρα χωρίς φετινή τιμή παίρνει αυτή που είχε την ίδια ημερομηνία πέρσι (με διακεκομμένο πλαίσιο και τη χρονιά πάνω δεξιά).' + (closedInMonth ? ' Αυτόν τον μήνα ' + closedInMonth + (closedInMonth === 1 ? ' μέρα είναι κλειστή.' : ' μέρες είναι κλειστές.') : ''),
       hasSel: hasSel, noSel: !hasSel, selHasOver: selHasOver,
       selLabel: !hasSel ? '' : (selSet.length === 1 ? this.DAY[this.dt(selSet[0]).getUTCDay()] + ' ' + this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1])),
       selSub: !hasSel ? '' : (selSet.length === 1 ? (s.sel.b ? '1 νύχτα' : '1 νύχτα · πάτα κι άλλη μέρα για διάστημα') : selSet.length + ' νύχτες'),
@@ -2980,12 +2980,12 @@ class Component extends DCLogic {
       },
       applyPrice: () => {
         const r = parseInt(s.draft.room, 10), a = parseInt(s.draft.apt, 10), m = parseInt(s.draft.min, 10);
-        if (!(r > 0) || !(a > 0) || !(m >= 1)) { this.say('Συμπλήρωσε τιμή δωματίου, τιμή διαμερίσματος και ελάχιστες νύχτες.'); return; }
+        if (!(r > 0) || !(a > 0) || !(m >= 1)) { this.say('Συμπλήρωσε τιμή δωματίου, τιμή Άθος και ελάχιστες νύχτες.'); return; }
         const no = Object.assign({}, s.overrides);
         selSet.forEach(d => { no[d] = { room: r, apt: a, min: m, closed: false }; });
         const label = selSet.length === 1 ? this.fmt(selSet[0]) : this.range(selSet[0], selSet[selSet.length - 1]);
         this.setState({ overrides: no, sel: null });
-        this.say(label + ': δωμάτιο ' + this.money(r) + ', διαμέρισμα ' + this.money(a) + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.'));
+        this.say(label + ': δωμάτιο ' + this.money(r) + ', Άθος ' + this.money(a) + ', από ' + m + (m === 1 ? ' νύχτα.' : ' νύχτες.'));
       },
       resetPrice: () => {
         const no = Object.assign({}, s.overrides);
@@ -3058,7 +3058,7 @@ class Component extends DCLogic {
       let blockReason = '';
       if (nights <= 0) blockReason = 'Η αναχώρηση πρέπει να είναι μετά την άφιξη.';
       else if (!fits.length) blockReason = 'Τα δωμάτια παίρνουν ως ' + maxG + ' άτομα.';
-      else if (!free.length) blockReason = 'Δεν υπάρχει ελεύθερο δωμάτιο ή διαμέρισμα για ' + g + ' άτομα για όλες αυτές τις νύχτες.';
+      else if (!free.length) blockReason = 'Δεν υπάρχει ελεύθερο δωμάτιο ή το Άθος για ' + g + ' άτομα για όλες αυτές τις νύχτες.';
       /* Required: a name always; an amount for paid stays when these dates have no normal price (empty amount = normal price). */
       const nameMissing = !(f.name || '').trim();
       const amountReq = f.kind === 'paid' && normal == null;

@@ -854,7 +854,7 @@ function cellTap(unit, night) {
   render();
 }
 function whyNot(b, unit) {
-  if ((unit === 'apt') !== (b.type === 'apt')) return 'το διαμέρισμα είναι ξεχωριστή κατηγορία';
+  if ((unit === 'apt') !== (b.type === 'apt')) return 'το Άθος είναι ξεχωριστή κατηγορία';
   if (UNITS.find(x => x.id === unit).cap < b.guests) return 'χωράει λιγότερα άτομα';
   return 'είναι πιασμένο εκείνες τις μέρες';
 }
@@ -1239,7 +1239,7 @@ function openReq(id) {
       (b.note ? '<div class="sec">Μήνυμα πελάτη</div><div class="bubble" style="background:var(--card)">' + esc(b.note) + '</div>' : '') +
       '<div class="sec">Δωμάτιο</div>' +
       (free.length ? '<div class="chips" id="units">' + fits.map(u => '<button class="chip' + (u.id === pickUnit ? ' on' : '') + '" data-unit="' + u.id + '"' + (free.some(f => f.id === u.id) ? '' : ' disabled') + '>' + u.short + '</button>').join('') + '</div><p class="note">Τα γκρι είναι πιασμένα εκείνες τις μέρες ή δεν χωράνε ' + b.guests + ' άτομα.</p>'
-                   : '<div class="card empty" style="color:var(--red)">Δεν υπάρχει ελεύθερο ' + (b.type === 'apt' ? 'διαμέρισμα' : 'δωμάτιο') + ' για αυτές τις μέρες.</div>') +
+                   : '<div class="card empty" style="color:var(--red)">' + (b.type === 'apt' ? 'Το Άθος δεν είναι ελεύθερο' : 'Δεν υπάρχει ελεύθερο δωμάτιο') + ' για αυτές τις μέρες.</div>') +
     '</div>' +
     '<div class="ft"><button class="btn danger" data-act="reject" data-id="' + b.id + '">Απόρριψη</button><button class="btn ok" data-act="accept" data-id="' + b.id + '"' + (free.length ? '' : ' disabled') + '>Αποδοχή</button></div>', 'req', id);
   el.querySelectorAll('[data-unit]').forEach(c => c.addEventListener('click', () => {
