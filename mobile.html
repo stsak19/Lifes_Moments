@@ -1835,6 +1835,9 @@ html.gs-lock { overflow: hidden; }
 /* journeys: the tip appears only with the last day, so it never floats alone below an earlier day */
 .jrow.seen .jtx .jq { transition: opacity .6s ease, filter .6s ease, transform .6s cubic-bezier(.2, .7, .2, 1); transition-delay: 0s; }
 .jrow.seen .jtx:not(:has(.jsteps li:last-child.now)) .jq { opacity: 0; filter: blur(3px); transform: translateY(12px); }
+/* journeys: after the last day and the tip appear, the photo holds a little longer before the page moves on */
+.jtx { padding-bottom: 45vh; }
+@media (max-width: 900px) { .jtx { padding-bottom: 25vh; } }
 /* ---------- aesthetic polish ---------- */
 /* rooms without photos yet: a soft sea-toned card instead of a dashed box */
 .usoon { border: 1px solid var(--line); background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 70%), linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--accent-2) 8%, var(--surface))); }
