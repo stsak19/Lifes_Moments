@@ -1970,6 +1970,8 @@ html.gs-lock { overflow: hidden; }
   .stay:not(.bk-open) .mbar .mbar-go { flex: 0 0 auto; width: min(240px, 64%); margin: 0 auto; height: 50px; border-radius: 0; font-size: 16px; letter-spacing: .04em; background: #1E90E8; color: #fff; font-weight: 600; }
   /* journeys: a calmer photo that fits between the header and the booking bar */
   .jstage { top: 84px; height: calc(100svh - 84px - 84px - env(safe-area-inset-bottom, 0px)); max-height: 600px; }
+  .stay:not(.bk-open) .mbar { transition: background-color .35s ease, border-color .35s ease; }
+  .stay:not(.bk-open) .mbar.on-hero { background-color: rgba(6,10,18,.35); border-top-color: rgba(248,244,236,.18); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: none; }
   .stay.bk-open .mbar { visibility: hidden; }
   .mfab, .mfab.show { display: none !important; }
   body { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 68px); }
@@ -3005,6 +3007,35 @@ html.gs-lock { overflow: hidden; }
     $('#bkSum').innerHTML = '<b>' + d + '</b><small>' + (nights ? plural(nights, 'night', 'nights') + ' · ' : '') + plural(cal.guests, 'guest', 'guests') + (q ? ' · ' + eur(q.total) : '') + '</small>';
   };
   window.__bkOpen = () => bkOpen(true);
+
+  /* the bottom booking bar takes the colour of the section behind it */
+  (function barTint() {
+    const bar = $('#mbar'); if (!bar) return;
+    const bgOf = (el) => {
+      for (; el && el !== document.documentElement; el = el.parentElement) {
+        if (el.closest && el.closest('#intro')) return 'hero';
+        const c = getComputedStyle(el).backgroundColor;
+        if (c && c !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(c)) return c;
+      }
+      return getComputedStyle(document.body).backgroundColor;
+    };
+    let raf = 0;
+    function tint() {
+      raf = 0;
+      if (!mqMobile.matches) return;
+      const r = bar.getBoundingClientRect();
+      const under = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).find((x) => x !== bar && !bar.contains(x));
+      const sec = under && under.closest('main > section, footer');
+      const c = bgOf(sec || under);
+      bar.classList.toggle('on-hero', c === 'hero');
+      bar.style.backgroundColor = c === 'hero' ? '' : c;
+    }
+    const ask = () => { if (!raf) raf = requestAnimationFrame(tint); };
+    window.addEventListener('scroll', ask, { passive: true });
+    window.addEventListener('resize', ask);
+    if (window.lenis && window.lenis.on) window.lenis.on('scroll', ask);
+    setTimeout(tint, 300);
+  })();
 
   /* the floating button: shows once the one-line bar has scrolled off the top, hides when you're back at it */
   const mfab = $('#mfab');
