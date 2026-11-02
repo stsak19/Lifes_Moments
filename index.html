@@ -1813,7 +1813,7 @@ html.gs-lock { overflow: hidden; }
         <div>
           <p class="eyebrow sec-eyebrow"><span class="num">02</span><span data-i18n="nav.rooms">Rooms</span></p>
           <h2 class="sec-title" id="roomsTitle" data-i18n-html="rooms.title">Where you'll <em>stay</em></h2>
-          <p class="units-lead" data-i18n="units.lead">Ten rooms and Athos. Tap one to see all its photos.</p>
+          <p class="units-lead" data-i18n="units.lead">Bedrooms, bathrooms, balconies and the terrace. Tap one to see all its photos.</p>
         </div>
         <div class="tabs" role="tablist" aria-label="Rooms" id="roomTabs"></div>
       </div>
@@ -1822,7 +1822,7 @@ html.gs-lock { overflow: hidden; }
       <div class="utrack" id="utrack"></div>
     </div>
     <div class="wrap uctl">
-      <span class="ucount" id="ucount" aria-live="polite">01 / 12</span>
+      <span class="ucount" id="ucount" aria-live="polite">01 / 06</span>
       <span class="ubar" aria-hidden="true"><i id="ubar"></i></span>
       <div class="ubtns">
         <button type="button" class="icon-btn" id="uPrev" data-i18n-aria="u.prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6l6 6"/></svg></button>
@@ -2823,6 +2823,11 @@ html.gs-lock { overflow: hidden; }
    ['el', { 'pr.stay': '{n} · {p} σύνολο', 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
    ['tr', { 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
    ['bg', { 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
+  ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
+  [['en', { 'sp.rooms': 'Bedrooms', 'sp.baths': 'Bathrooms', 'sp.balcony': 'Balconies & view', 'sp.terrace': 'The terrace', 'sp.house': 'The house', 'units.lead': 'Bedrooms, bathrooms, balconies and the terrace. Tap one to see all its photos.' }],
+   ['el', { 'sp.rooms': 'Υπνοδωμάτια', 'sp.baths': 'Μπάνια', 'sp.balcony': 'Μπαλκόνια & θέα', 'sp.terrace': 'Η βεράντα', 'sp.house': 'Το κτίριο', 'units.lead': 'Υπνοδωμάτια, μπάνια, μπαλκόνια και η βεράντα. Πατήστε για να δείτε όλες τις φωτογραφίες.' }],
+   ['tr', { 'sp.rooms': 'Yatak odaları', 'sp.baths': 'Banyolar', 'sp.balcony': 'Balkonlar ve manzara', 'sp.terrace': 'Teras', 'sp.house': 'Bina', 'units.lead': 'Yatak odaları, banyolar, balkonlar ve teras. Tüm fotoğrafları görmek için dokunun.' }],
+   ['bg', { 'sp.rooms': 'Спални', 'sp.baths': 'Бани', 'sp.balcony': 'Балкони и гледка', 'sp.terrace': 'Терасата', 'sp.house': 'Сградата', 'units.lead': 'Спални, бани, балкони и терасата. Докоснете, за да видите всички снимки.' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
   function loadAvailability() {
     loadOpen();
@@ -4126,13 +4131,15 @@ html.gs-lock { overflow: hidden; }
      The strip moves at a steady speed and loops forever (the set is drawn three times so the seam never shows).
      It slows to a stop on hover, can be dragged, and the arrows step one unit at a time. */
   (function unitSlider() {
-    const UNIT_PHOTOS = [
-      ['photos/room-blue.jpg', 'photos/bathroom.jpg'],
-      ['photos/room-grey.jpg', 'photos/balcony-view.jpg'],
-      [], [], [], [], [], [], [], []
+    const SPACES = [
+      ['sp.rooms', ['photos/room-blue.jpg', 'photos/room-grey.jpg']],
+      ['sp.baths', ['photos/bathroom.jpg', 'photos/bathroom-white.jpg']],
+      ['sp.balcony', ['photos/balcony-view.jpg', 'photos/balcony-sea.jpg']],
+      ['sp.terrace', ['photos/terrace-sea.jpg', 'photos/terrace-day.jpg', 'photos/terrace-dusk.jpg']],
+      ['sp.house', ['photos/exterior-day.jpg', 'photos/exterior-evening.jpg', 'photos/aerial-beach.jpg', 'photos/aerial-house.jpg']]
     ];
-    const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg', 'photos/bathroom-white.jpg'];
-    const units = UNIT_PHOTOS.map((ph, i) => ({ ph: ph, name: () => t('unit.n', { n: i < 5 ? 100 + i : 195 + i }) })).concat([{ ph: APT_PHOTOS, apt: true, name: () => t('unit.apt') }]);
+    const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg'];
+    const units = SPACES.map(([k, ph]) => ({ ph: ph, name: () => t(k) })).concat([{ ph: APT_PHOTOS, apt: true, name: () => t('unit.apt') }]);
     const N = units.length, COPIES = 3;
     const car = $('#ucar'), track = $('#utrack'), bar = $('#ubar');
     const pad2 = (n) => String(n).padStart(2, '0');
