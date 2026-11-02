@@ -320,6 +320,8 @@ h1, h2, h3 { text-wrap: balance; }
 .tabs { display: flex; gap: 2px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; }
 .tab { min-height: 40px; padding: 0 18px; border-radius: 999px; border: 0; background: transparent; font-size: 14px; white-space: nowrap; color: var(--muted); transition: background-color .25s, color .25s; }
 .tab[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+#units .tp { display: block; margin-top: 1px; font-size: 11.5px; letter-spacing: .01em; opacity: .78; font-variant-numeric: tabular-nums; }
+#units button:has(.tp) { min-height: 50px; line-height: 1.2; padding-top: 6px; padding-bottom: 6px; }
 .gallery { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 260px 260px; gap: 12px; }
 .ph { position: relative; padding: 0; border: 0; border-radius: 18px; overflow: hidden; background: var(--deep); min-width: 0; }
 .ph:first-child { grid-row: span 2; }
@@ -2736,10 +2738,10 @@ html.gs-lock { overflow: hidden; }
   const minNights = () => (cal.ci && prices[cal.ci] ? prices[cal.ci].min : 1);
   const tooShort = () => !!(cal.ci && cal.co && dayNum(cal.co) - dayNum(cal.ci) < minNights());
   const eur = (v) => fmtEur.format(v);
-  [['en', { 'note.min': 'These dates need a stay of at least {n} nights. Pick a later check-out.', 'pr.off': 'Discount −{p}%', 'pr.total': 'Total', 'pr.ask': 'We will tell you the price when we reply to your request.', 'pr.extra': 'Includes {p} per night for each guest after the second.' }],
-   ['el', { 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
-   ['tr', { 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
-   ['bg', { 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
+  [['en', { 'pr.from': 'from {p} / night', 'pr.stay': '{n} · {p} total', 'note.min': 'These dates need a stay of at least {n} nights. Pick a later check-out.', 'pr.off': 'Discount −{p}%', 'pr.total': 'Total', 'pr.ask': 'We will tell you the price when we reply to your request.', 'pr.extra': 'Includes {p} per night for each guest after the second.' }],
+   ['el', { 'pr.from': 'από {p} / βράδυ', 'pr.stay': '{n} · {p} σύνολο', 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
+   ['tr', { 'pr.from': 'gecelik {p}\'den', 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
+   ['bg', { 'pr.from': 'от {p} / нощувка', 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
   function loadAvailability() {
     loadOpen();
@@ -2801,7 +2803,27 @@ html.gs-lock { overflow: hidden; }
         : '<span class="ok">' + t('st.free') + '</span>';
       const q = free && quote(); h = plural(n, 'night', 'nights') + ' · ' + st + (q ? ' · ' + eur(q.total) : '');
     } else h = many ? t('st.rooms', { n: u.subs.length, g: u.guests }) : t('st.apt', { g: u.guests });
+    renderTabPrices();
     const nOut = $('#nOut'); if (nOut) nOut.innerHTML = h; // the line under the bar was removed
+  }
+  // The price on the Room / Athos tabs: the lowest nightly price ahead, or the stay's total once dates are picked.
+  function renderTabPrices() {
+    const el = document.getElementById('units'); if (!el) return;
+    el.querySelectorAll('button[data-u]').forEach((b, i) => {
+      const u = UNITS[i]; if (!u) return;
+      const apt = typeOf(i) === 'apt';
+      let txt = '';
+      if (cal.ci && cal.co) {
+        const keep = cal.unit; cal.unit = i; const q = quote(); cal.unit = keep;
+        if (q) txt = t('pr.stay', { n: plural(q.nights, 'night', 'nights'), p: eur(q.total) });
+      } else {
+        let lo = null;
+        Object.keys(prices).forEach((k) => { if (k >= todayKey) { const v = apt ? prices[k].apt : prices[k].room; if (v != null && (lo == null || v < lo)) lo = v; } });
+        if (lo != null) txt = t('pr.from', { p: eur(lo) });
+      }
+      b.textContent = t(i === 0 ? 'u.room' : 'u.apt');
+      if (txt) { const sp = document.createElement('span'); sp.className = 'tp'; sp.textContent = txt; b.appendChild(sp); }
+    });
   }
   function selectUnit(i) {
     cal.unit = i;
