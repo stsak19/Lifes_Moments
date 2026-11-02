@@ -270,6 +270,16 @@ html.dark .calhead{background:rgba(14,23,25,.94)}
 .contact .call{background:var(--teal);color:#fff}
 .contact .wa{background:#25D366;color:#fff}
 .pnl{padding:0 20px}
+.pqq{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;scrollbar-width:none}.pqq .chip{flex-shrink:0;height:32px;font-size:13px}
+.pqc{padding:8px 6px}.pqw,.pqg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.pqw span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:0 0 4px}
+.pqd{height:54px;border:0;border-radius:10px;background:var(--soft);font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:0}
+.pqd b{font-size:14px}.pqd small{font-size:11.5px;font-weight:700;color:var(--teal)}
+.pqd.we{background:var(--teal-soft)}.pqd.td b{color:var(--teal);text-decoration:underline}
+.pqd.past{opacity:.35;cursor:default}
+.pqd.on{background:var(--teal);color:#fff}.pqd.on small{color:#fff}.pqd.an{box-shadow:inset 0 0 0 2px var(--yellow)}
+.pqinfo{font-size:14px;color:var(--muted);margin:0 0 8px}.pqinfo b{color:var(--ink)}
+.pqrow{display:flex;gap:8px;margin-top:8px}.pqrow .pill{flex:1;justify-content:center}.pqrow input{flex:1;min-width:0;height:46px;font-size:18px;font-weight:700}
 .pnl .typ{display:flex;background:var(--seg);border-radius:12px;padding:3px;margin:4px 0 12px}
 .pnl .typ button{flex:1;border:0;background:none;padding:9px 0;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
 .pnl .typ button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
@@ -977,43 +987,69 @@ function cleanSheet() {
 
 /* ---- price for a few nights (same night prices as the desktop «Τιμές») ---- */
 function priceSheet() {
-  if (!S.pq || S.pq.a < S.today) S.pq = { a: S.today, z: add(S.today, 2), type: 'room' };
-  sheet('<div class="hd"><div style="flex:1"><h2>Τιμή για λίγες μέρες</h2><p>Ίδια τιμή σε όλα τα δωμάτια του τύπου</p></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div>' +
-    '<div class="bd" style="padding:0 0 16px"><div class="avd"><label>Πρώτη νύχτα<input class="field" type="date" id="pqA" min="' + S.today + '" value="' + S.pq.a + '"></label><label>Τελευταία νύχτα<input class="field" type="date" id="pqZ" min="' + S.today + '" value="' + add(S.pq.z, -1) + '"></label></div><div id="pqRes" class="pnl"></div></div>', 'price', null);
+  if (!S.pq || !S.pq.m) S.pq = { type: 'room', m: S.today.slice(0, 7), sel: [], anchor: null };
+  full('<header class="top"><button class="iconbtn" data-act="close" aria-label="Πίσω">' + ICON.back + '</button><div style="flex:1"><h1 style="font-size:20px">Τιμές</h1></div></header><div class="bd" id="pqBody"></div><div class="ft pqft" id="pqFt"></div>', 'price', null);
   priceRes();
 }
+function pqNights() { return S.pq.sel.slice().sort(); }
 function priceRes() {
-  const box = $('#pqRes'); if (!box) return;
-  const q = S.pq, nights = []; for (let d = q.a; d < q.z; d = add(d, 1)) nights.push(d);
-  if (!nights.length) { box.innerHTML = '<div class="empty">Η τελευταία νύχτα πρέπει να είναι μετά ή ίδια με την πρώτη.</div>'; return; }
-  const vals = nights.map(n => { const p = priceFor(n); return p && !p.closed && p[q.type] != null ? Number(p[q.type]) : null; });
-  box.innerHTML = '<div class="typ"><button data-act="pq-type" data-id="room" class="' + (q.type === 'room' ? 'on' : '') + '">Δωμάτια</button><button data-act="pq-type" data-id="apt" class="' + (q.type === 'apt' ? 'on' : '') + '">Άθος</button></div>' +
-    '<div class="lbl" style="font-size:13px;font-weight:600;color:var(--muted)">Τώρα · ' + nights.length + (nights.length === 1 ? ' νύχτα' : ' νύχτες') + '</div>' +
-    '<div class="now">' + nights.slice(0, 31).map((n, i) => '<span>' + fmt(n) + ' <b>' + (vals[i] == null ? '—' : vals[i] + '€') + '</b></span>').join('') + (nights.length > 31 ? '<span>…</span>' : '') + '</div>' +
-    '<div class="np"><input class="field" id="pqV" type="number" inputmode="numeric" min="0" placeholder="Νέα τιμή"><span style="font-size:20px;font-weight:700">€</span></div>' +
-    '<p class="note" style="margin:8px 0 14px;font-size:13px;color:var(--muted)">Τιμή ανά νύχτα για 2 άτομα. Αλλάζει αμέσως στο σάιτ. Το Booking.com δεν επηρεάζεται.</p>' +
-    '<button class="btn" data-act="pq-save" style="width:100%;background:var(--teal);color:#fff">Αποθήκευση</button>';
+  const body = $('#pqBody'); if (!body) return;
+  const q = S.pq, y = +q.m.slice(0, 4), mo = +q.m.slice(5, 7) - 1;
+  const nd = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate(), first = q.m + '-01', lead = (dt(first).getUTCDay() + 6) % 7;
+  const val = n => { const p = priceFor(n); return p && p.closed ? 'x' : p && p[q.type] != null ? Number(p[q.type]) : null; };
+  let h = '<div class="pnl" style="padding:0"><div class="typ"><button data-act="pq-type" data-id="room" class="' + (q.type === 'room' ? 'on' : '') + '">Δωμάτια</button><button data-act="pq-type" data-id="apt" class="' + (q.type === 'apt' ? 'on' : '') + '">Άθος</button></div></div>';
+  h += '<div class="cal-nav"><button class="pill sq" data-act="pq-m" data-id="-1" aria-label="Προηγούμενος μήνας">‹</button><span class="mon">' + MONF[mo] + ' ' + y + '</span><button class="pill sq" data-act="pq-m" data-id="1" aria-label="Επόμενος μήνας">›</button></div>';
+  h += '<div class="pqq"><button class="chip" data-act="pq-pick" data-id="month">Όλος ο μήνας</button><button class="chip" data-act="pq-pick" data-id="we">Παρ–Σαβ</button><button class="chip" data-act="pq-pick" data-id="wd">Κυρ–Πέμ</button>' + (q.sel.length ? '<button class="chip" data-act="pq-pick" data-id="none">Καθαρισμός</button>' : '') + '</div>';
+  h += '<div class="card pqc"><div class="pqw">' + ['Δε', 'Τρ', 'Τε', 'Πε', 'Πα', 'Σα', 'Κυ'].map(d => '<span>' + d + '</span>').join('') + '</div><div class="pqg">';
+  for (let i = 0; i < lead; i++) h += '<span></span>';
+  for (let i = 0; i < nd; i++) {
+    const n = add(first, i), v = val(n), past = n < S.today, wd = dt(n).getUTCDay();
+    h += '<button class="pqd' + (past ? ' past' : '') + (q.sel.includes(n) ? ' on' : '') + (n === q.anchor ? ' an' : '') + (wd === 5 || wd === 6 ? ' we' : '') + (n === S.today ? ' td' : '') + '"' + (past ? ' disabled' : ' data-act="pq-day" data-id="' + n + '"') + '><b>' + (i + 1) + '</b><small>' + (v === 'x' ? 'κλειστό' : v == null ? '—' : v + '€') + '</small></button>';
+  }
+  h += '</div></div><p class="note" style="font-size:13px;color:var(--muted);margin:10px 4px 0">Πάτα την πρώτη και την τελευταία νύχτα (ή μία μέρα). Τιμή ανά νύχτα για 2 άτομα· αλλάζει αμέσως στο σάιτ, όχι στο Booking.com.</p>';
+  body.innerHTML = h;
+  const ft = $('#pqFt'), ns = pqNights();
+  if (!ns.length) { ft.innerHTML = '<div style="flex:1;text-align:center;color:var(--muted);font-weight:600;padding:12px 0">Διάλεξε μέρες για να αλλάξεις τιμή</div>'; return; }
+  const vs = ns.map(val).filter(v => typeof v === 'number'), lo = Math.min(...vs), hi = Math.max(...vs);
+  ft.innerHTML = '<div style="width:100%"><div class="pqinfo"><b>' + ns.length + (ns.length === 1 ? ' νύχτα' : ' νύχτες') + '</b> · ' + (ns.length === 1 ? fmt(ns[0]) : fmt(ns[0]) + ' – ' + fmt(ns[ns.length - 1])) + (vs.length ? ' · τώρα ' + (lo === hi ? lo + '€' : lo + '–' + hi + '€') : '') + '</div>' +
+    '<div class="pqrow"><button class="pill" data-act="pq-delta" data-id="-10">−10€</button><button class="pill" data-act="pq-delta" data-id="-5">−5€</button><button class="pill" data-act="pq-delta" data-id="5">+5€</button><button class="pill" data-act="pq-delta" data-id="10">+10€</button></div>' +
+    '<div class="pqrow"><input class="field" id="pqV" type="number" inputmode="numeric" min="0" placeholder="Νέα τιμή €"><button class="btn" data-act="pq-save" style="background:var(--teal);color:#fff;flex:0 0 auto;padding:0 20px">Αποθήκευση</button></div></div>';
 }
-function priceSave() {
-  const q = S.pq, v = Number(($('#pqV') || {}).value);
-  if (!($('#pqV') || {}).value || !(v >= 0) || v > 5000) { toast('Γράψε μια τιμή σε ευρώ.'); return; }
-  const nights = []; for (let d = q.a; d < q.z; d = add(d, 1)) nights.push(d);
-  const rows = nights.map(n => {
+function pqDay(n) {
+  const q = S.pq;
+  if (q.anchor && q.anchor !== n) { const a = q.anchor < n ? q.anchor : n, z = q.anchor < n ? n : q.anchor; q.sel = []; for (let d = a; d <= z; d = add(d, 1)) q.sel.push(d); q.anchor = null; }
+  else if (q.anchor === n) { q.sel = []; q.anchor = null; }
+  else { q.sel = [n]; q.anchor = n; }
+  priceRes();
+}
+function pqPick(k) {
+  const q = S.pq; q.anchor = null;
+  if (k === 'none') { q.sel = []; priceRes(); return; }
+  const nd = new Date(Date.UTC(+q.m.slice(0, 4), +q.m.slice(5, 7), 0)).getUTCDate(); q.sel = [];
+  for (let i = 0; i < nd; i++) { const n = add(q.m + '-01', i), wd = dt(n).getUTCDay(); if (n < S.today) continue; if (k === 'month' || (k === 'we' ? wd === 5 || wd === 6 : wd !== 5 && wd !== 6)) q.sel.push(n); }
+  priceRes();
+}
+function pqMonth(k) { const y = +S.pq.m.slice(0, 4), m = +S.pq.m.slice(5, 7) - 1 + k; S.pq.m = new Date(Date.UTC(y, m, 1)).toISOString().slice(0, 7); priceRes(); }
+function priceSave(delta) {
+  const q = S.pq, nights = pqNights();
+  let v = null;
+  if (delta == null) { v = Number(($('#pqV') || {}).value); if (!($('#pqV') || {}).value || !(v >= 0) || v > 5000) { toast('Γράψε μια τιμή σε ευρώ.'); return; } v = Math.round(v); }
+  const rows = [];
+  for (const n of nights) {
     const cur = priceFor(n) || {};
     const row = { night: n, room: cur.room != null ? cur.room : null, apt: cur.apt != null ? cur.apt : null, closed: !!cur.closed, updated_by: by() };
     if (cur.min_nights != null) row.min_nights = cur.min_nights;
-    row[q.type] = Math.round(v);
-    return row;
-  });
+    if (delta != null) { if (cur[q.type] == null) continue; row[q.type] = Math.max(0, Math.round(Number(cur[q.type]) + delta)); } else row[q.type] = v;
+    rows.push(row);
+  }
+  if (!rows.length) { toast('Δεν υπάρχει τιμή για να αλλάξει.'); return; }
   write(() => SB.from('price_overrides').upsert(rows, { onConflict: 'night' }).select('night'), () => {
     rows.forEach(r0 => { S.prices[r0.night] = Object.assign({}, S.prices[r0.night] || {}, r0); });
-    closeOverlay(); toast((q.type === 'apt' ? 'Άθος' : 'Δωμάτια') + ': ' + Math.round(v) + '€ τη νύχτα, ' + (nights.length === 1 ? fmt(nights[0]) : range(nights[0], q.z)) + '.');
+    toast((q.type === 'apt' ? 'Άθος' : 'Δωμάτια') + ': ' + (delta != null ? (delta > 0 ? '+' : '−') + Math.abs(delta) + '€' : v + '€ τη νύχτα') + ' · ' + rows.length + (rows.length === 1 ? ' νύχτα' : ' νύχτες') + '.');
+    if (delta == null) { q.sel = []; q.anchor = null; }
+    priceRes();
   }, 'Δεν αποθηκεύτηκε η τιμή');
 }
-document.addEventListener('change', e => {
-  if (e.target.id === 'pqA') { S.pq.a = e.target.value; if (S.pq.z <= S.pq.a) S.pq.z = add(S.pq.a, 1); const z = $('#pqZ'); if (z) z.value = add(S.pq.z, -1); priceRes(); }
-  if (e.target.id === 'pqZ') { S.pq.z = add(e.target.value, 1); priceRes(); }
-});
 
 /* ---- call / WhatsApp ---- */
 function contactHTML(phone) {
@@ -1578,6 +1614,10 @@ document.addEventListener('click', e => {
     case 'price': priceSheet(); break;
     case 'pq-type': S.pq.type = id; priceRes(); break;
     case 'pq-save': priceSave(); break;
+    case 'pq-delta': priceSave(Number(id)); break;
+    case 'pq-day': pqDay(id); break;
+    case 'pq-pick': pqPick(id); break;
+    case 'pq-m': pqMonth(Number(id)); break;
     case 'av-new': { const a0 = S.av.a, z0 = S.av.z; closeOverlay(); openNew({ unit: id, start: a0, end: z0 }); break; }
     case 'av-close': { S.sel = { unit: id, a: S.av.a, b: add(S.av.z, -1) }; setClosed(true); setTimeout(availRes, 50); break; }
     case 'move-cancel': S.move = null; render(); break;
