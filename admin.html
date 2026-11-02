@@ -330,7 +330,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <div><div style="font-weight: 600">{{calEditTitle}}</div><div style="font-size: 13px; color: #4A5B5E">{{calEditSub}}</div></div>
 <div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px">
 <sc-if value="{{calEditRoom}}" hint-placeholder-val="{{true}}"><div style="flex: 1 1 140px"><label for="ce-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο (€/νύχτα)</label><input id="ce-room" type="number" inputmode="numeric" min="0" value="{{calDraft.room}}" onChange="{{setCalRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
-<sc-if value="{{calEditApt}}" hint-placeholder-val="{{false}}"><div style="flex: 1 1 140px"><label for="ce-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμέρισμα (€/νύχτα)</label><input id="ce-apt" type="number" inputmode="numeric" min="0" value="{{calDraft.apt}}" onChange="{{setCalApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
+<sc-if value="{{calEditApt}}" hint-placeholder-val="{{false}}"><div style="flex: 1 1 140px"><label for="ce-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Άθος (€/νύχτα)</label><input id="ce-apt" type="number" inputmode="numeric" min="0" value="{{calDraft.apt}}" onChange="{{setCalApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div></sc-if>
 <div style="flex: 1 1 120px"><label for="ce-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="ce-min" type="number" inputmode="numeric" min="1" value="{{calDraft.min}}" onChange="{{setCalMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 <button type="button" onClick="{{calApply}}" style="height: 44px; padding: 0 22px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">{{calApplyLabel}}</button>
 <sc-if value="{{calHasOver}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{calResetPrice}}" style="height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; height: 44px">Όπως πέρσι</button></sc-if>
@@ -540,7 +540,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
 <div><label for="p-room" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Δωμάτιο</label><input id="p-room" type="number" inputmode="numeric" min="0" value="{{draft.room}}" onChange="{{setDraftRoom}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
-<div><label for="p-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Διαμέρισμα (€)</label><input id="p-apt" type="number" inputmode="numeric" min="0" value="{{draft.apt}}" onChange="{{setDraftApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
+<div><label for="p-apt" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Άθος (€)</label><input id="p-apt" type="number" inputmode="numeric" min="0" value="{{draft.apt}}" onChange="{{setDraftApt}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 </div>
 <div><label for="p-min" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 4px">Ελάχιστες νύχτες</label><input id="p-min" type="number" inputmode="numeric" min="1" value="{{draft.min}}" onChange="{{setDraftMin}}" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 16px; font-weight: 600"></div>
 <button type="button" onClick="{{applyPrice}}" style="height: 46px; border-radius: 23px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 15px; font-weight: 600; cursor: pointer">{{applyLabel}}</button>
@@ -1164,8 +1164,8 @@ class Component extends DCLogic {
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.state.quickDel) this.setState({ quickDel: null }); });
     this.state.qf = null;
     this.PAST = [
-      { name: 'Οικογένεια Μαρκοπούλου', date: '2024-07-20', when: '20–27 Ιουλ 2024', unit: 'Διαμέρισμα', nights: 7, total: 1190, source: 'site' },
-      { name: 'Οικογένεια Μαρκοπούλου', date: '2025-07-12', when: '12–19 Ιουλ 2025', unit: 'Διαμέρισμα', nights: 7, total: 1260, source: 'site' },
+      { name: 'Οικογένεια Μαρκοπούλου', date: '2024-07-20', when: '20–27 Ιουλ 2024', unit: 'Άθος', nights: 7, total: 1190, source: 'site' },
+      { name: 'Οικογένεια Μαρκοπούλου', date: '2025-07-12', when: '12–19 Ιουλ 2025', unit: 'Άθος', nights: 7, total: 1260, source: 'site' },
       { name: 'Νίκος Παπαδόπουλος', date: '2025-08-21', when: '21–25 Αυγ 2025', unit: 'Δωμάτιο 3', nights: 4, total: 460, source: 'booking' },
       { name: 'Anna Schmidt', date: '2025-06-08', when: '8–12 Ιουν 2025', unit: 'Δωμάτιο 2', nights: 4, total: 340, source: 'booking' },
       { name: 'Ελισάβετ Ραφαηλίδου', date: '2025-09-02', when: '2–6 Σεπ 2025', unit: 'Δωμάτιο 4', nights: 4, total: 340, source: 'site', email: 'elisavet@example.com', phone: '+30 69xx xxx xxx' },
@@ -2235,7 +2235,7 @@ class Component extends DCLogic {
           usedText: rb.ago + ' από 24 ώρες',
           barFill: 'height: 8px; width: ' + Math.round(rb.ago / 24 * 100) + '%; background: ' + (left <= 6 ? '#C2502A' : '#C99A3B'),
           dates: this.range(rb.start, this.endOf(rb)), nights: String(rb.nights), guests: String(rb.guests), total: rb.priceless ? 'χωρίς τιμή' : this.money(rb.total),
-          pickTitle: rb.type === 'apt' ? 'Διαμέρισμα' : 'Σε ποιο δωμάτιο;',
+          pickTitle: rb.type === 'apt' ? 'Άθος' : 'Σε ποιο δωμάτιο;',
           rooms: rooms, noFree: !suggested, canAccept: !!picked, pickedName: picked ? this.unitName(picked) : '–', canDrag: rb.type === 'room',
           acceptLabel: s.checking === rb.id ? (this.REAL ? 'Αποθήκευση…' : 'Έλεγχος στο Booking.com…') : picked ? 'Αποδοχή στο ' + this.unitName(picked) + (rb.priceless ? '' : ' · χρέωση ' + this.money(rb.total)) : '',
           contact: rb.email + ' · ' + rb.phone,
@@ -2459,7 +2459,7 @@ class Component extends DCLogic {
         }
       }
       segs.forEach(g => { if (!g.expanded) g.plain = true; });
-      return { label: b.type === 'apt' ? 'Διαμέρισμα · ' + b.guests + ' άτ.' : 'Δωμάτιο · ' + b.guests + ' άτ.', segs: segs };
+      return { label: b.type === 'apt' ? 'Άθος · ' + b.guests + ' άτ.' : 'Δωμάτιο · ' + b.guests + ' άτ.', segs: segs };
     });
     const d0 = this.dt(days[0]), d1 = this.dt(days[days.length - 1]);
     const calTitle = d0.getUTCMonth() === d1.getUTCMonth()
@@ -2575,7 +2575,7 @@ class Component extends DCLogic {
       if (!listB.length) { this.say('Δεν υπάρχουν κρατήσεις με αυτά τα φίλτρα.'); return; }
       const MN = ['Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος', 'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'];
       const head = ['Πελάτης', 'Άφιξη', 'Αναχώρηση', 'Νύχτες', 'Άτομα', 'Χώρος', 'Πηγή', 'Κατάσταση', 'Ποσό', 'Κράτηση έγινε', 'Email', 'Τηλέφωνο'];
-      const line = b => Object.assign([b.name, b.start, this.endOf(b), b.nights, b.guests, b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο'), srcWord(b), statusWord(b), b.source === 'booking' ? '' : b.total, this.bookedOn(b), b.email, b.phone], { kind: b.source === 'booking' ? 'booking' : 'row' });
+      const line = b => Object.assign([b.name, b.start, this.endOf(b), b.nights, b.guests, b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο'), srcWord(b), statusWord(b), b.source === 'booking' ? '' : b.total, this.bookedOn(b), b.email, b.phone], { kind: b.source === 'booking' ? 'booking' : 'row' });
       const sum = (label, list, kind) => { const live = list.filter(b => b.status === 'confirmed'); return Object.assign([label, '', '', live.reduce((a, b) => a + (+b.nights || 0), 0), live.reduce((a, b) => a + (+b.guests || 0), 0), '', live.length + (live.length === 1 ? ' κράτηση' : ' κρατήσεις'), '', ownMoney(live), '', '', ''], { kind: kind || 'msum' }); };
       const byY = {};
       listB.forEach(b => { const y = b.start.slice(0, 4), m = b.start.slice(5, 7); ((byY[y] = byY[y] || {})[m] = byY[y][m] || []).push(b); });
@@ -2625,7 +2625,7 @@ class Component extends DCLogic {
     const rowOf = b => { const hs = homeSt(b) ? HOME[homeSt(b)] : null; return Object.assign({
       hasSt: !!hs, stLabel: hs ? hs[0] : '', stStyle: hs ? 'flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: ' + hs[1] + '; color: ' + hs[2] : '',
       name: b.name,
-      sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Χωρίς δωμάτιο')) + (b.source === 'booking' ? '' : ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : '')),
+      sub: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Άθος' : 'Χωρίς δωμάτιο')) + (b.source === 'booking' ? '' : ' · ' + b.guests + (b.guests === 1 ? ' άτομο' : ' άτομα') + (b.kind === 'free' || b.kind === 'test' ? ' · ' + srcWord(b) : '')),
       dates: this.range(b.start, this.endOf(b)),
       nightsText: b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες'),
       money: b.source === 'booking' ? '' : this.money(b.total),
@@ -2771,7 +2771,7 @@ class Component extends DCLogic {
           sourceText: b.source === 'site' ? 'Κράτηση από το σάιτ' : (b.source === 'direct' ? 'Την πέρασες εσύ' + (b.note ? ' · ' + b.note : '') : 'Κράτηση από Booking.com'),
           dates: this.range(b.start, this.endOf(b)),
           nightsGuests: b.synced ? b.nights + (b.nights === 1 ? ' νύχτα' : ' νύχτες') + ' · τα άτομα φαίνονται στο Booking' : b.nights + ' νύχτες · ' + b.guests + ' άτομα',
-          unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο, όχι ακόμα'),
+          unit: b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο, όχι ακόμα'),
           total: this.money(b.total), pay: pay, email: b.email || '–', phone: b.phone || '–',
           hasBy: !!b.by, by: b.by || '',
           canCancel: !b.synced && (b.source === 'site' || b.source === 'direct' || !!b.stayId) && b.status === 'confirmed',
@@ -2832,7 +2832,7 @@ class Component extends DCLogic {
       else if (end <= T) { status = 'Ολοκληρώθηκε'; if (!g.last || end > g.last) g.last = end; }
       else { status = 'Έρχεται'; if (!g.next || b.start < g.next.start) g.next = b; }
       if (b.status === 'confirmed') { g.spent += b.total; g.count++; }
-      g.stays.push({ key: b.start, when: this.range(b.start, end) + ' ' + b.start.slice(0, 4), what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
+      g.stays.push({ key: b.start, when: this.range(b.start, end) + ' ' + b.start.slice(0, 4), what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
     });
     const MONY = s2 => { const d = this.dt(s2); return this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
     const srcLabel = g => ['site', 'booking', 'direct'].filter(k => g.sources[k]).map(k => ({ site: 'Σάιτ', booking: 'Booking', direct: 'Από εμάς' })[k]).join(' και ');
@@ -3070,7 +3070,7 @@ class Component extends DCLogic {
       nb = {
         close: () => this.setState({ newOpen: false, nb: null }),
         kinds: KINDS.map(k => ({ label: k.label, sub: k.sub, pressed: f.kind === k.id ? 'true' : 'false', style: card(f.kind === k.id), radio: radio(f.kind === k.id), pick: () => upd({ kind: k.id }) })),
-        types: [['room', 'Δωμάτιο'], ['apt', 'Διαμέρισμα']].map(t => ({ label: t[1], pressed: f.type === t[0] ? 'true' : 'false', style: (f.type === t[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ type: t[0], unit: '', guests: t[0] === 'room' && g > 2 ? '2' : f.guests }) })),
+        types: [['room', 'Δωμάτιο'], ['apt', 'Άθος']].map(t => ({ label: t[1], pressed: f.type === t[0] ? 'true' : 'false', style: (f.type === t[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ type: t[0], unit: '', guests: t[0] === 'room' && g > 2 ? '2' : f.guests }) })),
         name: f.name, phone: f.phone, email: f.email, start: f.start, end: f.end, guests: f.guests, note: f.note, amount: f.amount,
         maxGuests: String(maxG),
         setName: e => upd({ name: val(e) }), setPhone: e => upd({ phone: val(e) }), setEmail: e => upd({ email: val(e) }), setNote: e => upd({ note: val(e) }),
@@ -3150,7 +3150,7 @@ class Component extends DCLogic {
     const cb = curT ? findB(curT.bid) : null;
     const conv = {
       name: cb ? cb.name : '', empty: !!curT && curT.msgs.length === 0,
-      meta: cb ? this.range(cb.start, this.endOf(cb)) + ' · ' + cb.guests + ' άτομα · ' + (cb.unit ? this.unitName(cb.unit) : (cb.type === 'apt' ? 'Διαμέρισμα' : 'χωρίς δωμάτιο ακόμα')) : '',
+      meta: cb ? this.range(cb.start, this.endOf(cb)) + ' · ' + cb.guests + ' άτομα · ' + (cb.unit ? this.unitName(cb.unit) : (cb.type === 'apt' ? 'Άθος' : 'χωρίς δωμάτιο ακόμα')) : '',
       via: 'Φτάνει στον πελάτη με email' + (cb && cb.email ? ' (' + cb.email + ')' : ''),
       openBooking: () => { if (cb) this.setState({ detail: cb.id }); },
       msgs: curT ? curT.msgs.map(m => ({ text: m.text,

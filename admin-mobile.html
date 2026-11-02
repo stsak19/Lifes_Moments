@@ -714,7 +714,7 @@ function renderInbox() {
     p.forEach(b => {
       const hl = hoursLeft(b);
       h += sw('<button class="req" data-act="open-req" data-id="' + b.id + '"><div class="l1"><b>' + esc(b.name) + '</b><span class="timer' + (hl <= 4 ? ' hot' : '') + '">' + hl + ' ώρ. ακόμα</span></div>' +
-        '<div class="l2">' + range(b.start, b.end) + ' · ' + b.nights + ' νύχτες · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο') + (b.total != null ? ' · <b style="color:var(--ink)">' + money(b.total) + '</b>' : '') + '</div>' +
+        '<div class="l2">' + range(b.start, b.end) + ' · ' + b.nights + ' νύχτες · ' + b.guests + ' άτομα · ' + (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο') + (b.total != null ? ' · <b style="color:var(--ink)">' + money(b.total) + '</b>' : '') + '</div>' +
         (b.note ? '<div class="msg">' + esc(b.note) + '</div>' : '') + '</button>', 'del-req', b.id, true);
     });
     const done = S.reqs.filter(b => b.status !== 'pending' && b.created && Date.now() - Date.parse(b.created) < 7 * 864e5).sort((a, b) => Date.parse(b.created) - Date.parse(a.created));
@@ -937,7 +937,7 @@ function priceRes() {
   const q = S.pq, nights = []; for (let d = q.a; d < q.z; d = add(d, 1)) nights.push(d);
   if (!nights.length) { box.innerHTML = '<div class="empty">Η τελευταία νύχτα πρέπει να είναι μετά ή ίδια με την πρώτη.</div>'; return; }
   const vals = nights.map(n => { const p = priceFor(n); return p && !p.closed && p[q.type] != null ? Number(p[q.type]) : null; });
-  box.innerHTML = '<div class="typ"><button data-act="pq-type" data-id="room" class="' + (q.type === 'room' ? 'on' : '') + '">Δωμάτια</button><button data-act="pq-type" data-id="apt" class="' + (q.type === 'apt' ? 'on' : '') + '">Διαμέρισμα</button></div>' +
+  box.innerHTML = '<div class="typ"><button data-act="pq-type" data-id="room" class="' + (q.type === 'room' ? 'on' : '') + '">Δωμάτια</button><button data-act="pq-type" data-id="apt" class="' + (q.type === 'apt' ? 'on' : '') + '">Άθος</button></div>' +
     '<div class="lbl" style="font-size:13px;font-weight:600;color:var(--muted)">Τώρα · ' + nights.length + (nights.length === 1 ? ' νύχτα' : ' νύχτες') + '</div>' +
     '<div class="now">' + nights.slice(0, 31).map((n, i) => '<span>' + fmt(n) + ' <b>' + (vals[i] == null ? '—' : vals[i] + '€') + '</b></span>').join('') + (nights.length > 31 ? '<span>…</span>' : '') + '</div>' +
     '<div class="np"><input class="field" id="pqV" type="number" inputmode="numeric" min="0" placeholder="Νέα τιμή"><span style="font-size:20px;font-weight:700">€</span></div>' +
@@ -957,7 +957,7 @@ function priceSave() {
   });
   write(() => SB.from('price_overrides').upsert(rows, { onConflict: 'night' }).select('night'), () => {
     rows.forEach(r0 => { S.prices[r0.night] = Object.assign({}, S.prices[r0.night] || {}, r0); });
-    closeOverlay(); toast((q.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτια') + ': ' + Math.round(v) + '€ τη νύχτα, ' + (nights.length === 1 ? fmt(nights[0]) : range(nights[0], q.z)) + '.');
+    closeOverlay(); toast((q.type === 'apt' ? 'Άθος' : 'Δωμάτια') + ': ' + Math.round(v) + '€ τη νύχτα, ' + (nights.length === 1 ? fmt(nights[0]) : range(nights[0], q.z)) + '.');
   }, 'Δεν αποθηκεύτηκε η τιμή');
 }
 document.addEventListener('change', e => {
@@ -1230,7 +1230,7 @@ function openReq(id) {
       '<div class="card" style="padding:16px 18px"><dl class="kv">' +
         '<dt>Ημερομηνίες</dt><dd>' + fmtD(b.start) + ' → ' + fmtD(b.end) + '</dd>' +
         '<dt>Νύχτες</dt><dd>' + b.nights + '</dd><dt>Άτομα</dt><dd>' + b.guests + '</dd>' +
-        '<dt>Τύπος</dt><dd>' + (b.type === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο') + '</dd>' +
+        '<dt>Τύπος</dt><dd>' + (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο') + '</dd>' +
         '<dt>Ποσό</dt><dd>' + (b.total != null ? money(b.total) : '<span style="color:var(--muted);font-weight:500">χωρίς τιμή</span>') + '</dd>' +
         (b.promo ? '<dt>Κουπόνι</dt><dd>' + esc(b.promo) + ' · −' + b.pct + '%</dd>' : '') +
         '<dt>Τηλέφωνο</dt><dd><a href="tel:' + esc(b.phone) + '">' + esc(b.phone) + '</a></dd>' +
