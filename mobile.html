@@ -128,6 +128,18 @@
 #journeys .jnext:hover { background: none; color: var(--ink); }
 #journeys .jnext.gone { display: none; }
 #journeys .jsteps li:not(.now) .jnext { opacity: 0; pointer-events: none; }
+
+@media (max-width: 760px) {
+  .jstage .jspot { z-index: 3; }
+  .jstage .jspot-card { width: 200px; }
+  .jmt { z-index: 2; }
+  .jmlayer { position: absolute; right: 0; bottom: calc(100% + 14px); width: 84px; aspect-ratio: 4 / 5; border-radius: 8px; border: 3px solid #fff; background-size: 280%;
+    box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .6); transform: rotate(4deg) translateY(12px); opacity: 0; transition: opacity .7s ease .5s, transform .9s cubic-bezier(.2, .7, .2, 1) .5s; }
+  .jmt.on .jmlayer { opacity: 1; transform: rotate(4deg); }
+  .jmt span .jw { font: inherit; color: inherit; letter-spacing: inherit; display: inline-block; opacity: 0; filter: blur(4px); transition: opacity .5s ease, filter .5s ease; }
+  .jmt.on span .jw { opacity: 1; filter: none; transition-delay: calc(.5s + var(--w) * 45ms); }
+  .jmnext { margin-top: 12px; padding: 4px 0; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .8); background: none; color: #fff; font: inherit; font-size: 13.5px; letter-spacing: .04em; }
+}
 </style>
 </head><body>
 <title>Life's Moments Mobile Test</title>
@@ -3383,7 +3395,30 @@ html.gs-lock { overflow: hidden; }
         stage.__plus = true;
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) $$('.jmi', stage).forEach((img) => clipFor(img));
         const names = {}; JOURNEYS.forEach((j) => (j.days || []).forEach((d) => { names[d[0][L()]] = d[0][0]; }));
+        // the same touches as the desktop journeys, on the phone's place-by-place stage
+        const lg = { el: 1, tr: 2, bg: 3 }[lang] || 0, mts = $$('.jmt', stage), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        mts.forEach((mt, i) => {
+          const key = names[(mt.querySelector('b') || {}).textContent], ph = key && PLACE[key];
+          // dots with short notes on the photo
+          (SPOTS[key] || []).forEach((sp) => stage.insertAdjacentHTML('beforeend',
+            '<button type="button" class="jspot" data-day="' + i + '" style="left:' + sp[0] + '%;top:' + (sp[1] * .7) + '%" aria-expanded="false"><i aria-hidden="true"></i>' +
+            '<span class="sr">' + esc(sp[2][lg] || sp[2][0]) + '</span><span class="jspot-card" role="note"><b>' + esc(sp[2][lg] || sp[2][0]) + '</b>' + esc(sp[3][lg] || sp[3][0]) + '</span></button>'));
+          // a small detail of the photo, like a polaroid
+          if (ph) mt.insertAdjacentHTML('afterbegin', '<i class="jmlayer" aria-hidden="true" style="background-image:url(\'' + ph[0] + '\');background-position:' + (i % 2 ? '70% 35%' : '30% 60%') + '"></i>');
+          // words that appear one by one
+          const sp = mt.querySelector('span');
+          if (sp && !reduce) sp.innerHTML = sp.textContent.split(/\s+/).filter(Boolean).map((w, n) => '<em class="jw" style="--w:' + n + '">' + esc(w) + '</em>').join(' ');
+          // next place
+          if (i < mts.length - 1) mt.insertAdjacentHTML('beforeend', '<button type="button" class="jmnext">' + esc(jx('next')) + ' ↓</button>');
+        });
+        stage.addEventListener('click', (e) => {
+          const b = e.target.closest('.jspot');
+          $$('.jspot.open', stage).forEach((x) => { if (x !== b) { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); } });
+          if (b) { e.stopImmediatePropagation(); const on = !b.classList.contains('open'); b.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on)); }
+        }, true);
         const sync = () => { const on = stage.querySelector('.jmt.on b'); mapOn(stage.querySelector('.jmap'), on && names[on.textContent]);
+          const k0 = mts.findIndex((x) => x.classList.contains('on'));
+          $$('.jspot', stage).forEach((x) => { const v = +x.dataset.day === k0; if (x.classList.contains('show') !== v) x.classList.toggle('show', v); if (!v && x.classList.contains('open')) x.classList.remove('open'); });
           const all = $$('.jmt', stage), k = all.findIndex((x) => x.classList.contains('on'));
           stage.style.setProperty('--tod', (all.length > 1 ? k / (all.length - 1) : 0).toFixed(3)); };
         new MutationObserver(() => { sync(); clipTick(); }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
