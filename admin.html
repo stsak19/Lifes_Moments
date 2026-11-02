@@ -44,6 +44,13 @@
 @keyframes lm-drop{0%{transform:translateY(-6px);opacity:0}35%{transform:none;opacity:1}75%{transform:none;opacity:1}100%{transform:translateY(4px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.lm-xl,.lm-xl-ic,.lm-xl-x{transition:none}.lm-cv-arr{animation:none!important}}
 html{overflow-y:scroll;scrollbar-gutter:stable}
+.cal-scroll{scrollbar-width:auto;scrollbar-color:#9DB3B5 #EEF3F4}
+.cal-scroll::-webkit-scrollbar{height:14px}
+.cal-scroll > div > :not([style*="display: grid"]){position:sticky;left:0;width:max-content}
+.cal-scroll [style*="grid-template-columns: 124px"] > :first-child{position:sticky;left:-16px;z-index:4;background:#FFFFFF;margin-left:-16px;padding-left:16px;box-shadow:6px 0 6px -6px rgba(10,58,62,.18)}
+.cal-scroll::-webkit-scrollbar-track{background:#EEF3F4;border-radius:7px}
+.cal-scroll::-webkit-scrollbar-thumb{background:#9DB3B5;border-radius:7px;border:3px solid #EEF3F4}
+.cal-scroll::-webkit-scrollbar-thumb:hover{background:#0F5257}
 body{margin:0;background:#EEF3F4}
 a{color:#0F5257}a:hover{color:#0A3A3E}
 button,input{font-family:inherit}
@@ -259,8 +266,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </div>
 
-<section aria-label="Ημερολόγιο δωματίων" onPointerMove="{{calDragMove}}" style="background: #FFFFFF; border-radius: 18px; padding: 16px; overflow-x: auto; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
-<div style="min-width: 600px">
+<section id="calScroll" class="cal-scroll" aria-label="Ημερολόγιο δωματίων" onPointerMove="{{calDragMove}}" style="background: #FFFFFF; border-radius: 18px; padding: 16px; overflow-x: auto; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="min-width: max-content">
 <div style="{{calRowStyle}}">
 <span></span>
 <sc-for list="{{head}}" as="h" hint-placeholder-count="14">
@@ -337,11 +344,7 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </section>
 </sc-if>
-<div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 18px; padding: 12px 18px; border: 1px solid rgba(24, 40, 43, 0.18)">
-<span style="font-size: 13px; font-weight: 600; color: #4A5B5E; white-space: nowrap">Σήμερα</span>
-<input type="range" aria-label="Μετακίνηση στο ημερολόγιο" min="0" max="365" step="1" value="{{calSlide.value}}" onInput="{{calSlide.move}}" onChange="{{calSlide.move}}" style="flex: 1; accent-color: #0F5257; cursor: pointer">
-<span style="font-size: 13px; font-weight: 600; color: #0F5257; white-space: nowrap; min-width: 120px; text-align: right">{{calSlide.label}}</span>
-</div>
+
 </div>
 </sc-if>
 
@@ -1543,6 +1546,7 @@ class Component extends DCLogic {
     return cur ? cur.bid : null;
   }
   go(tab) {
+    if (tab === 'cal') this.calScroll();
     this.setState({ calFlash: null, tab: tab, detail: tab === 'msgs' ? this.threadBid() : null, req: null, customer: null, room: null, calReq: null, sel: null, calSel: null, calEdit: false, newOpen: false });
   }
 
@@ -1728,6 +1732,14 @@ class Component extends DCLogic {
     if (!this.REAL || !PUSH.client) { done(); return; }
     PUSH.client.from('guest_notes').upsert(row, { onConflict: 'guest_key' }).select('guest_key').then(r => { if (r.error) this.say('Δεν αποθηκεύτηκε: ' + r.error.message); else done(); }, () => this.say('Δεν υπάρχει σύνδεση, δεν αποθηκεύτηκε.'));
   }
+  calScroll() {
+    // after the month renders: show today near the left, otherwise the start of the month
+    setTimeout(() => {
+      const sc = document.getElementById('calScroll'); if (!sc) return;
+      const st = this.state.calStart, d = Number(st.slice(8, 10));
+      sc.scrollLeft = st.slice(0, 7) === this.TODAY.slice(0, 7) || d > 1 ? Math.max(0, (d - 2) * 65) : 0;
+    }, 30);
+  }
   openGuest(name) { this.setState({ customer: name, detail: null, room: null, newOpen: false }); }
   openRoom(id) { this.setState({ room: this.state.room === id ? null : id, detail: null, customer: null, newOpen: false }); }
   /* Requests are answered on the calendar: open it on the request's dates with the request panel. */
@@ -1735,7 +1747,7 @@ class Component extends DCLogic {
     const b = this.list().find(x => x.id === id && x.status === 'pending');
     if (!b) { this.go('today'); return; }
     const from = this.add(b.start, -2);
-    this.setState({ tab: 'cal', calStart: from < this.TODAY ? this.TODAY : from, calReq: null, calFlash: b.id, req: null, detail: null, customer: null, room: null, newOpen: false, calSel: null, calEdit: false });
+    this.setState({ tab: 'cal', calStart: from < this.TODAY ? this.TODAY : from, calReq: null, calFlash: b.id, req: null, detail: null, customer: null, room: null, newOpen: false, calSel: null, calEdit: false }); this.calScroll();
   }
   /* Close (add) or reopen (remove) nights, keys 'r4|2026-07-15'. Shown at once, then saved in unit_blocks so the site,
      the Booking.com export and the other owner see it. Nights in the past are never closed. If saving fails the
@@ -2172,7 +2184,7 @@ class Component extends DCLogic {
         closeTonight: () => { this.block(ru.id, T); this.say(ru.name + ' κλειστό απόψε' + closedMsg); },
         openTonight: () => { this.unblockFrom(ru.id, T); this.say(ru.name + ' άνοιξε ξανά.'); },
         newBooking: () => { let st = T; while (!this.isFree(ru.id, st, 2) && st < this.add(T, 365)) st = this.add(st, 1); this.openNew({ type: ru.id === 'apt' ? 'apt' : 'room', unit: ru.id, start: st, end: this.add(st, 2), guests: String(Math.min(2, ru.cap)) }); },
-        toCal: () => this.setState({ tab: 'cal', calStart: this.add(T, -2), room: null, detail: null, customer: null }),
+        toCal: () => { this.setState({ tab: 'cal', calStart: T, room: null, detail: null, customer: null }); this.calScroll(); },
         close: () => this.setState({ room: null })
       };
     }
@@ -2337,9 +2349,10 @@ class Component extends DCLogic {
 
     /* Calendar */
     const days = [];
-    const CAL_DAYS = 14; // always two weeks
-    for (let i = 0; i < CAL_DAYS; i++) days.push(this.add(s.calStart, i));
-    const calRowStyle = 'display: grid; grid-template-columns: 124px repeat(' + CAL_DAYS + ', minmax(0, 1fr)); gap: 3px; margin-bottom: 3px';
+    // the whole month of calStart; the admin scrolls sideways inside it
+    const calM = s.calStart.slice(0, 7), CAL_DAYS = new Date(Date.UTC(+calM.slice(0, 4), +calM.slice(5, 7), 0)).getUTCDate();
+    for (let i = 0; i < CAL_DAYS; i++) days.push(this.add(calM + '-01', i));
+    const calRowStyle = 'display: grid; grid-template-columns: 124px repeat(' + CAL_DAYS + ', 62px); gap: 3px; margin-bottom: 3px';
     const head = days.map(x => {
       const d = this.dt(x);
       const wk = d.getUTCDay() === 0 || d.getUTCDay() === 6;
@@ -2361,11 +2374,13 @@ class Component extends DCLogic {
     })();
     const inCalSel = (unit, x) => (!!cs && x >= cs.a && x <= cs.b && uIdx(unit) >= cs.u1 && uIdx(unit) <= cs.u2) || (!!nbSel && unit === nbSel.unit && x >= nbSel.start && x < nbSel.end);
     const calDown = (unit, x) => (e) => {
+      if (x < T) return;
       if (e && e.target && e.target.releasePointerCapture && e.pointerId != null) { try { e.target.releasePointerCapture(e.pointerId); } catch (err) {} }
       this.drag = { kind: 'cal', unit: unit, anchor: x, moved: false };
     };
     const pick1 = (unit, x) => () => {
       if (this.justDragged) { this.justDragged = false; return; }
+      if (x < T) return;
       const i = uIdx(unit), c = this.state.calSel;
       const same = c && c.u1 === i && c.u2 === i && c.a === x && c.b === x;
       this.setState({ calSel: same ? null : { u1: i, u2: i, a: x, b: x }, calEdit: false });
@@ -3459,10 +3474,9 @@ class Component extends DCLogic {
         if (cur && cur.u1 === n.u1 && cur.u2 === n.u2 && cur.a === n.a && cur.b === n.b) return;
         this.setState({ calSel: n, calEdit: false });
       },
-      calPrev: () => { const p = this.add(s.calStart, -7); this.setState({ calStart: p < T ? T : p }); },
-      calNext: () => this.setState({ calStart: this.add(s.calStart, 7) }),
-      calToday: () => this.setState({ calStart: T }),
-      calSlide: (() => { const v = Math.max(0, Math.round((this.dt(s.calStart) - this.dt(T)) / 864e5)); const d = this.dt(s.calStart); return { value: String(Math.min(365, v)), label: d.getUTCDate() + ' ' + this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(), move: (e) => { const n = Number(e && e.target ? e.target.value : 0); this.setState({ calStart: this.add(T, n) }); } }; })(),
+      calPrev: () => { const d = this.dt(s.calStart.slice(0, 7) + '-01'); d.setUTCMonth(d.getUTCMonth() - 1); const p = d.toISOString().slice(0, 10); if (p.slice(0, 7) < T.slice(0, 7)) return; this.setState({ calStart: p.slice(0, 7) === T.slice(0, 7) ? T : p }); this.calScroll(); },
+      calNext: () => { const d = this.dt(s.calStart.slice(0, 7) + '-01'); d.setUTCMonth(d.getUTCMonth() + 1); this.setState({ calStart: d.toISOString().slice(0, 10) }); this.calScroll(); },
+      calToday: () => { this.setState({ calStart: T }); this.calScroll(); },
       calNote: auto
         ? 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Ό,τι κλείνεις κλείνει αμέσως και στο Booking.com. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Κλικ σε κράτηση για λεπτομέρειες.'
         : 'Κλικ σε μια μέρα για να τη διαλέξεις, ή σύρε πάνω από περισσότερες μέρες και δωμάτια. Από κάτω βγαίνουν τα κουμπιά για νέα κράτηση, κλείσιμο ή άνοιγμα. Σύρε μια κράτηση πάνω ή κάτω για να αλλάξεις δωμάτιο, με τις ίδιες ημερομηνίες. Τα αιτήματα σε αναμονή φαίνονται με διακεκομμένο περίγραμμα στο δωμάτιο που θα πάρουν· σύρε τα κι αυτά για άλλο δωμάτιο, ή πάτα πάνω τους: μεγαλώνουν και από κάτω βγαίνουν τα κουμπιά Αποδοχή και Απόρριψη. Κλικ σε κράτηση για λεπτομέρειες.',
