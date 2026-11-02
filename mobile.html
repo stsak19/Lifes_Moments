@@ -140,6 +140,12 @@
   .jmt.on span .jw { opacity: 1; filter: none; transition-delay: calc(.5s + var(--w) * 45ms); }
   .jmnext { margin-top: 12px; padding: 4px 0; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .8); background: none; color: #fff; font: inherit; font-size: 13.5px; letter-spacing: .04em; }
 }
+
+/* iPhone: keep the rounded corners clipped while the photos and layers animate during scroll */
+@media (max-width: 760px) {
+  .jstage { isolation: isolate; clip-path: inset(0 round 16px); -webkit-mask-image: -webkit-radial-gradient(white, black); transform: translateZ(0); }
+  .jstage::before { mix-blend-mode: normal; }
+}
 </style>
 </head><body>
 <title>Life's Moments Mobile Test</title>
