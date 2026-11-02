@@ -412,10 +412,22 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 
 <sc-if value="{{show.guests}}" hint-placeholder-val="{{false}}">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<div style="max-width: 360px">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+<div style="flex: 0 1 360px; min-width: 220px">
 <label for="gsearch" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Αναζήτηση πελάτη</label>
 <input id="gsearch" type="search" value="{{gQuery}}" onChange="{{setGQuery}}" placeholder="Όνομα, email ή τηλέφωνο" style="width: 100%; box-sizing: border-box; height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #18282B; font-size: 14px">
 </div>
+<button type="button" onClick="{{gAdd.toggle}}" style="height: 44px; padding: 0 20px; border-radius: 22px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">+ Νέος πελάτης</button>
+</div>
+<sc-if value="{{gAdd.open}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #FFFFFF; border-radius: 18px; padding: 14px; border: 1px solid rgba(24, 40, 43, 0.18)">
+<input id="gaName" type="text" placeholder="Ονοματεπώνυμο *" style="flex: 1 1 200px; height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid #D5E0E1; font-size: 14px">
+<input id="gaPhone" type="tel" placeholder="Τηλέφωνο" style="flex: 1 1 150px; height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid #D5E0E1; font-size: 14px">
+<input id="gaEmail" type="email" placeholder="Email" style="flex: 1 1 200px; height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid #D5E0E1; font-size: 14px">
+<button type="button" onClick="{{gAdd.save}}" style="height: 42px; padding: 0 18px; border-radius: 12px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Αποθήκευση</button>
+<button type="button" onClick="{{gAdd.toggle}}" style="height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid #D5E0E1; background: #FFFFFF; color: #18282B; font-size: 14px; cursor: pointer">Άκυρο</button>
+</div>
+</sc-if>
 <div style="background: #FFFFFF; border-radius: 18px; overflow-x: auto; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <div style="min-width: 700px">
 <div style="display: grid; grid-template-columns: 1.6fr 1.8fr 1.2fr 0.8fr 0.8fr; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #E6ECED; font-size: 12px; font-weight: 600; color: #4A5B5E">
@@ -1695,6 +1707,23 @@ class Component extends DCLogic {
     document.body.appendChild(a); a.click(); a.remove();
   }
   open(id) { this.setState({ detail: id, customer: null, room: null, calReq: null, newOpen: false }); }
+  loadManualGuests() {
+    if (!this.REAL || !PUSH.client) return Promise.resolve();
+    return PUSH.client.from('guest_notes').select('guest_key, name, email, phone').eq('manual', true).eq('hidden', false).limit(5000).then(r => {
+      if (!r.error) this.setState({ manualGuests: (r.data || []).filter(x => x.name) });
+    });
+  }
+  addGuest() {
+    const v = id => ((document.getElementById(id) || {}).value || '').trim();
+    const name = v('gaName').slice(0, 200), phone = v('gaPhone').slice(0, 50), email = v('gaEmail').slice(0, 200);
+    if (!name) { this.say('Γράψε το όνομα του πελάτη.'); return; }
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { this.say('Το email δεν είναι σωστό.'); return; }
+    const key = email.toLowerCase() || phone.replace(/\D/g, '').slice(-10) || name.toLowerCase();
+    const row = { guest_key: key, name: name, email: email, phone: phone, manual: true, hidden: false, updated_at: new Date().toISOString(), updated_by: (this.state.user && this.state.user.name) || '' };
+    const done = () => { this.setState({ gAddOpen: false, manualGuests: (this.state.manualGuests || []).filter(x => x.guest_key !== key).concat([row]), customer: name }); this.say('Προστέθηκε ο πελάτης ' + name + '.'); };
+    if (!this.REAL || !PUSH.client) { done(); return; }
+    PUSH.client.from('guest_notes').upsert(row, { onConflict: 'guest_key' }).select('guest_key').then(r => { if (r.error) this.say('Δεν αποθηκεύτηκε: ' + r.error.message); else done(); }, () => this.say('Δεν υπάρχει σύνδεση, δεν αποθηκεύτηκε.'));
+  }
   openGuest(name) { this.setState({ customer: name, detail: null, room: null, newOpen: false }); }
   openRoom(id) { this.setState({ room: this.state.room === id ? null : id, detail: null, customer: null, newOpen: false }); }
   /* Requests are answered on the calendar: open it on the request's dates with the request panel. */
@@ -2834,6 +2863,7 @@ class Component extends DCLogic {
       if (b.status === 'confirmed') { g.spent += b.total; g.count++; }
       g.stays.push({ key: b.start, when: this.range(b.start, end) + ' ' + b.start.slice(0, 4), what: (b.unit ? this.unitName(b.unit) : (b.type === 'apt' ? 'Άθος' : 'Δωμάτιο')) + ' · ' + b.nights + ' νύχτες', money: b.total, status: status, id: b.id });
     });
+    (s.manualGuests || []).forEach(m => { const g = addG(m.name); if (!g.email && m.email) g.email = m.email; if (!g.phone && m.phone) g.phone = m.phone; g.sources.direct = g.sources.direct || 0; });
     const MONY = s2 => { const d = this.dt(s2); return this.MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
     const srcLabel = g => ['site', 'booking', 'direct'].filter(k => g.sources[k]).map(k => ({ site: 'Σάιτ', booking: 'Booking', direct: 'Από εμάς' })[k]).join(' και ');
     const rank = g => g.current ? 0 : (g.next ? 1 : (g.pending ? 2 : 3));
@@ -2882,7 +2912,7 @@ class Component extends DCLogic {
       const viaBooking = g.email === 'μέσω Booking';
       guest = {
         name: g.name, badges: badges,
-        srcText: 'Κλείνει από: ' + srcLabel(g),
+        srcText: srcLabel(g) ? 'Κλείνει από: ' + srcLabel(g) : 'Νέος πελάτης · χωρίς κράτηση ακόμα',
         count: String(g.count), spent: this.money(g.spent),
         email: g.email || '–', phone: g.phone || '–',
         stays: g.stays.slice().sort((a, c) => c.key.localeCompare(a.key)).map(st => ({
@@ -3353,6 +3383,7 @@ class Component extends DCLogic {
       downloadCsv: downloadCsv, listSummary: listSummary,
       goGuests: () => this.go('guests'),
       guests: guests, noGuests: guests.length === 0, guestTotal: allG.length + ' συνολικά', gFilters: gFilters, gQuery: s.gQuery,
+      gAdd: { open: !!s.gAddOpen, toggle: () => this.setState({ gAddOpen: !s.gAddOpen }), save: () => this.addGuest() },
       setGQuery: (e) => this.setState({ gQuery: e && e.target ? e.target.value : '' }),
       guest: guest, hasGuest: hasGuest,
       showSlot: false,
@@ -3824,7 +3855,7 @@ class Component extends DCLogic {
     PUSH.client = SB;
     comp.reload = loadRequests;
     comp.props = Object.assign({}, comp.props, { owners: AUTH.users() });
-    loadRequests(); comp.loadFeeds(); comp.loadPrices(); comp.loadCoupons();
+    loadRequests(); comp.loadFeeds(); comp.loadPrices(); comp.loadCoupons(); comp.loadManualGuests();
     if (channel) SB.removeChannel(channel);
     channel = SB.channel('booking-requests').on('postgres_changes', { event: '*', schema: 'public', table: 'booking_requests' }, function (p) {
       if (p.eventType === 'INSERT' && p.new && p.new.name) comp.say('Νέο αίτημα από ' + p.new.name + '.');
