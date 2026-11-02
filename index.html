@@ -73,6 +73,12 @@
   background-image: repeating-linear-gradient(transparent 0 27px, rgba(43, 42, 38, .08) 27px 28px); padding: 26px 22px 18px; }
 .jq.jnote::before { content: ""; position: absolute; top: -10px; left: 50%; width: 86px; height: 22px; margin-left: -43px; background: rgba(243, 201, 139, .7); transform: rotate(2deg); }
 .jq.jnote span { color: #9A6B2F; }
+/* the small photo grows and lifts on hover */
+.jsteps li.now .jlayer { pointer-events: auto; cursor: zoom-in; }
+.jlayer { transform-origin: 85% 30%; transition: opacity .8s ease, scale .5s cubic-bezier(.2, .8, .2, 1), box-shadow .5s ease; }
+@media (hover: hover) {
+  .jsteps li.now .jlayer:hover { scale: 1.9; z-index: 5; box-shadow: 0 34px 60px -22px rgba(0, 0, 0, .55), 0 12px 24px -12px rgba(0, 0, 0, .35); }
+}
 @media (max-width: 760px) { .jlayer { width: 78px; } .jsteps li:has(.jlayer) p { padding-right: 90px; } .jspot-card { width: 190px; } }
 @media (prefers-reduced-motion: reduce) { .jspot i::after { animation: none; } .jlayer { transform: none !important; } }
 </style>
