@@ -436,8 +436,8 @@ const money = v => (Math.round(v) || 0).toLocaleString('el-GR') + ' €';
 const initials = n => String(n || '').trim().split(/\s+/).map(w => w.charAt(0)).join('').slice(0, 2).toUpperCase();
 const UNITS = [];
 // 10 rooms: r1–r5 are 100–104, r6–r10 are 200–204. The apartment is called Άθος.
-for (let i = 1; i <= 10; i++) { const no = i <= 5 ? 99 + i : 194 + i; UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + no, short: String(no), cap: i <= 5 ? 2 : 3 }); }
-UNITS.push({ id: 'apt', name: 'Άθος', short: 'Άθος', cap: 5 });
+for (let i = 1; i <= 10; i++) { const no = i <= 5 ? 99 + i : 194 + i; UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + no, short: String(no), cap: 2 }); }
+UNITS.push({ id: 'apt', name: 'Άθος', short: 'Άθος', cap: 4 });
 const unitName = id => (UNITS.find(u => u.id === id) || {}).name || 'χωρίς δωμάτιο';
 
 const LOGO_MARK = '<svg class="brandmark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>';

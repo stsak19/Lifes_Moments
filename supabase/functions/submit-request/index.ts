@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     if (check_in < athensToday()) bad.push('past');
     if (Date.parse(check_in) - Date.now() > 550 * DAY) bad.push('too_far');
   }
-  if (!Number.isInteger(guests) || guests < 1 || guests > (unit_type === 'apt' ? 5 : 3)) bad.push('guests');
+  if (!Number.isInteger(guests) || guests < 1 || guests > (unit_type === 'apt' ? 4 : 2)) bad.push('guests');
   if (name.length < 2 || name.length > 120) bad.push('name');
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) bad.push('email');
   if (phone.replace(/\D/g, '').length < 8 || phone.length > 40) bad.push('phone');

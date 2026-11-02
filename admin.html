@@ -1084,8 +1084,8 @@ class Component extends DCLogic {
     this.MONG = ['Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
     this.UNITS = [];
     // 10 rooms: r1–r5 are 100–104, r6–r10 are 200–204. The apartment is called Άθος.
-    for (let i = 1; i <= 10; i++) this.UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + (i <= 5 ? 99 + i : 194 + i), cap: i <= 5 ? 2 : 3, n: i });
-    this.UNITS.push({ id: 'apt', name: 'Άθος', cap: 5, n: 11 });
+    for (let i = 1; i <= 10; i++) this.UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + (i <= 5 ? 99 + i : 194 + i), cap: 2, n: i });
+    this.UNITS.push({ id: 'apt', name: 'Άθος', cap: 4, n: 11 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
       tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', calDays: (() => { try { return localStorage.getItem('lm.calDays') === '14' ? 14 : 7; } catch (e) { return 7; } })(), filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', yOpen: {}, mOpen: {}, listDates: false, thread: 't1', msgDraft: '',
@@ -3070,7 +3070,7 @@ class Component extends DCLogic {
       nb = {
         close: () => this.setState({ newOpen: false, nb: null }),
         kinds: KINDS.map(k => ({ label: k.label, sub: k.sub, pressed: f.kind === k.id ? 'true' : 'false', style: card(f.kind === k.id), radio: radio(f.kind === k.id), pick: () => upd({ kind: k.id }) })),
-        types: [['room', 'Δωμάτιο'], ['apt', 'Διαμέρισμα']].map(t => ({ label: t[1], pressed: f.type === t[0] ? 'true' : 'false', style: (f.type === t[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ type: t[0], unit: '', guests: t[0] === 'room' && g > 3 ? '3' : f.guests }) })),
+        types: [['room', 'Δωμάτιο'], ['apt', 'Διαμέρισμα']].map(t => ({ label: t[1], pressed: f.type === t[0] ? 'true' : 'false', style: (f.type === t[0] ? chipOn : chipOff) + '; flex: 1 1 0', pick: () => upd({ type: t[0], unit: '', guests: t[0] === 'room' && g > 2 ? '2' : f.guests }) })),
         name: f.name, phone: f.phone, email: f.email, start: f.start, end: f.end, guests: f.guests, note: f.note, amount: f.amount,
         maxGuests: String(maxG),
         setName: e => upd({ name: val(e) }), setPhone: e => upd({ phone: val(e) }), setEmail: e => upd({ email: val(e) }), setNote: e => upd({ note: val(e) }),

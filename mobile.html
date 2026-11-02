@@ -2251,8 +2251,8 @@ html.gs-lock { overflow: hidden; }
       'book.room': 'Book a room', 'book.apt': 'Book the apartment',
       'line.room': 'One of our ten rooms. You pick the dates, the host gives you a free one.',
       'line.apt': 'A separate apartment right next to the main house, with its own kitchen and living room.',
-      'facts.room': ['10 rooms', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
-      'facts.apt': ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
+      'facts.room': ['10 rooms', 'Up to 2 guests', '[beds]', 'The host assigns the room'],
+      'facts.apt': ['Whole apartment', 'Up to 4 guests', 'Own kitchen', 'Own living room'],
       'ph.label': '{name}, photo {i} of 3', 'ph.open': 'Open {x}', 'ph.wait': 'Rendering…', 'ph.n': 'Photo {i}',
       'band.line': 'Slow mornings in the garden,<br>long evenings by the sea.',
       'place.lead': 'Everything you need for an easy week on the island. <span class="todo-note">(List to confirm with the owner.)</span>',
@@ -2308,8 +2308,8 @@ html.gs-lock { overflow: hidden; }
       'book.room': 'Κράτηση διαμερίσματος', 'book.apt': 'Κράτηση απαρτμέντ',
       'line.room': 'Ένα από τα 10 διαμερίσματα. Εσείς διαλέγετε ημερομηνίες και ο οικοδεσπότης σάς δίνει ένα ελεύθερο.',
       'line.apt': 'Ξεχωριστό απαρτμέντ ακριβώς δίπλα, με δική του κουζίνα και σαλόνι.',
-      'facts.room': ['10 διαμερίσματα', 'Έως 3 άτομα', '[κρεβάτια]', 'Το διαμέρισμα το ορίζει ο οικοδεσπότης'],
-      'facts.apt': ['Ολόκληρο το απαρτμέντ', 'Έως 5 άτομα', 'Δική του κουζίνα', 'Δικό του σαλόνι'],
+      'facts.room': ['10 διαμερίσματα', 'Έως 2 άτομα', '[κρεβάτια]', 'Το διαμέρισμα το ορίζει ο οικοδεσπότης'],
+      'facts.apt': ['Ολόκληρο το απαρτμέντ', 'Έως 4 άτομα', 'Δική του κουζίνα', 'Δικό του σαλόνι'],
       'ph.label': '{name}, φωτογραφία {i} από 3', 'ph.open': 'Άνοιγμα: {x}', 'ph.wait': 'Φόρτωση…', 'ph.n': 'Φωτογραφία {i}',
       'band.line': 'Ήσυχα πρωινά στον κήπο,<br>μεγάλα βράδια δίπλα στη θάλασσα.',
       'place.lead': 'Ό,τι χρειάζεστε για μια ξέγνοιαστη εβδομάδα στο νησί. <span class="todo-note">(Η λίστα θέλει επιβεβαίωση από τον ιδιοκτήτη.)</span>',
@@ -2503,12 +2503,12 @@ html.gs-lock { overflow: hidden; }
   // Two choices for the guest: a room in the main house (the host picks which one) or the apartment next door.
   // Room count, sizes and beds are placeholders until the owner sends the real details.
   const UNITS = [
-    { id: 'room', kind: 'Main house', name: 'A room', tab: 'Rooms', book: 'Book a room', subs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], guests: 3, beds: '[beds]',
-      facts: ['4 rooms in the main house', 'Up to 3 guests', '[beds]', 'The host assigns the room'],
+    { id: 'room', kind: 'Main house', name: 'A room', tab: 'Rooms', book: 'Book a room', subs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], guests: 2, beds: '[beds]',
+      facts: ['4 rooms in the main house', 'Up to 2 guests', '[beds]', 'The host assigns the room'],
       line: 'One of the rooms in the main house. You pick the dates, the host gives you a free room.',
       shots: [[[1.6, 1.6, -6.8], [-3.7, 0.6, -8.1]], [[-2.1, 1.2, -6.5], [-4.5, 0.8, -6.75]], [[-1.2, 1.6, -6.6], [2, 1.5, -9.8]]] },
-    { id: 'apt', kind: 'Next door', name: 'The Apartment', tab: 'The Apartment', book: 'Book the apartment', subs: [11], guests: 5, beds: 'own kitchen',
-      facts: ['Whole apartment', 'Up to 5 guests', 'Own kitchen', 'Own living room'],
+    { id: 'apt', kind: 'Next door', name: 'The Apartment', tab: 'The Apartment', book: 'Book the apartment', subs: [10], guests: 4, beds: 'own kitchen',
+      facts: ['Whole apartment', 'Up to 4 guests', 'Own kitchen', 'Own living room'],
       line: 'A separate apartment right next to the main house, with its own kitchen and living room.',
       shots: [[[2.6, 1.65, -0.8], [-3, 0.9, -4.4]], [[0.9, 1.7, -0.9], [3.0, 0.8, -2.6]], [[-1.4, 1.35, -2.0], [-2.6, 0.6, -5.6]]] }
   ];
