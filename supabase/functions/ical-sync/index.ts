@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
 
   let b: Record<string, unknown> = {};
   try { b = await req.json(); } catch { /* empty body: every room */ }
-  const only = typeof b.unit === 'string' && /^(r([1-9]|1[01])|apt)$/.test(b.unit) ? b.unit : null;
+  const only = typeof b.unit === 'string' && /^(r([1-9]|10)|apt)$/.test(b.unit) ? b.unit : null;
 
   try {
     let q = admin.from('ical_feeds').select('unit, import_url, last_ok_at').order('unit');
