@@ -23,14 +23,14 @@
 .jm-stop.on { fill: #F3C98B; r: 5; }
 .jm-home { fill: #fff; stroke: #F3C98B; stroke-width: 2; }
 .jtod { position: absolute; left: clamp(18px, 2.4vw, 32px); top: 18px; z-index: 3; color: #F8F4EC; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; text-shadow: 0 1px 8px rgba(0, 0, 0, .4); }
-.jnext { position: absolute; left: clamp(14px, 2vw, 28px); top: 42px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 1px solid rgba(248, 244, 236, .55); border-radius: 999px;
-  background: rgba(10, 18, 32, .3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #F8F4EC; font: inherit; font-size: 13px; letter-spacing: .06em; cursor: pointer; transition: opacity .4s ease, background .25s ease; }
-.jnext:hover { background: rgba(10, 18, 32, .55); }
+.jnext { position: sticky; bottom: 24px; z-index: 3; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 0 30px; padding: 0 20px; border: 1px solid var(--accent); border-radius: 999px;
+  background: var(--surface, #fff); color: var(--accent); font: inherit; font-size: 13.5px; letter-spacing: .06em; cursor: pointer; box-shadow: 0 10px 24px -14px var(--shadow, rgba(0,0,0,.3)); transition: opacity .4s ease, background .25s ease, color .25s ease; }
+.jnext:hover { background: var(--accent); color: #fff; }
 .jnext svg { animation: jbob 2.4s ease-in-out infinite; }
 .jnext.gone { opacity: 0; pointer-events: none; }
 @keyframes jbob { 50% { transform: translateY(3px); } }
 .jstage .jmap { top: 12px; right: 12px; width: 84px; }
-@media (max-width: 760px) { .jnext { top: 38px; } .jmap { width: 86px; } }
+@media (max-width: 760px) { .jnext { bottom: 16px; display: flex; width: max-content; margin-left: auto; } .jmap { width: 86px; } }
 @media (prefers-reduced-motion: reduce) { .jm-way { transition: none; } .jnext svg { animation: none; } #journeys, .jph::before { transition: none; } }
 </style>
 </head><body>
@@ -3316,8 +3316,9 @@ html.gs-lock { overflow: hidden; }
         const j = JOURNEYS[i], ph = row.querySelector('.jph'); if (!ph) return;
         const keys = (j.days || []).map((d) => d[0][0]);
         if (keys.some((k) => GEO[k])) ph.insertAdjacentHTML('beforeend', mapSvg(keys));
-        ph.insertAdjacentHTML('beforeend', '<span class="jtod" aria-hidden="true"></span>' +
-          (j.days ? '<button type="button" class="jnext">' + esc(jx('next')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>' : ''));
+        ph.insertAdjacentHTML('beforeend', '<span class="jtod" aria-hidden="true"></span>');
+        const st = row.querySelector('.jsteps');
+        if (st) st.insertAdjacentHTML('afterend', (j.days ? '<button type="button" class="jnext">' + esc(jx('next')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>' : ''));
         // clips in place of photos
         if (!reduce) $$('.jshot', row).forEach((img) => clipFor(img));
       });
