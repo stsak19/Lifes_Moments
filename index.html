@@ -3368,7 +3368,6 @@ html.gs-lock { overflow: hidden; }
       $$('.jrow', listEl).forEach((row, i) => {
         const j = JOURNEYS[i], ph = row.querySelector('.jph'); if (!ph) return;
         const keys = (j.days || []).map((d) => d[0][0]);
-        if (keys.some((k) => GEO[k])) ph.insertAdjacentHTML('beforeend', mapSvg(keys));
         const st = row.querySelector('.jsteps');
         if (st) st.insertAdjacentHTML('afterend', (j.days ? '<button type="button" class="jnext">' + esc(jx('next')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>' : ''));
         // clips in place of photos
@@ -3380,9 +3379,9 @@ html.gs-lock { overflow: hidden; }
       setTimeout(clipTick, 50);
       // phones: the pinned place-by-place stage gets the map too, and a tap moves on
       const mob = $('#jMob'), stage = mob && mob.querySelector('.jstage');
-      if (stage && !stage.querySelector('.jmap')) {
+      if (stage && !stage.__plus) {
+        stage.__plus = true;
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) $$('.jmi', stage).forEach((img) => clipFor(img));
-        stage.insertAdjacentHTML('beforeend', mapSvg(Object.keys(GEO)));
         const names = {}; JOURNEYS.forEach((j) => (j.days || []).forEach((d) => { names[d[0][L()]] = d[0][0]; }));
         const sync = () => { const on = stage.querySelector('.jmt.on b'); mapOn(stage.querySelector('.jmap'), on && names[on.textContent]);
           const all = $$('.jmt', stage), k = all.findIndex((x) => x.classList.contains('on'));
