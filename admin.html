@@ -691,15 +691,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </div>
 </section>
 <section>
-<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Σάιτ</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
-<span><span style="display: block; font-weight: 500">Δεχόμαστε αιτήματα</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{site.sub}}</span></span>
-<button type="button" role="switch" aria-checked="{{site.aria}}" aria-label="Δεχόμαστε αιτήματα" onClick="{{site.flip}}" style="{{site.track}}"><span style="{{site.knob}}"></span></button>
-</div>
-</div>
-</section>
-<section>
 <h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Χρήστες</h2>
 <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
 <sc-for list="{{owners}}" as="ow" hint-placeholder-count="2">
@@ -733,7 +724,24 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </section>
 </div>
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
-<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid rgba(24, 40, 43, 0.18); background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
+<section>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Σάιτ</h2>
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
+<span><span style="display: block; font-weight: 500">Δεχόμαστε αιτήματα</span><span style="display: block; font-size: 12px; color: #4A5B5E">{{site.sub}}</span></span>
+<button type="button" role="switch" aria-checked="{{site.aria}}" aria-label="Δεχόμαστε αιτήματα" onClick="{{site.flip}}" style="{{site.track}}"><span style="{{site.knob}}"></span></button>
+</div>
+</div>
+</section>
+<section>
+<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Λογιστήριο</h2>
+<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 12px 18px">
+<span style="min-width: 0"><span style="display: block; font-weight: 500">Πληρωμές {{exportMonth}}</span><span style="display: block; font-size: 12px; color: #4A5B5E">Αρχείο για τον λογιστή · μόνο κρατήσεις με πληρωμή</span></span>
+<button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 500; cursor: pointer">Εξαγωγή</button>
+</div>
+</div>
+</section>
 </div>
 </div>
 </div>
