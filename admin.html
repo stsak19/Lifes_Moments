@@ -733,42 +733,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </section>
 </div>
 <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
-<section>
-<h2 style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #4A5B5E">Booking.com</h2>
-<div style="background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid rgba(24, 40, 43, 0.18); box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">
-<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px">
-<button type="button" onClick="{{bk.toggle}}" aria-expanded="{{bk.aria}}" style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: transparent; color: #18282B; font: inherit; text-align: left; cursor: pointer">
-<span style="min-width: 0"><span style="display: block; font-weight: 500">Συγχρονισμός ημερολογίων</span><span style="{{bk.sumStyle}}">{{bk.summary}}</span></span>
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="{{bk.chev}}"><path d="M6 9l6 6 6-6"></path></svg>
-</button>
-<sc-if value="{{bk.canSync}}" hint-placeholder-val="{{true}}">
-<button type="button" onClick="{{bk.syncAll}}" style="flex-shrink: 0; height: 38px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{bk.syncLabel}}</button>
-</sc-if>
-</div>
-<sc-if value="{{bk.open}}" hint-placeholder-val="{{false}}">
-<div style="padding: 0 18px 12px; font-size: 12px; color: #4A5B5E; border-bottom: 1px solid #EEF2F2">Κάθε δωμάτιο συνδέεται χωριστά, με δύο συνδέσμους: έναν από το Booking προς το σάιτ και έναν από το σάιτ προς το Booking. Τους βρίσκεις στο extranet, στο Τιμές και διαθεσιμότητα → Συγχρονισμός ημερολογίων.</div>
-<sc-for list="{{bk.rows}}" as="f" hint-placeholder-count="12">
-<div style="border-bottom: 1px solid #EEF2F2">
-<button type="button" onClick="{{f.toggle}}" aria-expanded="{{f.aria}}" style="{{f.rowStyle}}">
-<span style="min-width: 0"><span style="display: block; font-weight: 500">{{f.name}}</span><span style="{{f.statusStyle}}">{{f.status}}</span></span>
-<span style="flex-shrink: 0; font-size: 13px; font-weight: 600; color: #0F5257">{{f.action}}</span>
-</button>
-<sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
-<div style="display: flex; flex-direction: column; gap: 14px; padding: 4px 18px 16px; background: #F7FAFA">
-<div><label for="bk-in" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">1 · Από το Booking στο σάιτ: κόλλησε εδώ τον σύνδεσμο «Εξαγωγή» του Booking</label>
-<div style="display: flex; gap: 8px"><input id="bk-in" type="url" inputmode="url" autocomplete="off" spellcheck="false" value="{{f.draft}}" onChange="{{f.setDraft}}" placeholder="https://admin.booking.com/…" style="flex: 1; min-width: 0; box-sizing: border-box; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px"><button type="button" onClick="{{f.save}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 20px; border: 0; background: #0F5257; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">{{f.saveLabel}}</button></div></div>
-<div><label for="bk-out" style="display: block; font-size: 12px; font-weight: 600; color: #4A5B5E; margin-bottom: 6px">2 · Από το σάιτ στο Booking: βάλε αυτόν τον σύνδεσμο στην «Εισαγωγή» του Booking</label>
-<div style="display: flex; gap: 8px"><input id="bk-out" type="text" readonly value="{{f.exportUrl}}" onClick="{{f.selectOut}}" style="flex: 1; min-width: 0; box-sizing: border-box; height: 40px; padding: 0 14px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; color: #4A5B5E"><button type="button" onClick="{{f.copy}}" style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 19px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap">Αντιγραφή</button></div></div>
-<sc-if value="{{f.canRemove}}" hint-placeholder-val="{{false}}">
-<button type="button" onClick="{{f.remove}}" style="align-self: flex-start; height: 32px; padding: 0; border: 0; background: transparent; color: #8A3412; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer">Αποσύνδεση αυτού του δωματίου</button>
-</sc-if>
-</div>
-</sc-if>
-</div>
-</sc-for>
-</sc-if>
-</div>
-</section>
 <button type="button" onClick="{{exportCsv}}" title="Μόνο κρατήσεις με πληρωμή. Οι δωρεάν και οι δοκιμές δεν μπαίνουν." style="height: 48px; border-radius: 24px; border: 1px solid rgba(24, 40, 43, 0.18); background: #FFFFFF; color: #18282B; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 6px 18px rgba(10, 58, 62, 0.10), 0 1px 3px rgba(10, 58, 62, 0.08)">Εξαγωγή πληρωμών {{exportMonth}} για λογιστή</button>
 </div>
 </div>
@@ -938,17 +902,6 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 <button type="button" onClick="{{goCoupons}}" style="{{nav.coupons}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z"></path><path class="ic-line" d="M14 5v14" stroke-dasharray="2 2.2"></path></svg><span style="flex: 1">Κουπόνια</span></button>
 <button type="button" onClick="{{goSettings}}" style="{{nav.settings}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" style="flex-shrink: 0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle class="ic-knob ic-k1" cx="16" cy="6" r="2"></circle><circle class="ic-knob ic-k2" cx="10" cy="12" r="2"></circle><circle class="ic-knob ic-k3" cx="18" cy="18" r="2"></circle></svg><span style="flex: 1">Ρυθμίσεις</span></button>
 </nav>
-<div style="margin-top: auto; padding: 14px; border-radius: 14px; background: #EEF3F4; display: flex; flex-direction: column; gap: 10px">
-<sc-if value="{{isManual}}" hint-placeholder-val="{{true}}">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<div><div style="display: flex; align-items: center; gap: 6px; font-weight: 600"><span style="width: 8px; height: 8px; border-radius: 4px; background: #C99A3B"></span>Booking.com</div><div style="font-size: 12px; color: #4A5B5E">{{syncLine}}</div></div>
-<button type="button" onClick="{{syncNow}}" style="height: 40px; border-radius: 20px; border: 1px solid #C3D1D3; background: #FFFFFF; color: #18282B; font-size: 13px; font-weight: 500; cursor: pointer">Έλεγχος τώρα</button>
-</div>
-</sc-if>
-<sc-if value="{{isAuto}}" hint-placeholder-val="{{false}}">
-<div><div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #0F5257"><span style="width: 8px; height: 8px; border-radius: 4px; background: #0F5257"></span>Beds24</div><div style="font-size: 12px; color: #4A5B5E">Σε πραγματικό χρόνο · Booking.com και σάιτ</div></div>
-</sc-if>
-</div>
 </aside>
 </div>
 </template>
