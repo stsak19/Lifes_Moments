@@ -120,6 +120,14 @@
 }
 @media (max-width: 760px) { .jlayer { width: 78px; } .jsteps li:has(.jlayer) p { padding-right: 90px; } .jspot-card { width: 190px; } }
 @media (prefers-reduced-motion: reduce) { .jspot i::after { animation: none; } .jlayer { transform: none !important; } }
+
+/* next day: a quiet link right under the day being read */
+#journeys .jnext { position: static; display: inline-flex; width: auto; margin: 14px 0 0; min-height: 0; padding: 4px 0; border: 0; border-bottom: 1px solid currentColor; border-radius: 0;
+  background: none; box-shadow: none; color: var(--accent); font-size: 14px; opacity: 0; transform: translateY(6px); transition: opacity .5s ease .3s, transform .5s ease .3s, color .2s ease; }
+#journeys .jnext.in { opacity: 1; transform: none; }
+#journeys .jnext:hover { background: none; color: var(--ink); }
+#journeys .jnext.gone { display: none; }
+#journeys .jsteps li:not(.now) .jnext { opacity: 0; pointer-events: none; }
 </style>
 </head><body>
 <title>Life's Moments Mobile Test</title>
@@ -3396,7 +3404,13 @@ html.gs-lock { overflow: hidden; }
       row.style.setProperty('--tod', f.toFixed(3));
       const i = $$('.jrow', listEl).indexOf(row), j = JOURNEYS[i];
       mapOn(row.querySelector('.jmap'), j && j.days && j.days[k] ? j.days[k][0][0] : '');
-      const nx = row.querySelector('.jnext'); if (nx) nx.classList.toggle('gone', k >= lis.length - 1);
+      const nx = row.querySelector('.jnext');
+      if (nx) {
+        // the button sits right under the day being read
+        const host = lis[k];
+        if (host && k < lis.length - 1 && nx.parentNode !== host) { nx.classList.remove('in'); host.appendChild(nx); requestAnimationFrame(() => nx.classList.add('in')); }
+        nx.classList.toggle('gone', k >= lis.length - 1);
+      }
       plusDay2(row, k);
       clipTick();
       if (row.classList.contains('act')) { const sec = $('#journeys'); if (sec) sec.style.setProperty('--tod', f.toFixed(3)); }
