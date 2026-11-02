@@ -2043,12 +2043,12 @@ html.gs-lock { overflow: hidden; }
     <img class="hero-still" src="hero-poster.jpg" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
     <video class="hero-video" id="heroVideo" muted loop playsinline preload="auto" aria-label="360° video around the building"></video>
     <div class="hslides" id="hSlides" aria-hidden="true">
-      <img class="hslide on first" src="photos/terrace-dusk.jpg" alt="" fetchpriority="high" decoding="async">
+      <img class="hslide on first" src="photos/terrace-day.jpg" style="object-position:78% 50%" alt="" fetchpriority="high" decoding="async">
+      <img class="hslide" src="photos/balcony-view.jpg" alt="" loading="lazy" decoding="async">
+      <img class="hslide" src="photos/terrace-dusk.jpg" alt="" loading="lazy" decoding="async">
+      <img class="hslide" src="photos/exterior-evening.jpg" alt="" loading="lazy" decoding="async">
       <img class="hslide" src="https://images.pexels.com/photos/10505161/pexels-photo-10505161.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
       <img class="hslide" src="https://images.pexels.com/photos/15511304/pexels-photo-15511304.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
-      <img class="hslide" src="https://images.pexels.com/photos/33023678/pexels-photo-33023678.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
-      <img class="hslide" src="https://images.pexels.com/photos/10505160/pexels-photo-10505160.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
-      <img class="hslide" src="https://images.pexels.com/photos/28576091/pexels-photo-28576091.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" loading="lazy" decoding="async">
     </div>
     <div class="grade"></div>
     <div class="shade"></div>
@@ -3778,8 +3778,8 @@ html.gs-lock { overflow: hidden; }
   });
   // Real photos of the property. The first one is the big image.
   const PHOTOS = {
-    room: ['photos/room-blue.jpg', 'photos/room-grey.jpg', 'photos/balcony-sea.jpg'],
-    apt: ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg', 'photos/bathroom.jpg']
+    room: ['photos/room-blue.jpg', 'photos/room-grey.jpg', 'photos/balcony-view.jpg', 'photos/bathroom.jpg'],
+    apt: ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg', 'photos/bathroom-white.jpg']
   };
   window.__realPhotos = true;
   const currentShots = () => PHOTOS[ROOMS[roomIdx].id] || shotsFor(roomIdx);
@@ -4186,10 +4186,10 @@ html.gs-lock { overflow: hidden; }
   (function unitSlider() {
     const UNIT_PHOTOS = [
       ['photos/room-blue.jpg', 'photos/bathroom.jpg'],
-      ['photos/room-grey.jpg', 'photos/balcony-sea.jpg'],
+      ['photos/room-grey.jpg', 'photos/balcony-view.jpg'],
       [], [], [], [], [], [], [], []
     ];
-    const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg'];
+    const APT_PHOTOS = ['photos/apt-living.jpg', 'photos/apt-bedroom.jpg', 'photos/bathroom-white.jpg'];
     const units = UNIT_PHOTOS.map((ph, i) => ({ ph: ph, name: () => t('unit.n', { n: i < 5 ? 100 + i : 195 + i }) })).concat([{ ph: APT_PHOTOS, apt: true, name: () => t('unit.apt') }]);
     const N = units.length, COPIES = 3;
     const car = $('#ucar'), track = $('#utrack'), bar = $('#ubar');
