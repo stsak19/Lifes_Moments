@@ -1952,6 +1952,30 @@ html.gs-lock { overflow: hidden; }
 /* footer wordmark: a touch of the sea colour */
 .foot-mark { background: linear-gradient(180deg, var(--ink), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .14; }
 @media (prefers-reduced-motion: reduce) { .gcard { transition: none; } .gcard:hover { transform: none; } }
+
+/* ---------- phones: title at the bottom (magazine style), dots for the photos, booking bar always at the bottom ---------- */
+.hkick, .hline, .hdots { display: none; }
+@media (max-width: 760px) {
+  html .intro { height: 100vh; height: 100svh; min-height: 520px; }
+  html .intro .shade { background: linear-gradient(to top, rgba(6,10,18,.82) 0%, rgba(6,10,18,.45) 28%, rgba(6,10,18,0) 55%), linear-gradient(to bottom, rgba(6,10,18,.4), rgba(6,10,18,0) 18%); opacity: 1; }
+  html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px calc(env(safe-area-inset-bottom, 0px) + 128px) !important; }
+  html .intro .hcenter .hplace { display: none; }
+  html .intro .hcenter .hkick { display: block; margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: rgba(248,244,236,.88); }
+  html .intro .hcenter h1 { font-size: clamp(46px, 14vw, 60px); line-height: .95; white-space: normal; text-align: left; }
+  html .intro .hcenter .hline { display: block; margin: 12px 0 0; max-width: 30ch; font-size: 15px; line-height: 1.45; color: rgba(248,244,236,.9); text-shadow: 0 1px 10px rgba(0,0,0,.5); }
+  .hdots { display: flex; position: absolute; z-index: 3; right: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 136px); gap: 6px; pointer-events: none; }
+  .hdots span { width: 6px; height: 6px; border-radius: 999px; background: rgba(248,244,236,.45); transition: width .4s ease, background-color .4s ease; }
+  .hdots span.on { width: 18px; background: #F8F4EC; }
+  .hs-arrow { display: none; }
+  /* the booking bar sits fixed at the bottom centre, in a frame */
+  .stay, html .stay { margin-top: 0; padding: 0; }
+  .stay:not(.bk-open) .mbar { position: fixed; z-index: 60; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); transform: translateX(-50%); width: min(440px, calc(100% - 28px));
+    border: 1px solid rgba(248,244,236,.55); border-radius: 20px; padding: 8px 8px 8px 18px; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 0 0 4px rgba(248,244,236,.14), 0 18px 40px -14px rgba(6,10,18,.55); }
+  .stay.bk-open .mbar { visibility: hidden; }
+  .mfab, .mfab.show { display: none !important; }
+  body { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px); }
+}
 </style>
 
 <header class="top" id="top">
@@ -2045,9 +2069,12 @@ html.gs-lock { overflow: hidden; }
     <button type="button" class="hs-arrow hs-next" id="hsNext" data-i18n-aria="u.next" aria-label="Next"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <div class="cap hero hcenter">
       <svg class="hlogo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" aria-hidden="true"><circle cx="16" cy="16" r="15"/><path d="M10 17.5a6 6 0 0 1 12 0"/><path d="M5 20.5c1.8 0 1.8-1.2 3.7-1.2s1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2 1.8-1.2 3.6-1.2 1.8 1.2 3.7 1.2"/><path d="M8 24.5c1.4 0 1.4-1 3-1s1.5 1 3 1 1.5-1 3-1 1.5 1 3 1 1.5-1 3-1 1.5 1 3 1"/></svg>
+      <p class="hkick" data-i18n="hero.kick">Thasos · Aegean</p>
       <h1>Life's Moments</h1>
       <p class="hplace" data-i18n="brand.sub">Thasos</p>
+      <p class="hline" data-i18n="hero.line">Ten rooms and Athos, by the sea.</p>
     </div>
+    <div class="hdots" id="hDots" aria-hidden="true"></div>
   </section>
 
 
@@ -2725,6 +2752,11 @@ html.gs-lock { overflow: hidden; }
    ['el', { 'pr.stay': '{n} · {p} σύνολο', 'note.min': 'Για αυτές τις μέρες η ελάχιστη διαμονή είναι {n} νύχτες. Διαλέξτε μεταγενέστερη αναχώρηση.', 'pr.off': 'Έκπτωση −{p}%', 'pr.total': 'Σύνολο', 'pr.ask': 'Θα σας πούμε την τιμή όταν απαντήσουμε στο αίτημά σας.', 'pr.extra': 'Περιλαμβάνει {p} τη νύχτα για κάθε άτομο πέρα από τα δύο.' }],
    ['tr', { 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
    ['bg', { 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
+  ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
+  [['en', { 'hero.kick': 'Thasos · Aegean', 'hero.line': 'Ten rooms and Athos, by the sea.' }],
+   ['el', { 'hero.kick': 'Θάσος · Αιγαίο', 'hero.line': '10 δωμάτια και το Άθος, δίπλα στη θάλασσα.' }],
+   ['tr', { 'hero.kick': 'Thasos · Ege', 'hero.line': 'Denize yakın on oda ve Athos.' }],
+   ['bg', { 'hero.kick': 'Тасос · Егейско море', 'hero.line': 'Десет стаи и Атон, до морето.' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
   function loadAvailability() {
     loadOpen();
@@ -3814,10 +3846,13 @@ html.gs-lock { overflow: hidden; }
   (function heroSlides() {
     const imgs = $$('#hSlides .hslide'); if (!imgs.length) return;
     let i = 0, timer = null;
+    const dotBox = $('#hDots');
+    const dots = imgs.map((_, k) => { const d = document.createElement('span'); if (!k) d.className = 'on'; dotBox.appendChild(d); return d; });
     function show(n) {
       imgs[i].classList.remove('on');
       i = (n + imgs.length) % imgs.length;
       imgs[i].classList.add('on');
+      dots.forEach((d, k) => d.classList.toggle('on', k === i));
       [1, -1].forEach((d) => { const x = imgs[(i + d + imgs.length) % imgs.length]; if (x.loading === 'lazy') x.loading = 'eager'; });
     }
     function restart() { clearInterval(timer); if (!reduce) timer = setInterval(() => { if (!document.hidden) show(i + 1); }, 7000); }
