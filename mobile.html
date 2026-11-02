@@ -1955,7 +1955,7 @@ html.gs-lock { overflow: hidden; }
 
 /* ---------- phones: title at the bottom, booking bar always at the bottom ---------- */
 @media (max-width: 760px) {
-  html .intro { height: calc(100vh - 67px); height: calc(100svh - 67px - env(safe-area-inset-bottom, 0px)); min-height: 460px; }
+  html .intro { height: calc(100vh - 54px); height: calc(100svh - 54px - env(safe-area-inset-bottom, 0px)); min-height: 460px; }
   html .intro .shade { background: linear-gradient(to top, rgba(6,10,18,.82) 0%, rgba(6,10,18,.45) 28%, rgba(6,10,18,0) 55%), linear-gradient(to bottom, rgba(6,10,18,.4), rgba(6,10,18,0) 18%); opacity: 1; }
   html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px 28px !important; }
   html .intro .hcenter .hplace { display: none; }
@@ -1964,10 +1964,10 @@ html.gs-lock { overflow: hidden; }
   /* the booking bar sits fixed at the bottom centre, in a frame */
   .stay, html .stay { margin-top: 0; padding: 0; }
   .stay:not(.bk-open) .mbar { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; width: 100%; transform: none;
-    border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 8px 14px calc(env(safe-area-inset-bottom, 0px) + 8px); justify-content: center;
+    border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 5px 14px calc(env(safe-area-inset-bottom, 0px) + 2px); justify-content: center;
     background: var(--surface); box-shadow: 0 -10px 30px -12px rgba(6,10,18,.35); }
   .stay:not(.bk-open) .mbar .mbar-txt { display: none; }
-  .stay:not(.bk-open) .mbar .mbar-go { flex: 0 0 auto; width: min(240px, 64%); margin: 0 auto; height: 50px; border-radius: 6px; font-size: 17.5px; letter-spacing: .04em; background: #1E90E8; color: #fff; font-weight: 600; }
+  .stay:not(.bk-open) .mbar .mbar-go { flex: 0 0 auto; width: min(240px, 64%); margin: 0 auto; height: 46px; border-radius: 6px; font-size: 17.5px; letter-spacing: .04em; background: #1E90E8; color: #fff; font-weight: 600; }
   /* journeys: a calmer photo that fits between the header and the booking bar */
   .jstage { top: 84px; height: calc(100svh - 84px - 84px - env(safe-area-inset-bottom, 0px)); max-height: 600px; }
   .stay:not(.bk-open) .mbar { transition: background-color .35s ease, border-color .35s ease; }
