@@ -1624,6 +1624,13 @@ html.gs-lock { overflow: hidden; }
 /* footer wordmark: a touch of the sea colour */
 .foot-mark { background: linear-gradient(180deg, var(--ink), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .14; }
 @media (prefers-reduced-motion: reduce) { .gcard { transition: none; } .gcard:hover { transform: none; } }
+
+/* Athos stands apart from the rooms: a gap before it, a coloured frame and its own label */
+.uslide.is-apt { margin-left: 28px; position: relative; }
+.uslide.is-apt::before { content: ""; position: absolute; left: -24px; top: 6%; bottom: 22%; width: 1px; background: var(--line); }
+.uslide.is-apt .uimg { box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px #1E90E8; }
+.uslide.is-apt .umeta b::after { content: none; }
+.utag { position: absolute; left: 12px; top: 12px; z-index: 2; padding: 6px 12px; background: #1E90E8; color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
 </style>
 
 <header class="top" id="top">
@@ -4147,7 +4154,7 @@ html.gs-lock { overflow: hidden; }
 
     function slideHtml(u, i, clone) {
       const has = u.ph.length > 0, count = u.ph.length === 1 ? t('unit.photo1') : t('unit.photos', { n: u.ph.length });
-      const inner = '<span class="uimg">' + (has ? '<img src="' + u.ph[0] + '" alt="" loading="lazy" draggable="false">' : '<span class="usoon"><b>' + (u.apt ? 'A' : (i < 5 ? 100 + i : 195 + i)) + '</b><span>' + t('unit.soon') + '</span></span>') + '</span>' +
+      const inner = '<span class="uimg">' + (u.apt ? '<span class="utag">' + t('u.apt') + '</span>' : '') + (has ? '<img src="' + u.ph[0] + '" alt="" loading="lazy" draggable="false">' : '<span class="usoon"><b>' + (u.apt ? 'A' : (i < 5 ? 100 + i : 195 + i)) + '</b><span>' + t('unit.soon') + '</span></span>') + '</span>' +
         '<span class="umeta"><b>' + u.name() + '</b><span>' + (has ? count : '') + '</span></span>';
       const hide = clone ? ' aria-hidden="true" tabindex="-1"' : '';
       return has ? '<button type="button" class="uslide' + (u.apt ? ' is-apt' : '') + '" data-u="' + i + '"' + hide + (clone ? '' : ' role="group" aria-roledescription="slide" aria-label="' + u.name() + '"') + '>' + inner + '</button>'
