@@ -1825,6 +1825,19 @@ html.gs-lock { overflow: hidden; }
     }
   }
 }
+/* ---------- aesthetic polish ---------- */
+/* rooms without photos yet: a soft sea-toned card instead of a dashed box */
+.usoon { border: 1px solid var(--line); background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 70%), linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--accent-2) 8%, var(--surface))); }
+.usoon b { opacity: .8; letter-spacing: -.02em; }
+.usoon span { text-transform: uppercase; font-size: 11px; letter-spacing: .16em; }
+/* map: a calm sea gradient while the map loads (or if it can't) */
+.map { background: radial-gradient(80% 60% at 30% 30%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 70%), linear-gradient(160deg, color-mix(in srgb, var(--accent-2) 12%, var(--surface)), var(--deep)); }
+/* guide cards: a gentle lift with a soft shadow */
+.gcard { transition: background-color .9s, border-color .9s, transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .35s ease; }
+@media (hover: hover) { .gcard:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -22px rgba(10, 30, 60, .35); } }
+/* footer wordmark: a touch of the sea colour */
+.foot-mark { background: linear-gradient(180deg, var(--ink), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .14; }
+@media (prefers-reduced-motion: reduce) { .gcard { transition: none; } .gcard:hover { transform: none; } }
 </style>
 
 <header class="top" id="top">
