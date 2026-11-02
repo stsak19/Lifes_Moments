@@ -1958,23 +1958,25 @@ html.gs-lock { overflow: hidden; }
 @media (max-width: 760px) {
   html .intro { height: 100vh; height: 100svh; min-height: 520px; }
   html .intro .shade { background: linear-gradient(to top, rgba(6,10,18,.82) 0%, rgba(6,10,18,.45) 28%, rgba(6,10,18,0) 55%), linear-gradient(to bottom, rgba(6,10,18,.4), rgba(6,10,18,0) 18%); opacity: 1; }
-  html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px calc(env(safe-area-inset-bottom, 0px) + 116px) !important; }
+  html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px calc(env(safe-area-inset-bottom, 0px) + 104px) !important; }
   html .intro .hcenter .hplace { display: none; }
   html .intro .hcenter .hkick { display: block; margin: 0 0 10px; font-size: 11px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: rgba(248,244,236,.88); }
   html .intro .hcenter h1 { font-size: clamp(46px, 14vw, 60px); line-height: .95; white-space: normal; text-align: left; }
   html .intro .hcenter .hline { display: block; margin: 12px 0 0; max-width: 30ch; font-size: 15px; line-height: 1.45; color: rgba(248,244,236,.9); text-shadow: 0 1px 10px rgba(0,0,0,.5); }
-  .hdots { display: flex; position: absolute; z-index: 3; right: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 124px); gap: 6px; pointer-events: none; }
+  .hdots { display: flex; position: absolute; z-index: 3; right: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 112px); gap: 6px; pointer-events: none; }
   .hdots span { width: 6px; height: 6px; border-radius: 999px; background: rgba(248,244,236,.45); transition: width .4s ease, background-color .4s ease; }
   .hdots span.on { width: 18px; background: #F8F4EC; }
   .hs-arrow { display: none; }
   /* the booking bar sits fixed at the bottom centre, in a frame */
   .stay, html .stay { margin-top: 0; padding: 0; }
   .stay:not(.bk-open) .mbar { position: fixed; z-index: 60; left: 0; right: 0; bottom: 0; width: 100%; transform: none;
-    border: 0; border-top: 1px solid var(--line); border-radius: 20px 20px 0 0; padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px) 22px;
+    border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 10px);
     background: var(--surface); box-shadow: 0 -10px 30px -12px rgba(6,10,18,.35); }
+  .stay:not(.bk-open) .mbar .mbar-txt { display: none; }
+  .stay:not(.bk-open) .mbar .mbar-go { flex: 1; height: 52px; border-radius: 0; font-size: 16px; letter-spacing: .04em; }
   .stay.bk-open .mbar { visibility: hidden; }
   .mfab, .mfab.show { display: none !important; }
-  body { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 82px); }
+  body { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 74px); }
 }
 </style>
 
@@ -2083,7 +2085,7 @@ html.gs-lock { overflow: hidden; }
     <div class="wrap">
       <button type="button" class="mbar" id="mbar" aria-haspopup="dialog" aria-expanded="false" aria-controls="sbar">
         <span class="mbar-txt"><small id="mbarUnit">A room</small><b id="mbarSum">Add dates · 2 guests</b></span>
-        <span class="mbar-go" data-i18n="mbar.go">Check</span>
+        <span class="mbar-go" data-i18n="mbar.go">Book</span>
       </button>
       <div class="bar-wrap" id="barWrap">
         <form class="sbar" id="sbar" onsubmit="return false">
@@ -2753,10 +2755,10 @@ html.gs-lock { overflow: hidden; }
    ['tr', { 'pr.stay': '{n} · toplam {p}', 'note.min': 'Bu tarihler için en az {n} gece konaklama gerekir. Daha geç bir çıkış tarihi seçin.', 'pr.off': 'İndirim −{p}%', 'pr.total': 'Toplam', 'pr.ask': 'Fiyatı talebinize yanıt verirken bildireceğiz.', 'pr.extra': 'İkinci kişiden sonraki her misafir için gecelik {p} dahildir.' }],
    ['bg', { 'pr.stay': '{n} · общо {p}', 'note.min': 'За тези дати минималният престой е {n} нощувки. Изберете по-късно напускане.', 'pr.off': 'Отстъпка −{p}%', 'pr.total': 'Общо', 'pr.ask': 'Ще ви кажем цената, когато отговорим на запитването ви.', 'pr.extra': 'Включва {p} на нощувка за всеки гост след втория.' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
-  [['en', { 'hero.kick': 'Thasos · Aegean', 'hero.line': 'Ten rooms and Athos, by the sea.' }],
-   ['el', { 'hero.kick': 'Θάσος · Αιγαίο', 'hero.line': '10 δωμάτια και το Άθος, δίπλα στη θάλασσα.' }],
-   ['tr', { 'hero.kick': 'Thasos · Ege', 'hero.line': 'Denize yakın on oda ve Athos.' }],
-   ['bg', { 'hero.kick': 'Тасос · Егейско море', 'hero.line': 'Десет стаи и Атон, до морето.' }]
+  [['en', { 'hero.kick': 'Thasos · Aegean', 'hero.line': 'Ten rooms and Athos, by the sea.', 'mbar.go': 'Book' }],
+   ['el', { 'hero.kick': 'Θάσος · Αιγαίο', 'hero.line': '10 δωμάτια και το Άθος, δίπλα στη θάλασσα.', 'mbar.go': 'Κράτηση' }],
+   ['tr', { 'hero.kick': 'Thasos · Ege', 'hero.line': 'Denize yakın on oda ve Athos.', 'mbar.go': 'Rezervasyon' }],
+   ['bg', { 'hero.kick': 'Тасос · Егейско море', 'hero.line': 'Десет стаи и Атон, до морето.', 'mbar.go': 'Резервация' }]
   ].forEach(([l, s]) => { if (I18N[l]) Object.assign(I18N[l], s); });
   function loadAvailability() {
     loadOpen();
