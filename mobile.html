@@ -1955,9 +1955,9 @@ html.gs-lock { overflow: hidden; }
 
 /* ---------- phones: title at the bottom, booking bar always at the bottom ---------- */
 @media (max-width: 760px) {
-  html .intro { height: 100vh; height: 100svh; min-height: 520px; }
+  html .intro { height: calc(100vh - 67px); height: calc(100svh - 67px - env(safe-area-inset-bottom, 0px)); min-height: 460px; }
   html .intro .shade { background: linear-gradient(to top, rgba(6,10,18,.82) 0%, rgba(6,10,18,.45) 28%, rgba(6,10,18,0) 55%), linear-gradient(to bottom, rgba(6,10,18,.4), rgba(6,10,18,0) 18%); opacity: 1; }
-  html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px calc(env(safe-area-inset-bottom, 0px) + 92px) !important; }
+  html .intro .cap.hcenter { inset: auto 0 0 0; align-items: flex-start; justify-content: flex-end; text-align: left; padding: 0 22px 28px !important; }
   html .intro .hcenter .hplace { display: none; }
   html .intro .hcenter h1 { font-size: clamp(46px, 14vw, 60px); line-height: .95; white-space: normal; text-align: left; }
   .hs-arrow { display: none; }
