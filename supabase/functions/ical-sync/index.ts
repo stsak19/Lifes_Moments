@@ -9,7 +9,7 @@ const LINK = /^https:\/\/([a-z0-9-]+\.)*booking\.com\//;
 const DAY = 86400000;
 const athensToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Athens' }).format(new Date());
 const addDays = (d: string, n: number) => new Date(Date.parse(d + 'T00:00:00Z') + n * DAY).toISOString().slice(0, 10);
-const unitName = (u: string) => u === 'apt' ? 'Διαμέρισμα' : 'Δωμάτιο ' + u.slice(1);
+const unitName = (u: string) => { if (u === 'apt') return 'Άθος'; const i = +u.slice(1); return 'Δωμάτιο ' + (i <= 5 ? 99 + i : 194 + i); };
 
 type Ev = { uid: string; start: string; end: string };
 type Feed = { unit: string; import_url: string | null; last_ok_at: string | null };

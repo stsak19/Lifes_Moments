@@ -291,8 +291,8 @@ nav[aria-label="Μενού"] button:not([style*="background: #0F5257"]):hover{ba
 </sc-for>
 </div>
 </sc-if>
-<div style="font-size: 12px; font-weight: 600; color: #4A5B5E; margin: 14px 0 6px">Δωμάτια</div>
-<sc-for list="{{rows}}" as="row" hint-placeholder-count="12">
+<sc-for list="{{rows}}" as="row" hint-placeholder-count="11">
+<sc-if value="{{row.hasGroup}}" hint-placeholder-val="{{false}}"><div style="{{row.groupStyle}}">{{row.group}}</div></sc-if>
 <div data-row="{{row.id}}" style="{{row.style}}">
 <span style="{{row.labelStyle}}">{{row.label}}</span>
 <sc-for list="{{row.segs}}" as="sg" hint-placeholder-count="10">
@@ -1083,8 +1083,9 @@ class Component extends DCLogic {
     this.MON = ['Ιαν', 'Φεβ', 'Μαρ', 'Απρ', 'Μαΐ', 'Ιουν', 'Ιουλ', 'Αυγ', 'Σεπ', 'Οκτ', 'Νοε', 'Δεκ'];
     this.MONG = ['Ιανουαρίου', 'Φεβρουαρίου', 'Μαρτίου', 'Απριλίου', 'Μαΐου', 'Ιουνίου', 'Ιουλίου', 'Αυγούστου', 'Σεπτεμβρίου', 'Οκτωβρίου', 'Νοεμβρίου', 'Δεκεμβρίου'];
     this.UNITS = [];
-    for (let i = 1; i <= 11; i++) this.UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + i, cap: i <= 6 ? 2 : 3, n: i });
-    this.UNITS.push({ id: 'apt', name: 'Διαμέρισμα', cap: 5, n: 12 });
+    // 10 rooms: r1–r5 are 100–104, r6–r10 are 200–204. The apartment is called Άθος.
+    for (let i = 1; i <= 10; i++) this.UNITS.push({ id: 'r' + i, name: 'Δωμάτιο ' + (i <= 5 ? 99 + i : 194 + i), cap: i <= 5 ? 2 : 3, n: i });
+    this.UNITS.push({ id: 'apt', name: 'Άθος', cap: 5, n: 11 });
     const blocks = { 'r10|2026-07-13': true, 'r10|2026-07-14': true, 'r10|2026-07-15': true };
     this.state = {
       tab: 'today', detail: null, req: null, customer: null, room: null, gFilter: 'all', gQuery: '', notes: { 'Οικογένεια Μαρκοπούλου': 'Τρίτη χρονιά. Τους αρέσει το πρωινό στη βεράντα, φέρνουν και σκύλο.' }, calStart: '2026-07-14', calDays: (() => { try { return localStorage.getItem('lm.calDays') === '14' ? 14 : 7; } catch (e) { return 7; } })(), filter: 'all', query: '', picks: {}, toast: null, newOpen: false, nb: null, calEdit: false, calDraft: { room: '', apt: '', min: '' }, dateBy: 'arr', dateFrom: '', dateTo: '', yOpen: {}, mOpen: {}, listDates: false, thread: 't1', msgDraft: '',
@@ -1124,7 +1125,7 @@ class Component extends DCLogic {
         { id: 'b9', name: 'Marek Nowak', type: 'room', unit: 'r9', start: '2026-07-17', nights: 3, guests: 3, total: 405, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+48 5xx xxx xxx' },
         { id: 'b10', name: 'Claire Martin', type: 'room', unit: 'r4', start: '2026-07-18', nights: 4, guests: 2, total: 480, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+33 6xx xx xx xx' },
         { id: 'b11', name: 'Κώστας Βλάχος', type: 'room', unit: 'r5', start: '2026-07-11', nights: 3, guests: 2, total: 360, source: 'site', status: 'confirmed', email: 'kostas@example.com', phone: '+30 69xx xxx xxx' },
-        { id: 'b12', name: 'Ingrid Larsen', type: 'room', unit: 'r11', start: '2026-07-13', nights: 5, guests: 3, total: 675, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+47 4xx xx xxx' },
+        { id: 'b12', name: 'Ingrid Larsen', type: 'room', unit: 'r10', start: '2026-07-13', nights: 5, guests: 3, total: 675, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+47 4xx xx xxx' },
         { id: 'b13', name: 'Δημήτρης Ράπτης', type: 'room', unit: 'r1', start: '2026-07-20', nights: 6, guests: 2, total: 720, source: 'site', status: 'confirmed', email: 'dimitris@example.com', phone: '+30 69xx xxx xxx' },
         { id: 'b14', name: 'Emma Johansson', type: 'room', unit: 'r2', start: '2026-07-22', nights: 5, guests: 2, total: 600, source: 'booking', status: 'confirmed', email: 'μέσω Booking', phone: '+46 7xx xxx xxx', ago: 9 },
         { id: 'b15', name: 'Οικογένεια Νικολάου', type: 'apt', unit: 'apt', start: '2026-07-26', nights: 7, guests: 4, total: 1330, source: 'site', status: 'confirmed', email: 'nikolaou@example.com', phone: '+30 69xx xxx xxx' },
@@ -2435,7 +2436,8 @@ class Component extends DCLogic {
         }
       }
       segs.forEach(g => { if (!g.expanded) g.plain = true; });
-      return { id: u.id, label: u.name, segs: segs, style: calRowStyle + (u.id === 'apt' ? '; margin-top: 16px; padding-top: 12px; border-top: 1px dashed #C3D1D3' : ''), labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
+      const group = ({ r1: 'Δωμάτια 100–104', r6: 'Δωμάτια 200–204', apt: 'Άθος · ξεχωριστό διαμέρισμα' })[u.id] || '';
+      return { id: u.id, label: u.name, group: group, hasGroup: !!group, groupStyle: 'font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #0F5257; margin: ' + (u.id === 'r1' ? '14px' : '18px') + ' 0 6px;' + (u.id === 'r1' ? '' : ' padding-top: 12px; border-top: 2px solid #C3D1D3'), segs: segs, style: calRowStyle, labelStyle: 'font-size: 13px; display: flex; align-items: center; align-self: start; height: 34px; white-space: nowrap;' + (mvT === u.id ? 'font-weight: 700; color: ' + (mvChk && mvChk.ok ? '#0F5257' : '#8A1C12') : 'font-weight: 500') };
     });
     const reqRows = auto ? [] : pending.filter(b => !tentative[b.id]).map(b => {
       const segs = [];
