@@ -32,6 +32,30 @@
 .jstage .jmap { top: 12px; right: 12px; width: 84px; }
 @media (max-width: 760px) { .jnext { bottom: 16px; display: flex; width: max-content; margin-left: auto; } .jmap { width: 86px; } }
 @media (prefers-reduced-motion: reduce) { .jm-way { transition: none; } .jnext svg { animation: none; } #journeys, .jph::before { transition: none; } }
+
+/* ===== immersive photo: full height, out to the screen edge, cinematic changes ===== */
+@media (min-width: 761px) {
+  #journeys .jrow { align-items: start; }
+  #journeys .jph { position: sticky; top: var(--hh, 60px); height: calc(100vh - var(--hh, 60px)); max-height: none; aspect-ratio: auto;
+    margin-left: calc(-1 * var(--bl, 0px)); width: calc(100% + var(--bl, 0px)); border-radius: 0; clip-path: inset(6% 8% 6% 8%); }
+  #journeys .jrow:nth-child(even) .jph { margin-left: 0; margin-right: calc(-1 * var(--br, 0px)); width: calc(100% + var(--br, 0px)); }
+  #journeys .jrow.seen .jph { clip-path: inset(0); }
+  #journeys .jtx { padding-block: 18vh 30vh; }
+  #journeys .jsteps li { padding-bottom: 34vh; }
+  #journeys .jsteps li:last-child { padding-bottom: 8vh; }
+  #journeys .jsteps p { font-size: 18px; line-height: 1.6; }
+  #journeys .jsteps p b { display: block; margin-bottom: 4px; font: 400 clamp(26px, 2.4vw, 36px)/1.1 var(--font-display); }
+}
+#journeys .jsteps li { transition: opacity .7s ease, transform 1s cubic-bezier(.2, .7, .2, 1); }
+#journeys .jrow.seen .jsteps li:not(.now) { opacity: .28; }
+#journeys .jshot { filter: blur(10px) saturate(.9); transition: opacity 1.4s ease, transform 2.4s cubic-bezier(.2, .7, .2, 1), filter 1.4s ease; }
+#journeys .jshot.on { filter: none; }
+#journeys .jph::after { background: linear-gradient(to top, rgba(6, 10, 18, .7), rgba(6, 10, 18, 0) 45%), radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(6, 10, 18, .35)); }
+@media (max-width: 760px) {
+  #journeys .jph { height: 70svh; top: var(--hh, 56px); }
+  #journeys .jsteps li { padding-bottom: 22vh; }
+}
+@media (prefers-reduced-motion: reduce) { #journeys .jshot { filter: none; transition: opacity .3s ease; } #journeys .jrow.seen .jsteps li:not(.now) { opacity: .6; } }
 </style>
 </head><body>
 <title>Life's Moments · Θάσος</title>
@@ -3242,10 +3266,8 @@ html.gs-lock { overflow: hidden; }
     const GEO = { 'Metalia & the Palataki': [24.574, 40.627], 'Kastro & Pefkari': [24.612, 40.640], 'Giola & Archangel Michael': [24.680, 40.583],
       'Alyki & Psili Ammos': [24.742, 40.602], 'Theologos': [24.700, 40.662], 'Limenas': [24.712, 40.779], 'Golden Beach & Maries': [24.770, 40.745] };
     // short silent clips can replace a day's photo: 'Place name': 'photos/clip.mp4'
-    // sample clips (Mixkit free licence), stand-ins until there are real ones from Thasos
-    const CLIP = { 'Arrival': 'clips/4004.mp4', 'Metalia & the Palataki': 'clips/51506.mp4', 'Kastro & Pefkari': 'clips/1954.mp4',
-      'Giola & Archangel Michael': 'clips/51502.mp4', 'Alyki & Psili Ammos': 'clips/5008.mp4', 'Theologos': 'clips/25078.mp4',
-      'Limenas': 'clips/40077.mp4', 'Golden Beach & Maries': 'clips/5016.mp4', 'Departure': 'clips/4999.mp4' };
+    // short silent clips can replace a day's photo: 'Place name': 'clips/name.mp4'
+    const CLIP = {};
     const ISLE = [[24.712,40.784],[24.672,40.792],[24.640,40.782],[24.600,40.758],[24.565,40.733],[24.548,40.700],[24.530,40.664],[24.545,40.632],[24.575,40.618],[24.610,40.600],[24.650,40.578],[24.700,40.570],[24.742,40.592],[24.770,40.625],[24.785,40.668],[24.778,40.712],[24.765,40.748],[24.740,40.775]];
     const XY = (p) => [((p[0] - 24.52) * 758).toFixed(1), ((40.80 - p[1]) * 1000).toFixed(1)];
     function mapSvg(keys) {
@@ -3310,6 +3332,18 @@ html.gs-lock { overflow: hidden; }
       });
     }
     window.addEventListener('scroll', () => requestAnimationFrame(clipTick), { passive: true });
+    // the photo runs to the edge of the screen on its side
+    function bleed() {
+      const hh = (document.querySelector('header') || { offsetHeight: 60 }).offsetHeight;
+      $$('.jrow', listEl).forEach((row) => {
+        const r = row.getBoundingClientRect(); if (!r.width) return;
+        row.style.setProperty('--bl', Math.max(0, r.left) + 'px');
+        row.style.setProperty('--br', Math.max(0, document.documentElement.clientWidth - r.right) + 'px');
+        row.style.setProperty('--hh', hh + 'px');
+      });
+    }
+    window.addEventListener('resize', bleed);
+    document.addEventListener('click', (e) => { if (e.target.closest('[data-jtab]')) setTimeout(bleed, 60); });
     function plus() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       $$('.jrow', listEl).forEach((row, i) => {
@@ -3323,6 +3357,7 @@ html.gs-lock { overflow: hidden; }
         if (!reduce) $$('.jshot', row).forEach((img) => clipFor(img));
       });
       plusDates();
+      bleed();
       setTimeout(clipTick, 50);
       // phones: the pinned place-by-place stage gets the map too, and a tap moves on
       const mob = $('#jMob'), stage = mob && mob.querySelector('.jstage');
