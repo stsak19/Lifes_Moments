@@ -197,6 +197,10 @@ body:has(.segbar) .top{background:var(--bg);backdrop-filter:none;-webkit-backdro
 .ogr .dh.t{color:var(--teal)}
 .ogr .ce{height:28px;border-left:1px solid var(--hair)}
 .ogr .ce.we{background:var(--hair)}
+.ogr .ce{cursor:pointer;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+.ogr .ce.cl{background:var(--red)}
+.ogr .ce.sl{background:var(--teal-soft);box-shadow:inset 0 0 0 2px var(--teal)}
+.ogr .ce.cl.sl{background:#e88}
 .ogr .bk{height:26px;min-height:0;max-height:26px;box-sizing:border-box;position:relative;z-index:1;margin:0 1px;border-radius:7px;color:#fff;font-size:11px;font-weight:700;padding:0 5px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;border:0;font-family:inherit;cursor:pointer;text-align:left}
 .ogr .bk span{overflow:hidden;text-overflow:ellipsis}
 .ogr .bk.site,.ogr .bk.direct{background:var(--teal)}.ogr .bk.booking{background:var(--booking)}.ogr .bk.free{background:var(--free)}.ogr .bk.pending{background:var(--yellow);color:#3A2604}.ogr .bk.cl{background:var(--red)}
@@ -780,7 +784,7 @@ function renderCal() {
   topbar('Καλημέρα' + (S.user && S.user.name ? ', ' + esc(voc(S.user.name.split(' ')[0])) : ''), DAY[td.getUTCDay()] + ' ' + td.getUTCDate() + ' ' + MONF[td.getUTCMonth()]);
   const cs = S.calSeg || 'moves';
   let h = '<div class="segbar"><div class="seg"><button data-act="cseg" data-id="moves" class="' + (cs === 'moves' ? 'on' : '') + '">Κινήσεις</button><button data-act="cseg" data-id="cals" class="' + (cs === 'cals' ? 'on' : '') + '">Ημερολόγια</button></div></div>';
-  if (cs === 'cals') { h += occHTML(); $('#main').innerHTML = h; const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0; document.querySelectorAll('.oscr').forEach(e => e.scrollLeft = Math.max(0, ti) * 30); return; }
+  if (cs === 'cals') { h += occHTML(); $('#main').innerHTML = h; const ti = S.today.slice(0, 7) === (S.calMonth || S.today.slice(0, 7)) ? +S.today.slice(8) - 3 : 0; document.querySelectorAll('.oscr').forEach((e, i) => { e.scrollLeft = S.occX && S.occX.m === S.calMonth + '' ? S.occX.x[i] : Math.max(0, ti) * 30; e.addEventListener('scroll', () => { S.occX = { m: S.calMonth + '', x: [...document.querySelectorAll('.oscr')].map(o => o.scrollLeft) }; }, { passive: true }); }); occDrag($('#main .occ3')); return; }
   const p = pending();
   h += '<div class="calhead">';
   if (p.length) h += '<button class="alert" data-act="go-reqs"><div><b>' + (p.length === 1 ? '1 νέο αίτημα' : p.length + ' νέα αιτήματα') + '</b><small>' + (p.length === 1 ? esc(p[0].name) + ' · ' + range(p[0].start, p[0].end) : 'Το πιο επείγον λήγει σε ' + hoursLeft(p[0]) + ' ώρες') + '</small></div><span class="chev">' + ICON.chev + '</span></button>';
@@ -810,6 +814,34 @@ function renderCal() {
   $('#main').innerHTML = h;
   const on = $('#ucs .uc.on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
+function inSel(unit, n) {
+  if (!S.sel || S.sel.unit !== unit) return false;
+  const a = S.sel.b && S.sel.b < S.sel.a ? S.sel.b : S.sel.a, z = S.sel.b ? (S.sel.b < S.sel.a ? S.sel.a : S.sel.b) : S.sel.a;
+  return n >= a && n <= z;
+}
+/* drag over the empty cells of one room to select many nights (touch: hold briefly, then drag) */
+function occDrag(box) {
+  let st = null, timer = null, x0 = 0, y0 = 0;
+  const cellAt = (x, y) => { const el = document.elementFromPoint(x, y); const c = el && el.closest('[data-cell]'); return c ? c.dataset.cell.split('|') : null; };
+  const paint = () => box.querySelectorAll('[data-cell]').forEach(c => { const p = c.dataset.cell.split('|'); c.classList.toggle('sl', inSel(p[0], p[1])); });
+  const begin = () => { st.on = true; S.move = null; S.sel = { unit: st.u, a: st.n, b: st.n }; paint(); if (navigator.vibrate) navigator.vibrate(15); };
+  box.addEventListener('pointerdown', e => {
+    const c = cellAt(e.clientX, e.clientY); if (!c || c[1] < S.today) return;
+    st = { u: c[0], n: c[1], on: false, moved: false }; x0 = e.clientX; y0 = e.clientY;
+    if (e.pointerType === 'mouse') begin(); else timer = setTimeout(begin, 280);
+  });
+  box.addEventListener('pointermove', e => {
+    if (!st) return;
+    if (!st.on) { if (Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) > 8) { clearTimeout(timer); st = null; } return; }
+    const c = cellAt(e.clientX, e.clientY);
+    if (c && c[0] === st.u && c[1] >= S.today && c[1] !== S.sel.b) { S.sel.b = c[1]; st.moved = true; paint(); }
+  });
+  box.addEventListener('touchmove', e => { if (st && st.on) e.preventDefault(); }, { passive: false });
+  const end = () => { clearTimeout(timer); if (st && st.on) { box.dataset.dragged = '1'; setTimeout(() => { delete box.dataset.dragged; }, 50); render(); } st = null; };
+  box.addEventListener('pointerup', end); box.addEventListener('pointercancel', () => { if (st && st.on) return end(); clearTimeout(timer); st = null; });
+  box.addEventListener('click', e => { if (box.dataset.dragged) { e.stopPropagation(); e.preventDefault(); } }, true);
+  box.addEventListener('contextmenu', e => { if (st) e.preventDefault(); });
+}
 function calMonthStep(k) { const m = S.calMonth || S.today.slice(0, 7); const d = new Date(Date.UTC(+m.slice(0, 4), +m.slice(5, 7) - 1 + k, 1)); S.calMonth = d.toISOString().slice(0, 7); render(); }
 function occHTML() {
   const m = S.calMonth || S.today.slice(0, 7), y = +m.slice(0, 4), mo = +m.slice(5, 7) - 1;
@@ -828,12 +860,8 @@ function occHTML() {
           let k = 1; while (i + k < nd && onNight(u.id, days[i + k]) === b) k++;
           h += '<button class="bk ' + srcClass(b) + '" style="grid-column:span ' + k + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span>' + esc(b.name) + '</span></button>'; i += k; continue;
         }
-        if (isClosed(u.id, n)) {
-          let k = 1; while (i + k < nd && !onNight(u.id, days[i + k]) && isClosed(u.id, days[i + k])) k++;
-          h += '<div class="bk cl" style="grid-column:span ' + k + '"><span>Κλειστό</span></div>'; i += k; continue;
-        }
-        const wd = dt(n).getUTCDay();
-        h += '<div class="ce' + (wd === 0 || wd === 6 ? ' we' : '') + '"></div>'; i++;
+        const wd = dt(n).getUTCDay(), cl = isClosed(u.id, n);
+        h += '<div class="ce' + (cl ? ' cl' : wd === 0 || wd === 6 ? ' we' : '') + (inSel(u.id, n) ? ' sl' : '') + '" data-cell="' + u.id + '|' + n + '">' + (cl ? '×' : '') + '</div>'; i++;
       }
     });
     h += '</div></div></div>';
