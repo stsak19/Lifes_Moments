@@ -43,6 +43,38 @@
   #journeys .jsteps li { padding-bottom: 22vh; }
 }
 @media (prefers-reduced-motion: reduce) { #journeys .jshot { filter: none; transition: opacity .3s ease; } #journeys .jrow.seen .jsteps li:not(.now) { opacity: .6; } }
+/* ===== Journeys, explore layer ===== */
+.jmap { width: clamp(130px, 13vw, 180px); }
+.jm-boat { fill: #fff; stroke: rgba(10, 18, 32, .5); stroke-width: .6; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .4)); }
+/* (4) dots on the photo */
+.jspot { position: absolute; z-index: 3; width: 34px; height: 34px; margin: -17px 0 0 -17px; padding: 0; border: 0; background: none; cursor: pointer; opacity: 0; transform: scale(.4); pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2, .9, .3, 1.4); }
+.jspot.show { opacity: 1; transform: none; pointer-events: auto; transition-delay: .6s; }
+.jspot i { position: absolute; inset: 9px; border-radius: 50%; background: #F8F4EC; box-shadow: 0 0 0 2px rgba(248, 244, 236, .4); }
+.jspot i::after { content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 1.5px solid #F8F4EC; animation: jping 2.4s ease-out infinite; }
+@keyframes jping { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+.jspot.open i { background: #F3C98B; }
+.jspot-card { position: absolute; left: 50%; bottom: calc(100% + 8px); width: 220px; padding: 12px 14px; border-radius: 12px; background: rgba(248, 244, 236, .97); color: #1A2124; text-align: left;
+  font-size: 13.5px; line-height: 1.45; box-shadow: 0 16px 30px -14px rgba(0, 0, 0, .5); opacity: 0; visibility: hidden; transform: translate(-50%, 6px); transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s; }
+.jspot-card b { display: block; margin-bottom: 4px; font: 400 17px/1.15 var(--font-display); }
+.jspot.open .jspot-card { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
+.jspot .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+/* (1) a floating detail beside the day */
+.jsteps li { position: relative; }
+.jlayer { position: absolute; right: -6px; top: 4px; width: clamp(84px, 9vw, 120px); aspect-ratio: 4 / 5; border-radius: 10px; background-size: 280%; z-index: 1; opacity: 0; pointer-events: none;
+  border: 4px solid var(--surface, #fff); box-shadow: 0 18px 34px -18px rgba(0, 0, 0, .45); transform: translateY(calc(var(--d, 0) * -60px)) rotate(3deg); transition: opacity .8s ease; }
+.jsteps li:nth-child(odd) .jlayer { transform: translateY(calc(var(--d, 0) * -60px)) rotate(-3deg); }
+.jsteps li.now .jlayer { opacity: 1; }
+.jsteps li:has(.jlayer) p { padding-right: clamp(96px, 10vw, 136px); }
+/* (2) words appear one by one, the first time */
+.jsteps li:not(.told) .jw { opacity: 0; filter: blur(4px); }
+.jsteps li .jw { display: inline-block; transition: opacity .5s ease, filter .5s ease; transition-delay: calc(var(--w) * 45ms); }
+/* (5) the tip as a note pinned in a travel journal */
+.jq.jnote { position: relative; border-radius: 3px; background: #FBF6E9; color: #2B2A26; transform: rotate(-1.2deg); box-shadow: 0 14px 26px -18px rgba(0, 0, 0, .45);
+  background-image: repeating-linear-gradient(transparent 0 27px, rgba(43, 42, 38, .08) 27px 28px); padding: 26px 22px 18px; }
+.jq.jnote::before { content: ""; position: absolute; top: -10px; left: 50%; width: 86px; height: 22px; margin-left: -43px; background: rgba(243, 201, 139, .7); transform: rotate(2deg); }
+.jq.jnote span { color: #9A6B2F; }
+@media (max-width: 760px) { .jlayer { width: 78px; } .jsteps li:has(.jlayer) p { padding-right: 90px; } .jspot-card { width: 190px; } }
+@media (prefers-reduced-motion: reduce) { .jspot i::after { animation: none; } .jlayer { transform: none !important; } }
 </style>
 </head><body>
 <title>Life's Moments · Θάσος</title>
@@ -3342,6 +3374,7 @@ html.gs-lock { overflow: hidden; }
         // clips in place of photos
         if (!reduce) $$('.jshot', row).forEach((img) => clipFor(img));
       });
+      plus2();
       plusDates();
       bleed();
       setTimeout(clipTick, 50);
@@ -3373,6 +3406,7 @@ html.gs-lock { overflow: hidden; }
       const i = $$('.jrow', listEl).indexOf(row), j = JOURNEYS[i];
       mapOn(row.querySelector('.jmap'), j && j.days && j.days[k] ? j.days[k][0][0] : '');
       const nx = row.querySelector('.jnext'); if (nx) nx.classList.toggle('gone', k >= lis.length - 1);
+      plusDay2(row, k);
       clipTick();
       if (row.classList.contains('act')) { const sec = $('#journeys'); if (sec) sec.style.setProperty('--tod', f.toFixed(3)); }
     }
@@ -3383,6 +3417,104 @@ html.gs-lock { overflow: hidden; }
       const top = nx.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.42;
       lenis ? lenis.scrollTo(top, { duration: 1.3 }) : window.scrollTo({ top, behavior: 'smooth' });
     });
+    /* ===== Journeys, explore layer =====
+       (1) a small detail of each day's photo floats beside the text at its own pace,
+       (2) the day's words appear one by one the first time it is read,
+       (3) a boat sails across the map from the house to the day's stop,
+       (4) dots on the photo open short notes about the place,
+       (5) the tip reads like a note pinned in a travel journal. */
+    const SPOTS = {
+      'Metalia & the Palataki': [[30, 62, ['Flat rocks', 'Επίπεδα βράχια', 'Düz kayalar', 'Плоски скали'], ['Smooth rocks right into deep, clear water. Bring a mat.', 'Λείοι βράχοι που μπαίνουν κατευθείαν σε βαθιά, καθαρά νερά. Πάρτε ένα στρωματάκι.', 'Doğrudan derin ve berrak suya inen düz kayalar. Bir minder getirin.', 'Гладки скали направо в дълбока, бистра вода. Вземете постелка.']],
+        [66, 34, ['The Palataki', 'Το Παλατάκι', 'Palataki', 'Палатаки'], ['The old mining company mansion on the hill, with the whole bay below.', 'Το παλιό αρχοντικό της μεταλλευτικής εταιρείας στον λόφο, με όλο τον κόλπο από κάτω.', 'Tepedeki eski maden şirketi konağı; bütün koy ayaklarınızın altında.', 'Старото имение на минната компания на хълма, с целия залив отдолу.']]],
+      'Kastro & Pefkari': [[38, 40, ['Kastro', 'Κάστρο', 'Kastro', 'Кастро'], ['A stone village high in the hills, with only a handful of people living there today.', 'Πέτρινο χωριό ψηλά στο βουνό, όπου σήμερα μένουν ελάχιστοι.', 'Tepelerde, bugün sadece birkaç kişinin yaşadığı taş bir köy.', 'Каменно село високо в хълмовете, където днес живеят съвсем малко хора.']],
+        [64, 70, ['Pefkari', 'Πευκάρι', 'Pefkari', 'Пефкари'], ['Pine trees come down almost to the sand; shade all afternoon.', 'Τα πεύκα φτάνουν σχεδόν ως την άμμο· σκιά όλο το απόγευμα.', 'Çamlar neredeyse kuma kadar iner; bütün öğleden sonra gölge.', 'Боровете стигат почти до пясъка; сянка цял следобед.']]],
+      'Giola & Archangel Michael': [[42, 64, ['Giola', 'Γκιόλα', 'Giola', 'Гиола'], ['A natural pool in the rock, filled by the sea. Go early, before the crowds.', 'Φυσική πισίνα στον βράχο που γεμίζει από τη θάλασσα. Πηγαίνετε νωρίς, πριν τον κόσμο.', 'Kayada denizin doldurduğu doğal bir havuz. Kalabalıktan önce, erken gidin.', 'Естествен басейн в скалата, пълнен от морето. Отидете рано, преди тълпите.']],
+        [68, 30, ['Archangel Michael', 'Αρχάγγελος Μιχαήλ', 'Başmelek Mikail', 'Архангел Михаил'], ['A monastery on the cliff above the sea. Shoulders and knees covered.', 'Μοναστήρι στον γκρεμό πάνω από τη θάλασσα. Με καλυμμένους ώμους και γόνατα.', 'Denizin üstündeki yamaçta bir manastır. Omuzlar ve dizler kapalı.', 'Манастир на скалата над морето. С покрити рамене и колене.']]],
+      'Alyki & Psili Ammos': [[34, 58, ['Ancient quarry', 'Αρχαίο λατομείο', 'Antik taş ocağı', 'Древна кариера'], ['At Alyki you swim beside marble cut in antiquity.', 'Στην Αλυκή κολυμπάτε δίπλα σε μάρμαρο που κόπηκε στην αρχαιότητα.', 'Alyki\'de antik çağda kesilmiş mermerin yanında yüzersiniz.', 'В Алики плувате до мрамор, изсечен в древността.']],
+        [70, 72, ['Psili Ammos', 'Ψιλή Άμμος', 'Psili Ammos', 'Псили Амос'], ['Fine sand and shallow water, easy for children.', 'Ψιλή άμμος και ρηχά νερά, εύκολα για παιδιά.', 'İnce kum ve sığ su, çocuklar için kolay.', 'Фин пясък и плитка вода, лесно за деца.']]],
+      'Theologos': [[46, 48, ['The old capital', 'Η παλιά πρωτεύουσα', 'Eski başkent', 'Старата столица'], ['Stone houses with slate roofs along one long street. Stay for lunch.', 'Πέτρινα σπίτια με πλακόστρωτες στέγες κατά μήκος ενός μακρύ δρόμου. Μείνετε για φαγητό.', 'Uzun bir sokak boyunca arduvaz çatılı taş evler. Öğle yemeğine kalın.', 'Каменни къщи с каменни покриви по една дълга улица. Останете за обяд.']]],
+      'Limenas': [[36, 62, ['By the harbour', 'Δίπλα στο λιμάνι', 'Limanın yanında', 'До пристанището'], ['The ancient agora lies right next to the old harbour, free to walk around.', 'Η αρχαία αγορά βρίσκεται ακριβώς δίπλα στο παλιό λιμάνι.', 'Antik agora, eski limanın hemen yanında.', 'Древната агора е точно до старото пристанище.']],
+        [66, 32, ['Ancient theatre', 'Αρχαίο θέατρο', 'Antik tiyatro', 'Античен театър'], ['A short climb through the pines to a theatre facing the sea.', 'Λίγο ανέβασμα μέσα στα πεύκα, ως ένα θέατρο με θέα τη θάλασσα.', 'Çamların arasından kısa bir tırmanış, denize bakan bir tiyatroya.', 'Кратко изкачване през боровете до театър с изглед към морето.']]],
+      'Golden Beach & Maries': [[40, 70, ['Golden Beach', 'Χρυσή Αμμουδιά', 'Altın Plaj', 'Златен плаж'], ['A long sandy beach with the mountain behind it.', 'Μεγάλη αμμουδιά με το βουνό από πίσω.', 'Arkasında dağ olan uzun bir kumsal.', 'Дълъг пясъчен плаж с планината зад него.']],
+        [66, 36, ['Maries', 'Μαριές', 'Maries', 'Мариес'], ['A quiet mountain village on the way back, for a coffee in the shade.', 'Ήσυχο ορεινό χωριό στον δρόμο της επιστροφής, για έναν καφέ στη σκιά.', 'Dönüş yolunda, gölgede bir kahve için sakin bir dağ köyü.', 'Тихо планинско село на връщане, за кафе на сянка.']]]
+    };
+    function plus2() {
+      const l = L();
+      $$('.jrow', listEl).forEach((row, i) => {
+        const j = JOURNEYS[i]; if (!j) return;
+        const ph = row.querySelector('.jph');
+        // (4) dots on the photo, one set per day
+        if (ph && j.days) ph.insertAdjacentHTML('beforeend', j.days.map((d, n) => (SPOTS[d[0][0]] || []).map((s, m) =>
+          '<button type="button" class="jspot" data-day="' + n + '" style="left:' + s[0] + '%;top:' + s[1] + '%" aria-expanded="false">' +
+            '<i aria-hidden="true"></i><span class="sr">' + esc(s[2][l] || s[2][0]) + '</span>' +
+            '<span class="jspot-card" role="note"><b>' + esc(s[2][l] || s[2][0]) + '</b>' + esc(s[3][l] || s[3][0]) + '</span></button>').join('')).join(''));
+        // (3) the boat
+        const svg = row.querySelector('.jmap');
+        if (svg) { const h = XY(HOME); svg.insertAdjacentHTML('beforeend', '<g class="jm-boat" transform="translate(' + h.join(',') + ')"><path d="M-5 0h10l-2.5 3h-5z"/><path d="M0 -0.5v-7l4.5 6z"/></g>'); }
+        // (1) the floating detail, and (2) words ready to appear
+        $$('.jsteps li', row).forEach((li, n) => {
+          const d = j.days && j.days[n], ph2 = d && PLACE[d[0][0]];
+          if (ph2 && n > 0 && n < j.days.length - 1) li.insertAdjacentHTML('beforeend', '<span class="jlayer" aria-hidden="true" style="background-image:url(\'' + ph2[0] + '\');background-position:' + (n % 2 ? '70% 35%' : '30% 60%') + '"></span>');
+          const p = li.querySelector('p'); if (!p || reduceM()) return;
+          let w = 0;
+          p.childNodes.forEach((node) => {
+            if (node.nodeType !== 3) return;
+            const frag = document.createDocumentFragment();
+            node.textContent.split(/(\s+)/).forEach((x) => {
+              if (!x) return;
+              if (/^\s+$/.test(x)) { frag.appendChild(document.createTextNode(x)); return; }
+              const sp = document.createElement('span'); sp.className = 'jw'; sp.style.setProperty('--w', w++); sp.textContent = x; frag.appendChild(sp);
+            });
+            node.replaceWith(frag);
+          });
+        });
+        // (5) journal note
+        const q = row.querySelector('.jq'); if (q) q.classList.add('jnote');
+      });
+    }
+    const reduceM = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function sail(svg, key) {
+      const boat = svg && svg.querySelector('.jm-boat'); if (!boat) return;
+      const way = key && svg.querySelector('.jm-way[data-k="' + (window.CSS && CSS.escape ? CSS.escape(key) : key) + '"]');
+      const h = XY(HOME).map(Number);
+      const to = way ? (() => { const L2 = way.getTotalLength(), p = way.getPointAtLength(L2); return [p.x, p.y]; })() : h;
+      const from = boat.__at || h;
+      cancelAnimationFrame(boat.__raf);
+      if (reduceM() || !way) { boat.__at = to; boat.setAttribute('transform', 'translate(' + to.join(',') + ')'); return; }
+      const t0 = performance.now(), dur = 1400, L2 = way.getTotalLength();
+      const fromHome = Math.hypot(from[0] - h[0], from[1] - h[1]) < 1;
+      const step = (now) => {
+        const u = Math.min(1, (now - t0) / dur), e = u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        let x, y;
+        if (fromHome) { const p = way.getPointAtLength(e * L2); x = p.x; y = p.y; }
+        else { x = from[0] + (to[0] - from[0]) * e; y = from[1] + (to[1] - from[1]) * e; }
+        boat.setAttribute('transform', 'translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ')');
+        boat.__at = [x, y];
+        if (u < 1) boat.__raf = requestAnimationFrame(step);
+      };
+      boat.__raf = requestAnimationFrame(step);
+    }
+    function plusDay2(row, k) {
+      const i = $$('.jrow', listEl).indexOf(row), j = JOURNEYS[i];
+      const key = j && j.days && j.days[k] ? j.days[k][0][0] : '';
+      const svg = row.querySelector('.jmap');
+      if (svg && svg.__key !== key) { svg.__key = key; sail(svg, GEO[key] ? key : ''); }
+      $$('.jspot', row).forEach((s) => { const on = +s.dataset.day === k; s.classList.toggle('show', on); if (!on) { s.classList.remove('open'); s.setAttribute('aria-expanded', 'false'); } });
+      const li = $$('.jsteps li', row)[k]; if (li) li.classList.add('told');
+    }
+    listEl.addEventListener('click', (e) => {
+      const s = e.target.closest('.jspot');
+      $$('.jspot.open', listEl).forEach((x) => { if (x !== s) { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); } });
+      if (!s) return;
+      const on = !s.classList.contains('open');
+      s.classList.toggle('open', on); s.setAttribute('aria-expanded', String(on));
+    });
+    // (1) the details drift at their own pace
+    window.addEventListener('scroll', () => requestAnimationFrame(() => {
+      const vh = window.innerHeight;
+      $$('.jlayer', listEl).forEach((x) => { const r = x.parentNode.getBoundingClientRect(); if (r.bottom < -200 || r.top > vh + 200) return;
+        x.style.setProperty('--d', ((vh / 2 - r.top) / vh).toFixed(3)); });
+    }), { passive: true });
     { const rs = renderSum; renderSum = function () { rs.apply(this, arguments); try { plusDates(); } catch (e) {} }; }
     const fNote = $('#fNote'); if (fNote) fNote.addEventListener('input', () => { fNote.dataset.jauto = '0'; });
 
