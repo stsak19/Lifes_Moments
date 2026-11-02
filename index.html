@@ -3291,14 +3291,25 @@ html.gs-lock { overflow: hidden; }
       });
     }
     function clipFor(img) {
+      if (clipsOff()) return;
       const k = Object.keys(CLIP).find((c) => PLACE[c] && PLACE[c][0] === img.getAttribute('src')); if (!k) return;
       const v = document.createElement('video');
-      v.className = img.className; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true; v.preload = 'metadata';
+      v.className = img.className; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'none';
       v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
-      v.src = CLIP[k]; v.poster = img.src; v.style.objectFit = 'cover';
+      v.dataset.clip = CLIP[k]; v.poster = img.src; v.style.objectFit = 'cover';
       Object.assign(v.dataset, img.dataset); v.dataset.credit = 'Mixkit'; img.replaceWith(v);
-      v.play && v.play().catch(() => {});
     }
+    // only the clip on screen downloads and plays; the rest wait as photos (posters)
+    const clipsOff = () => { const c = navigator.connection; return !!(c && (c.saveData || /2g/.test(c.effectiveType || ''))); };
+    function clipTick() {
+      $$('video[data-clip]').forEach((v) => {
+        const r = v.getBoundingClientRect();
+        const live = v.classList.contains('on') && r.height > 0 && r.bottom > -200 && r.top < window.innerHeight + 200;
+        if (live) { if (!v.getAttribute('src')) v.src = v.dataset.clip; if (v.paused) v.play().catch(() => {}); }
+        else if (!v.paused) v.pause();
+      });
+    }
+    window.addEventListener('scroll', () => requestAnimationFrame(clipTick), { passive: true });
     function plus() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       $$('.jrow', listEl).forEach((row, i) => {
@@ -3311,6 +3322,7 @@ html.gs-lock { overflow: hidden; }
         if (!reduce) $$('.jshot', row).forEach((img) => clipFor(img));
       });
       plusDates();
+      setTimeout(clipTick, 50);
       // phones: the pinned place-by-place stage gets the map too, and a tap moves on
       const mob = $('#jMob'), stage = mob && mob.querySelector('.jstage');
       if (stage && !stage.querySelector('.jmap')) {
@@ -3320,7 +3332,7 @@ html.gs-lock { overflow: hidden; }
         const sync = () => { const on = stage.querySelector('.jmt.on b'); mapOn(stage.querySelector('.jmap'), on && names[on.textContent]);
           const all = $$('.jmt', stage), k = all.findIndex((x) => x.classList.contains('on'));
           stage.style.setProperty('--tod', (all.length > 1 ? k / (all.length - 1) : 0).toFixed(3)); };
-        new MutationObserver(sync).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
+        new MutationObserver(() => { sync(); clipTick(); }).observe(stage, { subtree: true, attributes: true, attributeFilter: ['class'] });
         sync();
         if (!stage.__tap) { stage.__tap = true; stage.addEventListener('click', () => {
           const n = +mob.style.getPropertyValue('--n') || 1, r = mob.getBoundingClientRect();
@@ -3341,6 +3353,7 @@ html.gs-lock { overflow: hidden; }
       const tod = row.querySelector('.jtod');
       if (tod) tod.textContent = j && j.days ? jx(f < 0.25 ? 'morning' : f < 0.5 ? 'noon' : f < 0.8 ? 'after' : 'eve') : '';
       const nx = row.querySelector('.jnext'); if (nx) nx.classList.toggle('gone', k >= lis.length - 1);
+      clipTick();
       if (row.classList.contains('act')) { const sec = $('#journeys'); if (sec) sec.style.setProperty('--tod', f.toFixed(3)); }
     }
     listEl.addEventListener('click', (e) => {
