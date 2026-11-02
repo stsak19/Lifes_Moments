@@ -295,7 +295,7 @@ html.dark .calhead{background:rgba(14,23,25,.94)}
 .tonight{display:flex;align-items:center;gap:10px;width:100%;border:0;background:var(--card);border-radius:14px;padding:12px 14px;margin:0 0 10px;cursor:pointer;font:inherit;color:var(--ink);box-shadow:0 1px 3px rgba(10,58,62,.07)}
 .tonight .tbar{flex:1;height:6px;border-radius:3px;background:var(--hair);overflow:hidden}.tonight .tbar u{display:block;height:100%;background:var(--teal)}
 .tonight > span:not(.tbar){font-size:14px;font-weight:600;color:var(--muted)}
-.agn{min-width:40px;height:40px;padding:0 8px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;flex-shrink:0}
+.agn{min-width:40px;height:40px;padding:0 8px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
 .agr.in .agn{color:#2E9E57}.agr.out .agn{color:#D2443A}
 /* action bar above tabs */
 .actbar{position:fixed;left:12px;right:12px;bottom:calc(var(--tab-h) + var(--safe-b) + 10px);z-index:30;background:var(--solid);color:#fff;border-radius:18px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:up .22s ease-out}
@@ -847,7 +847,7 @@ function occHTML() {
 }
 const DAYF = ['Κυριακή', 'Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο'];
 function agRow(b, kind, U) {
-  const num = b.unit ? (b.unit === 'apt' ? 'Δ' : b.unit.slice(1)) : '–';
+  const num = b.unit ? (UNITS.find(u => u.id === b.unit) || {}).short || '–' : '–';
   return '<button class="agr ' + kind + '" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><div class="agk">' + ICON[kind] + '</div><div class="main"><b>' + esc(b.name) + '</b><small>' + (kind === 'in' ? 'Άφιξη' : 'Αναχώρηση') + (b.status === 'pending' ? ' · αίτημα' : '') + '</small></div><span class="agn" aria-label="' + (b.unit ? unitName(b.unit) : 'χωρίς δωμάτιο') + '">' + num + '</span></button>';
 }
 function availSheet() {
@@ -863,7 +863,7 @@ function availRes() {
   const nights = diff(a, z), free = UNITS.filter(u => isFree(u.id, a, z));
   let h = '<div class="cal-sub" style="margin:6px 20px 4px">' + nights + (nights === 1 ? ' νύχτα' : ' νύχτες') + ' · ' + free.length + ' ελεύθερα</div>';
   h += UNITS.map(u => {
-    const lbl = u.id === 'apt' ? 'Διαμ.' : 'Δωμ. ' + u.id.slice(1);
+    const lbl = u.id === 'apt' ? 'Άθος' : u.short;
     if (isFree(u.id, a, z)) return '<div class="urow"><span class="n">' + lbl + '</span><div class="main"><b style="color:var(--teal)">Ελεύθερο</b><small>' + u.cap + ' άτομα</small></div><button class="pill" style="height:34px;padding:0 10px;color:var(--red)" data-act="av-close" data-id="' + u.id + '">Κλειστά</button><button class="pill" style="height:34px;padding:0 10px;background:var(--teal);color:#fff;border-color:var(--teal)" data-act="av-new" data-id="' + u.id + '">Κράτηση</button></div>';
     let who = []; for (let d = a; d < z; d = add(d, 1)) { const b = onNight(u.id, d); if (b && !who.includes(b.name)) who.push(b.name); else if (!b && isClosed(u.id, d) && !who.includes('Κλειστό')) who.push('Κλειστό'); }
     return '<div class="urow no"><span class="n">' + lbl + '</span><div class="main"><b>Πιασμένο</b><small>' + esc(who.join(', ')) + '</small></div></div>';
@@ -877,7 +877,7 @@ document.addEventListener('change', e => {
 function daySheet(n) {
   sheet('<div class="hd"><div style="flex:1"><h2>' + (n === S.today ? 'Απόψε' : fmtD(n)) + '</h2></div><button class="iconbtn" data-act="close" aria-label="Κλείσιμο" style="box-shadow:none;background:var(--soft2)">' + ICON.x + '</button></div><div class="bd" style="padding:0 0 16px">' +
     UNITS.map(u => {
-      const b = onNight(u.id, n), lbl = u.id === 'apt' ? 'Διαμ.' : 'Δωμ. ' + u.id.slice(1);
+      const b = onNight(u.id, n), lbl = u.id === 'apt' ? 'Άθος' : u.short;
       if (b) return '<button class="urow" data-act="' + (b.status === 'pending' ? 'open-req' : 'booking') + '" data-id="' + b.id + '"><span class="n">' + lbl + '</span><div class="main"><b>' + esc(b.name) + '</b><small>' + range(b.start, b.end) + '</small></div>' + srcTag(b) + '</button>';
       if (isClosed(u.id, n)) return '<button class="urow" data-act="ag-unit" data-id="' + u.id + '"><span class="n">' + lbl + '</span><div class="main" style="color:var(--red);font-weight:600">Κλειστό</div></button>';
       return '<button class="urow free" data-act="ag-unit" data-id="' + u.id + '"><span class="n" style="color:var(--ink)">' + lbl + '</span><div class="main">Ελεύθερο</div>' + ICON.chev + '</button>';
