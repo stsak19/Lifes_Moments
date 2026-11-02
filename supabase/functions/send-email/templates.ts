@@ -45,8 +45,9 @@ function unitName(g: Guest, lang: string): string {
   const m = /^r(\d+)$/.exec(g.unit ?? '');
   const W: Record<string, [string, string]> = { el: ['Δωμάτιο', 'Διαμέρισμα'], en: ['Room', 'Apartment'], tr: ['Oda', 'Daire'], bg: ['Стая', 'Апартамент'] };
   const [room, apt] = W[lang] ?? W.el;
-  if (m) return room + ' ' + m[1];
-  return g.unit_type === 'apt' ? apt : room;
+  // r1–r5 are rooms 100–104, r6–r10 are 200–204; the apartment is called Athos.
+  if (m) { const i = +m[1]; return room + ' ' + (i <= 5 ? 99 + i : 194 + i); }
+  return g.unit_type === 'apt' ? apt + ' ' + (lang === 'el' ? 'Άθος' : 'Athos') : room;
 }
 function guestsText(n: number, lang: string) {
   if (lang === 'tr') return n + ' kişi';
