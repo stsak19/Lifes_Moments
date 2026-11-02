@@ -34,25 +34,12 @@
 @media (prefers-reduced-motion: reduce) { .jm-way { transition: none; } .jnext svg { animation: none; } #journeys, .jph::before { transition: none; } }
 
 /* ===== immersive photo: full height, out to the screen edge, cinematic changes ===== */
-@media (min-width: 761px) {
-  #journeys .jrow { align-items: start; }
-  #journeys .jph { position: sticky; top: var(--hh, 60px); height: calc(100vh - var(--hh, 60px)); max-height: none; aspect-ratio: auto;
-    margin-left: calc(-1 * var(--bl, 0px)); width: calc(100% + var(--bl, 0px)); border-radius: 0; clip-path: inset(6% 8% 6% 8%); }
-  #journeys .jrow:nth-child(even) .jph { margin-left: 0; margin-right: calc(-1 * var(--br, 0px)); width: calc(100% + var(--br, 0px)); }
-  #journeys .jrow.seen .jph { clip-path: inset(0); }
-  #journeys .jtx { padding-block: 18vh 30vh; }
-  #journeys .jsteps li { padding-bottom: 34vh; }
-  #journeys .jsteps li:last-child { padding-bottom: 8vh; }
-  #journeys .jsteps p { font-size: 18px; line-height: 1.6; }
-  #journeys .jsteps p b { display: block; margin-bottom: 4px; font: 400 clamp(26px, 2.4vw, 36px)/1.1 var(--font-display); }
-}
 #journeys .jsteps li { transition: opacity .7s ease, transform 1s cubic-bezier(.2, .7, .2, 1); }
 #journeys .jrow.seen .jsteps li:not(.now) { opacity: .28; }
 #journeys .jshot { filter: blur(10px) saturate(.9); transition: opacity 1.4s ease, transform 2.4s cubic-bezier(.2, .7, .2, 1), filter 1.4s ease; }
 #journeys .jshot.on { filter: none; }
 #journeys .jph::after { background: linear-gradient(to top, rgba(6, 10, 18, .7), rgba(6, 10, 18, 0) 45%), radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(6, 10, 18, .35)); }
 @media (max-width: 760px) {
-  #journeys .jph { height: 70svh; top: var(--hh, 56px); }
   #journeys .jsteps li { padding-bottom: 22vh; }
 }
 @media (prefers-reduced-motion: reduce) { #journeys .jshot { filter: none; transition: opacity .3s ease; } #journeys .jrow.seen .jsteps li:not(.now) { opacity: .6; } }
@@ -3350,7 +3337,6 @@ html.gs-lock { overflow: hidden; }
         const j = JOURNEYS[i], ph = row.querySelector('.jph'); if (!ph) return;
         const keys = (j.days || []).map((d) => d[0][0]);
         if (keys.some((k) => GEO[k])) ph.insertAdjacentHTML('beforeend', mapSvg(keys));
-        ph.insertAdjacentHTML('beforeend', '<span class="jtod" aria-hidden="true"></span>');
         const st = row.querySelector('.jsteps');
         if (st) st.insertAdjacentHTML('afterend', (j.days ? '<button type="button" class="jnext">' + esc(jx('next')) + ' <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>' : ''));
         // clips in place of photos
@@ -3386,8 +3372,6 @@ html.gs-lock { overflow: hidden; }
       row.style.setProperty('--tod', f.toFixed(3));
       const i = $$('.jrow', listEl).indexOf(row), j = JOURNEYS[i];
       mapOn(row.querySelector('.jmap'), j && j.days && j.days[k] ? j.days[k][0][0] : '');
-      const tod = row.querySelector('.jtod');
-      if (tod) tod.textContent = j && j.days ? jx(f < 0.25 ? 'morning' : f < 0.5 ? 'noon' : f < 0.8 ? 'after' : 'eve') : '';
       const nx = row.querySelector('.jnext'); if (nx) nx.classList.toggle('gone', k >= lis.length - 1);
       clipTick();
       if (row.classList.contains('act')) { const sec = $('#journeys'); if (sec) sec.style.setProperty('--tod', f.toFixed(3)); }
