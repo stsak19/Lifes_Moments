@@ -3,7 +3,6 @@
 ## Τι είναι το project
 Στατικό site για το κατάλυμα Life's Moments στη Θάσο, σε GitHub Pages
 (https://stsak19.github.io/Lifes_Moments/), με backend σε Supabase.
-Λεπτομέρειες λειτουργιών: `README.md`.
 
 - `index.html` — site επισκεπτών (υπολογιστής/tablet)
 - `mobile.html` — site επισκεπτών για κινητά (τα κινητά ανακατευθύνονται εκεί αυτόματα)
@@ -35,7 +34,6 @@
 - Ημερομηνίες πάντα σε ώρα Ελλάδας (Europe/Athens).
 - Commit messages: σύντομα, στα Αγγλικά, περιγράφουν τι βλέπει ο χρήστης
   (π.χ. «Shorter mobile booking bar, button sits lower»).
-- Όταν αλλάζει κάποια λειτουργία, ενημέρωσε και το `README.md`.
 
 ## Όταν αλλάζει ένα κείμενο/επιλογή στο site
 Κάνε την αλλαγή αυτόματα **παντού**, χωρίς να ρωτάς:
